@@ -1,0 +1,16 @@
+lastUpgrade=00950
+proj.pluginVersion=0.9.50
+proj.AppId=718810063125
+and.BundleId=com.ino.games.pixeldot
+proj.classDir=Assets
+proj.ConstantsClassName=GPGSIds
+and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0d%0a%3c%21--%0d%0aGoogle+Play+game+services+IDs.%0d%0aSave+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.%0d%0a--%3e%0d%0a%3cresources%3e%0d%0a++%3c%21--+app_id+--%3e%0d%0a++%3cstring+name%3d%22app_id%22+translatable%3d%22false%22%3e718810063125%3c%2fstring%3e%0d%0a++%3c%21--+package_name+--%3e%0d%0a++%3cstring+name%3d%22package_name%22+translatable%3d%22false%22%3ecom.ino.games.pixeldot%3c%2fstring%3e%0d%0a++%3c%21--+achievement+COMPLETE+10+--%3e%0d%0a++%3cstring+name%3d%22achievement_complete_10%22+translatable%3d%22false%22%3eCgkIlcKs4_UUEAIQBQ%3c%2fstring%3e%0d%0a++%3c%21--+achievement+COMPLETE+20+--%3e%0d%0a++%3cstring+name%3d%22achievement_complete_20%22+translatable%3d%22false%22%3eCgkIlcKs4_UUEAIQBg%3c%2fstring%3e%0d%0a++%3c%21--+achievement+COMPLETE+50+--%3e%0d%0a++%3cstring+name%3d%22achievement_complete_50%22+translatable%3d%22false%22%3eCgkIlcKs4_UUEAIQBw%3c%2fstring%3e%0d%0a++%3c%21--+achievement+COMPLETE+100+--%3e%0d%0a++%3cstring+name%3d%22achievement_complete_100%22+translatable%3d%22false%22%3eCgkIlcKs4_UUEAIQCA%3c%2fstring%3e%0d%0a++%3c%21--+leaderboard+Best+Time+--%3e%0d%0a++%3cstring+name%3d%22leaderboard_best_time%22+translatable%3d%22false%22%3eCgkIlcKs4_UUEAIQAQ%3c%2fstring%3e%0d%0a++%3c%21--+leaderboard+Daily+Best+--%3e%0d%0a++%3cstring+name%3d%22leaderboard_daily_best%22+translatable%3d%22false%22%3eCgkIlcKs4_UUEAIQBA%3c%2fstring%3e%0d%0a%3c%2fresources%3e%0d%0a
+and.ClientId=
+android.SetupDone=true
+App.NearbdServiceId=
+android.NearbySetupDone=true
+ios.ClientId=718810063125-6pqijcnjuk542apsvvt7ohdp5q6k9gcv.apps.googleusercontent.com
+ios.BundleId=com.ino.games.PixelArt
+ios.ResourceData=%23define+CLIENT_ID+%40%22718810063125-6pqijcnjuk542apsvvt7ohdp5q6k9gcv.apps.googleusercontent.com%22%0a%23define+BUNDLE_ID+%40%22com.ino.games.PixelArt%22%0a%23define+ACH_COMPLETE_10+%40%22CgkIlcKs4_UUEAIQBQ%22%0a%23define+ACH_COMPLETE_20+%40%22CgkIlcKs4_UUEAIQBg%22%0a%23define+ACH_COMPLETE_50+%40%22CgkIlcKs4_UUEAIQBw%22%0a%23define+ACH_COMPLETE_100+%40%22CgkIlcKs4_UUEAIQCA%22%0a%23define+LEAD_BEST_TIME+%40%22CgkIlcKs4_UUEAIQAQ%22%0a%23define+LEAD_DAILY_BEST+%40%22CgkIlcKs4_UUEAIQBA%22
+proj.requireGPlus=false
+ios.SetupDone=true

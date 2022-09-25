@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pixel Art - Color by Number", "Pixel Art - Color by Number.csproj", "{EEABAAD6-A870-D79F-0512-D43437EFF250}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pixel Art - Color by Number.Plugins", "Pixel Art - Color by Number.Plugins.csproj", "{36283C2D-FCE2-307D-63E6-1ED999CB011F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pixel Art - Color by Number.Editor", "Pixel Art - Color by Number.Editor.csproj", "{9CB82EDF-0F49-2DF0-7D95-91D97AC5792E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pixel Art - Color by Number.Editor.Plugins", "Pixel Art - Color by Number.Editor.Plugins.csproj", "{AA5BDCD7-3DB1-71F2-55B4-39381FA707AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EEABAAD6-A870-D79F-0512-D43437EFF250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEABAAD6-A870-D79F-0512-D43437EFF250}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEABAAD6-A870-D79F-0512-D43437EFF250}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEABAAD6-A870-D79F-0512-D43437EFF250}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36283C2D-FCE2-307D-63E6-1ED999CB011F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36283C2D-FCE2-307D-63E6-1ED999CB011F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36283C2D-FCE2-307D-63E6-1ED999CB011F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36283C2D-FCE2-307D-63E6-1ED999CB011F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CB82EDF-0F49-2DF0-7D95-91D97AC5792E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CB82EDF-0F49-2DF0-7D95-91D97AC5792E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CB82EDF-0F49-2DF0-7D95-91D97AC5792E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CB82EDF-0F49-2DF0-7D95-91D97AC5792E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA5BDCD7-3DB1-71F2-55B4-39381FA707AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA5BDCD7-3DB1-71F2-55B4-39381FA707AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA5BDCD7-3DB1-71F2-55B4-39381FA707AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA5BDCD7-3DB1-71F2-55B4-39381FA707AB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
