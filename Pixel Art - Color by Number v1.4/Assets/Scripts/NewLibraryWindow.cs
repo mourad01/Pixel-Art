@@ -82,13 +82,14 @@ public class NewLibraryWindow : BaseWindow
 	private void Awake()
 	{
 		NewLibraryWindow.instance = this;
+			
 		//IAPWrapper instance = IAPWrapper.Instance;
 		//instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
 		//DataManager instance2 = DataManager.Instance;
 		//instance2.OnInternetAppeared = (Action)Delegate.Combine(instance2.OnInternetAppeared, new Action(this.OnInternetAppearedHandler));
 	}
-	private void Start()
-	{ 
+	public void Start()
+	{
 		MainMenu.Instance.RefreshTodayArt();
 	}
 	public void Init(ImagesInfo imagesInfo)

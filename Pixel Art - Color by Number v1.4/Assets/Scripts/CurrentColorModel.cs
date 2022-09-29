@@ -19,7 +19,7 @@ public class CurrentColorModel
 {
 	public Action<CurrentColorModel, bool> OnStateChanged;
 
-	public Color Color { get; private set; }
+	public Color Color { get;  set; }
 
 	public void UpdateColor(Color color)
 	{

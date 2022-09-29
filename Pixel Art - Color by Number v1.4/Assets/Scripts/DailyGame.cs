@@ -59,15 +59,14 @@ public class DailyGame : MonoBehaviour
     {
         Instance = this;
 
-        if (isdaily)
-        {
+        
             ResetState(true);
 
             if (GetNameScript.Instance != null)
             {
                 this.leaderBoardScript = GetNameScript.Instance.leaderBoardScript;
             }
-        }
+        
     }
     public static void ResetState(bool isDailyArt)
     {

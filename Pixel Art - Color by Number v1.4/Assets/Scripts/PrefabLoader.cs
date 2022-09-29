@@ -29,7 +29,16 @@ public class PrefabLoader : MonoBehaviour
 
 	public static T Load<T>(string name) where T : BaseWindow
 	{
-		var w = instance.windows.FirstOrDefault(t => t.name == name);
-		return (T)w;
+		T a = null;
+		try
+		{
+			var w = instance.windows.FirstOrDefault(t => t.name == name);
+			a = (T)w;
+		}
+		catch(MissingReferenceException e)
+        {
+			Debug.Log(e.Message);
+        }
+		return a;
 	}
 }

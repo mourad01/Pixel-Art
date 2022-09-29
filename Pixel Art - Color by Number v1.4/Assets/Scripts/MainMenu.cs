@@ -85,7 +85,7 @@ public class MainMenu : BaseWindow
 	{
 		get
 		{
-			return true;
+			return false;
 		}
 	}
 

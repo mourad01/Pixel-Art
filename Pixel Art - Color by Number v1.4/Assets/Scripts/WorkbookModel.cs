@@ -14,15 +14,15 @@ U should buy a license from author if u use it in your project!
 
 public class WorkbookModel
 {
-	public static WorkbookModel Instance { get; private set; }
+	public static WorkbookModel Instance { get;  set; }
 
-	public ColorizationModeModel ColorizationModeModel { get; private set; }
+	public ColorizationModeModel ColorizationModeModel { get; set; }
 
-	public CurrentColorModel CurrentColorModel { get; private set; }
+	public CurrentColorModel CurrentColorModel { get;  set; }
 
-	public TutorialModel TutorialModel { get; private set; }
+	public TutorialModel TutorialModel { get;  set; }
 
-	public SpecBoostersModel SpecBoostersModel { get; private set; }
+	public SpecBoostersModel SpecBoostersModel { get;  set; }
 
 	public WorkbookModel()
 	{

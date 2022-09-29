@@ -187,12 +187,15 @@ public class MainManager : MonoBehaviour
 					AppData.CheckSessionEvents();
 					DataManager.Instance.GetImages(true, delegate (ImagesInfo imagesInfo)
 					{
+						Debug.Log("Hi Mourad");
 						if (WindowManager.Instance != null)
 						{
+							
 							MainMenu mainMenu = WindowManager.Instance.GetMainMenu();
 							if ((UnityEngine.Object)mainMenu != (UnityEngine.Object)null)
 							{
 								mainMenu.UpdateLibrary(imagesInfo);
+							
 							}
 						}
 					});
@@ -263,12 +266,14 @@ public class MainManager : MonoBehaviour
 
 		var mainMenu = WindowManager.Instance.OpenMainMenu();
 		mainMenu.Init(page);
-		bool needTrialWindow = false; 
-		if (this.first)
+		//bool needTrialWindow = false; 
+		/*if (this.first)
 		{
+			
 			needTrialWindow = (AppData.SessionId == 1);
 			if (!needTrialWindow && AppData.UpdateToNew && !AppData.SubCampaignWasShown)
-			{ 
+			{
+				
 				needTrialWindow = true; 
 			}
 		}
@@ -290,43 +295,31 @@ public class MainManager : MonoBehaviour
 #if UNITY_ANDROID
 			//OneSignalWrapper.Init(oneSignalAppId, googleProjectId);
 #else
-                OneSignalWrapper.Init(oneSignaliOSAppId, googleProjectId);
+                //OneSignalWrapper.Init(oneSignaliOSAppId, googleProjectId);
 #endif
             }
             catch(Exception ex)
             {
                 Debug.LogError(ex);
             }
-		}
+		}*/
 	}
 
 	private IEnumerator StartWorkbookCoroutine(ImageInfo imageInfo, ImageOpenType imageOpenType, ISavedWorkData savedWorkData = null, Action badHandler = null)
 	{
-		if (imageInfo.Is3D)
-		{
-			DataManager.Instance.GetImageAsset3D(imageInfo, delegate (bool res, CashImage3D vox)
-			{
-				if (res)
-				{
-					NavigationService.Navigate(new GameNavigationArgs(imageInfo, vox, savedWorkData as SavedWorkData3D, imageOpenType), true);
-				}
-				else
-				{
-					DialogToolWrapper.ShowNoInternetDialog();
-					badHandler.SafeInvoke();
-				}
-			}); 
-		}
-		else
-		{
+
+		
 			yield return SceneManager.LoadSceneAsync("2DScene");
 
 			while (NewWorkbookManager.Instance == null)
 			{
 				yield return null;
 			}
+		
 			Resources.UnloadUnusedAssets();
 			NewWorkbookManager.Instance.Init(imageInfo, imageOpenType, savedWorkData);
-		}
+		
+		
+		
 	}
 }

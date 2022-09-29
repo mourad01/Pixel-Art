@@ -26,7 +26,7 @@ public class NumbersBlock : MonoBehaviour
 	[SerializeField]
 	private GameObject m_content;
 
-	public bool Inited { get; private set; }
+	public bool Inited { get;  set; }
 
 	public void Init(int width, int height, Vector2 delta, Color[] values, int fullWidth, int startX, int startY, List<Color> colors)
 	{

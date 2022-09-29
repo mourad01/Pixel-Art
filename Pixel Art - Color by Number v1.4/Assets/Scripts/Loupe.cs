@@ -28,7 +28,7 @@ public class Loupe : MonoBehaviour
 	[SerializeField]
 	private RectTransform m_loupeRect;
 
-	public float Precision { get; private set; }
+	public float Precision { get;   set; }
 
 	public Vector2 Size
 	{

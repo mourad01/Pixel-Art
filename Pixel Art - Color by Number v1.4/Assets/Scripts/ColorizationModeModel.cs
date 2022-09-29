@@ -44,10 +44,10 @@ public class ColorizationModeModel
 		switch (this.m_spaceType)
 		{
 			case BrushType.Singular:
-				this.CurrentSpaceType = BrushType.Plural;
+				this.CurrentSpaceType = BrushType.Singular;
 				break;
 			case BrushType.Plural:
-				this.CurrentSpaceType = BrushType.Singular;
+				this.CurrentSpaceType = BrushType.Plural;
 				break;
 		}
 	}

@@ -44,7 +44,7 @@ public class NewWorkbookManager : MonoBehaviour
 	[SerializeField]
 	private GameObject m_videoWaiter;
 
-	public static NewWorkbookManager Instance { get; private set; }
+	public static NewWorkbookManager Instance { get;  set; }
 
 	public CameraManager CameraManager
 	{
@@ -86,6 +86,7 @@ public class NewWorkbookManager : MonoBehaviour
 	}
 	private void OnCurrentColorChangedHandler(CurrentColorModel model, bool val)
 	{
+		Debug.Log("hoyyyyy");
 		this.NumberColoring.SetColor(model.Color);
 	}
 

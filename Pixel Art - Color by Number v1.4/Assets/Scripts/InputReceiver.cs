@@ -107,9 +107,15 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 							Vector2 size4 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
 							float a2 = num5 + size4.x / 4f;
 							a2 = Mathf.Min(a2, workspaceRect.rect.width / 10f);
+
 							//NewWorkbookManager.Instance.CameraManager.Move(new Vector2(a2 / num * 0.05f, 0f));
 							NewWorkbookManager.Instance.CameraManager.UpdateLoupe(Input.mousePosition);
-							NewWorkbookManager.Instance.NumberColoring.TryClickPixel(Input.mousePosition);
+							Debug.Log(NewWorkbookManager.Instance.NumberColoring);
+								NewWorkbookManager.Instance.NumberColoring.TryClickPixel(Input.mousePosition);
+							
+							
+							
+                            
 						}
 					}
 					float y = vector.y;
@@ -129,7 +135,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 						NewWorkbookManager.Instance.CameraManager.UpdateLoupe(Input.mousePosition);
 						NewWorkbookManager.Instance.NumberColoring.TryClickPixel(Input.mousePosition);
 					}
-					else //if (!m_loupeEnabled)
+					else if (!m_loupeEnabled)
 					{
 						float y2 = vector.y;
 						float height4 = rect.height;

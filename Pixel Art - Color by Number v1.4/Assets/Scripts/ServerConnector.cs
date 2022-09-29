@@ -158,8 +158,8 @@ public class ServerConnector : MonoBehaviour
 		{
 			if (!string.IsNullOrEmpty(www.error))
 			{
-				//Debug.Log(localFile + " not found");
-				//handler.SafeInvoke(false, null);
+				Debug.Log(localFile + " not found");
+				handler.SafeInvoke(false, null);
 				if (notFoundHandler != null)
 				{
 					notFoundHandler();

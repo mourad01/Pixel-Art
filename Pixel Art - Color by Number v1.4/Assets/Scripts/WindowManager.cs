@@ -58,7 +58,7 @@ public class WindowManager : MonoBehaviour
 
 	private FilterWindow m_filterWindow;
 
-	public static WindowManager Instance { get; private set; }
+	public static WindowManager Instance { get;  set; }
 
 	public int OpenedWindowsCount
 	{
@@ -87,12 +87,15 @@ public class WindowManager : MonoBehaviour
 	{
 		if (this.m_mainMenu == null)
 		{
+		
 			this.m_mainMenu = ((Component)this.m_uiParent.Find("main_menu")).GetComponent<MainMenu>();
+			
 		}
 		this.m_openedWindows.Add(this.m_mainMenu);
 		//AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
 		this.m_mainMenu.InitCanvas(this.m_canvas, true);
 		this.m_mainMenu.Open();
+		
 		return this.m_mainMenu;
 	}
 

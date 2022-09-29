@@ -90,23 +90,24 @@ public class DataManager : MonoBehaviour
                 this.m_imagesInfo = res;
                 base.StartCoroutine(this.GetImagesListCoroutine(force, handler));
 			}));
-			//base.StartCoroutine(this.LoadImages(handler));
+			base.StartCoroutine(this.LoadImages(handler));
 		}
 	}
 
-	//private IEnumerator LoadImages(Action<ImagesInfo> handler)
-	//{
-	//	yield return null;
-	//	if (this.m_imagesInfo == null || this.m_imagesInfo.Images.Count == 0)
-	//	{
-	//		yield return new WaitForSeconds(0.5f);
-	//		using (var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(imagesAsset.text)))
-	//		{
-	//			this.m_imagesInfo = Serializer.LoadFromTextStream<ImagesInfo>(stream);
-	//		}
-	//	}
-	//	handler(this.m_imagesInfo);
-	//} 
+	private IEnumerator LoadImages(Action<ImagesInfo> handler)
+	{
+		yield return null;
+		if (this.m_imagesInfo == null || this.m_imagesInfo.Images.Count == 0)
+		{
+            Debug.Log("Hiiiii SImOURAD");
+			yield return new WaitForSeconds(0.5f);
+			/*using (var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(imagesAsset.text)))
+			{
+				this.m_imagesInfo = Serializer.LoadFromTextStream<ImagesInfo>(stream);
+			}*/
+		}
+		handler(this.m_imagesInfo);
+	} 
 	private T CheckDownloadedFile<T>(string fileName)
 	{ 
         string path = AppPathsConfig.DownloadsPath + fileName;
@@ -222,10 +223,11 @@ public class DataManager : MonoBehaviour
     private IEnumerator GetImagesListCoroutine(bool force, Action<ImagesInfo> handler)
     {
         Debug.Log("GetImagesListCoroutine");
-
+        
         if (!force)
         {
             yield return null;
+            
             Debug.Log("GetImagesListCoroutine not force");
             this.StartCoroutine(this.SearchForLocalFile(AppPathsConfig.ImagesFile, delegate (ImagesInfo res)
             {
@@ -237,8 +239,11 @@ public class DataManager : MonoBehaviour
                     handler.SafeInvoke(this.m_imagesInfo);
                 }
             }));
+            
             yield return null;
+            
         }
+        
         yield return null;
         this.m_serverConnector.GetImagesList(delegate (ImagesInfo imagesInfo)         {
             Debug.Log("GetImagesListCoroutine GetImagesList response");
@@ -273,13 +278,20 @@ public class DataManager : MonoBehaviour
             { 
                 if (res)
                 {
-                    string fileName = AppPathsConfig.DownloadsPath + imageInfo.Id + ".png";
-                    Serializer.SaveToFile(fileName, new CashImage(bytes), false);
-                    CashImage cashImage = Serializer.LoadFromFile<CashImage>(fileName);
-                    Texture2D texture2D2 = new Texture2D(1, 1, TextureFormat.RGB24, false);
-                    texture2D2.filterMode = (FilterMode)(imageInfo.Is3D ? 1 : 0);
-                    texture2D2.LoadImage(cashImage.Bytes);
-                    serverTex = texture2D2;
+                    try
+                    {
+                        string fileName = AppPathsConfig.DownloadsPath + imageInfo.Id + ".png";
+                        Serializer.SaveToFile(fileName, new CashImage(bytes), false);
+                        CashImage cashImage = Serializer.LoadFromFile<CashImage>(fileName);
+                        Texture2D texture2D2 = new Texture2D(1, 1, TextureFormat.RGB24, false);
+                        texture2D2.filterMode = (FilterMode)(imageInfo.Is3D ? 1 : 0);
+                        texture2D2.LoadImage(cashImage.Bytes);
+                        serverTex = texture2D2;
+                    }
+                    catch(Exception e)
+                    {
+                        Debug.Log(e.Message);
+                    }
                 }
                 handler.SafeInvoke((UnityEngine.Object)serverTex != (UnityEngine.Object)null, serverTex);
             }); 
@@ -332,10 +344,12 @@ public class DataManager : MonoBehaviour
     }
     private IEnumerator GetPhotoAssetCoroutine(string id, Action<bool, Texture2D> handler)
     {
+      
         yield return null;
         var fileName = id + ".png";
         if (File.Exists(AppPathsConfig.DownloadsPath + fileName))
         {
+            
             byte[] data = File.ReadAllBytes(AppPathsConfig.DownloadsPath + fileName);
             Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGB24, false);
             texture2D.filterMode = FilterMode.Point;

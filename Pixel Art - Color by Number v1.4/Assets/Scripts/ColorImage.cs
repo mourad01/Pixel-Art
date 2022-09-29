@@ -29,9 +29,9 @@ public class ColorImage : MonoBehaviour
 	[SerializeField]
 	private Image m_mark;
 
-	public Color Color { get; private set; }
+	public Color Color { get; set; }
 
-	public int ColorIndex { get; private set; }
+	public int ColorIndex { get;  set; }
 
 	public void Init(Color color, int number)
 	{

@@ -42,23 +42,23 @@ public class NGPostProcessBuild
 			PBXProject pbxProject = new PBXProject();
 			pbxProject.ReadFromFile( pbxProjectPath );
 
-			string targetGUID = pbxProject.TargetGuidByName( PBXProject.GetUnityTargetName() );
+			//string targetGUID = pbxProject.TargetGuidByName( PBXProject.GetUnityTargetName() );
 	
 			if( MINIMUM_TARGET_8_OR_ABOVE )
 			{
-				pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework Photos" );
-				pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework MobileCoreServices" );
-				pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework ImageIO" );
+				//pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework Photos" );
+				//pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework MobileCoreServices" );
+				//pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework ImageIO" );
 			}
 			else
 			{
-				pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-weak_framework Photos" );
-				pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework AssetsLibrary" );
-				pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework MobileCoreServices" );
-				pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework ImageIO" );
+				//pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-weak_framework Photos" );
+				//pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework AssetsLibrary" );
+				//pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework MobileCoreServices" );
+				//pbxProject.AddBuildProperty( targetGUID, "OTHER_LDFLAGS", "-framework ImageIO" );
 			}
 	
-			pbxProject.RemoveFrameworkFromProject( targetGUID, "Photos.framework" );
+			//pbxProject.RemoveFrameworkFromProject( targetGUID, "Photos.framework" );
 
 			File.WriteAllText( pbxProjectPath, pbxProject.WriteToString() );
 			

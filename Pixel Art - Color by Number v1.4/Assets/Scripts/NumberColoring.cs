@@ -25,7 +25,7 @@ using UnityEngine;
 public class NumberColoring : MonoBehaviour
 {
 	public static int CELL_SIZE = 50;
-	public Color borderColor = Color.grey;
+	public Color borderColor = Color.green;
 	public int borderWidth = 1;
 
 	public Action OnComplete;
@@ -34,7 +34,7 @@ public class NumberColoring : MonoBehaviour
 	public Action<Color, int> OnCountLeft;
 	public Action<Color> OnPaintedPixel;
 
-	private int[,] m_bombMatrix = new int[7, 7] {
+	public int[,] m_bombMatrix = new int[7, 7] {
 		{
 			0, 0,
 			1,
@@ -156,7 +156,7 @@ public class NumberColoring : MonoBehaviour
 	[HideInInspector]
 	public History m_history;
 
-	public bool Completed { get; private set; }
+	public bool Completed { get;  set; }
 	 
 	private Color transparent = new Color(1, 1, 1, 0);
 	private int m_totalNumbers = 0;
@@ -192,7 +192,7 @@ public class NumberColoring : MonoBehaviour
 		this.m_width = tex.width;
 		this.m_height = tex.height;
 		this.m_pixels = tex.GetPixels();
-		this.m_colors = this.m_pixels.Distinct().ToList();//.Where(c => c.r != 1 && c.g != 1 && c.b != 1).ToList();
+		this.m_colors = this.m_pixels.Distinct().ToList();//Where(c => c.r != 1 && c.g != 1 && c.b != 1).ToList();
 
 		this.m_colors.Remove(Color.white);
 		this.m_colors.Remove(transparent);
@@ -288,6 +288,7 @@ public class NumberColoring : MonoBehaviour
 	{
         Debug.Log("set highlight color: " + color);
 		this.m_highlightedGridRenderer.sharedMaterial.SetColor("_CurrentColor", color);
+		
 	}
 
 	public void TryClickPixel(Vector2 mousePosition)
@@ -296,21 +297,34 @@ public class NumberColoring : MonoBehaviour
 		RaycastHit[] array = Physics.RaycastAll(ray);
 		if (array != null && array.Length > 0)
 		{
+			
 			MeshRenderer component = array[0].collider.gameObject.GetComponent<MeshRenderer>();
+			
 			if (component != null)
 			{
+				Debug.Log(array.Count());
 				Texture mainTexture = component.sharedMaterial.mainTexture;
-				Vector3 point = array[0].point;
+				Vector2 point = array[0].point;
+				
 				float x = point.x;
-				Vector3 lossyScale = array[0].collider.transform.lossyScale;
+				Vector2 lossyScale = array[0].collider.transform.lossyScale;
+				
 				point.x = x / lossyScale.x;
 				float y = point.y;
-				Vector3 lossyScale2 = array[0].collider.transform.lossyScale;
+				
+				Vector2 lossyScale2 = array[0].collider.transform.lossyScale;
+				
 				point.y = y / lossyScale2.y;
-				point.x = (point.x + 1f) / 2f * (float)mainTexture.width;
-				point.y = (point.y + 1f) / 2f * (float)mainTexture.height;
+				Debug.Log(mainTexture.width);
+				point.x = (point.x + 1f) / 2f* (float)mainTexture.width;
+
+
+				point.y = (point.y + 1f) / 2f*(float)mainTexture.height;
+				
 				this.SetPixelColor(point, WorkbookModel.Instance.CurrentColorModel.Color);
+				
 			}
+			
 		}
 	}
 
@@ -347,10 +361,12 @@ public class NumberColoring : MonoBehaviour
 
 	public void SetPixelColor(Vector2 pixelPos, Color color)
 	{
+		
 		Color pixel = ((Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture).GetPixel((int)pixelPos.x, (int)pixelPos.y);
 		if (WorkbookModel.Instance.SpecBoostersModel.LassoMode || WorkbookModel.Instance.SpecBoostersModel.BombMode)
 		{
 			color = pixel;
+			Debug.Log(pixel);
 		}
 		Color pixel2 = ((Texture2D)this.m_resMaterial.mainTexture).GetPixel((int)pixelPos.x, (int)pixelPos.y);
         bool pixelEqual = false;
@@ -374,7 +390,7 @@ public class NumberColoring : MonoBehaviour
                     float num4 = pixelPos.y - (float)num2;
                     if (num3 < 0.25f)
                     {
-                        return;
+                        return ;
                     }
                     if (num3 > 0.75f)
                     {
@@ -535,8 +551,7 @@ public class NumberColoring : MonoBehaviour
 			int num = Mathf.RoundToInt(color.grayscale * 1000f);
 			while (stack.Count > 0)
 			{
-				while (stack.Count > 0)
-				{
+				
 					Vector2 vector = stack.Pop();
 					int num2 = (int)vector.x + (int)vector.y * this.m_width;
 					int num3 = Mathf.RoundToInt(coloredPixels[num2].grayscale * 1000f);
@@ -563,9 +578,10 @@ public class NumberColoring : MonoBehaviour
 							}
 						}
 					}
-				}
+				
 				stack = stack2;
 				stack2 = new Stack<Vector2>();
+
 			}
 		}
 		catch (Exception ex)
@@ -781,8 +797,8 @@ public class NumberColoring : MonoBehaviour
 
 					var curI = i + mainI * maxSize / sizeKoef;
 
-					//int firstColumnCell = -1;
-					//int lastColumnCell = -1;
+					int firstColumnCell = -1;
+					int lastColumnCell = -1;
 					for (int j = 0; j < curHeight / sizeKoef; j++)
 					{
 						int offset = j + mainJ * maxSize / sizeKoef;
