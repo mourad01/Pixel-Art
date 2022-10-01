@@ -301,47 +301,47 @@
     <Reference Include="SyntaxTree.VisualStudio.Unity.Bridge">
       <HintPath>C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Editor\SyntaxTree.VisualStudio.Unity.Bridge.dll</HintPath>
     </Reference>
-    <Reference Include="unityplastic">
-      <HintPath>Library\PackageCache\com.unity.collab-proxy@1.9.0\Lib\Editor\PlasticSCM\unityplastic.dll</HintPath>
-    </Reference>
     <Reference Include="Google.VersionHandlerImpl_v1.2.164">
       <HintPath>Assets\ExternalDependencyManager\Editor\Google.VersionHandlerImpl_v1.2.164.dll</HintPath>
+    </Reference>
+    <Reference Include="log4netPlastic">
+      <HintPath>Library\PackageCache\com.unity.collab-proxy@1.9.0\Lib\Editor\PlasticSCM\log4netPlastic.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.JarResolver_v1.2.164">
+      <HintPath>Assets\ExternalDependencyManager\Editor\Google.JarResolver_v1.2.164.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Plastic.Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@1.9.0\Lib\Editor\PlasticSCM\Unity.Plastic.Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OneSignalSDK_WP_WNS">
-      <HintPath>Assets\OneSignal\Platforms\OneSignalSDK_WP_WNS.dll</HintPath>
+    <Reference Include="Unity.Plastic.Antlr3.Runtime">
+      <HintPath>Library\PackageCache\com.unity.collab-proxy@1.9.0\Lib\Editor\PlasticSCM\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="unityplastic">
+      <HintPath>Library\PackageCache\com.unity.collab-proxy@1.9.0\Lib\Editor\PlasticSCM\unityplastic.dll</HintPath>
     </Reference>
     <Reference Include="Google.PackageManagerResolver_v1.2.164">
       <HintPath>Assets\ExternalDependencyManager\Editor\Google.PackageManagerResolver_v1.2.164.dll</HintPath>
     </Reference>
+    <Reference Include="FullSerializer - NoUnity">
+      <HintPath>Assets\Plugins\FullSerializer - NoUnity.dll</HintPath>
+    </Reference>
+    <Reference Include="Google.VersionHandler">
+      <HintPath>Assets\ExternalDependencyManager\Editor\Google.VersionHandler.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityStore">
+      <HintPath>Assets\Plugins\UnityChannel\UnityStore.dll</HintPath>
+    </Reference>
+    <Reference Include="OneSignalSDK_WP_WNS">
+      <HintPath>Assets\OneSignal\Platforms\OneSignalSDK_WP_WNS.dll</HintPath>
+    </Reference>
     <Reference Include="Google.IOSResolver_v1.2.164">
       <HintPath>Assets\ExternalDependencyManager\Editor\Google.IOSResolver_v1.2.164.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Plastic.Antlr3.Runtime">
-      <HintPath>Library\PackageCache\com.unity.collab-proxy@1.9.0\Lib\Editor\PlasticSCM\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="ChannelPurchase">
       <HintPath>Assets\Plugins\UnityChannel\ChannelPurchase.dll</HintPath>
     </Reference>
     <Reference Include="TextureOptimization">
       <HintPath>Assets\Plugins\TextureOptimization.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.VersionHandler">
-      <HintPath>Assets\ExternalDependencyManager\Editor\Google.VersionHandler.dll</HintPath>
-    </Reference>
-    <Reference Include="log4netPlastic">
-      <HintPath>Library\PackageCache\com.unity.collab-proxy@1.9.0\Lib\Editor\PlasticSCM\log4netPlastic.dll</HintPath>
-    </Reference>
-    <Reference Include="FullSerializer - NoUnity">
-      <HintPath>Assets\Plugins\FullSerializer - NoUnity.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityStore">
-      <HintPath>Assets\Plugins\UnityChannel\UnityStore.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.JarResolver_v1.2.164">
-      <HintPath>Assets\ExternalDependencyManager\Editor\Google.JarResolver_v1.2.164.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>Library\PackageCache\com.unity.ext.nunit@1.0.6\net35\unity-custom\nunit.framework.dll</HintPath>

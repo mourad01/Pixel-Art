@@ -68,6 +68,8 @@
     <None Include="Assets\Plugins\UnityChannel\UnityStore.dll" />
     <None Include="Assets\Plugins\TextureOptimization.dll" />
     <None Include="Assets\Plugins\UnityChannel\ChannelPurchase.dll" />
+    <None Include="Assets\Plugins\Android\MaxMediationGoogleAdManager.androidlib\AndroidManifest.xml" />
+    <None Include="Assets\Plugins\Android\MaxMediationGoogle.androidlib\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -283,6 +285,12 @@
     <Reference Include="UnityEditor.UnityConnectModule">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.18f1\Editor\Data\Managed\UnityEngine\UnityEditor.UnityConnectModule.dll</HintPath>
     </Reference>
+    <Reference Include="FullSerializer - NoUnity">
+      <HintPath>Assets\Plugins\FullSerializer - NoUnity.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityStore">
+      <HintPath>Assets\Plugins\UnityChannel\UnityStore.dll</HintPath>
+    </Reference>
     <Reference Include="OneSignalSDK_WP_WNS">
       <HintPath>Assets\OneSignal\Platforms\OneSignalSDK_WP_WNS.dll</HintPath>
     </Reference>
@@ -291,12 +299,6 @@
     </Reference>
     <Reference Include="TextureOptimization">
       <HintPath>Assets\Plugins\TextureOptimization.dll</HintPath>
-    </Reference>
-    <Reference Include="FullSerializer - NoUnity">
-      <HintPath>Assets\Plugins\FullSerializer - NoUnity.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityStore">
-      <HintPath>Assets\Plugins\UnityChannel\UnityStore.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.18f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
@@ -673,14 +675,14 @@
     <Reference Include="UnityEditor.UI">
       <HintPath>Library\ScriptAssemblies\UnityEditor.UI.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.PlasticSCM.Editor">
-      <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.Rider.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.PlasticSCM.Editor">
+      <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -688,9 +690,17 @@
       <Project>{AEF87BBA-CAFE-D577-D39C-5A3AE22A5061}</Project>
       <Name>MaxSdk.Scripts.Editor</Name>
     </ProjectReference>
+    <ProjectReference Include="MaxSdk.Mediation.GoogleAdManager.Editor.csproj">
+      <Project>{7860064A-C68E-ED4A-63ED-D98C51BBF674}</Project>
+      <Name>MaxSdk.Mediation.GoogleAdManager.Editor</Name>
+    </ProjectReference>
     <ProjectReference Include="MaxSdk.Scripts.csproj">
       <Project>{F536CAA9-1F6B-DD6C-D4E5-ADC33DBD6590}</Project>
       <Name>MaxSdk.Scripts</Name>
+    </ProjectReference>
+    <ProjectReference Include="MaxSdk.Mediation.Google.Editor.csproj">
+      <Project>{A1014B49-02B3-9919-FBB2-ACFD7240EA39}</Project>
+      <Name>MaxSdk.Mediation.Google.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="MaxSdk.Scripts.IntegrationManager.Editor.csproj">
       <Project>{FC38F924-DBCB-2AD0-1EB7-41579AC8A963}</Project>

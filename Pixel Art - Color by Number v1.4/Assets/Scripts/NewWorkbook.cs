@@ -96,23 +96,30 @@ public class NewWorkbook : BaseWindow
 	}
 	public void OkButtonClick()
 	{
-		FilterWindow filterWindow = WindowManager.Instance.OpenFilterWindow();
-		filterWindow.OnOpen = () =>
+		try
 		{
-			NewWorkbookManager.Instance.NumberColoring.gameObject.SetActive(false);
-		};
-		filterWindow.OnClose = () =>
+			FilterWindow filterWindow = WindowManager.Instance.OpenFilterWindow();
+			filterWindow.OnOpen = () =>
+			{
+				NewWorkbookManager.Instance.NumberColoring.gameObject.SetActive(false);
+			};
+			filterWindow.OnClose = () =>
+			{
+				NewWorkbookManager.Instance.NumberColoring.gameObject.SetActive(true);
+				filterWindow.OnClose = null;
+				filterWindow.OnStartOpen = null;
+			};
+			float zoom = NewWorkbookManager.Instance.CameraManager.Zoom;
+			float maxZoom = NewWorkbookManager.Instance.CameraManager.MaxZoom;
+			Vector2 cameraPos = NewWorkbookManager.Instance.CameraManager.CameraPos;
+			filterWindow.Init(NewWorkbookManager.Instance.SaveWork(true), maxZoom, default(Rect));
+			AudioManager.Instance.PlayClick();
+			//AdsWrapper.Instance.ShowInterOrRate("end_level");
+		}
+		catch (System.Exception e)
 		{
-			NewWorkbookManager.Instance.NumberColoring.gameObject.SetActive(true);
-			filterWindow.OnClose = null;
-			filterWindow.OnStartOpen = null;
-		};
-		float zoom = NewWorkbookManager.Instance.CameraManager.Zoom;
-		float maxZoom = NewWorkbookManager.Instance.CameraManager.MaxZoom;
-		Vector2 cameraPos = NewWorkbookManager.Instance.CameraManager.CameraPos;
-		filterWindow.Init(NewWorkbookManager.Instance.SaveWork(true), maxZoom, default(Rect));
-		AudioManager.Instance.PlayClick();
-		//AdsWrapper.Instance.ShowInterOrRate("end_level");
+			Debug.Log(e.Message);
+		}
 	}
 
 	public void BackButtonClick()

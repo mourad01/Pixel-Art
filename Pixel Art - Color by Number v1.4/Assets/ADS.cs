@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ADS : MonoBehaviour
 {
-    string bannerAdUnitId = "3657079b8eb84a05"; // Retrieve the ID from your account
-
+   public string bannerAdUnitId = "3657079b8eb84a05"; // Retrieve the ID from your account
+    public string sdkKey = "zEt4_M4PkG_cNWU_sR4p4RXZ6mE5AO4RAx8SQs1BVTZR5iMfLP54K_p1L4C6x88exH8F__Tr3QQ0TgrAyzCiPq";
     // Start is called before the first frame update
     void Start()
     {
@@ -20,9 +20,10 @@ public class ADS : MonoBehaviour
             // Set background or background color for banners to be fully functional
             MaxSdk.SetBannerBackgroundColor(bannerAdUnitId, Color.white);
             MaxSdk.ShowBanner(bannerAdUnitId);
+           
         };
 
-        MaxSdk.SetSdkKey("zEt4_M4PkG_cNWU_sR4p4RXZ6mE5AO4RAx8SQs1BVTZR5iMfLP54K_p1L4C6x88exH8F__Tr3QQ0TgrAyzCiPq");
+        MaxSdk.SetSdkKey(sdkKey);
         MaxSdk.SetUserId("USER_ID");
         MaxSdk.InitializeSdk();
     }

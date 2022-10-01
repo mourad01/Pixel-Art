@@ -16,6 +16,7 @@ U should buy a license from author if u use it in your project!
 
 using System.Collections.Generic;
 using System.Linq;
+
 using UnityEngine;
 
 public class WindowManager : MonoBehaviour
@@ -217,19 +218,29 @@ public class WindowManager : MonoBehaviour
 
 	public FilterWindow OpenFilterWindow()
 	{
-		if (this.m_filterWindow == null)
+		try
 		{
-			this.m_filterWindow = Object.Instantiate(PrefabLoader.Load<FilterWindow>("filter_window"));
-			this.m_filterWindow.transform.SetParent(this.m_uiParent);
-			this.m_filterWindow.transform.localScale = Vector2.one;
-			((RectTransform)this.m_filterWindow.transform).anchoredPosition = Vector3.zero;
-			((RectTransform)this.m_filterWindow.transform).sizeDelta = Vector2.zero;
+			if (this.m_filterWindow == null)
+			{
+
+				this.m_filterWindow = Object.Instantiate(PrefabLoader.Load<FilterWindow>("filter_window"));
+				this.m_filterWindow.transform.SetParent(this.m_uiParent);
+				this.m_filterWindow.transform.localScale = Vector2.one;
+				((RectTransform)this.m_filterWindow.transform).anchoredPosition = Vector3.zero;
+				((RectTransform)this.m_filterWindow.transform).sizeDelta = Vector2.zero;
+
+
+			}
+			this.m_openedWindows.Add(this.m_filterWindow);
+			this.m_filterWindow.transform.SetAsLastSibling();
+			//AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
+			this.m_filterWindow.InitCanvas(this.m_canvas, true);
+			this.m_filterWindow.Open();
 		}
-		this.m_openedWindows.Add(this.m_filterWindow);
-		this.m_filterWindow.transform.SetAsLastSibling();
-		//AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-		this.m_filterWindow.InitCanvas(this.m_canvas, true);
-		this.m_filterWindow.Open();
+		catch (System.Exception e)
+		{
+			Debug.Log(e.Message);
+		}
 		return this.m_filterWindow;
 	}
 

@@ -5,7 +5,7 @@ using UnityEngine;
 public class intershow : MonoBehaviour
 {
 	private Interstitial interstitial;
-	string adInter = "72d41e387a1a7fd4";
+	public string adInter = "72d41e387a1a7fd4";
 	private void Start()
 	{
 		interstitial = Interstitial.Instance;

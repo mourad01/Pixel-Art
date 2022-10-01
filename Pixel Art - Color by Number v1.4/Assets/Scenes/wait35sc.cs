@@ -6,10 +6,10 @@ using System.Threading;
 public class wait35sc : MonoBehaviour
 {
     public int isrun=1;
-    public Timer timer;
-    public GameObject itert;
+   
+  
     private Interstitial interstitial;
-    string adInter = "72d41e387a1a7fd4";
+   public string adInter = "72d41e387a1a7fd4";
     private void Awake()
     {
         

@@ -281,8 +281,8 @@ public class ImagePreview : MonoBehaviour
 	}
 	private Rewarded rewarded;
 	private Interstitial interstitial;
-	string adInter = "72d41e387a1a7fd4";
-	string adUnitId = "daeeb9fc60cb9388";
+	public string adInter = "72d41e387a1a7fd4";
+	public string adUnitId = "daeeb9fc60cb9388";
 	MaxSdkBase.AdInfo adInfo;
 	MaxSdkBase.ErrorInfo errorInfo;
 
