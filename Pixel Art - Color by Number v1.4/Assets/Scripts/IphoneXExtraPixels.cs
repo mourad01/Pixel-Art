@@ -34,7 +34,7 @@ public class IphoneXExtraPixels : MonoBehaviour
 	[SerializeField]
 	private bool m_bottom;
 
-	public float Height { get; private set; }
+	public float Height { get;  set; }
 
 	private void Awake()
 	{
