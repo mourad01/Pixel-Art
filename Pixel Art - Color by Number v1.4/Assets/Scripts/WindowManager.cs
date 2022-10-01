@@ -92,6 +92,7 @@ public class WindowManager : MonoBehaviour
 			
 		}
 		this.m_openedWindows.Add(this.m_mainMenu);
+		
 		//AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
 		this.m_mainMenu.InitCanvas(this.m_canvas, true);
 		this.m_mainMenu.Open();
@@ -116,6 +117,7 @@ public class WindowManager : MonoBehaviour
 		}
 		this.m_openedWindows.Add(this.m_creationWindow);
 		this.m_creationWindow.transform.SetAsLastSibling();
+		
 		//AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
 		this.m_creationWindow.InitCanvas(this.m_canvas, true);
 		this.m_creationWindow.Open();
@@ -134,6 +136,7 @@ public class WindowManager : MonoBehaviour
 		}
 		this.m_openedWindows.Add(this.m_dailyArtWindow);
 		this.m_dailyArtWindow.transform.SetAsLastSibling();
+		
 		//AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
 		this.m_dailyArtWindow.InitCanvas(this.m_canvas, true);
 		this.m_dailyArtWindow.Open();
@@ -388,6 +391,7 @@ public class WindowManager : MonoBehaviour
 		if (window.Close())
 		{
 			this.m_openedWindows.Remove(window);
+			
 			//AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
 			BaseWindow baseWindow = this.m_openedWindows.Last();
 			baseWindow.SendActiveScreenEvent();

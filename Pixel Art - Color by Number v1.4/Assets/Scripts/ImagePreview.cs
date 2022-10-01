@@ -43,6 +43,8 @@ public class ImagePreview : MonoBehaviour
 
 	[SerializeField]
 	private GameObject m_adLocked;
+	
+	
 
 	[SerializeField]
 	private GameObject m_adLocked_mozaic;
@@ -90,6 +92,7 @@ public class ImagePreview : MonoBehaviour
 			return this.m_adLocked.activeSelf;
 		}
 	}
+
 	public bool Loaded
 	{
 		get
@@ -164,6 +167,7 @@ public class ImagePreview : MonoBehaviour
 		this.m_completedMark.SetActive(false);
 		this.m_3dMark.SetActive(imageInfo.Is3D);
 	}
+	
 	private void RecheckShaker(bool enabled)
 	{
 		if (m_isTodayArt)
@@ -242,8 +246,11 @@ public class ImagePreview : MonoBehaviour
 		this.m_image.gameObject.SetActive(false);
 	}
 
+	
 	public void Reinit()
 	{
+		
+
 		/*if (IAPWrapper.Instance.NoAds || IAPWrapper.Instance.Subscribed)
 		{
 			this.m_adLocked.SetActive(false);
@@ -272,11 +279,36 @@ public class ImagePreview : MonoBehaviour
 			//this.m_adLocked_mozaic_other_group.SetActive(active);
 		}*/
 	}
+	private Rewarded rewarded;
+	private Interstitial interstitial;
+	string adInter = "72d41e387a1a7fd4";
+	string adUnitId = "daeeb9fc60cb9388";
+	MaxSdkBase.AdInfo adInfo;
+	MaxSdkBase.ErrorInfo errorInfo;
 
-	public void Click()
+	private void Start()
+    {
+		interstitial = Interstitial.Instance;
+		rewarded = Rewarded.Instance;
+    }
+
+
+    public void Click()
 	{
+
+		if (this.m_adLocked.activeInHierarchy)
+		{
+
+			rewarded.InitializeRewardedAds();
+		}
+		else
+		{
+			interstitial.InitializeInterstitialAds();
+
+		}
 		this.OnClick.SafeInvoke(this.m_imageInfo, this);
 		AudioManager.Instance.PlayClick();
+		
 	}
 	private IEnumerator LoadSaveCoroutine()
 	{

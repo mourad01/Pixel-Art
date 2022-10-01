@@ -68,6 +68,7 @@ public class FreeImageSaver : MonoBehaviour
 
 	public void GetFilteredImage(Texture2D grayTex, Texture2D resTex, Texture2D filter, Rect uvRect, int size, bool enableWatermark, Action<byte[]> handler, bool antialiasing, float watermarkPos = 1f)
 	{
+		
 		this.m_image.material.SetTexture("_ResTex", resTex);
 		this.m_image.enabled = true;
 		if (filter != null)
@@ -83,6 +84,7 @@ public class FreeImageSaver : MonoBehaviour
 		{
 			this.m_filterImage.enabled = false;
 		}
+		
 		this.m_image.uvRect = uvRect;
 		this.m_filterImage.uvRect = this.m_image.uvRect;
 		this.m_image.texture = grayTex;

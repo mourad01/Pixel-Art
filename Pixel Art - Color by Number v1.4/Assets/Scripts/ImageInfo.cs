@@ -14,6 +14,7 @@ U should buy a license from author if u use it in your project!
 
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 
 
@@ -37,9 +38,10 @@ public class ImageInfo : IAccessStatusInfo
 	
 	public AccessStatus CustomAccessStatus
 	{
+		
 		get
-		{
-			/*if (!IAPWrapper.Instance.Subscribed && !IAPWrapper.Instance.NoAds)
+        {
+            /*if (!IAPWrapper.Instance.Subscribed && !IAPWrapper.Instance.NoAds)
 			{
 				switch (INPluginWrapper.Instance.GetAbTestGroup())
 				{
@@ -53,9 +55,13 @@ public class ImageInfo : IAccessStatusInfo
 						return this.AccessStatus;
 				}
 			}*/
-			return AccessStatus.Free;
-		}
-	}
+            
+           
+            
+
+            return AccessStatus.Free;
+        }
+    }
 
 	public ImageInfo()
 	{

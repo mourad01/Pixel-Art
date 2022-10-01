@@ -57,6 +57,8 @@ public class NewLibraryWindow : BaseWindow
 	[SerializeField]
 	private GameObject m_blockPlane;
 
+	
+
 	public bool Inited
 	{
 		get
@@ -90,6 +92,7 @@ public class NewLibraryWindow : BaseWindow
 	}
 	public void Start()
 	{
+	
 		MainMenu.Instance.RefreshTodayArt();
 	}
 	public void Init(ImagesInfo imagesInfo)
@@ -208,11 +211,14 @@ public class NewLibraryWindow : BaseWindow
 	private void SelectPreview(string saveId, ImageInfo imageInfo, ImagePreview preview)
 	{
 		ISavedWorkData swd = null;
+		
 		if (saveId != null)
 		{
 			swd = MainManager.Instance.SavedWorksList.LoadById(saveId);
+			
 		}
 		this.m_bigPreview.Init((RectTransform)preview.transform, preview.Texture, preview.Locked, swd);
+		
 	}
 	public void ExecutePuzzle()
 	{
@@ -270,6 +276,7 @@ public class NewLibraryWindow : BaseWindow
 					{
 						case ActionSheetResult.Continue:
 							this.LoadButtonClick(imageInfo);
+							
 							this.m_lock = false;
 							break;
 						case ActionSheetResult.New:
@@ -289,100 +296,43 @@ public class NewLibraryWindow : BaseWindow
 
 	public void NewImageButtonClick(ImageInfo imageInfo, ImageOpenType imageOpenType, ImagePreview imagePreview)
 	{
+		
 		if ((imageInfo.CustomAccessStatus == AccessStatus.Free && imagePreview != null && !imagePreview.AdsAvailable) || AppData.UnlockedImages.Contains(imageInfo.Id))
 		{
+			
 			base.StartCoroutine(this.NewImageButtonClickCoroutine(imageInfo, imageOpenType));
 		}
 		else
 		{
 
-			/*switch (INPluginWrapper.Instance.GetAbTestGroup())
-			{
-				case ABTestGroup.None:
-				case ABTestGroup.RewardedNo_ContentMedium_Old:
-				case ABTestGroup.RewardedNo_ContentMedium_Revealed:
-					{
-						NewInappsWindow newInappsWindow2 = WindowManager.Instance.OpenInappsWindow();
-						newInappsWindow2.Init("image", delegate
-						{
-							this.m_bigPreview.Close();
-						});
-						break;
-					}
-				case ABTestGroup.RewardedNo_ContentMedium:
-				case ABTestGroup.RewardedNo_ContentHard:
-					{
-						var trialInappsWindow2 = WindowManager.Instance.OpenInappsWindow();
-						trialInappsWindow2.Init("image", delegate
-						{
-							this.m_bigPreview.Close();
-						});//, false, false);
-						break;
-					}
-				default:
-					if ((imagePreview != null && imagePreview.AdsAvailable && !imagePreview.IsFreePremium))
-					{
-						//AdsWrapper.Instance.ShowVideo("image", delegate (bool res)
-
-
-
-								base.StartCoroutine(this.NewImageButtonClickCoroutine(imageInfo, imageOpenType));
-
-
-					}
-					else if (imagePreview != null || imageInfo.AccessStatus == AccessStatus.Premium) //if (AdsWrapper.Instance.IsVideoAvailable())
-					{
-						IapPopup abTestWindow = WindowManager.Instance.OpenAbTestWindow();
-						abTestWindow.Init(imageInfo, imagePreview);
-					}
-					else
-					{
-						base.StartCoroutine(this.NewImageButtonClickCoroutine(imageInfo, imageOpenType));
-					}
-					//else
-					//{
-					//    switch (INPluginWrapper.Instance.GetAbTestGroup())
-					//    {
-					//        case ABTestGroup.None:
-					//        case ABTestGroup.RewardedNo_ContentMedium_Old:
-					//        case ABTestGroup.RewardedNo_ContentMedium_Revealed:
-					//        {
-					//            NewInappsWindow newInappsWindow = WindowManager.Instance.OpenInappsWindow();
-					//            newInappsWindow.Init("image", null);
-					//            break;
-					//        }
-					//        default:
-					//        {
-					//            TrialInappsWindow trialInappsWindow = WindowManager.Instance.OpenTrialInappsWindow();
-					//            trialInappsWindow.Init("image", null, false, false);
-					//            break;
-					//        }
-					//    }
-					//}
-					this.m_bigPreview.Close();
-					break;
-			}*/
-		
 			
-				base.StartCoroutine(this.NewImageButtonClickCoroutine(imageInfo, imageOpenType));
+			base.StartCoroutine(this.NewImageButtonClickCoroutine(imageInfo, imageOpenType));
 			
 			this.m_lock = false;
 		}
 	}
+	
 	public void LoadButtonClick(ImageInfo imageInfo)
 	{
+
 		this.m_lock = true;
-		this.ClearPreviews();
-		string id = MainManager.Instance.SavedWorksList.LastSaveOfImageId(imageInfo.Id);
-		ISavedWorkData savedWorkData = MainManager.Instance.SavedWorksList.Load(SavedWorksList.GetPathToSave(id));
-		MainMenu.LastPage = MainMenuPage.Library;
-		MainMenu.ImageId = savedWorkData.ImageInfo.Id;
-		MainMenu.WorkId = savedWorkData.Id;
-		MainManager.Instance.StartWorkbook(savedWorkData, ImageOpenType.Continued, delegate
-		{
-			this.m_bigPreview.Close();
-			this.m_lock = false;
-		});
+		
+			this.ClearPreviews();
+			string id = MainManager.Instance.SavedWorksList.LastSaveOfImageId(imageInfo.Id);
+			ISavedWorkData savedWorkData = MainManager.Instance.SavedWorksList.Load(SavedWorksList.GetPathToSave(id));
+			MainMenu.LastPage = MainMenuPage.Library;
+			MainMenu.ImageId = savedWorkData.ImageInfo.Id;
+			MainMenu.WorkId = savedWorkData.Id;
+			
+			//rd.OnRewardedAdLoadedEvent(adUnitId, adInfo);
+
+			MainManager.Instance.StartWorkbook(savedWorkData, ImageOpenType.Continued, delegate
+			{
+
+				this.m_bigPreview.Close();
+				this.m_lock = false;
+			});
+		
 	}
 
 	private void ClearPreviews()

@@ -54,12 +54,15 @@ public class GroupOfPreviews : MonoBehaviour
 
 	public void AddPreview(ImageInfo imageInfo)
 	{
+		
 		if (!this.m_subscribed)
 		{
+			
 			this.Subscribe();
 		}
 		if (!this.m_previews[this.m_emptyIndex].CheckTheSame(imageInfo))
 		{
+			
 			this.m_previews[this.m_emptyIndex].Init(imageInfo);
 		}
 		this.m_previews[this.m_emptyIndex].gameObject.SetActive(true);
@@ -68,7 +71,9 @@ public class GroupOfPreviews : MonoBehaviour
 
 	public void Subscribe()
 	{
+		
 		this.m_subscribed = true;
+		
 		for (int i = 0; i < this.m_previews.Count; i++)
 		{
 			ImagePreview imagePreview = this.m_previews[i];
@@ -78,6 +83,7 @@ public class GroupOfPreviews : MonoBehaviour
 
 	public void LoadIcons()
 	{
+		
 		base.StartCoroutine(this.LoadIconsCoroutine());
 	}
 
@@ -110,6 +116,7 @@ public class GroupOfPreviews : MonoBehaviour
 
 	public void Clear()
 	{
+		
 		for (int i = 0; i < this.m_previews.Count; i++)
 		{
 			this.m_previews[i].gameObject.SetActive(false);

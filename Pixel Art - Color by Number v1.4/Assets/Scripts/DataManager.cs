@@ -99,7 +99,7 @@ public class DataManager : MonoBehaviour
 		yield return null;
 		if (this.m_imagesInfo == null || this.m_imagesInfo.Images.Count == 0)
 		{
-            Debug.Log("Hiiiii SImOURAD");
+           
 			yield return new WaitForSeconds(0.5f);
 			/*using (var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(imagesAsset.text)))
 			{
