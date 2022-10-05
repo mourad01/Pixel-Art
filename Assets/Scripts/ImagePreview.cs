@@ -292,13 +292,15 @@ public class ImagePreview : MonoBehaviour
 
 		if (this.m_adLocked.activeInHierarchy)
 		{
-			Advertisements.Instance.ShowRewardedVideo(CompleteMethod);
+			AdsManager.instance.ShowReward(()=>{
+				CompleteMethod?.Invoke(true);
+			},null);
 
 
 		}
 		else
 		{
-			Advertisements.Instance.ShowInterstitial();
+			AdsManager.instance.ShowInterstitial(null);
 		
 
 	}

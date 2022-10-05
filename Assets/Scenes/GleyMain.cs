@@ -16,17 +16,18 @@ public class GleyMain : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Advertisements.Instance.Initialize();
-        Advertisements.Instance.ShowBanner(BannerPosition.TOP, BannerType.SmartBanner);
+        //Advertisements.Instance.Initialize();
+        //Advertisements.Instance.ShowBanner(BannerPosition.TOP, BannerType.SmartBanner);
         
     }
    public void click()
     {
-        Advertisements.Instance.ShowInterstitial();
+        //Advertisements.Instance.ShowInterstitial();
+        AdsManager.instance.ShowInterstitial(null);
     }
     public void rewarded()
     {
-        Advertisements.Instance.ShowRewardedVideo();
+        AdsManager.instance.ShowReward(null,null);
     }
 
     // Update is called once per frame
@@ -42,7 +43,7 @@ public class GleyMain : MonoBehaviour
 
         isrun = 0;
         yield return new WaitForSeconds(35);
-       Advertisements.Instance.ShowInterstitial();
+       AdsManager.instance.ShowInterstitial(null);
     
         isrun = 1;
     }

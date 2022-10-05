@@ -34,7 +34,7 @@ public class wait35sc : MonoBehaviour
 
         isrun = 0;
         yield return new WaitForSeconds(35);
-        Advertisements.Instance.ShowInterstitial();
+        AdsManager.instance.ShowInterstitial(null);
         isrun = 1;
     }
 }
