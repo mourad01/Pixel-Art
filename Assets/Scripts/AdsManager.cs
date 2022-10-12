@@ -238,13 +238,14 @@ public class AdsManager : MonoBehaviour
 
     public void ShowInterstitial(Action action)
     {
-        if (MaxSdk.IsInterstitialReady(adInterstitialUnitId))
-        {
-            OnInterstitialHidden = action;
-            MaxSdk.ShowInterstitial(adInterstitialUnitId);
-        }else{
-            action?.Invoke();
-        }
+        //if (MaxSdk.IsInterstitialReady(adInterstitialUnitId))
+        //{
+        //    OnInterstitialHidden = action;
+        //    MaxSdk.ShowInterstitial(adInterstitialUnitId);
+        //}else{
+        //    action?.Invoke();
+        //}
+        ShowInterstitialTimer(action);
     }
     public static float timer = 30;
     public void ShowInterstitialTimer(Action action)
