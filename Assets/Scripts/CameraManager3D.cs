@@ -47,14 +47,14 @@ public class CameraManager3D : MonoBehaviour
 			{
 				break;
 			}
-			float num2 = num;
+			float value2 = num;
 			Vector2 anchoredPosition = rectTransform.anchoredPosition;
-			num = num2 + anchoredPosition.y;
+			num = value2 + anchoredPosition.y;
 			rectTransform = (RectTransform)rectTransform.parent;
 		}
-		float num3 = 0f - num;
+		float value3 = 0f - num;
 		Vector2 sizeDelta = this.m_cameraSpace.sizeDelta;
-		float y = 1f - (num3 + sizeDelta.y) / this.m_canvasRectTransform.rect.height;
+		float y = 1f - (value3 + sizeDelta.y) / this.m_canvasRectTransform.rect.height;
 		Vector2 sizeDelta2 = this.m_cameraSpace.sizeDelta;
 		float height = sizeDelta2.y / this.m_canvasRectTransform.rect.height;
 		this.m_camera.rect = new Rect(0f, y, 1f, height);

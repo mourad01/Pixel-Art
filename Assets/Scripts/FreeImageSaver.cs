@@ -114,22 +114,22 @@ public class FreeImageSaver : MonoBehaviour
 	public static Texture2D MakeTexFromOurVirtualThingy(int width, int height, int maxSize, int pixelPerUnit, Camera cam)
 	{
 		int num;
-		int num2;
+		int value2;
 		if (width < height)
 		{
 			num = maxSize;
-			num2 = (int)((float)width / (float)height) * num;
+			value2 = (int)((float)width / (float)height) * num;
 		}
 		else
 		{
-			num2 = maxSize;
-			num = (int)((float)height / (float)width) * num2;
+			value2 = maxSize;
+			num = (int)((float)height / (float)width) * value2;
 		}
-		RenderTexture renderTexture2 = cam.targetTexture = new RenderTexture(num2, num, 24);
+		RenderTexture renderTexture2 = cam.targetTexture = new RenderTexture(value2, num, 24);
 		cam.Render();
 		RenderTexture.active = renderTexture2;
-		Texture2D texture2D = new Texture2D(num2, num, TextureFormat.RGB24, false);
-		texture2D.ReadPixels(new Rect(0f, 0f, (float)num2, (float)num), 0, 0);
+		Texture2D texture2D = new Texture2D(value2, num, TextureFormat.RGB24, false);
+		texture2D.ReadPixels(new Rect(0f, 0f, (float)value2, (float)num), 0, 0);
 		texture2D.Apply();
 		RenderTexture.active = null;
 		cam.targetTexture = null;
@@ -140,24 +140,24 @@ public class FreeImageSaver : MonoBehaviour
 	public static byte[] MakePngFromOurVirtualThingy(int width, int height, int maxSize, int pixelPerUnit, Camera cam, bool antialising)
 	{
 		int num;
-		int num2;
+		int value2;
 		if (width < height)
 		{
 			num = maxSize;
-			num2 = (int)((float)width / (float)height) * num;
+			value2 = (int)((float)width / (float)height) * num;
 		}
 		else
 		{
-			num2 = maxSize;
-			num = (int)((float)height / (float)width) * num2;
+			value2 = maxSize;
+			num = (int)((float)height / (float)width) * value2;
 		}
-		RenderTexture renderTexture = new RenderTexture(num2, num, 24);
+		RenderTexture renderTexture = new RenderTexture(value2, num, 24);
 		renderTexture.antiAliasing = ((!antialising) ? 1 : 8);
 		RenderTexture renderTexture3 = cam.targetTexture = renderTexture;
 		cam.Render();
 		RenderTexture.active = renderTexture3;
-		Texture2D texture2D = new Texture2D(num2, num, TextureFormat.RGB24, true);
-		texture2D.ReadPixels(new Rect(0f, 0f, (float)num2, (float)num), 0, 0);
+		Texture2D texture2D = new Texture2D(value2, num, TextureFormat.RGB24, true);
+		texture2D.ReadPixels(new Rect(0f, 0f, (float)value2, (float)num), 0, 0);
 		RenderTexture.active = null;
 		cam.targetTexture = null;
 		byte[] result = texture2D.EncodeToJPG(100);

@@ -56,9 +56,9 @@ public class OrientatableCamera : MonoBehaviour
 				{
 					float b = this.m_uiSize / num - 0.005f;
 					b = Mathf.Max(0.01f, b);
-					float num2 = 0f;
-					num2 = this.m_topUiSize / num;
-					this.CameraRect = new Rect(0f, b, 1f, 1f - b - num2);
+					float value2 = 0f;
+					value2 = this.m_topUiSize / num;
+					this.CameraRect = new Rect(0f, b, 1f, 1f - b - value2);
 					break;
 				}
 		}

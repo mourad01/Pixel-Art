@@ -221,8 +221,8 @@ public class CreationWindow : BaseWindow
 		}
 		else
 		{
-			float num2 = (float)this.m_fullTexture.width / (float)this.m_fullTexture.height;
-			this.m_rect = new Rect(0f, (1f - num2) / 2f, 1f / this.m_currentImageZoom, num2 / this.m_currentImageZoom);
+			float value2 = (float)this.m_fullTexture.width / (float)this.m_fullTexture.height;
+			this.m_rect = new Rect(0f, (1f - value2) / 2f, 1f / this.m_currentImageZoom, value2 / this.m_currentImageZoom);
 		}
 		this.m_rect.center = center;
 		this.CheckBorders();

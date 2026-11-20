@@ -50,7 +50,7 @@ public class ScreenLayoutElement : MonoBehaviour
 				if (this.m_heightDependsOnWidth)
 				{
 					LayoutElement layoutElement = component;
-					component.minHeight = component.minWidth + this.m_extraHeight; float num4 = layoutElement.preferredHeight = (component.minHeight);
+					component.minHeight = component.minWidth + this.m_extraHeight; float value4 = layoutElement.preferredHeight = (component.minHeight);
 				}
 			}
 		}

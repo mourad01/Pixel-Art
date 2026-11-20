@@ -363,30 +363,30 @@ public class LevelProgressControl : MonoBehaviour
         }
         else if (long.TryParse(str, out num))
         {
-            long num2 = this.hintPotLastPeriod = (num ^ LevelProgressControl.CipherKey);
+            long value2 = this.hintPotLastPeriod = (num ^ LevelProgressControl.CipherKey);
         }
         string string2 = PlayerPrefs.GetString("PuzzleColorKey", "no");
-        long num3 = default(long);
+        long value3 = default(long);
         if (string2.Equals("no"))
         {
             PlayerPrefs.SetString("PuzzleColorKey", (3 ^ LevelProgressControl.CipherKey).ToString());
             this.hintPotCount = 3;
         }
-        else if (long.TryParse(string2, out num3))
+        else if (long.TryParse(string2, out value3))
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("PuzzleColorKey : " + num3.ToString());
+                UnityEngine.Debug.Log("PuzzleColorKey : " + value3.ToString());
             }
-            long num4 = num3 ^ LevelProgressControl.CipherKey;
+            long value4 = value3 ^ LevelProgressControl.CipherKey;
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("decode : " + num4);
+                UnityEngine.Debug.Log("decode : " + value4);
             }
-            this.hintPotCount = Convert.ToInt32(num4);
+            this.hintPotCount = Convert.ToInt32(value4);
         }
         string string3 = PlayerPrefs.GetString("PuzzleShapeSeed", "no");
-        long num5 = default(long);
+        long value5 = default(long);
         if (string3.Equals("no"))
         {
             if (Debug.isDebugBuild)
@@ -396,21 +396,21 @@ public class LevelProgressControl : MonoBehaviour
             PlayerPrefs.SetString("PuzzleShapeSeed", (Convert.ToInt64(false) + 2927 ^ LevelProgressControl.CipherKey).ToString());
             this.iapUnlockLevels = false;
         }
-        else if (long.TryParse(string3, out num5))
+        else if (long.TryParse(string3, out value5))
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("PuzzleShapeSeed : " + num5.ToString());
+                UnityEngine.Debug.Log("PuzzleShapeSeed : " + value5.ToString());
             }
-            long num6 = (num5 ^ LevelProgressControl.CipherKey) - 2927;
+            long value6 = (value5 ^ LevelProgressControl.CipherKey) - 2927;
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("decode : " + num6);
+                UnityEngine.Debug.Log("decode : " + value6);
             }
-            this.iapUnlockLevels = Convert.ToBoolean(num6);
+            this.iapUnlockLevels = Convert.ToBoolean(value6);
         }
         string string4 = PlayerPrefs.GetString("PuzzleDiffTrackSeed", "no");
-        long num7 = default(long);
+        long value7 = default(long);
         if (string4.Equals("no"))
         {
             if (Debug.isDebugBuild)
@@ -420,18 +420,18 @@ public class LevelProgressControl : MonoBehaviour
             PlayerPrefs.SetString("PuzzleDiffTrackSeed", (Convert.ToInt64(false) + 1066 ^ LevelProgressControl.CipherKey).ToString());
             this.iapDisableAds = false;
         }
-        else if (long.TryParse(string4, out num7))
+        else if (long.TryParse(string4, out value7))
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("PuzzleDiffTrackSeed : " + num7.ToString());
+                UnityEngine.Debug.Log("PuzzleDiffTrackSeed : " + value7.ToString());
             }
-            long num8 = (num7 ^ LevelProgressControl.CipherKey) - 1066;
+            long value8 = (value7 ^ LevelProgressControl.CipherKey) - 1066;
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("decode : " + num8);
+                UnityEngine.Debug.Log("decode : " + value8);
             }
-            this.iapDisableAds = Convert.ToBoolean(num8);
+            this.iapDisableAds = Convert.ToBoolean(value8);
         }
         int number = PlayerPrefs.GetInt("DailyPersonalBest", 0);
         if (number == 0)

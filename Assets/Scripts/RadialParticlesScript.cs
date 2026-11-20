@@ -94,13 +94,13 @@ public class RadialParticlesScript : MonoBehaviour
     {
         float a = 1f;
         float num = 0f;
-        float num2 = 6.28318548f / (float)this.numParticles;
+        float value2 = 6.28318548f / (float)this.numParticles;
         for (int i = 0; i < this.numParticles; i++)
         {
-            float num3 = Mathf.Cos(num2 * (float)i) * radius;
-            num = Mathf.Sin(num2 * (float)i) * radius;
+            float value3 = Mathf.Cos(value2 * (float)i) * radius;
+            num = Mathf.Sin(value2 * (float)i) * radius;
             ParticleSystem.Particle val = this.particles[i];
-            float x = num3;
+            float x = value3;
             float y = num;
             Vector3 position = base.transform.position;
             val.position = new Vector3(x, y, position.z);

@@ -67,7 +67,7 @@ public class HeightDependsOnWidth : MonoBehaviour
 		if (component != null)
 		{
 			LayoutElement layoutElement = component;
-			component.preferredHeight = num; float num4 = layoutElement.minHeight = (component.preferredHeight);
+			component.preferredHeight = num; float value4 = layoutElement.minHeight = (component.preferredHeight);
 		}
 	}
 	private IEnumerator UpdateHeightCoroutine()

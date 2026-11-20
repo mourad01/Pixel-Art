@@ -218,7 +218,7 @@ public static class MVImporter
 		}
 		float single = sizePerVox / 2f;
 		int num = 0;
-		int num1 = 0;
+		int value1 = 0;
 		for (int i = 0; i < 6; i++)
 		{
 			for (int j = 0; j < chunk.sizeX; j++)
@@ -227,13 +227,13 @@ public static class MVImporter
 				{
 					for (int l = 0; l < chunk.sizeZ; l++)
 					{
-						int num2 = chunk.faces[i].colorIndices[j, k, l];
-						if (num2 != 0)
+						int value2 = chunk.faces[i].colorIndices[j, k, l];
+						if (value2 != 0)
 						{
 							float single1 = ((float)j - origin.x + 0.5f) * sizePerVox;
 							float single2 = ((float)k - origin.y + 0.5f) * sizePerVox;
 							float single3 = ((float)l - origin.z + 0.5f) * sizePerVox;
-							int num3 = j;
+							int value3 = j;
 							int p = k;
 							int m = l;
 							switch (i)
@@ -242,7 +242,7 @@ public static class MVImporter
 								case 1:
 									{
 										p = k + 1;
-										while (p < chunk.sizeY && chunk.faces[i].colorIndices[j, p, l] == num2)
+										while (p < chunk.sizeY && chunk.faces[i].colorIndices[j, p, l] == value2)
 										{
 											p++;
 										}
@@ -252,7 +252,7 @@ public static class MVImporter
 											bool flag = true;
 											for (int n = k; n <= p; n++)
 											{
-												flag = flag & chunk.faces[i].colorIndices[j, n, m] == num2;
+												flag = flag & chunk.faces[i].colorIndices[j, n, m] == value2;
 											}
 											if (!flag)
 											{
@@ -265,18 +265,18 @@ public static class MVImporter
 								case 2:
 								case 3:
 									{
-										num3 = j + 1;
-										while (num3 < chunk.sizeX && chunk.faces[i].colorIndices[num3, k, l] == num2)
+										value3 = j + 1;
+										while (value3 < chunk.sizeX && chunk.faces[i].colorIndices[value3, k, l] == value2)
 										{
-											num3++;
+											value3++;
 										}
-										num3--;
+										value3--;
 										for (m = l + 1; m < chunk.sizeZ; m++)
 										{
 											bool flag1 = true;
-											for (int o = j; o <= num3; o++)
+											for (int o = j; o <= value3; o++)
 											{
-												flag1 = flag1 & chunk.faces[i].colorIndices[o, k, m] == num2;
+												flag1 = flag1 & chunk.faces[i].colorIndices[o, k, m] == value2;
 											}
 											if (!flag1)
 											{
@@ -289,18 +289,18 @@ public static class MVImporter
 								case 4:
 								case 5:
 									{
-										num3 = j + 1;
-										while (num3 < chunk.sizeX && chunk.faces[i].colorIndices[num3, k, l] == num2)
+										value3 = j + 1;
+										while (value3 < chunk.sizeX && chunk.faces[i].colorIndices[value3, k, l] == value2)
 										{
-											num3++;
+											value3++;
 										}
-										num3--;
+										value3--;
 										for (p = k + 1; p < chunk.sizeY; p++)
 										{
 											bool flag2 = true;
-											for (int q = j; q <= num3; q++)
+											for (int q = j; q <= value3; q++)
 											{
-												flag2 = flag2 & chunk.faces[i].colorIndices[q, p, l] == num2;
+												flag2 = flag2 & chunk.faces[i].colorIndices[q, p, l] == value2;
 											}
 											if (!flag2)
 											{
@@ -311,7 +311,7 @@ public static class MVImporter
 										break;
 									}
 							}
-							for (int r = j; r <= num3; r++)
+							for (int r = j; r <= value3; r++)
 							{
 								for (int s = k; s <= p; s++)
 								{
@@ -324,56 +324,56 @@ public static class MVImporter
 									}
 								}
 							}
-							int num4 = num3 - j;
-							int num5 = p - k;
-							int num6 = m - l;
+							int value4 = value3 - j;
+							int value5 = p - k;
+							int value6 = m - l;
 							switch (i)
 							{
 								case 0:
 									{
 										vector3s.Add(new Vector3(single1 + single, single2 - single, single3 - single));
-										vector3s.Add(new Vector3(single1 + single, single2 + single + sizePerVox * (float)num5, single3 - single));
-										vector3s.Add(new Vector3(single1 + single, single2 + single + sizePerVox * (float)num5, single3 + single + sizePerVox * (float)num6));
-										vector3s.Add(new Vector3(single1 + single, single2 - single, single3 + single + sizePerVox * (float)num6));
+										vector3s.Add(new Vector3(single1 + single, single2 + single + sizePerVox * (float)value5, single3 - single));
+										vector3s.Add(new Vector3(single1 + single, single2 + single + sizePerVox * (float)value5, single3 + single + sizePerVox * (float)value6));
+										vector3s.Add(new Vector3(single1 + single, single2 - single, single3 + single + sizePerVox * (float)value6));
 										break;
 									}
 								case 1:
 									{
 										vector3s.Add(new Vector3(single1 - single, single2 - single, single3 - single));
-										vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single + sizePerVox * (float)num6));
-										vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)num5, single3 + single + sizePerVox * (float)num6));
-										vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)num5, single3 - single));
+										vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single + sizePerVox * (float)value6));
+										vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)value5, single3 + single + sizePerVox * (float)value6));
+										vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)value5, single3 - single));
 										break;
 									}
 								case 2:
 									{
-										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)num4, single2 + single, single3 - single));
+										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 + single, single3 - single));
 										vector3s.Add(new Vector3(single1 - single, single2 + single, single3 - single));
-										vector3s.Add(new Vector3(single1 - single, single2 + single, single3 + single + sizePerVox * (float)num6));
-										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)num4, single2 + single, single3 + single + sizePerVox * (float)num6));
+										vector3s.Add(new Vector3(single1 - single, single2 + single, single3 + single + sizePerVox * (float)value6));
+										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 + single, single3 + single + sizePerVox * (float)value6));
 										break;
 									}
 								case 3:
 									{
-										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)num4, single2 - single, single3 - single));
-										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)num4, single2 - single, single3 + single + sizePerVox * (float)num6));
-										vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single + sizePerVox * (float)num6));
+										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 - single, single3 - single));
+										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 - single, single3 + single + sizePerVox * (float)value6));
+										vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single + sizePerVox * (float)value6));
 										vector3s.Add(new Vector3(single1 - single, single2 - single, single3 - single));
 										break;
 									}
 								case 4:
 									{
-										vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)num5, single3 + single));
+										vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)value5, single3 + single));
 										vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single));
-										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)num4, single2 - single, single3 + single));
-										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)num4, single2 + single + sizePerVox * (float)num5, single3 + single));
+										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 - single, single3 + single));
+										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 + single + sizePerVox * (float)value5, single3 + single));
 										break;
 									}
 								case 5:
 									{
-										vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)num5, single3 - single));
-										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)num4, single2 + single + sizePerVox * (float)num5, single3 - single));
-										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)num4, single2 - single, single3 - single));
+										vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)value5, single3 - single));
+										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 + single + sizePerVox * (float)value5, single3 - single));
+										vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 - single, single3 - single));
 										vector3s.Add(new Vector3(single1 - single, single2 - single, single3 - single));
 										break;
 									}
@@ -382,7 +382,7 @@ public static class MVImporter
 							vector3s1.Add(_right[i]);
 							vector3s1.Add(_right[i]);
 							vector3s1.Add(_right[i]);
-							Color color = palatte[num2 - 1];
+							Color color = palatte[value2 - 1];
 							colors.Add(color);
 							colors.Add(color);
 							colors.Add(color);
@@ -393,10 +393,10 @@ public static class MVImporter
 							nums.Add(num * 4 + 2);
 							nums.Add(num * 4 + 3);
 							nums.Add(num * 4);
-							vector2s.Add(new Vector2(((float)num2 - 1f) / 256f, 0f));
-							vector2s.Add(new Vector2((float)num2 / 256f, 0f));
-							vector2s.Add(new Vector2((float)num2 / 256f, 1f));
-							vector2s.Add(new Vector2(((float)num2 - 1f) / 256f, 1f));
+							vector2s.Add(new Vector2(((float)value2 - 1f) / 256f, 0f));
+							vector2s.Add(new Vector2((float)value2 / 256f, 0f));
+							vector2s.Add(new Vector2((float)value2 / 256f, 1f));
+							vector2s.Add(new Vector2(((float)value2 - 1f) / 256f, 1f));
 							num++;
 							if (vector3s.Count + 4 >= 65000)
 							{
@@ -412,7 +412,7 @@ public static class MVImporter
 								colors.Clear();
 								vector3s1.Clear();
 								nums.Clear();
-								num1 += num;
+								value1 += num;
 								num = 0;
 							}
 						}
@@ -429,9 +429,9 @@ public static class MVImporter
 			mesh1.triangles = (nums.ToArray());
 			mesh1.uv = (vector2s.ToArray());
 			meshes.Add(mesh1);
-			num1 += num;
+			value1 += num;
 		}
-		Debug.Log(string.Format("[MVImport] Mesh generated, total quads {0}", num1));
+		Debug.Log(string.Format("[MVImport] Mesh generated, total quads {0}", value1));
 		return meshes.ToArray();
 	}
 
@@ -575,34 +575,34 @@ public static class MVImporter
 				else
 				{
 					int num = binaryReader.ReadInt32();
-					int num1 = binaryReader.ReadInt32();
+					int value1 = binaryReader.ReadInt32();
 					binaryReader.ReadBytes(num);
-					int num2 = 0;
-					while (num2 < num1)
+					int value2 = 0;
+					while (value2 < value1)
 					{
 						numArray = binaryReader.ReadBytes(4);
 						if (numArray[0] == 80 && numArray[1] == 65 && numArray[2] == 67 && numArray[3] == 75)
 						{
-							int num3 = binaryReader.ReadInt32();
-							int num4 = binaryReader.ReadInt32();
+							int value3 = binaryReader.ReadInt32();
+							int value4 = binaryReader.ReadInt32();
 							binaryReader.ReadInt32();
-							num2 = num2 + num3 + num4 + 12;
+							value2 = value2 + value3 + value4 + 12;
 						}
 						else if (numArray[0] == 83 && numArray[1] == 73 && numArray[2] == 90 && numArray[3] == 69)
 						{
-							num2 += MVImporter.ReadSizeChunk(binaryReader, _white);
+							value2 += MVImporter.ReadSizeChunk(binaryReader, _white);
 						}
 						else if (numArray[0] == 88 && numArray[1] == 89 && numArray[2] == 90 && numArray[3] == 73)
 						{
-							num2 += MVImporter.ReadVoxelChunk(binaryReader, _white.voxelChunk);
+							value2 += MVImporter.ReadVoxelChunk(binaryReader, _white.voxelChunk);
 						}
 						else if (numArray[0] != 82 || numArray[1] != 71 || numArray[2] != 66 || numArray[3] != 65)
 						{
 							Debug.LogWarning(string.Concat("[MVImport] Chunk ID not recognized, got ", Encoding.ASCII.GetString(numArray)));
-							int num5 = binaryReader.ReadInt32();
-							int num6 = binaryReader.ReadInt32();
-							binaryReader.ReadBytes(num5 + num6);
-							num2 = num2 + num5 + num6 + 12;
+							int value5 = binaryReader.ReadInt32();
+							int value6 = binaryReader.ReadInt32();
+							binaryReader.ReadBytes(value5 + value6);
+							value2 = value2 + value5 + value6 + 12;
 						}
 						else
 						{
@@ -611,7 +611,7 @@ public static class MVImporter
 							{
 								_white.palatte[i] = Color.white;
 							}
-							num2 += MVImporter.ReadPalattee(binaryReader, _white.palatte);
+							value2 += MVImporter.ReadPalattee(binaryReader, _white.palatte);
 							//if (MVImporter.ColorsPalleteLoadComplete == null)
 							//{
 							//	continue;
@@ -641,23 +641,23 @@ public static class MVImporter
 	private static int ReadPalattee(BinaryReader br, Color[] colors)
 	{
 		int num = br.ReadInt32();
-		int num1 = br.ReadInt32();
+		int value1 = br.ReadInt32();
 		for (int i = 0; i < 256; i++)
 		{
 			colors[i] = new Color((float)br.ReadByte() / 255f, (float)br.ReadByte() / 255f, (float)br.ReadByte() / 255f, (float)br.ReadByte() / 255f);
 		}
-		if (num1 > 0)
+		if (value1 > 0)
 		{
-			br.ReadBytes(num1);
+			br.ReadBytes(value1);
 			Debug.LogWarning("[MVImporter] Nested chunk not supported");
 		}
-		return num + num1 + 12;
+		return num + value1 + 12;
 	}
 
 	private static int ReadSizeChunk(BinaryReader br, MVMainChunk mainChunk)
 	{
 		int num = br.ReadInt32();
-		int num1 = br.ReadInt32();
+		int value1 = br.ReadInt32();
 		mainChunk.sizeX = br.ReadInt32();
 		mainChunk.sizeZ = br.ReadInt32();
 		mainChunk.sizeY = br.ReadInt32();
@@ -666,31 +666,31 @@ public static class MVImporter
 			voxels = new byte[mainChunk.sizeX, mainChunk.sizeY, mainChunk.sizeZ]
 		};
 		Debug.Log(string.Format("[MVImporter] Voxel Size {0}x{1}x{2}", mainChunk.sizeX, mainChunk.sizeY, mainChunk.sizeZ));
-		if (num1 > 0)
+		if (value1 > 0)
 		{
-			br.ReadBytes(num1);
+			br.ReadBytes(value1);
 			Debug.LogWarning("[MVImporter] Nested chunk not supported");
 		}
-		return num + num1 + 12;
+		return num + value1 + 12;
 	}
 
 	private static int ReadVoxelChunk(BinaryReader br, MVVoxelChunk chunk)
 	{
 		int num = br.ReadInt32();
-		int num1 = br.ReadInt32();
-		int num2 = br.ReadInt32();
-		for (int i = 0; i < num2; i++)
+		int value1 = br.ReadInt32();
+		int value2 = br.ReadInt32();
+		for (int i = 0; i < value2; i++)
 		{
-			int num3 = br.ReadByte();
-			int num4 = br.ReadByte();
-			int num5 = br.ReadByte();
-			chunk.voxels[num3, num5, num4] = br.ReadByte();
+			int value3 = br.ReadByte();
+			int value4 = br.ReadByte();
+			int value5 = br.ReadByte();
+			chunk.voxels[value3, value5, value4] = br.ReadByte();
 		}
-		if (num1 > 0)
+		if (value1 > 0)
 		{
-			br.ReadBytes(num1);
+			br.ReadBytes(value1);
 			Debug.LogWarning("[MVImporter] Nested chunk not supported");
 		}
-		return num + num1 + 12;
+		return num + value1 + 12;
 	}
 }

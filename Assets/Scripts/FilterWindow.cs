@@ -298,7 +298,7 @@ public class FilterWindow : BaseWindow
 		this.m_currentImageZoom = Mathf.Min(this.m_currentImageZoom, this.m_maxZoom);
 		Vector2 center = this.m_image.uvRect.center;
 		Rect uvRect = default(Rect);
-		uvRect.height = 1f / this.m_currentImageZoom; float num3 = uvRect.width = (uvRect.height);
+		uvRect.height = 1f / this.m_currentImageZoom; float value3 = uvRect.width = (uvRect.height);
 		uvRect.center = center;
 		this.m_image.uvRect = uvRect;
 		this.CheckBorders();
@@ -312,7 +312,7 @@ public class FilterWindow : BaseWindow
 		this.m_currentImageZoom = Mathf.Min(this.m_currentImageZoom, this.m_maxZoom);
 		Vector2 center = this.m_image.uvRect.center;
 		Rect uvRect = default(Rect);
-		uvRect.height = 1f / this.m_currentImageZoom; float num3 = uvRect.width = (uvRect.height);
+		uvRect.height = 1f / this.m_currentImageZoom; float value3 = uvRect.width = (uvRect.height);
 		uvRect.center = center;
 		this.m_image.uvRect = uvRect;
 		this.CheckBorders();
@@ -371,9 +371,9 @@ public class FilterWindow : BaseWindow
 			Vector2 center7 = uvRect.center;
 			float x5 = center7.x;
 			Vector2 center8 = uvRect.center;
-			float num2 = center8.y + 1f;
+			float value2 = center8.y + 1f;
 			Vector2 max4 = uvRect.max;
-			uvRect.center = new Vector2(x5, num2 - max4.y);
+			uvRect.center = new Vector2(x5, value2 - max4.y);
 		}
 		this.m_image.uvRect = uvRect;
 	}

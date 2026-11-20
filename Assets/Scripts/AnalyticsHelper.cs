@@ -142,8 +142,8 @@ public static class AnalyticsHelper
 	private static float ScreenSizeInches()
 	{
 		float num = (float)Screen.width / Screen.dpi;
-		float num2 = (float)Screen.height / Screen.dpi;
-		return (float)Math.Sqrt((double)(num * num + num2 * num2));
+		float value2 = (float)Screen.height / Screen.dpi;
+		return (float)Math.Sqrt((double)(num * num + value2 * value2));
 	}
 
 	private static bool IsTablet()

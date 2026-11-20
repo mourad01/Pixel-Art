@@ -187,8 +187,8 @@ public class NewLibraryWindow : BaseWindow
 			float y = sizeDelta.y;
 			int num = 20;
 			Vector2 sizeDelta2 = this.m_scrollRect.content.sizeDelta;
-			float num2 = sizeDelta2.y * (1f - pos.y);
-			int index = Mathf.RoundToInt((num2 - (float)num) / (y + (float)num));
+			float value2 = sizeDelta2.y * (1f - pos.y);
+			int index = Mathf.RoundToInt((value2 - (float)num) / (y + (float)num));
 			this.OnSelectIndexHandler(index, false);
 		}
 	}

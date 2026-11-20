@@ -385,22 +385,22 @@ public class NumberColoring : MonoBehaviour
                 if (WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType == ColorizationModeModel.BrushType.Plural)
                 {
                     int num = (int)pixelPos.x;
-                    int num2 = (int)pixelPos.y;
-                    float num3 = pixelPos.x - (float)num;
-                    float num4 = pixelPos.y - (float)num2;
-                    if (num3 < 0.25f)
+                    int value2 = (int)pixelPos.y;
+                    float value3 = pixelPos.x - (float)num;
+                    float value4 = pixelPos.y - (float)value2;
+                    if (value3 < 0.25f)
                     {
                         return ;
                     }
-                    if (num3 > 0.75f)
+                    if (value3 > 0.75f)
                     {
                         return;
                     }
-                    if (num4 < 0.25f)
+                    if (value4 < 0.25f)
                     {
                         return;
                     }
-                    if (num4 > 0.75f)
+                    if (value4 > 0.75f)
                     {
                         return;
                     }
@@ -553,27 +553,27 @@ public class NumberColoring : MonoBehaviour
 			{
 				
 					Vector2 vector = stack.Pop();
-					int num2 = (int)vector.x + (int)vector.y * this.m_width;
-					int num3 = Mathf.RoundToInt(coloredPixels[num2].grayscale * 1000f);
-					if (num3 != num || flag)
+					int value2 = (int)vector.x + (int)vector.y * this.m_width;
+					int value3 = Mathf.RoundToInt(coloredPixels[value2].grayscale * 1000f);
+					if (value3 != num || flag)
 					{
 						flag = false;
-						coloredPixels[num2] = color;
+						coloredPixels[value2] = color;
 						Vector2[] array2 = array;
 						for (int i = 0; i < array2.Length; i++)
 						{
 							Vector2 vector2 = array2[i];
-							int num4 = (int)vector.x + (int)vector2.x;
-							int num5 = (int)vector.y + (int)vector2.y;
-							Vector2 vector3 = new Vector2((float)num4, (float)num5);
-							num2 = num4 + num5 * this.m_width;
-							if (num4 >= 0 && num4 < this.m_width && num5 >= 0 && num5 < this.m_height)
+							int value4 = (int)vector.x + (int)vector2.x;
+							int value5 = (int)vector.y + (int)vector2.y;
+							Vector2 vector3 = new Vector2((float)value4, (float)value5);
+							value2 = value4 + value5 * this.m_width;
+							if (value4 >= 0 && value4 < this.m_width && value5 >= 0 && value5 < this.m_height)
 							{
-								int num6 = Mathf.RoundToInt(coloredPixels[num2].grayscale * 1000f);
-								int num7 = Mathf.RoundToInt(rightPixels[num2].grayscale * 1000f);
-								if (num6 != num && num7 == num)
+								int value6 = Mathf.RoundToInt(coloredPixels[value2].grayscale * 1000f);
+								int value7 = Mathf.RoundToInt(rightPixels[value2].grayscale * 1000f);
+								if (value6 != num && value7 == num)
 								{
-									stack2.Push(new Vector2((float)num4, (float)num5));
+									stack2.Push(new Vector2((float)value4, (float)value5));
 								}
 							}
 						}
@@ -609,28 +609,28 @@ public class NumberColoring : MonoBehaviour
 			while (stack.Count > 0)
 			{
 				Vector2 vector = stack.Pop();
-				int num2 = (int)vector.x + (int)vector.y * this.m_width;
-				int num3 = (int)((coloredPixels[num2].r + coloredPixels[num2].g * 256f + coloredPixels[num2].b * 65536f) * 1000f);
-				if (num3 != num || flag)
+				int value2 = (int)vector.x + (int)vector.y * this.m_width;
+				int value3 = (int)((coloredPixels[value2].r + coloredPixels[value2].g * 256f + coloredPixels[value2].b * 65536f) * 1000f);
+				if (value3 != num || flag)
 				{
 					flag = false;
-					coloredPixels[num2] = color;
+					coloredPixels[value2] = color;
 					historyStep.Add(new ShortVector2((int)vector.x, (int)vector.y));
 					Vector2[] array2 = array;
 					for (int i = 0; i < array2.Length; i++)
 					{
 						Vector2 vector2 = array2[i];
-						int num4 = (int)vector.x + (int)vector2.x;
-						int num5 = (int)vector.y + (int)vector2.y;
-						Vector2 vector3 = new Vector2((float)num4, (float)num5);
-						num2 = num4 + num5 * this.m_width;
-						if (num4 >= 0 && num4 < this.m_width && num5 >= 0 && num5 < this.m_height)
+						int value4 = (int)vector.x + (int)vector2.x;
+						int value5 = (int)vector.y + (int)vector2.y;
+						Vector2 vector3 = new Vector2((float)value4, (float)value5);
+						value2 = value4 + value5 * this.m_width;
+						if (value4 >= 0 && value4 < this.m_width && value5 >= 0 && value5 < this.m_height)
 						{
-							int num6 = (int)((coloredPixels[num2].r + coloredPixels[num2].g * 256f + coloredPixels[num2].b * 65536f) * 1000f);
-							int num7 = (int)((rightPixels[num2].r + rightPixels[num2].g * 256f + rightPixels[num2].b * 65536f) * 1000f);
-							if (num6 != num && num7 == num)
+							int value6 = (int)((coloredPixels[value2].r + coloredPixels[value2].g * 256f + coloredPixels[value2].b * 65536f) * 1000f);
+							int value7 = (int)((rightPixels[value2].r + rightPixels[value2].g * 256f + rightPixels[value2].b * 65536f) * 1000f);
+							if (value6 != num && value7 == num)
 							{
-								stack2.Push(new Vector2((float)num4, (float)num5));
+								stack2.Push(new Vector2((float)value4, (float)value5));
 							}
 						}
 					}
@@ -650,13 +650,13 @@ public class NumberColoring : MonoBehaviour
 		{
 			for (int j = -num; j <= num; j++)
 			{
-				int num2 = x + i;
-				int num3 = y + j;
-				if (num2 >= 0 && num2 < this.m_width && num3 >= 0 && num3 < this.m_height && this.m_bombMatrix[num + i, num + j] > 0)
+				int value2 = x + i;
+				int value3 = y + j;
+				if (value2 >= 0 && value2 < this.m_width && value3 >= 0 && value3 < this.m_height && this.m_bombMatrix[num + i, num + j] > 0)
 				{
-					int num4 = num2 + num3 * this.m_width;
-					coloredPixels[num4] = rightPixels[num4];
-					historyStep.Add(new ShortVector2(num2, num3));
+					int value4 = value2 + value3 * this.m_width;
+					coloredPixels[value4] = rightPixels[value4];
+					historyStep.Add(new ShortVector2(value2, value3));
 				}
 			}
 		}

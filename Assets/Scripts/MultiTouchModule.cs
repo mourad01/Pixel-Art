@@ -39,7 +39,7 @@ internal class MultiTouchModule : MonoBehaviour
 			Vector2 vector = list2[0].position - list2[0].deltaPosition - (list2[1].position - list2[1].deltaPosition);
 			float num = Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y);
 			Vector2 vector2 = list2[0].position - list2[1].position;
-			float num2 = Mathf.Sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
+			float value2 = Mathf.Sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
 		}
 	}
 }

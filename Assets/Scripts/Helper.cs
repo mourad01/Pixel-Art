@@ -32,7 +32,7 @@ public static class Helper
 	{
 		short[] array2 = new short[array.Length * 4];
 		int num = width * 2;
-		int num2 = height * 2;
+		int value2 = height * 2;
 		for (int i = 0; i < width; i++)
 		{
 			for (int j = 0; j < height; j++)

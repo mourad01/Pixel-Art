@@ -168,15 +168,15 @@ public class PositScrollRect : ScrollRect
 		}
 		else if (base.vertical)
 		{
-			float num2 = 0f;
+			float value2 = 0f;
 			foreach (RectTransform item2 in this.m_list)
 			{
-				num2 += item2.rect.height;
+				value2 += item2.rect.height;
 			}
-			num2 += (float)(this.m_list.Count - 1) * this.m_contentGroup.spacing;
+			value2 += (float)(this.m_list.Count - 1) * this.m_contentGroup.spacing;
 			RectTransform content2 = base.content;
 			Vector2 sizeDelta2 = base.content.sizeDelta;
-			content2.sizeDelta = new Vector2(sizeDelta2.x, num2);
+			content2.sizeDelta = new Vector2(sizeDelta2.x, value2);
 		}
 		if (base.horizontal)
 		{
@@ -351,9 +351,9 @@ public class PositScrollRect : ScrollRect
 					Vector2 anchoredPosition3 = base.content.anchoredPosition;
 					if (anchoredPosition3.x - this.m_rectTransform.rect.width < (0f - this.m_list[0].rect.width) * (float)this.m_list.Count - this.m_contentGroup.spacing * (float)(this.m_list.Count - 1))
 					{
-						float num2 = (0f - (this.m_list[0].rect.width + this.m_contentGroup.spacing)) * (float)(this.m_list.Count - 1);
+						float value2 = (0f - (this.m_list[0].rect.width + this.m_contentGroup.spacing)) * (float)(this.m_list.Count - 1);
 						Vector2 anchoredPosition4 = base.content.anchoredPosition;
-						base.StartCoroutine(this.MoveCoroutine(num2 - anchoredPosition4.x));
+						base.StartCoroutine(this.MoveCoroutine(value2 - anchoredPosition4.x));
 					}
 					else
 					{
@@ -368,31 +368,31 @@ public class PositScrollRect : ScrollRect
 				RectTransform content2 = base.content;
 				content2.localPosition += new Vector3(0f, vector2.y, 0f);
 				Vector3 localPosition2 = base.content.localPosition;
-				float num3 = localPosition2.y - this.m_startDragPos;
-				if (num3 > 0f)
+				float value3 = localPosition2.y - this.m_startDragPos;
+				if (value3 > 0f)
 				{
-					if (num3 < 100f)
+					if (value3 < 100f)
 					{
-						base.StartCoroutine(this.MoveCoroutine(0f - num3));
+						base.StartCoroutine(this.MoveCoroutine(0f - value3));
 					}
 					else
 					{
 						Vector2 anchoredPosition5 = base.content.anchoredPosition;
 						if (anchoredPosition5.y + this.m_rectHeight > this.m_list[this.m_currentElement].rect.height * (float)this.m_list.Count + this.m_contentGroup.spacing * (float)(this.m_list.Count - 1))
 						{
-							float num4 = base.content.rect.height - this.m_rectHeight;
+							float value4 = base.content.rect.height - this.m_rectHeight;
 							Vector2 anchoredPosition6 = base.content.anchoredPosition;
-							base.StartCoroutine(this.MoveCoroutine(num4 - anchoredPosition6.y));
+							base.StartCoroutine(this.MoveCoroutine(value4 - anchoredPosition6.y));
 						}
 						else
 						{
-							base.StartCoroutine(this.MoveCoroutine(this.m_list[this.m_currentElement].rect.height + this.m_contentGroup.spacing - num3));
+							base.StartCoroutine(this.MoveCoroutine(this.m_list[this.m_currentElement].rect.height + this.m_contentGroup.spacing - value3));
 						}
 					}
 				}
-				else if (num3 > -100f)
+				else if (value3 > -100f)
 				{
-					base.StartCoroutine(this.MoveCoroutine(0f - num3));
+					base.StartCoroutine(this.MoveCoroutine(0f - value3));
 				}
 				else
 				{
@@ -404,7 +404,7 @@ public class PositScrollRect : ScrollRect
 					}
 					else
 					{
-						base.StartCoroutine(this.MoveCoroutine(0f - (this.m_list[this.m_currentElement].rect.height + this.m_contentGroup.spacing) - num3));
+						base.StartCoroutine(this.MoveCoroutine(0f - (this.m_list[this.m_currentElement].rect.height + this.m_contentGroup.spacing) - value3));
 					}
 				}
 			}
@@ -510,7 +510,7 @@ public class PositScrollRect : ScrollRect
 				float num = 0f;
 				for (int i = 0; i < this.m_list.Count; i++)
 				{
-					float num2 = 0f;
+					float value2 = 0f;
 					if (base.horizontal)
 					{
 						if (i > 0)
@@ -518,17 +518,17 @@ public class PositScrollRect : ScrollRect
 							num += this.m_list[i - 1].rect.width + this.m_contentGroup.spacing;
 						}
 						Vector2 anchoredPosition = base.content.anchoredPosition;
-						num2 = Mathf.Abs(anchoredPosition.x + num);
+						value2 = Mathf.Abs(anchoredPosition.x + num);
 					}
 					else if (base.vertical)
 					{
 						num = this.m_list[i].rect.height * (float)i + this.m_contentGroup.spacing * (float)i;
 						Vector2 anchoredPosition2 = base.content.anchoredPosition;
-						num2 = Mathf.Abs(anchoredPosition2.y - num);
+						value2 = Mathf.Abs(anchoredPosition2.y - num);
 					}
-					if (all || num2 < this.DistForScale + this.m_list[i].rect.width + this.m_contentGroup.spacing)
+					if (all || value2 < this.DistForScale + this.m_list[i].rect.width + this.m_contentGroup.spacing)
 					{
-						float par = (!(num2 < this.DistForScale)) ? 1f : Mathf.Lerp(this.Scale, 1f, num2 / this.DistForScale);
+						float par = (!(value2 < this.DistForScale)) ? 1f : Mathf.Lerp(this.Scale, 1f, value2 / this.DistForScale);
 						this.OnScaleElement.SafeInvoke(i, par, this.Scale);
 					}
 				}

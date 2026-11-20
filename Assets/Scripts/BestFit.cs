@@ -235,8 +235,8 @@ public class BestFit : MonoBehaviour
 		}
 		else
 		{
-			float num2 = (float)((num + maxSize) / 2);
-			if (maxSize == num || num2 == (float)num)
+			float value2 = (float)((num + maxSize) / 2);
+			if (maxSize == num || value2 == (float)num)
 			{
 				this.SetSize(num);
 			}
@@ -255,32 +255,32 @@ public class BestFit : MonoBehaviour
 		{
 			array[i] = wordLengths[i] * num;
 		}
-		float num2 = baseSpaceLength * num;
-		int num3 = Mathf.CeilToInt((float)this.m_text.font.lineHeight * num);
-		if ((float)num3 >= this.m_transform.rect.height)
+		float value2 = baseSpaceLength * num;
+		int value3 = Mathf.CeilToInt((float)this.m_text.font.lineHeight * num);
+		if ((float)value3 >= this.m_transform.rect.height)
 		{
 			return false;
 		}
 		List<float> list = new List<float>();
 		list.Add(0f);
-		int num4 = 0;
-		int num5 = 0;
-		while (num5 < array.Length)
+		int value4 = 0;
+		int value5 = 0;
+		while (value5 < array.Length)
 		{
-			if (list[num4] + num2 + array[num5] < this.m_transform.rect.width)
+			if (list[value4] + value2 + array[value5] < this.m_transform.rect.width)
 			{
 				List<float> list2;
 				int index;
-				list2 = list; index = num4; (list2)[index] = list2[index] + (num2 + array[num5]);
-				num5++;
+				list2 = list; index = value4; (list2)[index] = list2[index] + (value2 + array[value5]);
+				value5++;
 				continue;
 			}
-			if (!((float)((list.Count + 1) * num3) < this.m_transform.rect.height))
+			if (!((float)((list.Count + 1) * value3) < this.m_transform.rect.height))
 			{
 				return false;
 			}
 			list.Add(0f);
-			num4++;
+			value4++;
 		}
 		return true;
 	}

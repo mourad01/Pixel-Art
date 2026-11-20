@@ -95,17 +95,17 @@ public class ColorsPanel : MonoBehaviour
 		count++;
 		int rowWidth = Mathf.Max(count, 5);
 		float colorSize = sizeDelta.x / (float)rowWidth;
-		int num5 = rowWidth * 2;
-		int num6 = Mathf.CeilToInt((float)colors.Count / (float)num5);
-		for (count = 0; count < num6; count++)
+		int value5 = rowWidth * 2;
+		int value6 = Mathf.CeilToInt((float)colors.Count / (float)value5);
+		for (count = 0; count < value6; count++)
 		{
-			List<Color> range = colors.GetRange(count * num5, Math.Min(num5, colors.Count - count * num5));
+			List<Color> range = colors.GetRange(count * value5, Math.Min(value5, colors.Count - count * value5));
 			ColorsPage colorsPage = UnityEngine.Object.Instantiate(this.m_colorsPagePrefab);
 			colorsPage.transform.SetParent(this.m_colorsPagesParent);
 			colorsPage.transform.localScale = Vector3.one;
 			colorsPage.gameObject.SetActive(true);
 			this.m_colorsPages.Add(colorsPage);
-			colorsPage.Init(range, count * num5, rowWidth, colorSize, this.m_colorsPages.Count - 1);
+			colorsPage.Init(range, count * value5, rowWidth, colorSize, this.m_colorsPages.Count - 1);
 			ColorsPage colorsPage2 = colorsPage;
 			colorsPage2.OnColorClick = (Action<ColorImage, SpecialColorPosition>)Delegate.Combine(colorsPage2.OnColorClick, new Action<ColorImage, SpecialColorPosition>(this.OnColorClickedHandler));
 		}
@@ -114,16 +114,16 @@ public class ColorsPanel : MonoBehaviour
 		if (colors.Count <= rowWidth)
 		{
 			LayoutElement layoutElement = this.m_layoutElement;
-			float num7 = colorSize + y;
-			this.m_layoutElement.preferredHeight = num7;
-			layoutElement.minHeight = num7;
+			float value7 = colorSize + y;
+			this.m_layoutElement.preferredHeight = value7;
+			layoutElement.minHeight = value7;
 		}
 		else
 		{
 			LayoutElement layoutElement2 = this.m_layoutElement;
-			float num7 = colorSize * 2f + y;
-			this.m_layoutElement.preferredHeight = num7;
-			layoutElement2.minHeight = num7;
+			float value7 = colorSize * 2f + y;
+			this.m_layoutElement.preferredHeight = value7;
+			layoutElement2.minHeight = value7;
 		}
 		this.m_specPage.sizeDelta = new Vector2(this.m_specPage.rect.width, this.m_layoutElement.minHeight);
 		this.m_specPageInternal.sizeDelta = new Vector2(0f, colorSize * 2f);
@@ -167,7 +167,7 @@ public class ColorsPanel : MonoBehaviour
 	private void GeneratePoints()
 	{
 		int num = this.m_colorsPages.Count + (this.m_specPage.gameObject.activeSelf ? 1 : 0);
-		float num2 = ((float)(-num) / 2f + 0.5f) * this.m_pointsDelta;
+		float value2 = ((float)(-num) / 2f + 0.5f) * this.m_pointsDelta;
 		this.m_points = new List<Image>(num);
 		for (int i = 0; i < num; i++)
 		{
@@ -175,7 +175,7 @@ public class ColorsPanel : MonoBehaviour
 			image.gameObject.SetActive(true);
 			image.transform.SetParent(this.m_pointsParent);
 			image.transform.localScale = Vector2.one;
-			((RectTransform)image.transform).anchoredPosition = new Vector2(num2 + (float)i * this.m_pointsDelta, 0f);
+			((RectTransform)image.transform).anchoredPosition = new Vector2(value2 + (float)i * this.m_pointsDelta, 0f);
 			this.m_points.Add(image);
 		}
 	}

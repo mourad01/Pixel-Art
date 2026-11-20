@@ -159,10 +159,10 @@ public class NewMyWorksWindow : BaseWindow
 		{
 			Vector2 sizeDelta = this.m_scrollRect.content.sizeDelta;
 			float num = sizeDelta.y * (1f - pos.y);
-			int num2 = Mathf.RoundToInt((num - this.m_delta) / (this.m_previewSize + this.m_delta));
-			if (num2 < this.m_pairsCount)
+			int value2 = Mathf.RoundToInt((num - this.m_delta) / (this.m_previewSize + this.m_delta));
+			if (value2 < this.m_pairsCount)
 			{
-				this.OnSelectIndexHandler(num2, false);
+				this.OnSelectIndexHandler(value2, false);
 			}
 			else
 			{

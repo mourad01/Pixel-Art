@@ -139,23 +139,23 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 			case TapState.Drag:
 				{
 					Vector2 vector2 = (Vector2)Input.mousePosition - this.m_mousePrev;
-					float num2 = vector2.x / (float)Screen.width * 180f;
-					float num3 = vector2.y / (float)Screen.width * 180f;
+					float value2 = vector2.x / (float)Screen.width * 180f;
+					float value3 = vector2.y / (float)Screen.width * 180f;
 					Quaternion rotation = Camera.main.transform.rotation;
 					Vector3 eulerAngles = rotation.eulerAngles;
-					float num4 = eulerAngles.x - num3;
+					float value4 = eulerAngles.x - value3;
 					Vector3 eulerAngles2 = rotation.eulerAngles;
-					float y = eulerAngles2.y + num2;
-					if (num4 > 180f)
+					float y = eulerAngles2.y + value2;
+					if (value4 > 180f)
 					{
-						num4 -= 360f;
+						value4 -= 360f;
 					}
-					else if (num4 < -180f)
+					else if (value4 < -180f)
 					{
-						num4 += 360f;
+						value4 += 360f;
 					}
-					num4 = Mathf.Clamp(num4, -80f, 80f);
-					rotation.eulerAngles = new Vector3(num4, y, 0f);
+					value4 = Mathf.Clamp(value4, -80f, 80f);
+					rotation.eulerAngles = new Vector3(value4, y, 0f);
 					Camera.main.transform.rotation = rotation;
 					this.m_mousePrev = Input.mousePosition;
 					Vector3 vector3 = Vector3.zero - Camera.main.transform.position;
@@ -173,14 +173,14 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 					if (touches.Length >= 2)
 					{
 						Vector2 vector4 = touches[0].position - touches[1].position;
-						float num5 = Mathf.Sqrt(vector4.x * vector4.x + vector4.y * vector4.y);
-						float num6 = num5 / this.m_touchesDelta;
-						float value = Camera.main.orthographicSize / num6;
+						float value5 = Mathf.Sqrt(vector4.x * vector4.x + vector4.y * vector4.y);
+						float value6 = value5 / this.m_touchesDelta;
+						float value = Camera.main.orthographicSize / value6;
 						value = Mathf.Clamp(value, 3f, 25f);
 						Vector3 vector5 = Camera.main.ScreenToWorldPoint(data.position);
 						Vector3 a3 = Camera.main.ScreenToWorldPoint(this.m_mousePrev);
 						Camera.main.orthographicSize = value;
-						this.m_touchesDelta = num5;
+						this.m_touchesDelta = value5;
 						Vector3 b = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 						Vector3 b2 = a3 - b;
 						Transform transform2 = Camera.main.transform;

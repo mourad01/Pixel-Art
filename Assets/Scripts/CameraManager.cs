@@ -141,23 +141,23 @@ public class CameraManager : MonoBehaviour
 			{
 				break;
 			}
-			float num2 = num;
+			float value2 = num;
 			Vector2 anchoredPosition = rectTransform.anchoredPosition;
-			num = num2 + anchoredPosition.y;
+			num = value2 + anchoredPosition.y;
 			rectTransform = (RectTransform)rectTransform.parent;
 		}
-		float num3 = 0f - num;
+		float value3 = 0f - num;
 		Vector2 sizeDelta = this.m_cameraSpace.sizeDelta;
-		float y = 1f - (num3 + sizeDelta.y) / this.m_canvasRectTransform.rect.height;
+		float y = 1f - (value3 + sizeDelta.y) / this.m_canvasRectTransform.rect.height;
 		Vector2 sizeDelta2 = this.m_cameraSpace.sizeDelta;
-		float num4 = (sizeDelta2.y + 150f) / this.m_canvasRectTransform.rect.height;
-		this.m_camera.rect = new Rect(0f, y, 1f, num4);
+		float value4 = (sizeDelta2.y + 150f) / this.m_canvasRectTransform.rect.height;
+		this.m_camera.rect = new Rect(0f, y, 1f, value4);
 		this.DefaultRect = this.m_camera.rect;
-		float a = num4 * (float)Screen.height / (this.m_camera.rect.width * (float)Screen.width);
+		float a = value4 * (float)Screen.height / (this.m_camera.rect.width * (float)Screen.width);
 		a = (this.DefaultOrtoSize = Mathf.Max(a, 1.2f));
 		this.m_camera.orthographicSize = a / this.m_zoom;
-		float num6 = MySystemInfo.IsTablet ? (this.m_loupe.Precision / (400f / (this.m_canvasRectTransform.rect.height * this.m_camera.rect.height))) : (this.m_loupe.Precision / (500f / (this.m_canvasRectTransform.rect.height * this.m_camera.rect.height)));
-		this.m_maxZoom = (a / num6);
+		float value6 = MySystemInfo.IsTablet ? (this.m_loupe.Precision / (400f / (this.m_canvasRectTransform.rect.height * this.m_camera.rect.height))) : (this.m_loupe.Precision / (500f / (this.m_canvasRectTransform.rect.height * this.m_camera.rect.height)));
+		this.m_maxZoom = (a / value6);
 		Rect rect = default(Rect);
 		rect.height = this.m_camera.orthographicSize * 2f;
 		rect.width = (float)Screen.width * this.m_camera.rect.width * rect.height / ((float)Screen.height * this.m_camera.rect.height);

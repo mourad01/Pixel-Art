@@ -236,22 +236,22 @@ public class GetNameScript : MonoBehaviour
                 //base.StartCoroutine(this.FlashSchedule());
             }
             //LevelProgressControl.control.dailyTodayPersonalBestBeaten = false;
-            int num2 = PlayerPrefs.GetInt("PuzzleStateId", -1);
-            if (num2 == -1)
+            int val2 = PlayerPrefs.GetInt("PuzzleStateId", -1);
+            if (val2 == -1)
             {
-                num2 = 287462819;
-                PlayerPrefs.SetInt("PuzzleStateId", num2);
+                val2 = 287462819;
+                PlayerPrefs.SetInt("PuzzleStateId", val2);
             }
-            num2 = (num2 - 287462819) / 3;
-            if (num2 > LevelProgressControl.adPeriodInSeconds)
+            val2 = (val2 - 287462819) / 3;
+            if (val2 > LevelProgressControl.adPeriodInSeconds)
             {
                 if (!LevelProgressControl.control.iapDisableAds)
                 {
                     //if (AdsWrapper.Instance.IsVideoAvailable())
                     {
 						//AdsWrapper.Instance.ShowInter(string.Empty);
-                        num2 = 287462819;
-                        PlayerPrefs.SetInt("PuzzleStateId", num2);
+                        val2 = 287462819;
+                        PlayerPrefs.SetInt("PuzzleStateId", val2);
                         PlayerPrefs.Save();
                     }
                 }
@@ -262,7 +262,7 @@ public class GetNameScript : MonoBehaviour
             }
             else if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("currAccumTime still accumulating... : " + num2.ToString());
+                UnityEngine.Debug.Log("currAccumTime still accumulating... : " + val2.ToString());
             }
         }
     }
@@ -604,19 +604,19 @@ public class GetNameScript : MonoBehaviour
         string[] array = this.todayFilename.Split('-');
         UnityEngine.Debug.Log("today day " + array[0] + " today year " + array[1]);
         int num = Convert.ToInt32(array[0]);
-        int num2 = Convert.ToInt32(array[1]);
-        int num3 = num2 * 365 + num;
-        UnityEngine.Debug.Log("Integer version: today day " + num + " today year " + num2 + " total days " + num3);
+        int val2 = Convert.ToInt32(array[1]);
+        int val3 = val2 * 365 + num;
+        UnityEngine.Debug.Log("Integer version: today day " + num + " today year " + val2 + " total days " + val3);
         string @string = PlayerPrefs.GetString("dailytodaydata", "nodata");
         if (@string.Equals("nodata"))
         {
             UnityEngine.Debug.Log("CalcDailyPrefDateDiff -> nodata for dailytodaydata. This shouldn't happen");
         }
         string[] array2 = @string.Split('-');
-        int num4 = Convert.ToInt32(array2[0]);
-        int num5 = Convert.ToInt32(array2[1]);
-        int num6 = Convert.ToInt32(array2[2]);
-        switch (num3 - (num5 * 365 + num4))
+        int val4 = Convert.ToInt32(array2[0]);
+        int val5 = Convert.ToInt32(array2[1]);
+        int val6 = Convert.ToInt32(array2[2]);
+        switch (val3 - (val5 * 365 + val4))
         {
             case 0:
                 if (Debug.isDebugBuild)

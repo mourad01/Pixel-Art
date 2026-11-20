@@ -79,13 +79,13 @@ public class CustomVerticalLayoutGroup : MonoBehaviour
 			}
 		}
 		float num = this.m_childs.Sum((RectTransform a) => a.rect.height);
-		float num2 = this.m_rectHeight - num;
-		float num3 = num2 / (float)this.m_childs.Count;
-		float num4 = 0f;
+		float value2 = this.m_rectHeight - num;
+		float value3 = value2 / (float)this.m_childs.Count;
+		float value4 = 0f;
 		for (int k = 0; k < this.m_childs.Count; k++)
 		{
-			this.m_childs[k].anchoredPosition = new Vector2(0f, (0f - num3) * ((float)k + 0.5f) - num4 - this.m_childs[k].rect.height / 2f);
-			num4 += this.m_childs[k].rect.height;
+			this.m_childs[k].anchoredPosition = new Vector2(0f, (0f - value3) * ((float)k + 0.5f) - value4 - this.m_childs[k].rect.height / 2f);
+			value4 += this.m_childs[k].rect.height;
 		}
 	}
 }

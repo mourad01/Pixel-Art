@@ -81,14 +81,14 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 					RectTransform workspaceRect = NewWorkbookManager.Instance.CameraManager.WorkspaceRect;
 					float x = vector.x;
 					Vector2 size = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
-					float num2 = x + size.x / 4f;
+					float value2 = x + size.x / 4f;
 					Vector2 offsetMax = workspaceRect.offsetMax;
-					if (num2 > offsetMax.x)
+					if (value2 > offsetMax.x)
 					{
 						Vector2 offsetMax2 = workspaceRect.offsetMax;
-						float num3 = offsetMax2.x - vector.x;
+						float value3 = offsetMax2.x - vector.x;
 						Vector2 size2 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
-						float a = num3 - size2.x / 4f;
+						float a = value3 - size2.x / 4f;
 						a = Mathf.Max(a, (0f - workspaceRect.rect.width) / 10f);
 						//NewWorkbookManager.Instance.CameraManager.Move(new Vector2(a / num * 0.05f, 0f));
 						NewWorkbookManager.Instance.CameraManager.UpdateLoupe(Input.mousePosition);
@@ -98,14 +98,14 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 					{
 						float x2 = vector.x;
 						Vector2 size3 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
-						float num4 = x2 - size3.x / 4f;
+						float value4 = x2 - size3.x / 4f;
 						Vector2 offsetMin = workspaceRect.offsetMin;
-						if (num4 < offsetMin.x)
+						if (value4 < offsetMin.x)
 						{
 							Vector2 offsetMin2 = workspaceRect.offsetMin;
-							float num5 = offsetMin2.x - vector.x;
+							float value5 = offsetMin2.x - vector.x;
 							Vector2 size4 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
-							float a2 = num5 + size4.x / 4f;
+							float a2 = value5 + size4.x / 4f;
 							a2 = Mathf.Min(a2, workspaceRect.rect.width / 10f);
 
 							//NewWorkbookManager.Instance.CameraManager.Move(new Vector2(a2 / num * 0.05f, 0f));
@@ -120,16 +120,16 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 					}
 					float y = vector.y;
 					Vector2 size5 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
-					float num6 = y + size5.y * 0.75f;
+					float value6 = y + size5.y * 0.75f;
 					float height2 = rect.height;
 					Vector2 offsetMax3 = workspaceRect.offsetMax;
-					if (num6 > height2 + offsetMax3.y)
+					if (value6 > height2 + offsetMax3.y)
 					{
 						float height3 = rect.height;
 						Vector2 offsetMax4 = workspaceRect.offsetMax;
-						float num7 = height3 + offsetMax4.y - vector.y;
+						float value7 = height3 + offsetMax4.y - vector.y;
 						Vector2 size6 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
-						float a3 = num7 - size6.y * 0.75f;
+						float a3 = value7 - size6.y * 0.75f;
 						a3 = Mathf.Max(a3, (0f - workspaceRect.rect.height) / 10f);
 						//NewWorkbookManager.Instance.CameraManager.Move(new Vector2(0f, a3 / num * 0.05f));
 						NewWorkbookManager.Instance.CameraManager.UpdateLoupe(Input.mousePosition);
@@ -249,15 +249,15 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 					if (touches.Length >= 2)
 					{
 						Vector2 vector2 = touches[0].position - touches[1].position;
-						float num2 = Mathf.Sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
-						float koef = num2 / this.m_touchesDelta;
+						float value2 = Mathf.Sqrt(vector2.x * vector2.x + vector2.y * vector2.y);
+						float koef = value2 / this.m_touchesDelta;
 						NewWorkbookManager.Instance.CameraManager.ChangeZoom(koef);
 						if (!this.m_currentZoomLogged)
 						{
 							this.m_currentZoomLogged = true;
 							AnalyticsManager.Instance.ZoomDone();
 						}
-						this.m_touchesDelta = num2;
+						this.m_touchesDelta = value2;
 						NewWorkbookManager.Instance.CameraManager.Move((Vector2)Input.mousePosition - this.m_mousePrev);
 						this.m_mousePrev = Input.mousePosition;
 					}

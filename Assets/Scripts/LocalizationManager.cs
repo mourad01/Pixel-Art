@@ -72,7 +72,6 @@ public class LocalizationManager
 		//		s[kv.Key] = kv.Value;
 		//	}
 
-		//	//File.WriteAllText(@"D:\Cocos\Tools\UnityDecompiler\Projects\Localization.txt", sw.ToString());
 		//	//DataContractSerializer serializer = new DataContractSerializer(lockitInfo.m_dict.GetType());
 
 		//	using (StringWriter sw = new StringWriter())
@@ -87,7 +86,6 @@ public class LocalizationManager
 
 		//			writer.Flush();
 
-		//			File.WriteAllText(@"D:\Cocos\Tools\UnityDecompiler\Projects\Localization.txt", sw.ToString());
 		//		}
 		//	}
 		//});

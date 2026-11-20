@@ -25,8 +25,8 @@ public class ScreenFormatScale : MonoBehaviour
 	private void Start()
 	{
 		float num = (float)Screen.height / (float)Screen.width;
-		float num2 = Mathf.Lerp(this.m_3x4Scale, this.m_9x16Scale, (num - 1.33f) / 0.449999928f);
-		base.transform.localScale = new Vector3(num2, num2, 1f);
+		float value2 = Mathf.Lerp(this.m_3x4Scale, this.m_9x16Scale, (num - 1.33f) / 0.449999928f);
+		base.transform.localScale = new Vector3(value2, value2, 1f);
 	}
 }
 

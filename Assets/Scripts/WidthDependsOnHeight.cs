@@ -52,7 +52,7 @@ public class WidthDependsOnHeight : MonoBehaviour
 		if (component != null)
 		{
 			LayoutElement layoutElement = component;
-			component.preferredWidth = height; float num3 = layoutElement.minWidth = (component.preferredWidth);
+			component.preferredWidth = height; float value3 = layoutElement.minWidth = (component.preferredWidth);
 		}
 	}
 }
