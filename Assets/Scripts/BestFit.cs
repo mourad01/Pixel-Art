@@ -95,15 +95,9 @@ public class BestFit : MonoBehaviour
         {
             return;
         }
-        Vector2 size = m_rect.size;
-        float x = size.x;
-        Vector2 size2 = m_transform.rect.size;
-        if (!(x > size2.x))
+        if (!(m_rect.size.x > m_transform.rect.size.x))
         {
-            Vector2 size3 = m_rect.size;
-            float y = size3.y;
-            Vector2 size4 = m_transform.rect.size;
-            if (y > size4.y)
+            if (m_rect.size.y > m_transform.rect.size.y)
             {
                 m_rect = m_transform.rect;
                 return;
@@ -174,8 +168,7 @@ public class BestFit : MonoBehaviour
                     try
                     {
                         var character = characters[charIndex++];
-                        float charWidth = character.charWidth;
-                        lineWidths[i] += charWidth;
+                        lineWidths[i] += character.charWidth;
                     }
                     catch
                     {
@@ -210,8 +203,8 @@ public class BestFit : MonoBehaviour
         }
         else
         {
-            float value2 = (float)((middle + maxSize) / 2);
-            if (maxSize == middle || value2 == (float)middle)
+            float upperMiddle = (float)((middle + maxSize) / 2);
+            if (maxSize == middle || upperMiddle == (float)middle)
             {
                 SetSize(middle);
             }
@@ -230,32 +223,32 @@ public class BestFit : MonoBehaviour
         {
             scaledLengths[i] = wordLengths[i] * scale;
         }
-        float value2 = baseSpaceLength * scale;
-        int value3 = Mathf.CeilToInt((float)m_text.font.lineHeight * scale);
-        if ((float)value3 >= m_transform.rect.height)
+        float spaceWidth = baseSpaceLength * scale;
+        int linePixels = Mathf.CeilToInt((float)m_text.font.lineHeight * scale);
+        if ((float)linePixels >= m_transform.rect.height)
         {
             return false;
         }
         var list = new List<float>();
         list.Add(0f);
-        int value4 = 0;
-        int value5 = 0;
-        while (value5 < scaledLengths.Length)
+        int line = 0;
+        int word = 0;
+        while (word < scaledLengths.Length)
         {
-            if (list[value4] + value2 + scaledLengths[value5] < m_transform.rect.width)
+            if (list[line] + spaceWidth + scaledLengths[word] < m_transform.rect.width)
             {
                 List<float> list2;
                 int index;
-                list2 = list; index = value4; (list2)[index] = list2[index] + (value2 + scaledLengths[value5]);
-                value5++;
+                list2 = list; index = line; (list2)[index] = list2[index] + (spaceWidth + scaledLengths[word]);
+                word++;
                 continue;
             }
-            if (!((float)((list.Count + 1) * value3) < m_transform.rect.height))
+            if (!((float)((list.Count + 1) * linePixels) < m_transform.rect.height))
             {
                 return false;
             }
             list.Add(0f);
-            value4++;
+            line++;
         }
         return true;
     }

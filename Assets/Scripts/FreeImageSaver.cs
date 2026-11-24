@@ -94,22 +94,22 @@ public class FreeImageSaver : MonoBehaviour
     public static Texture2D MakeTexFromOurVirtualThingy(int width, int height, int maxSize, int pixelPerUnit, Camera cam)
     {
         int newHeight;
-        int value2;
+        int newWidth;
         if (width < height)
         {
             newHeight = maxSize;
-            value2 = (int)((float)width / (float)height) * newHeight;
+            newWidth = (int)((float)width / (float)height) * newHeight;
         }
         else
         {
-            value2 = maxSize;
-            newHeight = (int)((float)height / (float)width) * value2;
+            newWidth = maxSize;
+            newHeight = (int)((float)height / (float)width) * newWidth;
         }
-        var renderTexture = cam.targetTexture = new RenderTexture(value2, newHeight, 24);
+        var renderTexture = cam.targetTexture = new RenderTexture(newWidth, newHeight, 24);
         cam.Render();
         RenderTexture.active = renderTexture;
-        var texture2D = new Texture2D(value2, newHeight, TextureFormat.RGB24, false);
-        texture2D.ReadPixels(new Rect(0f, 0f, (float)value2, (float)newHeight), 0, 0);
+        var texture2D = new Texture2D(newWidth, newHeight, TextureFormat.RGB24, false);
+        texture2D.ReadPixels(new Rect(0f, 0f, (float)newWidth, (float)newHeight), 0, 0);
         texture2D.Apply();
         RenderTexture.active = null;
         cam.targetTexture = null;
@@ -120,28 +120,28 @@ public class FreeImageSaver : MonoBehaviour
     public static byte[] MakePngFromOurVirtualThingy(int width, int height, int maxSize, int pixelPerUnit, Camera cam, bool antialising)
     {
         int newHeight;
-        int value2;
+        int newWidth;
         if (width < height)
         {
             newHeight = maxSize;
-            value2 = (int)((float)width / (float)height) * newHeight;
+            newWidth = (int)((float)width / (float)height) * newHeight;
         }
         else
         {
-            value2 = maxSize;
-            newHeight = (int)((float)height / (float)width) * value2;
+            newWidth = maxSize;
+            newHeight = (int)((float)height / (float)width) * newWidth;
         }
-        var renderTexture = new RenderTexture(value2, newHeight, 24);
+        var renderTexture = new RenderTexture(newWidth, newHeight, 24);
         renderTexture.antiAliasing = ((!antialising) ? 1 : 8);
-        var renderTexture3 = cam.targetTexture = renderTexture;
+        var activeTexture = cam.targetTexture = renderTexture;
         cam.Render();
-        RenderTexture.active = renderTexture3;
-        var texture2D = new Texture2D(value2, newHeight, TextureFormat.RGB24, true);
-        texture2D.ReadPixels(new Rect(0f, 0f, (float)value2, (float)newHeight), 0, 0);
+        RenderTexture.active = activeTexture;
+        var texture2D = new Texture2D(newWidth, newHeight, TextureFormat.RGB24, true);
+        texture2D.ReadPixels(new Rect(0f, 0f, (float)newWidth, (float)newHeight), 0, 0);
         RenderTexture.active = null;
         cam.targetTexture = null;
         var result = texture2D.EncodeToJPG(100);
-        UnityObject.Destroy(renderTexture3);
+        UnityObject.Destroy(activeTexture);
         UnityObject.Destroy(texture2D);
         return result;
     }

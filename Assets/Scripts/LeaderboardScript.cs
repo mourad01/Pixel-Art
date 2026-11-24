@@ -214,13 +214,13 @@ public class LeaderboardScript : MonoBehaviour
     public bool TestChapterComplete(int num)
     {
         UnityDebug.Log("TestChapterComplete : " + num);
-        int value2 = 0;
-        int value3 = (num - 1) * 6;
-        for (int i = value3; i < value3 + 6; i++)
+        int completed = 0;
+        int first = (num - 1) * 6;
+        for (int i = first; i < first + 6; i++)
         {
-            value2 += LevelProgressControl.control.postcardCompleteStateArray[i];
+            completed += LevelProgressControl.control.postcardCompleteStateArray[i];
         }
-        if (value2 == 12)
+        if (completed == 12)
         {
             return true;
         }
@@ -230,14 +230,14 @@ public class LeaderboardScript : MonoBehaviour
     public bool TestChapter3Starred(int num)
     {
         UnityDebug.Log("TestChapter3Starred : " + num);
-        int value2 = 0;
-        int value3 = (num - 1) * 72;
-        int value4 = value3 + 72;
-        for (int i = value3; i < value4; i++)
+        int stars = 0;
+        int first = (num - 1) * 72;
+        int last = first + 72;
+        for (int i = first; i < last; i++)
         {
-            value2 += LevelProgressControl.control.starsArray[i];
+            stars += LevelProgressControl.control.starsArray[i];
         }
-        if (value2 == 216)
+        if (stars == 216)
         {
             return true;
         }

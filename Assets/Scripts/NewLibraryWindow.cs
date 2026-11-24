@@ -122,8 +122,7 @@ public class NewLibraryWindow : BaseWindow
         int active;
         if (!(velocity.y > 500f))
         {
-            Vector2 velocity2 = m_scrollRect.velocity;
-            active = ((velocity2.y < -500f) ? 1 : 0);
+            active = ((m_scrollRect.velocity.y < -500f) ? 1 : 0);
         }
         else
         {
@@ -156,9 +155,8 @@ public class NewLibraryWindow : BaseWindow
             Vector2 sizeDelta = ((Component)m_imageGroups[0]).GetComponent<RectTransform>().sizeDelta;
             float y = sizeDelta.y;
             int spacing = 20;
-            Vector2 sizeDelta2 = m_scrollRect.content.sizeDelta;
-            float value2 = sizeDelta2.y * (1f - pos.y);
-            int index = Mathf.RoundToInt((value2 - (float)spacing) / (y + (float)spacing));
+            float scrolled = m_scrollRect.content.sizeDelta.y * (1f - pos.y);
+            int index = Mathf.RoundToInt((scrolled - (float)spacing) / (y + (float)spacing));
             OnSelectIndexHandler(index, false);
         }
     }

@@ -167,16 +167,14 @@ public class ImageLayersManager : MonoBehaviour, IPointerDownHandler, IPointerUp
                     0f,
                     0f
                 };
-                    Vector2 delta = data.delta;
-                    deltas[1] = Mathf.Abs(delta.x);
-                    Vector2 delta2 = data.delta;
-                    deltas[2] = Mathf.Abs(delta2.y);
+                    deltas[1] = Mathf.Abs(data.delta.x);
+                    deltas[2] = Mathf.Abs(data.delta.y);
                     float steps = Mathf.Max(deltas);
                     Vector2 a = data.delta / steps;
-                    Vector2 a2 = dir;
+                    Vector2 start = dir;
                     for (int i = 1; (float)i < steps; i++)
                     {
-                        ClickLayer(a2 + (float)i * a);
+                        ClickLayer(start + (float)i * a);
                     }
                     ClickLayer(data.position);
                     break;
@@ -211,8 +209,8 @@ public class ImageLayersManager : MonoBehaviour, IPointerDownHandler, IPointerUp
             Vector3 lossyScale = raycastHits[0].collider.transform.lossyScale;
             point.x = x / lossyScale.x;
             float y = point.y;
-            Vector3 lossyScale2 = raycastHits[0].collider.transform.lossyScale;
-            point.y = y / lossyScale2.y;
+            Vector3 scale = raycastHits[0].collider.transform.lossyScale;
+            point.y = y / scale.y;
             point.x = (point.x + 1f) / 2f * (float)mainTexture.width;
             point.y = (point.y + 1f) / 2f * (float)mainTexture.height;
             pixelPos = point;

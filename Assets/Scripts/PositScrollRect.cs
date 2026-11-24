@@ -89,9 +89,7 @@ public class PositScrollRect : ScrollRect
         if (!withoutPosCorrection)
         {
             var content = base.content;
-            Vector2 anchoredPosition = content.anchoredPosition;
-            Vector2 anchoredPosition2 = base.content.anchoredPosition;
-            content.anchoredPosition = anchoredPosition + new Vector2(0f - anchoredPosition2.x, 0f);
+            content.anchoredPosition = content.anchoredPosition + new Vector2(0f - base.content.anchoredPosition.x, 0f);
         }
         UpdateImageIndex();
         UpdateScale(true);
@@ -127,22 +125,17 @@ public class PositScrollRect : ScrollRect
                 totalWidth += rectTransform.rect.width;
             }
             totalWidth += (float)(m_list.Count - 1) * m_contentGroup.spacing;
-            var content = base.content;
-            float x = totalWidth;
-            Vector2 sizeDelta = base.content.sizeDelta;
-            content.sizeDelta = new Vector2(x, sizeDelta.y);
+            base.content.sizeDelta = new Vector2(totalWidth, base.content.sizeDelta.y);
         }
         else if (vertical)
         {
-            float value2 = 0f;
-            foreach (RectTransform item2 in m_list)
+            float totalHeight = 0f;
+            foreach (RectTransform item in m_list)
             {
-                value2 += item2.rect.height;
+                totalHeight += item.rect.height;
             }
-            value2 += (float)(m_list.Count - 1) * m_contentGroup.spacing;
-            var content2 = content;
-            Vector2 sizeDelta2 = content.sizeDelta;
-            content2.sizeDelta = new Vector2(sizeDelta2.x, value2);
+            totalHeight += (float)(m_list.Count - 1) * m_contentGroup.spacing;
+            content.sizeDelta = new Vector2(content.sizeDelta.x, totalHeight);
         }
         if (horizontal)
         {
@@ -184,8 +177,7 @@ public class PositScrollRect : ScrollRect
         }
         if (horizontal)
         {
-            Vector2 anchoredPosition = content.anchoredPosition;
-            if (anchoredPosition.x - m_rectTransform.rect.width - 5f > (0f - m_list[m_currentElement].rect.width) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
+            if (content.anchoredPosition.x - m_rectTransform.rect.width - 5f > (0f - m_list[m_currentElement].rect.width) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
             {
                 base.StartCoroutine(MoveCoroutine(0f - (m_list[m_currentElement].rect.width + m_contentGroup.spacing)));
                 OnDragStart.SafeInvoke();
@@ -193,8 +185,7 @@ public class PositScrollRect : ScrollRect
         }
         else if (vertical)
         {
-            Vector2 anchoredPosition2 = content.anchoredPosition;
-            if (0f - anchoredPosition2.y - m_rectHeight - 5f > (0f - m_list[m_currentElement].rect.height) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
+            if (0f - content.anchoredPosition.y - m_rectHeight - 5f > (0f - m_list[m_currentElement].rect.height) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
             {
                 base.StartCoroutine(MoveCoroutine(m_list[m_currentElement].rect.height + m_contentGroup.spacing));
                 OnDragStart.SafeInvoke();
@@ -209,28 +200,24 @@ public class PositScrollRect : ScrollRect
         {
             if (horizontal)
             {
-                Vector3 localPosition = base.content.localPosition;
-                m_startDragPos = localPosition.x;
+                m_startDragPos = base.content.localPosition.x;
                 Vector2 move = data.delta / (float)Camera.main.pixelWidth * m_screenWidth;
                 if (Inverted)
                 {
                     move.x *= -1f;
                 }
-                var content = base.content;
-                content.localPosition += new Vector3(move.x, 0f, 0f);
+                base.content.localPosition += new Vector3(move.x, 0f, 0f);
                 m_drag = true;
             }
             else if (vertical)
             {
-                Vector3 pos = content.localPosition;
-                m_startDragPos = pos.y;
+                m_startDragPos = content.localPosition.y;
                 Vector2 scrollOffset = data.delta / (float)Camera.main.pixelWidth * m_screenWidth;
                 if (Inverted)
                 {
                     scrollOffset.y *= -1f;
                 }
-                var content2 = content;
-                content2.localPosition += new Vector3(0f, scrollOffset.y, 0f);
+                content.localPosition += new Vector3(0f, scrollOffset.y, 0f);
                 m_drag = true;
             }
             m_pointerId = data.pointerId;
@@ -249,8 +236,7 @@ public class PositScrollRect : ScrollRect
                 {
                     move.x *= -1f;
                 }
-                var content = base.content;
-                content.localPosition += new Vector3(move.x, 0f, 0f);
+                base.content.localPosition += new Vector3(move.x, 0f, 0f);
                 UpdateScale(false);
             }
             else if (vertical)
@@ -260,8 +246,7 @@ public class PositScrollRect : ScrollRect
                 {
                     scrollOffset.y *= -1f;
                 }
-                var content2 = content;
-                content2.localPosition += new Vector3(0f, scrollOffset.y, 0f);
+                content.localPosition += new Vector3(0f, scrollOffset.y, 0f);
                 UpdateScale(false);
             }
         }
@@ -283,10 +268,8 @@ public class PositScrollRect : ScrollRect
                 {
                     move.x *= -1f;
                 }
-                var content = base.content;
-                content.localPosition += new Vector3(move.x, 0f, 0f);
-                Vector3 localPosition = base.content.localPosition;
-                float dragDistance = localPosition.x - m_startDragPos;
+                base.content.localPosition += new Vector3(move.x, 0f, 0f);
+                float dragDistance = base.content.localPosition.x - m_startDragPos;
                 if (dragDistance > 0f)
                 {
                     if (dragDistance < 100f)
@@ -295,11 +278,9 @@ public class PositScrollRect : ScrollRect
                     }
                     else
                     {
-                        Vector2 anchoredPosition = base.content.anchoredPosition;
-                        if (anchoredPosition.x > 0f)
+                        if (base.content.anchoredPosition.x > 0f)
                         {
-                            Vector2 anchoredPosition2 = base.content.anchoredPosition;
-                            base.StartCoroutine(MoveCoroutine(0f - anchoredPosition2.x));
+                            base.StartCoroutine(MoveCoroutine(0f - base.content.anchoredPosition.x));
                         }
                         else
                         {
@@ -314,63 +295,55 @@ public class PositScrollRect : ScrollRect
                 }
                 else
                 {
-                    Vector2 anchoredPosition3 = base.content.anchoredPosition;
-                    if (anchoredPosition3.x - m_rectTransform.rect.width < (0f - m_list[0].rect.width) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
+                    if (base.content.anchoredPosition.x - m_rectTransform.rect.width < (0f - m_list[0].rect.width) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
                     {
-                        float value2 = (0f - (m_list[0].rect.width + m_contentGroup.spacing)) * (float)(m_list.Count - 1);
-                        Vector2 anchoredPosition4 = base.content.anchoredPosition;
-                        base.StartCoroutine(MoveCoroutine(value2 - anchoredPosition4.x));
+                        float lastPos = (0f - (m_list[0].rect.width + m_contentGroup.spacing)) * (float)(m_list.Count - 1);
+                        base.StartCoroutine(MoveCoroutine(lastPos - base.content.anchoredPosition.x));
                     }
                     else
                     {
-                        int b2 = Mathf.RoundToInt((0f - dragDistance) / (m_list[m_currentElement].rect.width + m_contentGroup.spacing));
-                        base.StartCoroutine(MoveCoroutine((0f - (m_list[m_currentElement].rect.width + m_contentGroup.spacing)) * (float)Mathf.Max(1, b2) - dragDistance));
+                        int steps = Mathf.RoundToInt((0f - dragDistance) / (m_list[m_currentElement].rect.width + m_contentGroup.spacing));
+                        base.StartCoroutine(MoveCoroutine((0f - (m_list[m_currentElement].rect.width + m_contentGroup.spacing)) * (float)Mathf.Max(1, steps) - dragDistance));
                     }
                 }
             }
             else if (vertical)
             {
                 Vector2 scrollOffset = data.delta / (float)Camera.main.pixelWidth * m_screenWidth;
-                var content2 = content;
-                content2.localPosition += new Vector3(0f, scrollOffset.y, 0f);
-                Vector3 pos = content.localPosition;
-                float value3 = pos.y - m_startDragPos;
-                if (value3 > 0f)
+                content.localPosition += new Vector3(0f, scrollOffset.y, 0f);
+                float dragY = content.localPosition.y - m_startDragPos;
+                if (dragY > 0f)
                 {
-                    if (value3 < 100f)
+                    if (dragY < 100f)
                     {
-                        base.StartCoroutine(MoveCoroutine(0f - value3));
+                        base.StartCoroutine(MoveCoroutine(0f - dragY));
                     }
                     else
                     {
-                        Vector2 anchoredPosition5 = content.anchoredPosition;
-                        if (anchoredPosition5.y + m_rectHeight > m_list[m_currentElement].rect.height * (float)m_list.Count + m_contentGroup.spacing * (float)(m_list.Count - 1))
+                        if (content.anchoredPosition.y + m_rectHeight > m_list[m_currentElement].rect.height * (float)m_list.Count + m_contentGroup.spacing * (float)(m_list.Count - 1))
                         {
-                            float value4 = content.rect.height - m_rectHeight;
-                            Vector2 anchoredPosition6 = content.anchoredPosition;
-                            base.StartCoroutine(MoveCoroutine(value4 - anchoredPosition6.y));
+                            float maxY = content.rect.height - m_rectHeight;
+                            base.StartCoroutine(MoveCoroutine(maxY - content.anchoredPosition.y));
                         }
                         else
                         {
-                            base.StartCoroutine(MoveCoroutine(m_list[m_currentElement].rect.height + m_contentGroup.spacing - value3));
+                            base.StartCoroutine(MoveCoroutine(m_list[m_currentElement].rect.height + m_contentGroup.spacing - dragY));
                         }
                     }
                 }
-                else if (value3 > -100f)
+                else if (dragY > -100f)
                 {
-                    base.StartCoroutine(MoveCoroutine(0f - value3));
+                    base.StartCoroutine(MoveCoroutine(0f - dragY));
                 }
                 else
                 {
-                    Vector2 anchoredPosition7 = content.anchoredPosition;
-                    if (anchoredPosition7.y - m_rectHeight < 0f)
+                    if (content.anchoredPosition.y - m_rectHeight < 0f)
                     {
-                        Vector2 anchoredPosition8 = content.anchoredPosition;
-                        base.StartCoroutine(MoveCoroutine(0f - anchoredPosition8.y));
+                        base.StartCoroutine(MoveCoroutine(0f - content.anchoredPosition.y));
                     }
                     else
                     {
-                        base.StartCoroutine(MoveCoroutine(0f - (m_list[m_currentElement].rect.height + m_contentGroup.spacing) - value3));
+                        base.StartCoroutine(MoveCoroutine(0f - (m_list[m_currentElement].rect.height + m_contentGroup.spacing) - dragY));
                     }
                 }
             }
@@ -392,14 +365,11 @@ public class PositScrollRect : ScrollRect
                 {
                     var content = base.content;
                     float x = (0f - (m_list[0].rect.width + m_contentGroup.spacing)) * (float)index;
-                    Vector2 anchoredPosition = base.content.anchoredPosition;
-                    content.anchoredPosition = new Vector2(x, anchoredPosition.y);
+                    content.anchoredPosition = new Vector2(x, base.content.anchoredPosition.y);
                 }
                 else if (vertical)
                 {
-                    var content2 = content;
-                    Vector2 anchoredPosition2 = content.anchoredPosition;
-                    content2.anchoredPosition = new Vector2(anchoredPosition2.x, (m_list[0].rect.height + m_contentGroup.spacing) * (float)index);
+                    content.anchoredPosition = new Vector2(content.anchoredPosition.x, (m_list[0].rect.height + m_contentGroup.spacing) * (float)index);
                 }
                 UpdateImageIndex();
                 UpdateScale(true);
@@ -433,8 +403,7 @@ public class PositScrollRect : ScrollRect
         {
             if (!DynamicSize)
             {
-                Vector2 anchoredPosition = content.anchoredPosition;
-                m_currentElement = Mathf.RoundToInt((0f - anchoredPosition.x) / (m_list[0].rect.width + m_contentGroup.spacing));
+                m_currentElement = Mathf.RoundToInt((0f - content.anchoredPosition.x) / (m_list[0].rect.width + m_contentGroup.spacing));
             }
             else
             {
@@ -442,8 +411,7 @@ public class PositScrollRect : ScrollRect
                 for (int i = 0; i < m_list.Count; i++)
                 {
                     pos += m_list[i].rect.width + m_contentGroup.spacing;
-                    Vector2 anchoredPosition2 = content.anchoredPosition;
-                    if (anchoredPosition2.x > 0f - pos)
+                    if (content.anchoredPosition.x > 0f - pos)
                     {
                         m_currentElement = i;
                         break;
@@ -454,8 +422,7 @@ public class PositScrollRect : ScrollRect
         }
         else if (vertical)
         {
-            Vector2 anchoredPosition3 = content.anchoredPosition;
-            m_currentElement = Mathf.RoundToInt(anchoredPosition3.y / (m_list[0].rect.height + m_contentGroup.spacing));
+            m_currentElement = Mathf.RoundToInt(content.anchoredPosition.y / (m_list[0].rect.height + m_contentGroup.spacing));
         }
         if (!m_drag)
         {
@@ -476,25 +443,23 @@ public class PositScrollRect : ScrollRect
                 float pos = 0f;
                 for (int i = 0; i < m_list.Count; i++)
                 {
-                    float value2 = 0f;
+                    float distance = 0f;
                     if (horizontal)
                     {
                         if (i > 0)
                         {
                             pos += m_list[i - 1].rect.width + m_contentGroup.spacing;
                         }
-                        Vector2 anchoredPosition = content.anchoredPosition;
-                        value2 = Mathf.Abs(anchoredPosition.x + pos);
+                        distance = Mathf.Abs(content.anchoredPosition.x + pos);
                     }
                     else if (vertical)
                     {
                         pos = m_list[i].rect.height * (float)i + m_contentGroup.spacing * (float)i;
-                        Vector2 anchoredPosition2 = content.anchoredPosition;
-                        value2 = Mathf.Abs(anchoredPosition2.y - pos);
+                        distance = Mathf.Abs(content.anchoredPosition.y - pos);
                     }
-                    if (all || value2 < DistForScale + m_list[i].rect.width + m_contentGroup.spacing)
+                    if (all || distance < DistForScale + m_list[i].rect.width + m_contentGroup.spacing)
                     {
-                        float par = (!(value2 < DistForScale)) ? 1f : Mathf.Lerp(Scale, 1f, value2 / DistForScale);
+                        float par = (!(distance < DistForScale)) ? 1f : Mathf.Lerp(Scale, 1f, distance / DistForScale);
                         OnScaleElement.SafeInvoke(i, par, Scale);
                     }
                 }

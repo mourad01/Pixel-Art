@@ -56,8 +56,7 @@ public class RadialParticlesScript : MonoBehaviour
         for (int i = 0; i < numParticles; i++)
         {
             var val = particles[i];
-            Vector3 position = transform.position;
-            val.position = new Vector3(0f, 0f, position.z);
+            val.position = new Vector3(0f, 0f, transform.position.z);
             particles[i].color = new Color(1f, 1f, 1f, 1f);
             particles[i].size = particleSize;
             particles[i].remainingLifetime = processLifetime;
@@ -71,16 +70,13 @@ public class RadialParticlesScript : MonoBehaviour
     {
         float a = 1f;
         float offset = 0f;
-        float value2 = 6.28318548f / (float)numParticles;
+        float step = 6.28318548f / (float)numParticles;
         for (int i = 0; i < numParticles; i++)
         {
-            float value3 = Mathf.Cos(value2 * (float)i) * radius;
-            offset = Mathf.Sin(value2 * (float)i) * radius;
+            float x = Mathf.Cos(step * (float)i) * radius;
+            offset = Mathf.Sin(step * (float)i) * radius;
             var val = particles[i];
-            float x = value3;
-            float y = offset;
-            Vector3 position = transform.position;
-            val.position = new Vector3(x, y, position.z);
+            val.position = new Vector3(x, offset, transform.position.z);
             if (particles[i].remainingLifetime < processLifetime * 0.5f)
             {
                 a = particles[i].remainingLifetime / processLifetime;

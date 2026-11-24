@@ -20,17 +20,17 @@ public class ImageWaiter : MonoBehaviour
             {
                 t += 2f;
             }
-            float value2;
+            float alpha;
             if (t < 1f)
             {
-                value2 = Mathf.Lerp(0.3f, 1f, t);
+                alpha = Mathf.Lerp(0.3f, 1f, t);
             }
             else
             {
                 t -= 1f;
-                value2 = Mathf.Lerp(1f, 0.3f, t);
+                alpha = Mathf.Lerp(1f, 0.3f, t);
             }
-            m_indicators[i].localScale = new Vector3(value2, value2, 1f);
+            m_indicators[i].localScale = new Vector3(alpha, alpha, 1f);
         }
     }
 }

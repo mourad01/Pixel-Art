@@ -8,8 +8,8 @@ public class ScreenFormatScale : MonoBehaviour
     void Start()
     {
         float aspect = (float)Screen.height / (float)Screen.width;
-        float value2 = Mathf.Lerp(m_3x4Scale, m_9x16Scale, (aspect - 1.33f) / 0.449999928f);
-        transform.localScale = new Vector3(value2, value2, 1f);
+        float scale = Mathf.Lerp(m_3x4Scale, m_9x16Scale, (aspect - 1.33f) / 0.449999928f);
+        transform.localScale = new Vector3(scale, scale, 1f);
     }
 }
 

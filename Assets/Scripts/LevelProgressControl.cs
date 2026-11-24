@@ -343,31 +343,31 @@ public class LevelProgressControl : MonoBehaviour
         }
         else if (long.TryParse(str, out savedPeriod))
         {
-            long value2 = hintPotLastPeriod = (savedPeriod ^ CipherKey);
+            hintPotLastPeriod = savedPeriod ^ CipherKey;
         }
-        string string2 = PlayerPrefs.GetString("PuzzleColorKey", "no");
-        long value3 = default(long);
-        if (string2.Equals("no"))
+        string colorKey = PlayerPrefs.GetString("PuzzleColorKey", "no");
+        long savedColorKey = default(long);
+        if (colorKey.Equals("no"))
         {
             PlayerPrefs.SetString("PuzzleColorKey", (3 ^ CipherKey).ToString());
             hintPotCount = 3;
         }
-        else if (long.TryParse(string2, out value3))
+        else if (long.TryParse(colorKey, out savedColorKey))
         {
             if (Debug.isDebugBuild)
             {
-                Debug.Log("PuzzleColorKey : " + value3.ToString());
+                Debug.Log("PuzzleColorKey : " + savedColorKey.ToString());
             }
-            long value4 = value3 ^ CipherKey;
+            long hintPotValue = savedColorKey ^ CipherKey;
             if (Debug.isDebugBuild)
             {
-                Debug.Log("decode : " + value4);
+                Debug.Log("decode : " + hintPotValue);
             }
-            hintPotCount = Convert.ToInt32(value4);
+            hintPotCount = Convert.ToInt32(hintPotValue);
         }
-        string string3 = PlayerPrefs.GetString("PuzzleShapeSeed", "no");
-        long value5 = default(long);
-        if (string3.Equals("no"))
+        string shapeSeed = PlayerPrefs.GetString("PuzzleShapeSeed", "no");
+        long savedShapeSeed = default(long);
+        if (shapeSeed.Equals("no"))
         {
             if (Debug.isDebugBuild)
             {
@@ -376,22 +376,22 @@ public class LevelProgressControl : MonoBehaviour
             PlayerPrefs.SetString("PuzzleShapeSeed", (Convert.ToInt64(false) + 2927 ^ CipherKey).ToString());
             iapUnlockLevels = false;
         }
-        else if (long.TryParse(string3, out value5))
+        else if (long.TryParse(shapeSeed, out savedShapeSeed))
         {
             if (Debug.isDebugBuild)
             {
-                Debug.Log("PuzzleShapeSeed : " + value5.ToString());
+                Debug.Log("PuzzleShapeSeed : " + savedShapeSeed.ToString());
             }
-            long value6 = (value5 ^ CipherKey) - 2927;
+            long unlockLevelsValue = (savedShapeSeed ^ CipherKey) - 2927;
             if (Debug.isDebugBuild)
             {
-                Debug.Log("decode : " + value6);
+                Debug.Log("decode : " + unlockLevelsValue);
             }
-            iapUnlockLevels = Convert.ToBoolean(value6);
+            iapUnlockLevels = Convert.ToBoolean(unlockLevelsValue);
         }
-        string string4 = PlayerPrefs.GetString("PuzzleDiffTrackSeed", "no");
-        long value7 = default(long);
-        if (string4.Equals("no"))
+        string diffTrackSeed = PlayerPrefs.GetString("PuzzleDiffTrackSeed", "no");
+        long savedDiffTrackSeed = default(long);
+        if (diffTrackSeed.Equals("no"))
         {
             if (Debug.isDebugBuild)
             {
@@ -400,18 +400,18 @@ public class LevelProgressControl : MonoBehaviour
             PlayerPrefs.SetString("PuzzleDiffTrackSeed", (Convert.ToInt64(false) + 1066 ^ CipherKey).ToString());
             iapDisableAds = false;
         }
-        else if (long.TryParse(string4, out value7))
+        else if (long.TryParse(diffTrackSeed, out savedDiffTrackSeed))
         {
             if (Debug.isDebugBuild)
             {
-                Debug.Log("PuzzleDiffTrackSeed : " + value7.ToString());
+                Debug.Log("PuzzleDiffTrackSeed : " + savedDiffTrackSeed.ToString());
             }
-            long value8 = (value7 ^ CipherKey) - 1066;
+            long disableAdsValue = (savedDiffTrackSeed ^ CipherKey) - 1066;
             if (Debug.isDebugBuild)
             {
-                Debug.Log("decode : " + value8);
+                Debug.Log("decode : " + disableAdsValue);
             }
-            iapDisableAds = Convert.ToBoolean(value8);
+            iapDisableAds = Convert.ToBoolean(disableAdsValue);
         }
         int number = PlayerPrefs.GetInt("DailyPersonalBest", 0);
         if (number == 0)
@@ -470,8 +470,7 @@ public class LevelProgressControl : MonoBehaviour
         {
             hintPotCount++;
             hintPotLastPeriod = DateTime.Now.Ticks;
-            long period = hintPotLastPeriod;
-            PlayerPrefs.SetString("PuzzleColorId", (period ^ CipherKey).ToString());
+            PlayerPrefs.SetString("PuzzleColorId", (hintPotLastPeriod ^ CipherKey).ToString());
             PlayerPrefs.SetString("PuzzleColorKey", (hintPotCount ^ CipherKey).ToString());
         }
     }

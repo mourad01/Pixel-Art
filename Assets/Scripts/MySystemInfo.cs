@@ -8,21 +8,19 @@ public class MySystemInfo
     {
         get
         {
-            var nullable = s_IsTablet;
-            if (!nullable.HasValue)
+            if (!s_IsTablet.HasValue)
             {
                 s_IsTablet = (DeviceDiagonalSizeInInches() > 6.5f);
             }
-            var isTablet = s_IsTablet;
-            return isTablet.Value;
+            return s_IsTablet.Value;
         }
     }
 
     static float DeviceDiagonalSizeInInches()
     {
         float f = (float)Screen.width / Screen.dpi;
-        float f2 = (float)Screen.height / Screen.dpi;
-        return Mathf.Sqrt(Mathf.Pow(f, 2f) + Mathf.Pow(f2, 2f));
+        float heightInches = (float)Screen.height / Screen.dpi;
+        return Mathf.Sqrt(Mathf.Pow(f, 2f) + Mathf.Pow(heightInches, 2f));
     }
 }
 

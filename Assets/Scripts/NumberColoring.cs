@@ -280,9 +280,9 @@ public class NumberColoring : MonoBehaviour
                 point.x = x / lossyScale.x;
                 float y = point.y;
 
-                Vector2 lossyScale2 = raycastHits[0].collider.transform.lossyScale;
+                Vector2 scale = raycastHits[0].collider.transform.lossyScale;
 
-                point.y = y / lossyScale2.y;
+                point.y = y / scale.y;
                 Debug.Log(mainTexture.width);
                 point.x = (point.x + 1f) / 2f* (float)mainTexture.width;
 
@@ -311,14 +311,14 @@ public class NumberColoring : MonoBehaviour
                 Vector3 lossyScale = raycastHits[0].collider.transform.lossyScale;
                 point.x = x / lossyScale.x;
                 float y = point.y;
-                Vector3 lossyScale2 = raycastHits[0].collider.transform.lossyScale;
-                point.y = y / lossyScale2.y;
+                Vector3 scale = raycastHits[0].collider.transform.lossyScale;
+                point.y = y / scale.y;
                 point.x = (point.x + 1f) / 2f * (float)mainTexture.width;
                 point.y = (point.y + 1f) / 2f * (float)mainTexture.height;
                 Color color = WorkbookModel.Instance.CurrentColorModel.Color;
                 Color pixel = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixel((int)point.x, (int)point.y);
-                Color pixel2 = ((Texture2D)m_resMaterial.mainTexture).GetPixel((int)point.x, (int)point.y);
-                if (pixel != pixel2 && pixel == color)
+                Color resPixel = ((Texture2D)m_resMaterial.mainTexture).GetPixel((int)point.x, (int)point.y);
+                if (pixel != resPixel && pixel == color)
                 {
                     return true;
                 }
@@ -336,9 +336,9 @@ public class NumberColoring : MonoBehaviour
             color = pixel;
             Debug.Log(pixel);
         }
-        Color pixel2 = ((Texture2D)m_resMaterial.mainTexture).GetPixel((int)pixelPos.x, (int)pixelPos.y);
+        Color resPixel = ((Texture2D)m_resMaterial.mainTexture).GetPixel((int)pixelPos.x, (int)pixelPos.y);
         bool pixelEqual = false;
-        if (!(pixel == Color.white) && !(pixel == pixel2))
+        if (!(pixel == Color.white) && !(pixel == resPixel))
         {
             if (pixel == color)
             {
@@ -353,28 +353,28 @@ public class NumberColoring : MonoBehaviour
                 if (WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType == ColorizationModeModel.BrushType.Plural)
                 {
                     int pixelX = (int)pixelPos.x;
-                    int value2 = (int)pixelPos.y;
-                    float value3 = pixelPos.x - (float)pixelX;
-                    float value4 = pixelPos.y - (float)value2;
-                    if (value3 < 0.25f)
+                    int pixelY = (int)pixelPos.y;
+                    float fracX = pixelPos.x - (float)pixelX;
+                    float fracY = pixelPos.y - (float)pixelY;
+                    if (fracX < 0.25f)
                     {
                         return ;
                     }
-                    if (value3 > 0.75f)
+                    if (fracX > 0.75f)
                     {
                         return;
                     }
-                    if (value4 < 0.25f)
+                    if (fracY < 0.25f)
                     {
                         return;
                     }
-                    if (value4 > 0.75f)
+                    if (fracY > 0.75f)
                     {
                         return;
                     }
                 }
                 color.a = 0.5f;
-                Color lhs = pixel2;
+                Color lhs = resPixel;
                 lhs.a = 0.5f;
                 if (!(lhs == color))
                 {
@@ -393,10 +393,10 @@ public class NumberColoring : MonoBehaviour
             VibroWrapper.PlayVibroRight();
             AnalyticsManager.Instance.ElementColored(WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType, true);
             var pixels = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
-            var pixels2 = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
+            var grayPixels = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
             if (WorkbookModel.Instance.SpecBoostersModel.LassoMode)
             {
-                CheckLassoNeighbours(pixels2, pixels, (int)pixelPos.x, (int)pixelPos.y, color);
+                CheckLassoNeighbours(grayPixels, pixels, (int)pixelPos.x, (int)pixelPos.y, color);
                 ((Texture2D)m_resMaterial.mainTexture).SetPixels(pixels);
                 ((Texture2D)m_resMaterial.mainTexture).Apply();
                 WorkbookModel.Instance.SpecBoostersModel.SpendLasso();
@@ -405,20 +405,20 @@ public class NumberColoring : MonoBehaviour
             }
             if (WorkbookModel.Instance.SpecBoostersModel.BombMode)
             {
-                CheckBombNeighbours(pixels2, pixels, (int)pixelPos.x, (int)pixelPos.y, color);
+                CheckBombNeighbours(grayPixels, pixels, (int)pixelPos.x, (int)pixelPos.y, color);
                 ((Texture2D)m_resMaterial.mainTexture).SetPixels(pixels);
                 ((Texture2D)m_resMaterial.mainTexture).Apply();
                 WorkbookModel.Instance.SpecBoostersModel.SpendBomb();
                 AudioManager.Instance.PlayBomb();
                 AnalyticsManager.Instance.BombUsed(WorkbookModel.Instance.SpecBoostersModel.BombCount + 1);
-                foreach (Color color2 in m_colors)
+                foreach (Color c in m_colors)
                 {
-                    CheckColor(color2, pixels, pixels2);
+                    CheckColor(c, pixels, grayPixels);
                 }
             }
             m_colorsCount[color]--;
             m_totalNumbers--;
-            CheckColor(color, pixels, pixels2);
+            CheckColor(color, pixels, grayPixels);
             OnPaintedPixel(color);
 
             if (m_totalNumbers == 0)
@@ -441,8 +441,8 @@ public class NumberColoring : MonoBehaviour
         if (m_grayRenderer.sharedMaterial.mainTexture != null && m_resMaterial.mainTexture != null)
         {
             var pixels = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
-            var pixels2 = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
-            return CheckColor(color, pixels, pixels2, soundEnabled) > 0;
+            var grayPixels = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
+            return CheckColor(color, pixels, grayPixels, soundEnabled) > 0;
         }
 
         return false;
@@ -513,7 +513,7 @@ public class NumberColoring : MonoBehaviour
                 Vector2.right
             };
             var stack = new Stack<Vector2>();
-            var stack2 = new Stack<Vector2>();
+            var nextStack = new Stack<Vector2>();
             bool first = true;
             stack.Push(new Vector2((float)x, (float)y));
             int startGray = Mathf.RoundToInt(color.grayscale * 1000f);
@@ -521,34 +521,34 @@ public class NumberColoring : MonoBehaviour
             {
 
                     Vector2 current = stack.Pop();
-                    int value2 = (int)current.x + (int)current.y * m_width;
-                    int value3 = Mathf.RoundToInt(coloredPixels[value2].grayscale * 1000f);
-                    if (value3 != startGray || first)
+                    int index = (int)current.x + (int)current.y * m_width;
+                    int gray = Mathf.RoundToInt(coloredPixels[index].grayscale * 1000f);
+                    if (gray != startGray || first)
                     {
                         first = false;
-                        coloredPixels[value2] = color;
+                        coloredPixels[index] = color;
                         var neighbours = offsets;
                         for (int i = 0; i < neighbours.Length; i++)
                         {
                             Vector2 neighborOffset = neighbours[i];
-                            int value4 = (int)current.x + (int)neighborOffset.x;
-                            int value5 = (int)current.y + (int)neighborOffset.y;
-                            Vector2 neighborPosition = new Vector2((float)value4, (float)value5);
-                            value2 = value4 + value5 * m_width;
-                            if (value4 >= 0 && value4 < m_width && value5 >= 0 && value5 < m_height)
+                            int nx = (int)current.x + (int)neighborOffset.x;
+                            int ny = (int)current.y + (int)neighborOffset.y;
+                            Vector2 neighborPosition = new Vector2((float)nx, (float)ny);
+                            index = nx + ny * m_width;
+                            if (nx >= 0 && nx < m_width && ny >= 0 && ny < m_height)
                             {
-                                int value6 = Mathf.RoundToInt(coloredPixels[value2].grayscale * 1000f);
-                                int value7 = Mathf.RoundToInt(rightPixels[value2].grayscale * 1000f);
-                                if (value6 != startGray && value7 == startGray)
+                                int neighbourGray = Mathf.RoundToInt(coloredPixels[index].grayscale * 1000f);
+                                int rightGray = Mathf.RoundToInt(rightPixels[index].grayscale * 1000f);
+                                if (neighbourGray != startGray && rightGray == startGray)
                                 {
-                                    stack2.Push(new Vector2((float)value4, (float)value5));
+                                    nextStack.Push(new Vector2((float)nx, (float)ny));
                                 }
                             }
                         }
                     }
 
-                stack = stack2;
-                stack2 = new Stack<Vector2>();
+                stack = nextStack;
+                nextStack = new Stack<Vector2>();
 
             }
         }
@@ -567,7 +567,7 @@ public class NumberColoring : MonoBehaviour
             Vector2.right
         };
         var stack = new Stack<Vector2>();
-        var stack2 = new Stack<Vector2>();
+        var nextStack = new Stack<Vector2>();
         bool first = true;
         stack.Push(new Vector2((float)x, (float)y));
         int startColor = (int)((color.r + color.g * 256f + color.b * 65536f) * 1000f);
@@ -577,35 +577,35 @@ public class NumberColoring : MonoBehaviour
             while (stack.Count > 0)
             {
                 Vector2 current = stack.Pop();
-                int value2 = (int)current.x + (int)current.y * m_width;
-                int value3 = (int)((coloredPixels[value2].r + coloredPixels[value2].g * 256f + coloredPixels[value2].b * 65536f) * 1000f);
-                if (value3 != startColor || first)
+                int index = (int)current.x + (int)current.y * m_width;
+                int colorKey = (int)((coloredPixels[index].r + coloredPixels[index].g * 256f + coloredPixels[index].b * 65536f) * 1000f);
+                if (colorKey != startColor || first)
                 {
                     first = false;
-                    coloredPixels[value2] = color;
+                    coloredPixels[index] = color;
                     historyStep.Add(new ShortVector2((int)current.x, (int)current.y));
                     var neighbours = offsets;
                     for (int i = 0; i < neighbours.Length; i++)
                     {
                         Vector2 neighborOffset = neighbours[i];
-                        int value4 = (int)current.x + (int)neighborOffset.x;
-                        int value5 = (int)current.y + (int)neighborOffset.y;
-                        Vector2 neighborPosition = new Vector2((float)value4, (float)value5);
-                        value2 = value4 + value5 * m_width;
-                        if (value4 >= 0 && value4 < m_width && value5 >= 0 && value5 < m_height)
+                        int nx = (int)current.x + (int)neighborOffset.x;
+                        int ny = (int)current.y + (int)neighborOffset.y;
+                        Vector2 neighborPosition = new Vector2((float)nx, (float)ny);
+                        index = nx + ny * m_width;
+                        if (nx >= 0 && nx < m_width && ny >= 0 && ny < m_height)
                         {
-                            int value6 = (int)((coloredPixels[value2].r + coloredPixels[value2].g * 256f + coloredPixels[value2].b * 65536f) * 1000f);
-                            int value7 = (int)((rightPixels[value2].r + rightPixels[value2].g * 256f + rightPixels[value2].b * 65536f) * 1000f);
-                            if (value6 != startColor && value7 == startColor)
+                            int neighbourColor = (int)((coloredPixels[index].r + coloredPixels[index].g * 256f + coloredPixels[index].b * 65536f) * 1000f);
+                            int rightColor = (int)((rightPixels[index].r + rightPixels[index].g * 256f + rightPixels[index].b * 65536f) * 1000f);
+                            if (neighbourColor != startColor && rightColor == startColor)
                             {
-                                stack2.Push(new Vector2((float)value4, (float)value5));
+                                nextStack.Push(new Vector2((float)nx, (float)ny));
                             }
                         }
                     }
                 }
             }
-            stack = stack2;
-            stack2 = new Stack<Vector2>();
+            stack = nextStack;
+            nextStack = new Stack<Vector2>();
         }
         AddHistoryStep(historyStep);
     }
@@ -618,13 +618,13 @@ public class NumberColoring : MonoBehaviour
         {
             for (int j = -radius; j <= radius; j++)
             {
-                int value2 = x + i;
-                int value3 = y + j;
-                if (value2 >= 0 && value2 < m_width && value3 >= 0 && value3 < m_height && m_bombMatrix[radius + i, radius + j] > 0)
+                int px = x + i;
+                int py = y + j;
+                if (px >= 0 && px < m_width && py >= 0 && py < m_height && m_bombMatrix[radius + i, radius + j] > 0)
                 {
-                    int value4 = value2 + value3 * m_width;
-                    coloredPixels[value4] = rightPixels[value4];
-                    historyStep.Add(new ShortVector2(value2, value3));
+                    int index = px + py * m_width;
+                    coloredPixels[index] = rightPixels[index];
+                    historyStep.Add(new ShortVector2(px, py));
                 }
             }
         }

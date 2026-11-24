@@ -22,10 +22,10 @@ public class NumbersBlock : MonoBehaviour
                 float x = delta.x * ((float)i + 0.55f);
                 float y = delta.y * ((float)j + 0.5f);
                 var instance = Object.Instantiate(m_numberPrefab);
-                var transform2 = instance.transform;
-                transform2.SetParent(transform);
-                transform2.localScale = Vector3.one;
-                transform2.localPosition = new Vector2(x, y);
+                var tr = instance.transform;
+                tr.SetParent(transform);
+                tr.localScale = Vector3.one;
+                tr.localPosition = new Vector2(x, y);
                 var textMesh = instance.GetComponent<TextMesh>();
                 textMesh.text = colors.IndexOf(values[startX + i + (startY + j) * fullWidth]).ToString();
                 textMesh.characterSize = 0.125f * Mathf.Max(delta.x, delta.y);

@@ -602,8 +602,7 @@ public static class AppData
             try
             {
                 DateTime installDate = SystemToolsWrapper.GetInstallDate();
-                DateTime today = DateTime.Today;
-                var t = today - installDate;
+                var t = DateTime.Today - installDate;
                 if (t == new TimeSpan(1, 0, 0, 0))
                 {
                     AnalyticsManager.Instance.LaunchNextDay();

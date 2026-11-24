@@ -18,9 +18,8 @@ public class ScreenSizer : MonoBehaviour
         if (m_canvas != null)
         {
             float minSide = Mathf.Min(m_canvas.rect.width, m_canvas.rect.height);
-            float value2 = minSide;
-            Vector2 sizeDelta = ((RectTransform)transform).sizeDelta;
-            float y = sizeDelta.y;
+            float side = minSide;
+            float y = ((RectTransform)transform).sizeDelta.y;
             if (!m_onlyWidth)
             {
                 y = m_canvas.rect.height;
@@ -38,10 +37,10 @@ public class ScreenSizer : MonoBehaviour
                     {
                         is3x4 = true;
                     }
-                    y = ((!is3x4 || m_extraHeight3x4 != -1f) ? (value2 + m_extraHeight) : (value2 + m_extraHeight3x4));
+                    y = ((!is3x4 || m_extraHeight3x4 != -1f) ? (side + m_extraHeight) : (side + m_extraHeight3x4));
                 }
             }
-            (transform as RectTransform).sizeDelta = new Vector2(value2 - m_extends * 2f, y);
+            (transform as RectTransform).sizeDelta = new Vector2(side - m_extends * 2f, y);
             var rectTransform = transform as RectTransform;
             Vector2 anchoredPosition = (transform as RectTransform).anchoredPosition;
             rectTransform.anchoredPosition = new Vector2(0f, anchoredPosition.y);

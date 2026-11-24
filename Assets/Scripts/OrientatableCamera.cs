@@ -25,9 +25,9 @@ public class OrientatableCamera : MonoBehaviour
             case ScreenOrientation.LandscapeLeft:
             case ScreenOrientation.LandscapeRight:
                 {
-                    float b2 = m_uiSize / maxSide + 0.005f;
-                    b2 = Mathf.Max(0.01f, b2);
-                    CameraRect = new Rect(0f, 0f, 1f - b2, 1f);
+                    float uiWidth = m_uiSize / maxSide + 0.005f;
+                    uiWidth = Mathf.Max(0.01f, uiWidth);
+                    CameraRect = new Rect(0f, 0f, 1f - uiWidth, 1f);
                     break;
                 }
             case ScreenOrientation.Portrait:
@@ -35,9 +35,9 @@ public class OrientatableCamera : MonoBehaviour
                 {
                     float b = m_uiSize / maxSide - 0.005f;
                     b = Mathf.Max(0.01f, b);
-                    float value2 = 0f;
-                    value2 = m_topUiSize / maxSide;
-                    CameraRect = new Rect(0f, b, 1f, 1f - b - value2);
+                    float topPart = 0f;
+                    topPart = m_topUiSize / maxSide;
+                    CameraRect = new Rect(0f, b, 1f, 1f - b - topPart);
                     break;
                 }
         }

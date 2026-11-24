@@ -16,30 +16,30 @@ public static class Helper
 
     public static short[] Double(this short[] array, int width, int height)
     {
-        var array2 = new short[array.Length * 4];
+        var doubled = new short[array.Length * 4];
         int num = width * 2;
-        int value2 = height * 2;
+        int doubleHeight = height * 2;
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                array2[i * 2 + j * 2 * num] = (array2[i * 2 + 1 + j * 2 * num] = (array2[i * 2 + (j * 2 + 1) * num] = (array2[i * 2 + 1 + (j * 2 + 1) * num] = array[i + j * width])));
+                doubled[i * 2 + j * 2 * num] = (doubled[i * 2 + 1 + j * 2 * num] = (doubled[i * 2 + (j * 2 + 1) * num] = (doubled[i * 2 + 1 + (j * 2 + 1) * num] = array[i + j * width])));
             }
         }
-        return array2;
+        return doubled;
     }
 
     public static short[] Around(this short[] array, int width, int height)
     {
-        var array2 = new short[(width + 2) * (height + 2)];
+        var framed = new short[(width + 2) * (height + 2)];
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)
             {
-                array2[i + 1 + (j + 1) * (width + 2)] = array[i + j * width];
+                framed[i + 1 + (j + 1) * (width + 2)] = array[i + j * width];
             }
         }
-        return array2;
+        return framed;
     }
 }
 

@@ -28,8 +28,8 @@ public class ScreenLayoutElement : MonoBehaviour
                 layout.minHeight = minSide - m_extends * 2f;
                 if (m_heightDependsOnWidth)
                 {
-                    var layoutElement = layout;
-                    layout.minHeight = layout.minWidth + m_extraHeight; float value4 = layoutElement.preferredHeight = (layout.minHeight);
+                    layout.minHeight = layout.minWidth + m_extraHeight;
+                    layout.preferredHeight = layout.minHeight;
                 }
             }
         }

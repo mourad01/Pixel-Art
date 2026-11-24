@@ -35,8 +35,8 @@ public class WidthDependsOnHeight : MonoBehaviour
         var layout = base.GetComponent<LayoutElement>();
         if (layout != null)
         {
-            var layoutElement = layout;
-            layout.preferredWidth = height; float value3 = layoutElement.minWidth = (layout.preferredWidth);
+            layout.preferredWidth = height;
+            layout.minWidth = layout.preferredWidth;
         }
     }
 }

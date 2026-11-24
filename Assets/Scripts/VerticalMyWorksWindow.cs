@@ -104,8 +104,7 @@ public class VerticalMyWorksWindow : MonoBehaviour
             Vector2 sizeDelta = ((Component)m_imageElements[0]).GetComponent<RectTransform>().sizeDelta;
             float y = sizeDelta.y;
             float spacing = ((Component)m_scrollRect.content).GetComponent<VerticalLayoutGroup>().spacing;
-            Vector2 sizeDelta2 = m_scrollRect.content.sizeDelta;
-            float scrolled = sizeDelta2.y * (1f - pos.y);
+            float scrolled = m_scrollRect.content.sizeDelta.y * (1f - pos.y);
             int index = Mathf.RoundToInt((scrolled - spacing) / (y + spacing));
             OnSelectIndexHandler(index);
         }
@@ -118,9 +117,9 @@ public class VerticalMyWorksWindow : MonoBehaviour
             Vector2 sizeDelta = ((Component)m_imageElements[0]).GetComponent<RectTransform>().sizeDelta;
             float y = sizeDelta.y;
             float spacing = ((Component)m_scrollRect.content).GetComponent<VerticalLayoutGroup>().spacing;
-            float y2 = (float)index * (y + spacing);
+            float posY = (float)index * (y + spacing);
             Vector2 anchoredPosition = m_scrollRect.content.anchoredPosition;
-            anchoredPosition.y = y2;
+            anchoredPosition.y = posY;
             m_scrollRect.content.anchoredPosition = anchoredPosition;
         }
     }
@@ -170,8 +169,8 @@ public class VerticalMyWorksWindow : MonoBehaviour
         {
             m_lock = true;
             ClearPreviews();
-            var savedWorkData2 = MainManager.Instance.SavedWorksList.LoadById(m_saveIds[m_currentImageIndex]);
-            MainManager.Instance.StartWorkbook(savedWorkData2.ImageInfo, ImageOpenType.Reopened, MainMenuPage.MyWorks, null);
+            var savedWork = MainManager.Instance.SavedWorksList.LoadById(m_saveIds[m_currentImageIndex]);
+            MainManager.Instance.StartWorkbook(savedWork.ImageInfo, ImageOpenType.Reopened, MainMenuPage.MyWorks, null);
         }
         else
         {

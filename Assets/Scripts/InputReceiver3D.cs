@@ -121,23 +121,21 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
             case TapState.Drag:
                 {
                     Vector2 dragOffset = (Vector2)Input.mousePosition - m_mousePrev;
-                    float value2 = dragOffset.x / (float)Screen.width * 180f;
-                    float value3 = dragOffset.y / (float)Screen.width * 180f;
+                    float yawDelta = dragOffset.x / (float)Screen.width * 180f;
+                    float pitchDelta = dragOffset.y / (float)Screen.width * 180f;
                     Quaternion rotation = Camera.main.transform.rotation;
-                    Vector3 eulerAngles = rotation.eulerAngles;
-                    float value4 = eulerAngles.x - value3;
-                    Vector3 eulerAngles2 = rotation.eulerAngles;
-                    float y = eulerAngles2.y + value2;
-                    if (value4 > 180f)
+                    float pitch = rotation.eulerAngles.x - pitchDelta;
+                    float y = rotation.eulerAngles.y + yawDelta;
+                    if (pitch > 180f)
                     {
-                        value4 -= 360f;
+                        pitch -= 360f;
                     }
-                    else if (value4 < -180f)
+                    else if (pitch < -180f)
                     {
-                        value4 += 360f;
+                        pitch += 360f;
                     }
-                    value4 = Mathf.Clamp(value4, -80f, 80f);
-                    rotation.eulerAngles = new Vector3(value4, y, 0f);
+                    pitch = Mathf.Clamp(pitch, -80f, 80f);
+                    rotation.eulerAngles = new Vector3(pitch, y, 0f);
                     Camera.main.transform.rotation = rotation;
                     m_mousePrev = Input.mousePosition;
                     Vector3 centerOffset = Vector3.zero - Camera.main.transform.position;
@@ -145,8 +143,7 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                     {
                         centerOffset = centerOffset / centerOffset.magnitude * 0.2f;
                     }
-                    var transform = Camera.main.transform;
-                    transform.position += centerOffset;
+                    Camera.main.transform.position += centerOffset;
                     break;
                 }
             case TapState.Multitouch:
@@ -155,18 +152,17 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                     if (touches.Length >= 2)
                     {
                         Vector2 pinchOffset = touches[0].position - touches[1].position;
-                        float value5 = Mathf.Sqrt(pinchOffset.x * pinchOffset.x + pinchOffset.y * pinchOffset.y);
-                        float value6 = value5 / m_touchesDelta;
-                        float value = Camera.main.orthographicSize / value6;
+                        float touchDistance = Mathf.Sqrt(pinchOffset.x * pinchOffset.x + pinchOffset.y * pinchOffset.y);
+                        float zoom = touchDistance / m_touchesDelta;
+                        float value = Camera.main.orthographicSize / zoom;
                         value = Mathf.Clamp(value, 3f, 25f);
                         Vector3 pointerWorldPosition = Camera.main.ScreenToWorldPoint(data.position);
-                        Vector3 a3 = Camera.main.ScreenToWorldPoint(m_mousePrev);
+                        Vector3 worldPos = Camera.main.ScreenToWorldPoint(m_mousePrev);
                         Camera.main.orthographicSize = value;
-                        m_touchesDelta = value5;
+                        m_touchesDelta = touchDistance;
                         Vector3 b = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                        Vector3 dir = a3 - b;
-                        var transform2 = Camera.main.transform;
-                        transform2.position += dir;
+                        Vector3 dir = worldPos - b;
+                        Camera.main.transform.position += dir;
                         float z = Mathf.InverseLerp(15f, 5f, value);
                         UnitySingleton<GameController>.Instance.ChangeCamDepthPosition(z);
                         m_mousePrev = Input.mousePosition;
@@ -181,17 +177,15 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                     0f,
                     0f
                 };
-                    Vector2 delta = data.delta;
-                    deltas[1] = Mathf.Abs(delta.x);
-                    Vector2 delta2 = data.delta;
-                    deltas[2] = Mathf.Abs(delta2.y);
+                    deltas[1] = Mathf.Abs(data.delta.x);
+                    deltas[2] = Mathf.Abs(data.delta.y);
                     float steps = Mathf.Max(deltas);
                     Vector2 a = data.delta / steps;
-                    Vector2 a2 = prevPos;
+                    Vector2 start = prevPos;
                     var touchManager = UnityObject.FindObjectOfType<TouchManager>();
                     for (int i = 1; (float)i < steps; i++)
                     {
-                        touchManager.CheckCube(a2 + (float)i * a, false);
+                        touchManager.CheckCube(start + (float)i * a, false);
                     }
                     touchManager.CheckCube(data.position, false);
                     break;
@@ -201,9 +195,7 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     public void OnScroll(PointerEventData data)
     {
-        float orthographicSize = Camera.main.orthographicSize;
-        Vector2 scrollDelta = data.scrollDelta;
-        float value = orthographicSize * Mathf.Pow(1.1f, 0f - scrollDelta.y);
+        float value = Camera.main.orthographicSize * Mathf.Pow(1.1f, 0f - data.scrollDelta.y);
         value = Mathf.Clamp(value, 3f, 25f);
         Vector2 position = data.position;
         Vector3 a = Camera.main.ScreenToWorldPoint(position);

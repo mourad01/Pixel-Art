@@ -23,8 +23,8 @@ public class NumberColoringHelper
         gridMr.sharedMaterial = new Material(Shader.Find("Custom/TilingShader"));
         gridMr.sharedMaterial.mainTexture = mainTexture;
         var grayscaleObject = default(GameObject);
-        var meshFilter2 = default(MeshFilter);
-        CreateOrResetObject("gray_texture", out grayscaleObject, out grayMr, out meshFilter2);
+        var grayFilter = default(MeshFilter);
+        CreateOrResetObject("gray_texture", out grayscaleObject, out grayMr, out grayFilter);
         grayscaleObject.transform.SetParent(gameObject.transform);
         var grayscaleCollider = grayscaleObject.GetComponent<BoxCollider>();
         if (grayscaleCollider == null)
@@ -42,8 +42,8 @@ public class NumberColoringHelper
         CreateTextPrefab(gameObject.transform, out numberPrefab);
         var resultObject = default(GameObject);
         var meshRenderer = default(MeshRenderer);
-        var meshFilter3 = default(MeshFilter);
-        CreateOrResetObject("res_texture", out resultObject, out meshRenderer, out meshFilter3);
+        var resFilter = default(MeshFilter);
+        CreateOrResetObject("res_texture", out resultObject, out meshRenderer, out resFilter);
         resultObject.transform.SetParent(gameObject.transform);
         resultObject.transform.localPosition = new Vector3(0f, 0f, -1f);
         meshRenderer.sharedMaterial = new Material(Shader.Find("tk2d/BlendVertexColor"));

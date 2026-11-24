@@ -256,7 +256,7 @@ public class MouseOrbit : MonoBehaviour
             int height = Screen.height;
             var gUIStyle = new GUIStyle();
             Rect rect = new Rect(0f, 0f, (float)width, (float)(height * 2 / 100));
-            Rect rect2 = new Rect(0f, 200f, (float)width, (float)(height * 2 / 100));
+            Rect labelRect = new Rect(0f, 200f, (float)width, (float)(height * 2 / 100));
             gUIStyle.alignment = TextAnchor.UpperLeft;
             gUIStyle.fontSize = height * 2 / 100;
             gUIStyle.normal.textColor = new Color(0f, 0f, 0.5f, 1f);
@@ -269,7 +269,7 @@ public class MouseOrbit : MonoBehaviour
                 }
             }
             GUI.Label(rect, text, gUIStyle);
-            GUI.Label(rect2, text2, gUIStyle);
+            GUI.Label(labelRect, text2, gUIStyle);
         }
     }
 
@@ -330,7 +330,7 @@ public class MouseOrbit : MonoBehaviour
         {
             isMove = true;
             Vector2 deltaPosition = Input.GetTouch(0).deltaPosition;
-            Vector2 deltaPosition2 = Input.GetTouch(1).deltaPosition;
+            Vector2 secondDelta = Input.GetTouch(1).deltaPosition;
             transform.Translate((0f - deltaPosition.x) * xSpeedMove * distance * 0.02f, (0f - deltaPosition.y) * xSpeedMove * distance * 0.02f, 0f);
         }
     }

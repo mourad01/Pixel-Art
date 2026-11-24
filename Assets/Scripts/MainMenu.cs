@@ -77,11 +77,11 @@ public class MainMenu : BaseWindow
     {
         DateTime dateTime = DateTime.UtcNow.AddHours(-8.0);
         Debug.Log("UTC Now today (PST) : " + dateTime);
-        DateTime dateTime2 = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
-        Debug.Log("UTC Rollover midnight 24 hrs early (PST) : " + dateTime2);
-        DateTime dateTime3 = dateTime2.AddDays(1.0);
-        Debug.Log("UTC Rollover midnight (PST) : " + dateTime3);
-        var timeSpan = dateTime3.Subtract(dateTime);
+        DateTime midnight = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
+        Debug.Log("UTC Rollover midnight 24 hrs early (PST) : " + midnight);
+        DateTime nextMidnight = midnight.AddDays(1.0);
+        Debug.Log("UTC Rollover midnight (PST) : " + nextMidnight);
+        var timeSpan = nextMidnight.Subtract(dateTime);
         Debug.Log("Time until roll over " + timeSpan);
         string str = string.Format("{0:D2}:{1:D2}", timeSpan.Hours, timeSpan.Minutes);
         rolloverTimeText.text = "New Puzzle in " + str;

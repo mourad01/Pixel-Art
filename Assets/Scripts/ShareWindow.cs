@@ -169,9 +169,9 @@ public class ShareWindow : BaseWindow
         {
             if (instButtonImage != null)
             {
-                Color color2 = instButtonImage.color;
-                color2.a = ((!canFbShare) ? 0.5f : 1f);
-                instButtonImage.color = color2;
+                Color instColor = instButtonImage.color;
+                instColor.a = ((!canFbShare) ? 0.5f : 1f);
+                instButtonImage.color = instColor;
             }
         }
     }

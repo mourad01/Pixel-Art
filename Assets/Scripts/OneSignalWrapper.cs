@@ -51,8 +51,7 @@ public class OneSignalWrapper
                 string text = string.Empty;
                 foreach (KeyValuePair<string, object> additionalDatum in res.notification.payload.additionalData)
                 {
-                    string text2 = text;
-                    text = text2 + "[" + additionalDatum.Key + "] = " + additionalDatum.Value + "\r\n";
+                    text = text + "[" + additionalDatum.Key + "] = " + additionalDatum.Value + "\r\n";
                 }
                 UnityDebug.Log("OneSignalNotification: \r\n" + text);
             }

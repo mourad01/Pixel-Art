@@ -109,8 +109,7 @@ public class NewMyWorksWindow : BaseWindow
         int active;
         if (!(velocity.y > 500f))
         {
-            Vector2 velocity2 = m_scrollRect.velocity;
-            active = ((velocity2.y < -500f) ? 1 : 0);
+            active = ((m_scrollRect.velocity.y < -500f) ? 1 : 0);
         }
         else
         {
@@ -123,12 +122,11 @@ public class NewMyWorksWindow : BaseWindow
     {
         if (!m_lock && m_imageGroups.Count > 0)
         {
-            Vector2 sizeDelta = m_scrollRect.content.sizeDelta;
-            float scrolled = sizeDelta.y * (1f - pos.y);
-            int value2 = Mathf.RoundToInt((scrolled - m_delta) / (m_previewSize + m_delta));
-            if (value2 < m_pairsCount)
+            float scrolled = m_scrollRect.content.sizeDelta.y * (1f - pos.y);
+            int index = Mathf.RoundToInt((scrolled - m_delta) / (m_previewSize + m_delta));
+            if (index < m_pairsCount)
             {
-                OnSelectIndexHandler(value2, false);
+                OnSelectIndexHandler(index, false);
             }
             else
             {
@@ -217,8 +215,7 @@ public class NewMyWorksWindow : BaseWindow
     void SelectPreview(string saveId, MyWorkPreview preview)
     {
         var savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
-        var imageInfo = savedWorkData.ImageInfo;
-        AnalyticsManager.Instance.ImageSelected(imageInfo);
+        AnalyticsManager.Instance.ImageSelected(savedWorkData.ImageInfo);
         m_bigPreview.Init((RectTransform)preview.transform, preview.Texture, false, savedWorkData);
     }
 
@@ -270,14 +267,14 @@ public class NewMyWorksWindow : BaseWindow
         if (imageInfo.CustomAccessStatus == AccessStatus.Free)
         {
             m_lock = true;
-            var savedWorkData2 = MainManager.Instance.SavedWorksList.LoadById(saveId);
-            MainManager.Instance.StartWorkbook(savedWorkData2.ImageInfo, ImageOpenType.Reopened, MainMenuPage.MyWorks, null);
+            var savedWork = MainManager.Instance.SavedWorksList.LoadById(saveId);
+            MainManager.Instance.StartWorkbook(savedWork.ImageInfo, ImageOpenType.Reopened, MainMenuPage.MyWorks, null);
         }
         else
         {
             m_lock = true;
-            var savedWorkData3 = MainManager.Instance.SavedWorksList.LoadById(saveId);
-            MainManager.Instance.StartWorkbook(savedWorkData3.ImageInfo, ImageOpenType.Reopened, MainMenuPage.MyWorks, null);
+            var savedWork = MainManager.Instance.SavedWorksList.LoadById(saveId);
+            MainManager.Instance.StartWorkbook(savedWork.ImageInfo, ImageOpenType.Reopened, MainMenuPage.MyWorks, null);
         }
     }
 

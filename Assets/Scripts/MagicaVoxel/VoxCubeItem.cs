@@ -66,10 +66,9 @@ public class VoxCubeItem : MonoBehaviour
         }
         SetNumberByFaceCube(ColorIndex != Loader3D.CurrentIndex);
         _saveCubeRenderer.material.color = (Color);
-        Color color1 = Color;
-        float _grayscale = color1.grayscale + 0.4f;
-        Color color2 = new Color(_grayscale, _grayscale, _grayscale);
-        _saveCubeRenderer.material.SetColor("_BaseColor", color2); 
+        float _grayscale = Color.grayscale + 0.4f;
+        Color gray = new Color(_grayscale, _grayscale, _grayscale);
+        _saveCubeRenderer.material.SetColor("_BaseColor", gray); 
     }
 
     void InitResources()
@@ -88,9 +87,9 @@ public class VoxCubeItem : MonoBehaviour
         material1.SetColor("_Color", UnityEngine.Color.white);
         _saveCubeRenderer.material = material1;
         Shader.Find("Custom/3DColour");
-        var material2 = new Material(shader);
-        material2.SetFloat("_Blend", 0f);
-        material2.SetColor("_Color", UnityEngine.Color.white); 
+        var mat = new Material(shader);
+        mat.SetFloat("_Blend", 0f);
+        mat.SetColor("_Color", UnityEngine.Color.white); 
     }
 
     IEnumerator SetErrorColorByFaceCube()
@@ -176,8 +175,8 @@ public class VoxCubeItem : MonoBehaviour
                 _renderer.material.mainTexture = (SetNormalTextureOnFaceCube());
                 color = Color;
                 float _grayscale = color.grayscale + 0.4f;
-                Color color2 = new Color(_grayscale, _grayscale, _grayscale);
-                _renderer.material.SetColor("_BaseColor", color2);
+                Color gray = new Color(_grayscale, _grayscale, _grayscale);
+                _renderer.material.SetColor("_BaseColor", gray);
                 _renderer.material.SetInt("_Highlighted", 0);
             }
         }

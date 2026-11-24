@@ -101,12 +101,11 @@ public class MyPhotosWindow : BaseWindow
     {
         if (!m_lock && m_imageGroups.Count > 0)
         {
-            Vector2 sizeDelta = m_scrollRect.content.sizeDelta;
-            float scrolled = sizeDelta.y * (1f - pos.y);
-            int value2 = Mathf.RoundToInt((scrolled - m_delta) / (m_previewSize + m_delta));
-            if (value2 < m_pairsCount)
+            float scrolled = m_scrollRect.content.sizeDelta.y * (1f - pos.y);
+            int index = Mathf.RoundToInt((scrolled - m_delta) / (m_previewSize + m_delta));
+            if (index < m_pairsCount)
             {
-                OnSelectIndexHandler(value2, false);
+                OnSelectIndexHandler(index, false);
             }
             else
             {

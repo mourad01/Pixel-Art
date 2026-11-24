@@ -55,10 +55,8 @@ public class FilterWindow : BaseWindow
         }
         else
         {
-            Vector2 min = uvRect.min;
-            float x = (min.x + 1f) / 2f;
-            Vector2 min2 = uvRect.min;
-            uvRect.center = new Vector2(x, (min2.y + 1f) / 2f);
+            float x = (uvRect.min.x + 1f) / 2f;
+            uvRect.center = new Vector2(x, (uvRect.min.y + 1f) / 2f);
         }
         AnalyticsManager.Instance.FilterWindowOpened();
         m_savedWorkData = savedWorkData;
@@ -260,7 +258,8 @@ public class FilterWindow : BaseWindow
         m_currentImageZoom = Mathf.Min(m_currentImageZoom, m_maxZoom);
         Vector2 center = m_image.uvRect.center;
         Rect uvRect = default(Rect);
-        uvRect.height = 1f / m_currentImageZoom; float value3 = uvRect.width = (uvRect.height);
+        uvRect.height = 1f / m_currentImageZoom;
+        uvRect.width = uvRect.height;
         uvRect.center = center;
         m_image.uvRect = uvRect;
         CheckBorders();
@@ -274,7 +273,8 @@ public class FilterWindow : BaseWindow
         m_currentImageZoom = Mathf.Min(m_currentImageZoom, m_maxZoom);
         Vector2 center = m_image.uvRect.center;
         Rect uvRect = default(Rect);
-        uvRect.height = 1f / m_currentImageZoom; float value3 = uvRect.width = (uvRect.height);
+        uvRect.height = 1f / m_currentImageZoom;
+        uvRect.width = uvRect.height;
         uvRect.center = center;
         m_image.uvRect = uvRect;
         CheckBorders();
@@ -297,45 +297,26 @@ public class FilterWindow : BaseWindow
     void CheckBorders()
     {
         Rect uvRect = m_image.uvRect;
-        Vector2 min = uvRect.min;
-        if (min.x < 0f)
+        if (uvRect.min.x < 0f)
         {
-            Vector2 center = uvRect.center;
-            float x = center.x;
-            Vector2 min2 = uvRect.min;
-            float x2 = x - min2.x;
-            Vector2 center2 = uvRect.center;
-            uvRect.center = new Vector2(x2, center2.y);
+            float leftX = uvRect.center.x - uvRect.min.x;
+            uvRect.center = new Vector2(leftX, uvRect.center.y);
         }
-        Vector2 max = uvRect.max;
-        if (max.x > 1f)
+        if (uvRect.max.x > 1f)
         {
-            Vector2 center3 = uvRect.center;
-            float right = center3.x + 1f;
-            Vector2 max2 = uvRect.max;
-            float x3 = right - max2.x;
-            Vector2 center4 = uvRect.center;
-            uvRect.center = new Vector2(x3, center4.y);
+            float right = uvRect.center.x + 1f;
+            float rightX = right - uvRect.max.x;
+            uvRect.center = new Vector2(rightX, uvRect.center.y);
         }
-        Vector2 min3 = uvRect.min;
-        if (min3.y < 0f)
+        if (uvRect.min.y < 0f)
         {
-            Vector2 center5 = uvRect.center;
-            float x4 = center5.x;
-            Vector2 center6 = uvRect.center;
-            float y = center6.y;
-            Vector2 min4 = uvRect.min;
-            uvRect.center = new Vector2(x4, y - min4.y);
+            uvRect.center = new Vector2(uvRect.center.x, uvRect.center.y - uvRect.min.y);
         }
-        Vector2 max3 = uvRect.max;
-        if (max3.y > 1f)
+        if (uvRect.max.y > 1f)
         {
-            Vector2 center7 = uvRect.center;
-            float x5 = center7.x;
-            Vector2 center8 = uvRect.center;
-            float value2 = center8.y + 1f;
-            Vector2 max4 = uvRect.max;
-            uvRect.center = new Vector2(x5, value2 - max4.y);
+            float centerX = uvRect.center.x;
+            float top = uvRect.center.y + 1f;
+            uvRect.center = new Vector2(centerX, top - uvRect.max.y);
         }
         m_image.uvRect = uvRect;
     }

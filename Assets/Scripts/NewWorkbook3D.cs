@@ -126,8 +126,7 @@ public class NewWorkbook3D : BaseWindow
         var bottomPanelsHeight = m_bottomPanels.Sum((RectTransform a) => a.rect.height);
         m_content.anchoredPosition = new Vector2(0f, (topPanelsHeight - bottomPanelsHeight) / 2f);
         m_content.sizeDelta = new Vector2(0f, topPanelsHeight + bottomPanelsHeight);
-        Vector2 sizeDelta2 = m_content.sizeDelta;
-        var sign = (sizeDelta2.y > 0f);
+        var sign = (m_content.sizeDelta.y > 0f);
         var time = 0.5f;
         var sizeSpeed = -m_content.sizeDelta / time;
         var posSpeed = -m_content.anchoredPosition / time;
@@ -164,8 +163,7 @@ public class NewWorkbook3D : BaseWindow
         m_completedPlane.SetActive(true);
         var alphas = m_completePlateElements.Select(delegate (MaskableGraphic a)
         {
-            Color color = a.color;
-            return color.a;
+            return a.color.a;
         }).ToList();
 
         foreach (var completePlateElement in m_completePlateElements)

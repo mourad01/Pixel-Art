@@ -180,8 +180,8 @@ public class CreationWindow : BaseWindow
         }
         else
         {
-            float value2 = (float)m_fullTexture.width / (float)m_fullTexture.height;
-            m_rect = new Rect(0f, (1f - value2) / 2f, 1f / m_currentImageZoom, value2 / m_currentImageZoom);
+            float aspect = (float)m_fullTexture.width / (float)m_fullTexture.height;
+            m_rect = new Rect(0f, (1f - aspect) / 2f, 1f / m_currentImageZoom, aspect / m_currentImageZoom);
         }
         m_rect.center = center;
         CheckBorders();

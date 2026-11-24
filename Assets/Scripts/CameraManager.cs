@@ -108,23 +108,19 @@ public class CameraManager : MonoBehaviour
             {
                 break;
             }
-            float value2 = topOffset;
-            Vector2 anchoredPosition = rectTransform.anchoredPosition;
-            topOffset = value2 + anchoredPosition.y;
+            topOffset = topOffset + rectTransform.anchoredPosition.y;
             rectTransform = (RectTransform)rectTransform.parent;
         }
-        float value3 = 0f - topOffset;
-        Vector2 sizeDelta = m_cameraSpace.sizeDelta;
-        float y = 1f - (value3 + sizeDelta.y) / m_canvasRectTransform.rect.height;
-        Vector2 sizeDelta2 = m_cameraSpace.sizeDelta;
-        float value4 = (sizeDelta2.y + 150f) / m_canvasRectTransform.rect.height;
-        m_camera.rect = new Rect(0f, y, 1f, value4);
+        float top = 0f - topOffset;
+        float y = 1f - (top + m_cameraSpace.sizeDelta.y) / m_canvasRectTransform.rect.height;
+        float camHeight = (m_cameraSpace.sizeDelta.y + 150f) / m_canvasRectTransform.rect.height;
+        m_camera.rect = new Rect(0f, y, 1f, camHeight);
         DefaultRect = m_camera.rect;
-        float a = value4 * (float)Screen.height / (m_camera.rect.width * (float)Screen.width);
+        float a = camHeight * (float)Screen.height / (m_camera.rect.width * (float)Screen.width);
         a = (DefaultOrtoSize = Mathf.Max(a, 1.2f));
         m_camera.orthographicSize = a / m_zoom;
-        float value6 = MySystemInfo.IsTablet ? (m_loupe.Precision / (400f / (m_canvasRectTransform.rect.height * m_camera.rect.height))) : (m_loupe.Precision / (500f / (m_canvasRectTransform.rect.height * m_camera.rect.height)));
-        m_maxZoom = (a / value6);
+        float precision = MySystemInfo.IsTablet ? (m_loupe.Precision / (400f / (m_canvasRectTransform.rect.height * m_camera.rect.height))) : (m_loupe.Precision / (500f / (m_canvasRectTransform.rect.height * m_camera.rect.height)));
+        m_maxZoom = (a / precision);
         Rect rect = default(Rect);
         rect.height = m_camera.orthographicSize * 2f;
         rect.width = (float)Screen.width * m_camera.rect.width * rect.height / ((float)Screen.height * m_camera.rect.height);
@@ -132,10 +128,7 @@ public class CameraManager : MonoBehaviour
         Rect zeroBounds = (!(m_zoom > 1f)) ? m_zeroBounds : m_bounds;
         if (rect.width > zeroBounds.width)
         {
-            Vector2 center = zeroBounds.center;
-            float x = center.x;
-            Vector2 center2 = rect.center;
-            rect.center = new Vector2(x, center2.y);
+            rect.center = new Vector2(zeroBounds.center.x, rect.center.y);
         }
         else
         {
@@ -150,10 +143,7 @@ public class CameraManager : MonoBehaviour
         }
         if (rect.height > zeroBounds.height)
         {
-            Vector2 center3 = rect.center;
-            float x2 = center3.x;
-            Vector2 center4 = zeroBounds.center;
-            rect.center = new Vector2(x2, center4.y);
+            rect.center = new Vector2(rect.center.x, zeroBounds.center.y);
         }
         else
         {
@@ -166,11 +156,7 @@ public class CameraManager : MonoBehaviour
                 rect.center += new Vector2(0f, zeroBounds.yMax - rect.yMax);
             }
         }
-        var transform = m_camera.transform;
-        Vector2 center5 = rect.center;
-        float x3 = center5.x;
-        Vector2 center6 = rect.center;
-        transform.position = new Vector3(x3, center6.y, -10f);
+        m_camera.transform.position = new Vector3(rect.center.x, rect.center.y, -10f);
     }
 
     public void Move(Vector2 deltaPos)

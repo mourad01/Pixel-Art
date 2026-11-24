@@ -22,8 +22,7 @@ public class BrushTypeSwitcher : MonoBehaviour
     IEnumerator ChangeSpriteCoroutine(ColorizationModeModel model)
     {
         Vector2 openedPos = Vector2.zero;
-        Vector2 sizeDelta = ((RectTransform)transform).sizeDelta;
-        Vector2 closedPos = new Vector2(0f, sizeDelta.y);
+        Vector2 closedPos = new Vector2(0f, ((RectTransform)transform).sizeDelta.y);
         float time = 0.1f;
         Vector2 speed = closedPos / time;
         yield return null;
@@ -55,12 +54,10 @@ public class BrushTypeSwitcher : MonoBehaviour
                 m_content.anchoredPosition = openedPos;
                 yield break;
             }
-            var content = m_content;
-            content.anchoredPosition += delta;
+            m_content.anchoredPosition += delta;
             yield return null;
         }
-        var movingContent = m_content;
-        movingContent.anchoredPosition += delta;
+        m_content.anchoredPosition += delta;
         yield return null;
     }
 

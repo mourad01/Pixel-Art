@@ -144,15 +144,15 @@ public class BackgroundMusic : MonoBehaviour
         {
             yield return null;
         }
-        float t2 = 1f;
-        while (t2 > 0f)
+        float fadeVolume = 1f;
+        while (fadeVolume > 0f)
         {
-            m_audioTrackSrc.volume = t2;
-            t2 -= 0.1f;
+            m_audioTrackSrc.volume = fadeVolume;
+            fadeVolume -= 0.1f;
             yield return new WaitForSeconds(0.1f);
         }
-        t2 = 0f;
-        m_audioTrackSrc.volume = t2;
+        fadeVolume = 0f;
+        m_audioTrackSrc.volume = fadeVolume;
         if (pendingTrack != MusicTrackId.NONE)
         {
             var id = pendingTrack;

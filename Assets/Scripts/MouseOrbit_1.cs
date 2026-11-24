@@ -85,9 +85,9 @@ public class MouseOrbit_1 : MonoBehaviour
         if (target && isCanRotate && !isCanZoom)
         {
             float axis = Input.GetAxis("Mouse X");
-            float axis2 = Input.GetAxis("Mouse Y");
+            float axisY = Input.GetAxis("Mouse Y");
             x += axis * xSpeed * distance * 0.02f;
-            y -= axis2 * ySpeed * distance * 0.02f;
+            y -= axisY * ySpeed * distance * 0.02f;
             y = ClampAngle(y, yMinLimit, yMaxLimit);
             Quaternion rotation = Quaternion.Euler(y, x, 0f);
             distance = Mathf.Clamp(distance - Input.GetAxis("Mouse ScrollWheel") * 5f, distanceMinOrto, distanceMaxOrto);

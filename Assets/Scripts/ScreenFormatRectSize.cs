@@ -40,8 +40,8 @@ internal class ScreenFormatRectSize : MonoBehaviour
                 var rectTransform = transform as RectTransform;
                 Vector2 anchorMin = rectTransform.anchorMin;
                 Vector2 anchorMax = rectTransform.anchorMax;
-                var rectTransform2 = rectTransform;
-                Vector2 centerAnchor = rectTransform2.anchorMax = (rectTransform.anchorMin = new Vector2(0.5f, 0.5f));
+                rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+                rectTransform.anchorMax = rectTransform.anchorMin;
                 rectTransform.sizeDelta = new Vector2(m_forceWidth4_3, m_forceHeight4_3);
                 rectTransform.anchorMin = anchorMin;
                 rectTransform.anchorMax = anchorMax;

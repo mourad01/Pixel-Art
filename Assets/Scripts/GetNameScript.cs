@@ -192,22 +192,22 @@ public class GetNameScript : MonoBehaviour
                 //base.StartCoroutine(this.FlashSchedule());
             }
             //LevelProgressControl.control.dailyTodayPersonalBestBeaten = false;
-            int val2 = PlayerPrefs.GetInt("PuzzleStateId", -1);
-            if (val2 == -1)
+            int stateId = PlayerPrefs.GetInt("PuzzleStateId", -1);
+            if (stateId == -1)
             {
-                val2 = 287462819;
-                PlayerPrefs.SetInt("PuzzleStateId", val2);
+                stateId = 287462819;
+                PlayerPrefs.SetInt("PuzzleStateId", stateId);
             }
-            val2 = (val2 - 287462819) / 3;
-            if (val2 > LevelProgressControl.adPeriodInSeconds)
+            stateId = (stateId - 287462819) / 3;
+            if (stateId > LevelProgressControl.adPeriodInSeconds)
             {
                 if (!LevelProgressControl.control.iapDisableAds)
                 {
                     //if (AdsWrapper.Instance.IsVideoAvailable())
                     {
                         //AdsWrapper.Instance.ShowInter(string.Empty);
-                        val2 = 287462819;
-                        PlayerPrefs.SetInt("PuzzleStateId", val2);
+                        stateId = 287462819;
+                        PlayerPrefs.SetInt("PuzzleStateId", stateId);
                         PlayerPrefs.Save();
                     }
                 }
@@ -218,7 +218,7 @@ public class GetNameScript : MonoBehaviour
             }
             else if (Debug.isDebugBuild)
             {
-                Debug.Log("currAccumTime still accumulating... : " + val2.ToString());
+                Debug.Log("currAccumTime still accumulating... : " + stateId.ToString());
             }
         }
     }
@@ -560,19 +560,19 @@ public class GetNameScript : MonoBehaviour
         var parts = todayFilename.Split('-');
         Debug.Log("today day " + parts[0] + " today year " + parts[1]);
         int todayDay = Convert.ToInt32(parts[0]);
-        int val2 = Convert.ToInt32(parts[1]);
-        int val3 = val2 * 365 + todayDay;
-        Debug.Log("Integer version: today day " + todayDay + " today year " + val2 + " total days " + val3);
+        int todayYear = Convert.ToInt32(parts[1]);
+        int todayDays = todayYear * 365 + todayDay;
+        Debug.Log("Integer version: today day " + todayDay + " today year " + todayYear + " total days " + todayDays);
         string @string = PlayerPrefs.GetString("dailytodaydata", "nodata");
         if (@string.Equals("nodata"))
         {
             Debug.Log("CalcDailyPrefDateDiff -> nodata for dailytodaydata. This shouldn't happen");
         }
         var savedParts = @string.Split('-');
-        int val4 = Convert.ToInt32(savedParts[0]);
-        int val5 = Convert.ToInt32(savedParts[1]);
-        int val6 = Convert.ToInt32(savedParts[2]);
-        switch (val3 - (val5 * 365 + val4))
+        int savedDay = Convert.ToInt32(savedParts[0]);
+        int savedYear = Convert.ToInt32(savedParts[1]);
+        int savedState = Convert.ToInt32(savedParts[2]);
+        switch (todayDays - (savedYear * 365 + savedDay))
         {
             case 0:
                 if (Debug.isDebugBuild)
@@ -588,8 +588,8 @@ public class GetNameScript : MonoBehaviour
                 }
                 PlayerPrefs.SetString("dailyereyesterdaydata", PlayerPrefs.GetString("dailyyesterdaydata", "nodata"));
                 PlayerPrefs.SetString("dailyyesterdaydata", PlayerPrefs.GetString("dailytodaydata", "nodata"));
-                string value4 = todayFilename + "-99";
-                PlayerPrefs.SetString("dailytodaydata", value4);
+                string todayData = todayFilename + "-99";
+                PlayerPrefs.SetString("dailytodaydata", todayData);
                 LevelProgressControl.control.dailyTodayPersonalBest = 600f;
                 break;
             }
@@ -600,10 +600,10 @@ public class GetNameScript : MonoBehaviour
                     Debug.Log("daysDiff == 2");
                 }
                 PlayerPrefs.SetString("dailyereyesterdaydata", PlayerPrefs.GetString("dailytodaydata", "nodata"));
-                string value5 = yesterdayFilename + "-99";
-                PlayerPrefs.SetString("dailyyesterdaydata", value5);
-                string value6 = todayFilename + "-99";
-                PlayerPrefs.SetString("dailytodaydata", value6);
+                string yesterdayData = yesterdayFilename + "-99";
+                PlayerPrefs.SetString("dailyyesterdaydata", yesterdayData);
+                string todayData = todayFilename + "-99";
+                PlayerPrefs.SetString("dailytodaydata", todayData);
                 LevelProgressControl.control.dailyTodayPersonalBest = 600f;
                 break;
             }
@@ -616,10 +616,10 @@ public class GetNameScript : MonoBehaviour
                 string value = todayFilename + "-99";
                 PlayerPrefs.SetString("dailytodaydata", value);
                 LevelProgressControl.control.dailyTodayPersonalBest = 600f;
-                string value2 = yesterdayFilename + "-99";
-                PlayerPrefs.SetString("dailyyesterdaydata", value2);
-                string value3 = ereyesterdayFilename + "-99";
-                PlayerPrefs.SetString("dailyereyesterdaydata", value3);
+                string yesterdayData = yesterdayFilename + "-99";
+                PlayerPrefs.SetString("dailyyesterdaydata", yesterdayData);
+                string ereyesterdayData = ereyesterdayFilename + "-99";
+                PlayerPrefs.SetString("dailyereyesterdaydata", ereyesterdayData);
                 break;
             }
         }
@@ -641,21 +641,21 @@ public class GetNameScript : MonoBehaviour
             }
             LevelProgressControl.control.dailyTodayPersonalBest = 600f;
         }
-        string string2 = PlayerPrefs.GetString("dailyyesterdaydata", "nodata");
-        if (string2.Equals("nodata"))
+        string yesterdayData = PlayerPrefs.GetString("dailyyesterdaydata", "nodata");
+        if (yesterdayData.Equals("nodata"))
         {
-            string value2 = yesterdayFilename + "-99";
-            PlayerPrefs.SetString("dailyyesterdaydata", value2);
+            string emptyData = yesterdayFilename + "-99";
+            PlayerPrefs.SetString("dailyyesterdaydata", emptyData);
             if (Debug.isDebugBuild)
             {
                 Debug.Log("yesterday PPref = nodata");
             }
         }
-        string string3 = PlayerPrefs.GetString("dailyereyesterdaydata", "nodata");
-        if (string3.Equals("nodata"))
+        string ereyesterdayData = PlayerPrefs.GetString("dailyereyesterdaydata", "nodata");
+        if (ereyesterdayData.Equals("nodata"))
         {
-            string value3 = ereyesterdayFilename + "-99";
-            PlayerPrefs.SetString("dailyereyesterdaydata", value3);
+            string emptyData = ereyesterdayFilename + "-99";
+            PlayerPrefs.SetString("dailyereyesterdaydata", emptyData);
             if (Debug.isDebugBuild)
             {
                 Debug.Log("ereyesterday PPref = nodata");
@@ -715,11 +715,11 @@ public class GetNameScript : MonoBehaviour
     {
         DateTime dateTime = DateTime.UtcNow.AddHours(-8.0);
         Debug.Log("UTC Now today (PST) : " + dateTime);
-        DateTime dateTime2 = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
-        Debug.Log("UTC Rollover midnight 24 hrs early (PST) : " + dateTime2);
-        DateTime dateTime3 = dateTime2.AddDays(1.0);
-        Debug.Log("UTC Rollover midnight (PST) : " + dateTime3);
-        var timeSpan = dateTime3.Subtract(dateTime);
+        DateTime midnight = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
+        Debug.Log("UTC Rollover midnight 24 hrs early (PST) : " + midnight);
+        DateTime nextMidnight = midnight.AddDays(1.0);
+        Debug.Log("UTC Rollover midnight (PST) : " + nextMidnight);
+        var timeSpan = nextMidnight.Subtract(dateTime);
         Debug.Log("Time until roll over " + timeSpan);
         string str = string.Format("{0:D2}:{1:D2}", timeSpan.Hours, timeSpan.Minutes);
         rolloverTimeText.text = "New Daily Puzzle in " + str;

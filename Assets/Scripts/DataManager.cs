@@ -170,8 +170,7 @@ public class DataManager : MonoBehaviour
         if (string.IsNullOrEmpty(www.error))
         {
             Debug.Log("CheckEmbeddedVersion ok"); 
-            var bytes = www.bytes;
-            var par = Serializer.LoadFromStream<T>((Stream)new MemoryStream(bytes));
+            var par = Serializer.LoadFromStream<T>((Stream)new MemoryStream(www.bytes));
             SystemExtends.SafeInvoke<T>(handler, par);
         }
         else

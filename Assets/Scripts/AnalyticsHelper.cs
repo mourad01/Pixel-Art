@@ -42,8 +42,7 @@ public static class AnalyticsHelper
         }
         if (RuntimePlatformIs("IPhonePlayer"))
         {
-            string deviceModel = SystemInfo.deviceModel;
-            if (deviceModel.Contains("iPad"))
+            if (SystemInfo.deviceModel.Contains("iPad"))
             {
                 return "IOS_TABLET";
             }
@@ -128,8 +127,8 @@ public static class AnalyticsHelper
     static float ScreenSizeInches()
     {
         float widthInches = (float)Screen.width / Screen.dpi;
-        float value2 = (float)Screen.height / Screen.dpi;
-        return (float)Math.Sqrt((double)(widthInches * widthInches + value2 * value2));
+        float heightInches = (float)Screen.height / Screen.dpi;
+        return (float)Math.Sqrt((double)(widthInches * widthInches + heightInches * heightInches));
     }
 
     static bool IsTablet()

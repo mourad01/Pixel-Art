@@ -32,12 +32,12 @@ public class Loupe : MonoBehaviour
             Vector2 size2 = Size;
             float x = size2.x;
             Vector2 size3 = Size;
-            float value2 = Mathf.Sqrt(x * size3.x / 4f - dy * dy);
-            v.x -= value2;
+            float dx = Mathf.Sqrt(x * size3.x / 4f - dy * dy);
+            v.x -= dx;
             v.y = height / 2f - sizeDelta.y / 2f;
             if (v.x - sizeDelta.x / 2f < (0f - width) / 2f)
             {
-                v.x += value2 * 2f;
+                v.x += dx * 2f;
             }
         }
         else
@@ -49,9 +49,9 @@ public class Loupe : MonoBehaviour
         if (x2 + size4.x / 4f > width / 2f)
         {
             float x3 = v.x;
-            float value3 = width / 2f - v.x;
+            float spaceRight = width / 2f - v.x;
             Vector2 size5 = Size;
-            v.x = x3 + (value3 - size5.x / 4f);
+            v.x = x3 + (spaceRight - size5.x / 4f);
         }
         else
         {
@@ -60,14 +60,13 @@ public class Loupe : MonoBehaviour
             if (x4 - size6.x / 4f < (0f - width) / 2f)
             {
                 float x5 = v.x;
-                float value4 = (0f - width) / 2f - v.x;
+                float spaceLeft = (0f - width) / 2f - v.x;
                 Vector2 size7 = Size;
-                v.x = x5 + (value4 + size7.x / 4f);
+                v.x = x5 + (spaceLeft + size7.x / 4f);
             }
         }
         transform.localPosition = v;
-        Vector3 position = m_loupeCamera.position;
-        worldPos.z = position.z;
+        worldPos.z = m_loupeCamera.position.z;
         m_loupeCamera.position = worldPos;
     }
 
@@ -82,8 +81,7 @@ public class Loupe : MonoBehaviour
 
     public void SetLoupePrecision(Camera mainCamera, float koef)
     {
-        float height = ((RectTransform)m_canvas.transform).rect.height;
-        float orthoSize = m_loupeRect.rect.height / (height * mainCamera.rect.height) * mainCamera.orthographicSize;
+        float orthoSize = m_loupeRect.rect.height / (((RectTransform)m_canvas.transform).rect.height * mainCamera.rect.height) * mainCamera.orthographicSize;
         ((Component)m_loupeCamera).GetComponent<Camera>().orthographicSize = orthoSize * koef;
     }
 

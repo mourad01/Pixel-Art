@@ -88,13 +88,13 @@ public class NewInappsWindow : BaseWindow
             var parts = text.Split(new string[1] {
                 "\n"
             }, StringSplitOptions.RemoveEmptyEntries);
-            for (int value2 = 0; value2 < parts.Length; value2++)
+            for (int index = 0; index < parts.Length; index++)
             {
                 string detailsText = string.Empty;
 
-                if (value2 < parts.Length && !parts[value2].Contains("<a>"))
+                if (index < parts.Length && !parts[index].Contains("<a>"))
                 {
-                    detailsText = detailsText + parts[value2] + "\n";
+                    detailsText = detailsText + parts[index] + "\n";
                 }
                 if (!string.IsNullOrEmpty(detailsText))
                 {
@@ -117,9 +117,9 @@ public class NewInappsWindow : BaseWindow
                         lineText.alignment = TextAnchor.MiddleRight;
                     }
                 }
-                if (parts[value2].Contains("<a>"))
+                if (parts[index].Contains("<a>"))
                 {
-                    var match = Regex.Match(parts[value2], "(?<text>[^~]*)<a>(?<url>[^~]+)</a>");
+                    var match = Regex.Match(parts[index], "(?<text>[^~]*)<a>(?<url>[^~]+)</a>");
                     var urlText = UnityObject.Instantiate(m_urlPrefab);
                     urlText.transform.SetParent(m_detailsText.transform.parent);
                     urlText.transform.localScale = Vector2.one;

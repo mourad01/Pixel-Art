@@ -71,9 +71,7 @@ public class FilterWIndowInputReceiver : MonoBehaviour, IPointerDownHandler, IPo
 
     public void OnScroll(PointerEventData data)
     {
-        var onScrolled = OnScrolled;
-        Vector2 scrollDelta = data.scrollDelta;
-        onScrolled.SafeInvoke(scrollDelta.y);
+        OnScrolled.SafeInvoke(data.scrollDelta.y);
     }
 }
 

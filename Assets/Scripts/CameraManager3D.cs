@@ -28,16 +28,12 @@ public class CameraManager3D : MonoBehaviour
             {
                 break;
             }
-            float value2 = topOffset;
-            Vector2 anchoredPosition = rectTransform.anchoredPosition;
-            topOffset = value2 + anchoredPosition.y;
+            topOffset = topOffset + rectTransform.anchoredPosition.y;
             rectTransform = (RectTransform)rectTransform.parent;
         }
-        float value3 = 0f - topOffset;
-        Vector2 sizeDelta = m_cameraSpace.sizeDelta;
-        float y = 1f - (value3 + sizeDelta.y) / m_canvasRectTransform.rect.height;
-        Vector2 sizeDelta2 = m_cameraSpace.sizeDelta;
-        float height = sizeDelta2.y / m_canvasRectTransform.rect.height;
+        float top = 0f - topOffset;
+        float y = 1f - (top + m_cameraSpace.sizeDelta.y) / m_canvasRectTransform.rect.height;
+        float height = m_cameraSpace.sizeDelta.y / m_canvasRectTransform.rect.height;
         m_camera.rect = new Rect(0f, y, 1f, height);
         yield break;
     }

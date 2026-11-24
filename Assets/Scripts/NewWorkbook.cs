@@ -157,8 +157,7 @@ public class NewWorkbook : BaseWindow
         m_completedPlane.SetActive(true);
         var alphas = m_completePlateElements.Select(delegate (MaskableGraphic a)
         {
-            Color color = a.color;
-            return color.a;
+            return a.color.a;
         }).ToList();
 
         foreach(var completePlateElement in m_completePlateElements)

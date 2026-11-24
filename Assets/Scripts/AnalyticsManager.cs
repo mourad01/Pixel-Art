@@ -150,9 +150,9 @@ public class AnalyticsManager : MonoBehaviour
         }
         else
         {
-            foreach (AnalyticsPlatform platform3 in m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
-                platform3.SendEvent(AnalyticsEvents.sub_1option_action, new Dictionary<string, object> {
+                platform.SendEvent(AnalyticsEvents.sub_1option_action, new Dictionary<string, object> {
                     {
                         "action",
                         action
@@ -482,16 +482,16 @@ public class AnalyticsManager : MonoBehaviour
         }
         else if (onStart)
         {
-            foreach (AnalyticsPlatform platform3 in m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
-                platform3.SendEvent(AnalyticsEvents.sub_launch_1option_displayed);
+                platform.SendEvent(AnalyticsEvents.sub_launch_1option_displayed);
             }
         }
         else
         {
-            foreach (AnalyticsPlatform platform4 in m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
-                platform4.SendEvent(AnalyticsEvents.sub_1option_displayed, new Dictionary<string, object> {
+                platform.SendEvent(AnalyticsEvents.sub_1option_displayed, new Dictionary<string, object> {
                     {
                         "placement",
                         placement
@@ -606,9 +606,9 @@ public class AnalyticsManager : MonoBehaviour
                 value = "year";
                 break;
         }
-        foreach (AnalyticsPlatform platform3 in m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
-            platform3.SendEvent(AnalyticsEvents.sub_result, new Dictionary<string, object> {
+            platform.SendEvent(AnalyticsEvents.sub_result, new Dictionary<string, object> {
                 {
                     "sub_type",
                     value

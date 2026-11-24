@@ -202,7 +202,7 @@ public static class MVImporter
         }
         float single = sizePerVox / 2f;
         int quadCount = 0;
-        int value1 = 0;
+        int faceCount = 0;
         for (int i = 0; i < 6; i++)
         {
             for (int j = 0; j < chunk.sizeX; j++)
@@ -217,7 +217,7 @@ public static class MVImporter
                             float single1 = ((float)j - origin.x + 0.5f) * sizePerVox;
                             float single2 = ((float)k - origin.y + 0.5f) * sizePerVox;
                             float single3 = ((float)l - origin.z + 0.5f) * sizePerVox;
-                            int value3 = j;
+                            int end = j;
                             int p = k;
                             int m = l;
                             switch (i)
@@ -249,16 +249,16 @@ public static class MVImporter
                                 case 2:
                                 case 3:
                                     {
-                                        value3 = j + 1;
-                                        while (value3 < chunk.sizeX && chunk.faces[i].colorIndices[value3, k, l] == colorIndice)
+                                        end = j + 1;
+                                        while (end < chunk.sizeX && chunk.faces[i].colorIndices[end, k, l] == colorIndice)
                                         {
-                                            value3++;
+                                            end++;
                                         }
-                                        value3--;
+                                        end--;
                                         for (m = l + 1; m < chunk.sizeZ; m++)
                                         {
                                             bool matchesDepthRow = true;
-                                            for (int o = j; o <= value3; o++)
+                                            for (int o = j; o <= end; o++)
                                             {
                                                 matchesDepthRow = matchesDepthRow & chunk.faces[i].colorIndices[o, k, m] == colorIndice;
                                             }
@@ -273,16 +273,16 @@ public static class MVImporter
                                 case 4:
                                 case 5:
                                     {
-                                        value3 = j + 1;
-                                        while (value3 < chunk.sizeX && chunk.faces[i].colorIndices[value3, k, l] == colorIndice)
+                                        end = j + 1;
+                                        while (end < chunk.sizeX && chunk.faces[i].colorIndices[end, k, l] == colorIndice)
                                         {
-                                            value3++;
+                                            end++;
                                         }
-                                        value3--;
+                                        end--;
                                         for (p = k + 1; p < chunk.sizeY; p++)
                                         {
                                             bool matchesHeightRow = true;
-                                            for (int q = j; q <= value3; q++)
+                                            for (int q = j; q <= end; q++)
                                             {
                                                 matchesHeightRow = matchesHeightRow & chunk.faces[i].colorIndices[q, p, l] == colorIndice;
                                             }
@@ -295,7 +295,7 @@ public static class MVImporter
                                         break;
                                     }
                             }
-                            for (int r = j; r <= value3; r++)
+                            for (int r = j; r <= end; r++)
                             {
                                 for (int s = k; s <= p; s++)
                                 {
@@ -308,56 +308,56 @@ public static class MVImporter
                                     }
                                 }
                             }
-                            int value4 = value3 - j;
-                            int value5 = p - k;
-                            int value6 = m - l;
+                            int quadWidth = end - j;
+                            int quadHeight = p - k;
+                            int quadDepth = m - l;
                             switch (i)
                             {
                                 case 0:
                                     {
                                         vector3s.Add(new Vector3(single1 + single, single2 - single, single3 - single));
-                                        vector3s.Add(new Vector3(single1 + single, single2 + single + sizePerVox * (float)value5, single3 - single));
-                                        vector3s.Add(new Vector3(single1 + single, single2 + single + sizePerVox * (float)value5, single3 + single + sizePerVox * (float)value6));
-                                        vector3s.Add(new Vector3(single1 + single, single2 - single, single3 + single + sizePerVox * (float)value6));
+                                        vector3s.Add(new Vector3(single1 + single, single2 + single + sizePerVox * (float)quadHeight, single3 - single));
+                                        vector3s.Add(new Vector3(single1 + single, single2 + single + sizePerVox * (float)quadHeight, single3 + single + sizePerVox * (float)quadDepth));
+                                        vector3s.Add(new Vector3(single1 + single, single2 - single, single3 + single + sizePerVox * (float)quadDepth));
                                         break;
                                     }
                                 case 1:
                                     {
                                         vector3s.Add(new Vector3(single1 - single, single2 - single, single3 - single));
-                                        vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single + sizePerVox * (float)value6));
-                                        vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)value5, single3 + single + sizePerVox * (float)value6));
-                                        vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)value5, single3 - single));
+                                        vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single + sizePerVox * (float)quadDepth));
+                                        vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)quadHeight, single3 + single + sizePerVox * (float)quadDepth));
+                                        vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)quadHeight, single3 - single));
                                         break;
                                     }
                                 case 2:
                                     {
-                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 + single, single3 - single));
+                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)quadWidth, single2 + single, single3 - single));
                                         vector3s.Add(new Vector3(single1 - single, single2 + single, single3 - single));
-                                        vector3s.Add(new Vector3(single1 - single, single2 + single, single3 + single + sizePerVox * (float)value6));
-                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 + single, single3 + single + sizePerVox * (float)value6));
+                                        vector3s.Add(new Vector3(single1 - single, single2 + single, single3 + single + sizePerVox * (float)quadDepth));
+                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)quadWidth, single2 + single, single3 + single + sizePerVox * (float)quadDepth));
                                         break;
                                     }
                                 case 3:
                                     {
-                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 - single, single3 - single));
-                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 - single, single3 + single + sizePerVox * (float)value6));
-                                        vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single + sizePerVox * (float)value6));
+                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)quadWidth, single2 - single, single3 - single));
+                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)quadWidth, single2 - single, single3 + single + sizePerVox * (float)quadDepth));
+                                        vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single + sizePerVox * (float)quadDepth));
                                         vector3s.Add(new Vector3(single1 - single, single2 - single, single3 - single));
                                         break;
                                     }
                                 case 4:
                                     {
-                                        vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)value5, single3 + single));
+                                        vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)quadHeight, single3 + single));
                                         vector3s.Add(new Vector3(single1 - single, single2 - single, single3 + single));
-                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 - single, single3 + single));
-                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 + single + sizePerVox * (float)value5, single3 + single));
+                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)quadWidth, single2 - single, single3 + single));
+                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)quadWidth, single2 + single + sizePerVox * (float)quadHeight, single3 + single));
                                         break;
                                     }
                                 case 5:
                                     {
-                                        vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)value5, single3 - single));
-                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 + single + sizePerVox * (float)value5, single3 - single));
-                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)value4, single2 - single, single3 - single));
+                                        vector3s.Add(new Vector3(single1 - single, single2 + single + sizePerVox * (float)quadHeight, single3 - single));
+                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)quadWidth, single2 + single + sizePerVox * (float)quadHeight, single3 - single));
+                                        vector3s.Add(new Vector3(single1 + single + sizePerVox * (float)quadWidth, single2 - single, single3 - single));
                                         vector3s.Add(new Vector3(single1 - single, single2 - single, single3 - single));
                                         break;
                                     }
@@ -396,7 +396,7 @@ public static class MVImporter
                                 colors.Clear();
                                 vector3s1.Clear();
                                 nums.Clear();
-                                value1 += quadCount;
+                                faceCount += quadCount;
                                 quadCount = 0;
                             }
                         }
@@ -413,9 +413,9 @@ public static class MVImporter
             mesh.triangles = (nums.ToArray());
             mesh.uv = (vector2s.ToArray());
             meshes.Add(mesh);
-            value1 += quadCount;
+            faceCount += quadCount;
         }
-        Debug.Log(string.Format("[MVImport] Mesh generated, total quads {0}", value1));
+        Debug.Log(string.Format("[MVImport] Mesh generated, total quads {0}", faceCount));
         return meshes.ToArray();
     }
 
@@ -559,34 +559,34 @@ public static class MVImporter
                 else
                 {
                     int chunkSize = binaryReader.ReadInt32();
-                    int value1 = binaryReader.ReadInt32();
+                    int childrenSize = binaryReader.ReadInt32();
                     binaryReader.ReadBytes(chunkSize);
-                    int value2 = 0;
-                    while (value2 < value1)
+                    int readSize = 0;
+                    while (readSize < childrenSize)
                     {
                         numArray = binaryReader.ReadBytes(4);
                         if (numArray[0] == 80 && numArray[1] == 65 && numArray[2] == 67 && numArray[3] == 75)
                         {
-                            int value3 = binaryReader.ReadInt32();
-                            int value4 = binaryReader.ReadInt32();
+                            int contentSize = binaryReader.ReadInt32();
+                            int childSize = binaryReader.ReadInt32();
                             binaryReader.ReadInt32();
-                            value2 = value2 + value3 + value4 + 12;
+                            readSize = readSize + contentSize + childSize + 12;
                         }
                         else if (numArray[0] == 83 && numArray[1] == 73 && numArray[2] == 90 && numArray[3] == 69)
                         {
-                            value2 += ReadSizeChunk(binaryReader, _white);
+                            readSize += ReadSizeChunk(binaryReader, _white);
                         }
                         else if (numArray[0] == 88 && numArray[1] == 89 && numArray[2] == 90 && numArray[3] == 73)
                         {
-                            value2 += ReadVoxelChunk(binaryReader, _white.voxelChunk);
+                            readSize += ReadVoxelChunk(binaryReader, _white.voxelChunk);
                         }
                         else if (numArray[0] != 82 || numArray[1] != 71 || numArray[2] != 66 || numArray[3] != 65)
                         {
                             Debug.LogWarning(string.Concat("[MVImport] Chunk ID not recognized, got ", Encoding.ASCII.GetString(numArray)));
-                            int value5 = binaryReader.ReadInt32();
-                            int value6 = binaryReader.ReadInt32();
-                            binaryReader.ReadBytes(value5 + value6);
-                            value2 = value2 + value5 + value6 + 12;
+                            int skipContent = binaryReader.ReadInt32();
+                            int skipChildren = binaryReader.ReadInt32();
+                            binaryReader.ReadBytes(skipContent + skipChildren);
+                            readSize = readSize + skipContent + skipChildren + 12;
                         }
                         else
                         {
@@ -595,7 +595,7 @@ public static class MVImporter
                             {
                                 _white.palatte[i] = Color.white;
                             }
-                            value2 += ReadPalattee(binaryReader, _white.palatte);
+                            readSize += ReadPalattee(binaryReader, _white.palatte);
                             //if (MVImporter.ColorsPalleteLoadComplete == null)
                             //{
                             //	continue;
@@ -625,23 +625,23 @@ public static class MVImporter
     static int ReadPalattee(BinaryReader br, Color[] colors)
     {
         int chunkSize = br.ReadInt32();
-        int value1 = br.ReadInt32();
+        int childrenSize = br.ReadInt32();
         for (int i = 0; i < 256; i++)
         {
             colors[i] = new Color((float)br.ReadByte() / 255f, (float)br.ReadByte() / 255f, (float)br.ReadByte() / 255f, (float)br.ReadByte() / 255f);
         }
-        if (value1 > 0)
+        if (childrenSize > 0)
         {
-            br.ReadBytes(value1);
+            br.ReadBytes(childrenSize);
             Debug.LogWarning("[MVImporter] Nested chunk not supported");
         }
-        return chunkSize + value1 + 12;
+        return chunkSize + childrenSize + 12;
     }
 
     static int ReadSizeChunk(BinaryReader br, MVMainChunk mainChunk)
     {
         int chunkSize = br.ReadInt32();
-        int value1 = br.ReadInt32();
+        int childrenSize = br.ReadInt32();
         mainChunk.sizeX = br.ReadInt32();
         mainChunk.sizeZ = br.ReadInt32();
         mainChunk.sizeY = br.ReadInt32();
@@ -650,31 +650,31 @@ public static class MVImporter
             voxels = new byte[mainChunk.sizeX, mainChunk.sizeY, mainChunk.sizeZ]
         };
         Debug.Log(string.Format("[MVImporter] Voxel Size {0}x{1}x{2}", mainChunk.sizeX, mainChunk.sizeY, mainChunk.sizeZ));
-        if (value1 > 0)
+        if (childrenSize > 0)
         {
-            br.ReadBytes(value1);
+            br.ReadBytes(childrenSize);
             Debug.LogWarning("[MVImporter] Nested chunk not supported");
         }
-        return chunkSize + value1 + 12;
+        return chunkSize + childrenSize + 12;
     }
 
     static int ReadVoxelChunk(BinaryReader br, MVVoxelChunk chunk)
     {
         int chunkSize = br.ReadInt32();
-        int value1 = br.ReadInt32();
-        int value2 = br.ReadInt32();
-        for (int i = 0; i < value2; i++)
+        int childrenSize = br.ReadInt32();
+        int voxelCount = br.ReadInt32();
+        for (int i = 0; i < voxelCount; i++)
         {
-            int value3 = br.ReadByte();
-            int value4 = br.ReadByte();
-            int value5 = br.ReadByte();
-            chunk.voxels[value3, value5, value4] = br.ReadByte();
+            int vx = br.ReadByte();
+            int vy = br.ReadByte();
+            int vz = br.ReadByte();
+            chunk.voxels[vx, vz, vy] = br.ReadByte();
         }
-        if (value1 > 0)
+        if (childrenSize > 0)
         {
-            br.ReadBytes(value1);
+            br.ReadBytes(childrenSize);
             Debug.LogWarning("[MVImporter] Nested chunk not supported");
         }
-        return chunkSize + value1 + 12;
+        return chunkSize + childrenSize + 12;
     }
 }

@@ -39,22 +39,22 @@ public class LockitInfo
     {
         if (dict != null)
         {
-            foreach (object value2 in dict.Values)
+            foreach (object entry in dict.Values)
             {
-                var dictionary = value2 as Dictionary<string, object>;
+                var dictionary = entry as Dictionary<string, object>;
                 string key = string.Empty;
-                foreach (string key6 in dictionary.Keys)
+                foreach (string field in dictionary.Keys)
                 {
-                    switch (key6)
+                    switch (field)
                     {
                         case "key":
-                            key = (string)dictionary[key6];
+                            key = (string)dictionary[field];
                             m_dict.Add(key, new Dictionary<SystemLanguage, string>());
                             break;
                         default:
                             {
-                                var systemLanguage = (SystemLanguage)Enum.Parse(typeof(SystemLanguage), key6);
-                                string value = (string)dictionary[key6];
+                                var systemLanguage = (SystemLanguage)Enum.Parse(typeof(SystemLanguage), field);
+                                string value = (string)dictionary[field];
                                 m_dict[key].Add(systemLanguage, value);
                                 break;
                             }
@@ -63,15 +63,15 @@ public class LockitInfo
                     }
                 }
             }
-            string key3 = "help_text";
-            string key4 = "how_to_cancel_android";
-            if (m_dict.ContainsKey(key3))
+            string helpKey = "help_text";
+            string cancelKey = "how_to_cancel_android";
+            if (m_dict.ContainsKey(helpKey))
             {
-                var keys = m_dict[key3].Keys.ToList();
+                var keys = m_dict[helpKey].Keys.ToList();
                 for (int i = 0; i < keys.Count; i++)
                 {
-                    var key5 = keys[i];
-                    m_dict[key3][key5] = m_dict[key3][key5].Replace("<how_to_cancel/>", m_dict[key4][key5]);
+                    var locale = keys[i];
+                    m_dict[helpKey][locale] = m_dict[helpKey][locale].Replace("<how_to_cancel/>", m_dict[cancelKey][locale]);
                 }
             }
         }

@@ -64,13 +64,13 @@ public class CustomVerticalLayoutGroup : MonoBehaviour
             }
         }
         float childsHeight = m_childs.Sum((RectTransform a) => a.rect.height);
-        float value2 = m_rectHeight - childsHeight;
-        float value3 = value2 / (float)m_childs.Count;
-        float value4 = 0f;
+        float freeSpace = m_rectHeight - childsHeight;
+        float gap = freeSpace / (float)m_childs.Count;
+        float y = 0f;
         for (int k = 0; k < m_childs.Count; k++)
         {
-            m_childs[k].anchoredPosition = new Vector2(0f, (0f - value3) * ((float)k + 0.5f) - value4 - m_childs[k].rect.height / 2f);
-            value4 += m_childs[k].rect.height;
+            m_childs[k].anchoredPosition = new Vector2(0f, (0f - gap) * ((float)k + 0.5f) - y - m_childs[k].rect.height / 2f);
+            y += m_childs[k].rect.height;
         }
     }
 }
