@@ -49,6 +49,7 @@ public class CreationWindowInputReceiver : MonoBehaviour, IPointerDownHandler, I
                     {
                         Vector2 dir = touches[0].position - touches[1].position;
                         float touchDistance = Mathf.Sqrt(dir.x * dir.x + dir.y * dir.y);
+                        //zoom factor is the ratio of new and old finger distance
                         float par = touchDistance / m_touchesDelta;
                         OnZoomed.SafeInvoke(par);
                         m_touchesDelta = touchDistance;

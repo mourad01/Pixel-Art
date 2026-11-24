@@ -81,6 +81,7 @@ public class MVVoxModel : MonoBehaviour
                 {
                     material.mainTexture = (mVMainChunk.PaletteToTexture());
                 }
+                //one merged mesh or one object per voxel, offset by meshOrigin if set
                 if (!asIndividualVoxels)
                 {
                     if (meshOrigin == null)

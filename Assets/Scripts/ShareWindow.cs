@@ -80,12 +80,14 @@ public class ShareWindow : BaseWindow
 
     void ReinitImage(bool withRect)
     {
+        //saved coloring preview goes in _ResTex on top of the source image
         var resTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
         resTex.filterMode = FilterMode.Point;
         resTex.LoadImage(m_savedWorkData.Preview);
         m_image.material.SetTexture("_ResTex", resTex);
         m_image.enabled = true;
         m_filterImage.enabled = false;
+        //library images have a url, user photos are loaded by id
         if (m_savedWorkData.ImageInfo.Url != null)
         {
             DataManager.Instance.GetImageAsset(m_savedWorkData.ImageInfo, delegate (bool res, Texture2D tex)
@@ -95,6 +97,7 @@ public class ShareWindow : BaseWindow
                 {
                     m_image.material.SetInt("_HideMainTex", 1);
                 }
+                //filter overlay repeated once per image pixel
                 var filter = MainManager.Instance.FilterManager.GetFilter(m_savedWorkData.FilterId);
                 if (filter != null)
                 {
@@ -110,6 +113,7 @@ public class ShareWindow : BaseWindow
                 {
                     m_filterImage.enabled = false;
                 }
+                //keep the saved visible area of the work
                 if (withRect)
                 {
                     m_image.uvRect = m_savedWorkData.UvRect1;
@@ -152,6 +156,7 @@ public class ShareWindow : BaseWindow
 
     void UpdateSocialButtons()
     {
+        //unavailable share buttons are disabled and drawn at half alpha
         bool canFbShare = ShareWrapper.CanFbShare();
         m_facebookButton.interactable = canFbShare;
         foreach (Image facebookButtonImage in m_facebookButtonImages)
@@ -208,6 +213,7 @@ public class ShareWindow : BaseWindow
         }
         else
         { 
+            //write the filtered image as png then copy it to the gallery
             string filePath = AppPathsConfig.SavedImagesPath + m_savedWorkData.Id + ".png";
             MainManager.Instance.FreeImageSaver.GetFilteredImage(m_savedWorkData, delegate (byte[] bytes)
             {
@@ -304,6 +310,7 @@ public class ShareWindow : BaseWindow
     public void ReturnToMenu()
     {
         AudioManager.Instance.PlayClick();
+        //in the library just close, from a coloring scene go back to the library
         if (SceneManager.GetActiveScene().name == "LibraryScene")
         {
             WindowManager.Instance.CloseMe(this);
@@ -334,6 +341,7 @@ public class ShareWindow : BaseWindow
     IEnumerator ShowRateUsIfNeedCoroutine(RateUsReason reason)
     {
         m_waitTimeForRateUs = true;
+        //wait for the popup to close, then 1 more second
         while (m_popup.isActiveAndEnabled)
         {
             yield return null;

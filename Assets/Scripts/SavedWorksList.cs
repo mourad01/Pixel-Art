@@ -12,6 +12,7 @@ public class SavedWorksList
 
     public static string Ext = ".dat";
 
+    //image id -> all saves made on that image
     Dictionary<string, List<SavedWorkInfo>> m_dict;
     List<PhotoInfo> m_photoList;
 
@@ -50,6 +51,7 @@ public class SavedWorksList
 
     void CheckSavedWorks()
     {
+        //add any .dat save on disk that is missing from the index
         var files = Directory.GetFiles(AppPathsConfig.SavesPath);
         var saveFiles = files;
         foreach (string text in saveFiles)
@@ -113,6 +115,7 @@ public class SavedWorksList
 
     public List<string> GetSaves()
     {
+        // newest saves first
         return (from b in m_dict.SelectMany((KeyValuePair<string, List<SavedWorkInfo>> a) => a.Value)
                 orderby b.DateTime descending
                 select b into c
@@ -165,6 +168,7 @@ public class SavedWorksList
             savedWorkData = new SavedWorkData();
         }
         savedWorkData.Init(imageInfo, preview, completed, null);
+        //existing save is overwritten, a new one takes the image id as file name
         if (!string.IsNullOrEmpty(savedWorkData.FileName))
         {
             Serializer.SaveToFile(savedWorkData.FullFileName, savedWorkData, true);
@@ -189,6 +193,7 @@ public class SavedWorksList
             m_dict.Add(imageInfo.Id, new List<SavedWorkInfo>());
         }
         var savedWorkInfo = m_dict[imageInfo.Id].FirstOrDefault((SavedWorkInfo a) => a.Id == savedWorkData.Id);
+        //touch the date so this save shows first
         if (savedWorkInfo != null)
         {
             savedWorkInfo.DateTime = DateTime.Now;
@@ -219,6 +224,7 @@ public class SavedWorksList
         }
         else
         {
+            //file name taken, find a free id_N name
             int index = 0;
             while (File.Exists(AppPathsConfig.SavesPath + imageInfo.Id + "_" + index.ToString() + Ext))
             {

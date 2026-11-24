@@ -64,6 +64,7 @@ public abstract class BaseWindow : MonoBehaviour
     public virtual void InitCanvas(Canvas canvas, bool setClosePosition = true)
     {
         m_canvas = canvas;
+        //closed position sits 50 px outside the canvas edge
         switch (m_openStyle)
         {
             case WindowOpenStyle.None:
@@ -232,8 +233,10 @@ public abstract class BaseWindow : MonoBehaviour
 
         while (true)
         {
+            // cap delta time so a slow frame does not jump too far
             var delta = speed * Mathf.Min(0.05f, Time.deltaTime);
             var newSign = (RectTransform.anchoredPosition.x + delta > m_openedPosition.x);
+            //stop once the window passes its opened position
             if (newSign != sign)
             {
                 RectTransform.anchoredPosition = m_openedPosition;
@@ -352,6 +355,7 @@ public abstract class BaseWindow : MonoBehaviour
                 OnClose.SafeInvoke();
                 yield break; 
             } 
+            // no yield here so it closes in the same frame
             RectTransform.anchoredPosition += new Vector2(0f, delta);
         }
     }

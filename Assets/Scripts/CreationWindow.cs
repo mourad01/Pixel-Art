@@ -55,6 +55,7 @@ public class CreationWindow : BaseWindow
 
     void OnUpdateTextureHandler(Texture2D tex, float angle)
     {
+        //live camera preview is pixelated by the quality slider
         GameHelper.CamScaleTexture(tex, 40, 1f, m_qualitySlider.value);
         m_image.rectTransform.localEulerAngles = new Vector3(0f, 0f, angle);
         m_image.texture = tex;
@@ -77,6 +78,7 @@ public class CreationWindow : BaseWindow
     public void PhotoButtonClicked()
     {
         var texture2D = m_cameraPlugin.TakeSnapshot();
+        // shrink big snapshots to fit in 1024 px
         if (texture2D.width > m_maxSize || texture2D.height > m_maxSize)
         {
             float aspect = (float)texture2D.width / (float)texture2D.height;
@@ -92,6 +94,7 @@ public class CreationWindow : BaseWindow
         m_firstButtonsBlock.SetActive(false);
         m_cameraPlugin.Stop();
         m_image.rectTransform.localEulerAngles = Vector3.zero;
+        //2 = Camera, 3 = Selfie
         m_currentSource = (PhotoSource)((!m_cameraPlugin.CurrentDevice.isFrontFacing) ? 2 : 3);
     }
 
@@ -173,6 +176,7 @@ public class CreationWindow : BaseWindow
         m_currentImageZoom = Mathf.Max(1f, m_currentImageZoom);
         m_currentImageZoom = Mathf.Min(m_currentImageZoom, m_maxZoom);
         Vector2 center = m_rect.center;
+        // crop rect is a square on the short side of the photo
         if (m_fullTexture.width > m_fullTexture.height)
         {
             float aspect = (float)m_fullTexture.height / (float)m_fullTexture.width;
@@ -189,6 +193,7 @@ public class CreationWindow : BaseWindow
 
     void CheckBorders()
     { 
+        //keep the crop rect inside the photo
         if (m_rect.min.x < 0f)
         {    
             m_rect.center = new Vector2(m_rect.center.x - m_rect.min.x, m_rect.center.y);
@@ -225,6 +230,7 @@ public class CreationWindow : BaseWindow
         }
         else
         {
+            // copy the cropped square out of the full photo
             int x = (int)(m_rect.xMin * (float)m_fullTexture.width);
             int y = (int)(m_rect.yMin * (float)m_fullTexture.height);
             int a = (int)(m_rect.width * (float)m_fullTexture.width);
@@ -251,6 +257,7 @@ public class CreationWindow : BaseWindow
     {
         string text = Guid.NewGuid().ToString();
         var texture2D = (Texture2D)m_image.texture;
+        //quality slider picks between 15 and 50 colors
         int colorCount = (int)Mathf.Lerp(15f, 50f, (m_qualitySlider.value - m_qualitySlider.minValue) / (m_qualitySlider.maxValue - m_qualitySlider.minValue));
         if (TextureColoring.CheckToNeedConverColor(texture2D, colorCount))
         {
@@ -270,6 +277,7 @@ public class CreationWindow : BaseWindow
 
     public override bool Close()
     {
+        // back from the preview returns to the camera instead of closing
         if (m_okButtonsBlock.activeSelf)
         {
             m_okButtonsBlock.SetActive(false);

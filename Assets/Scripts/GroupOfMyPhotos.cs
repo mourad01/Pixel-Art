@@ -111,6 +111,7 @@ public class GroupOfMyPhotos : MonoBehaviour
     public void ClearPreview(int index)
     {
         m_previews[index].gameObject.SetActive(false);
+        //whole row empty, hide it
         if (m_previews.All((PhotoPreview a) => !a.gameObject.activeSelf))
         {
             Index = -1;
@@ -118,6 +119,7 @@ public class GroupOfMyPhotos : MonoBehaviour
     }
     IEnumerator LoadIconsCoroutine()
     {
+        // one icon per frame to avoid a hitch
         for(int i = 0; i < m_previews.Count; i++)
         {
             if (m_previews[i].Inited)

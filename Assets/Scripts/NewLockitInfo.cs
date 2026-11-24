@@ -23,6 +23,7 @@ public class NewLockitInfo
                     string text = m_dict[key][locale];
                     if (!string.IsNullOrEmpty(text))
                     {
+                        //arabic texts come with reversed tags and urls, fix them back
                         if (locale == "ar")
                         {
                             text = text.Replace("[[[", string.Empty);
@@ -35,6 +36,7 @@ public class NewLockitInfo
                         return text;
                     }
                 }
+                // no exact match, try shorter locales like pt-BR then pt
                 while (locale.Length > 3)
                 {
                     if (!locale.Contains("-"))
@@ -67,6 +69,7 @@ public class NewLockitInfo
                     translation = translation.Replace("//:https", "https://");
                     break;
                 }
+                //last try is the default locale, else return the key itself
                 locale = LocalizationManager.Instance.DefaultLocale;
                 if (m_dict[key].ContainsKey(locale))
                 {
@@ -95,6 +98,7 @@ public class NewLockitInfo
             var doc = new XmlDocument();
             doc.LoadXml(text);
 
+            // each TextPair holds a key and one Text per locale
             var pairs = doc.GetElementsByTagName("TextPair");
             foreach (XmlElement pair in pairs)
             {

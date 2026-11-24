@@ -130,6 +130,7 @@ internal class GameScene : BaseScene
         VoxLoad(vox.Vox);
         vox.Init(load3D.MV);
 
+        //video and save cameras use the view saved with the model
         Vector3 position = vox.Position.ToVector3();
         videoCamera.transform.position = position;
         saveCamera.transform.position = position; 
@@ -142,6 +143,7 @@ internal class GameScene : BaseScene
         Camera.main.orthographicSize = vox.CamSize / 1.5f;
         Camera.main.transform.position = Vector3.zero;
         Camera.main.transform.rotation = vox.Rotation.ToQuaternion();
+        // ortho size 15..5 becomes 0..1 for the camera depth
         float z = Mathf.InverseLerp(15f, 5f, Camera.main.orthographicSize);
         UnitySingleton<GameController>.Instance.ChangeCamDepthPosition(z);
     }
@@ -179,6 +181,7 @@ internal class GameScene : BaseScene
         m_imageInfo = info;
         yield return null;
 
+        //both branches continue, so the init below is never reached
         while (true)
         {
             if (m_stopInit)
@@ -254,6 +257,7 @@ internal class GameScene : BaseScene
             if (tutorialWindow != null)
             {
                 tutorialWindow.Init("picture", "3D");
+                // hide the scene while the tutorial is open
                 gameObject.SetActive(false);
                 tutorialWindow.OnStartClose += delegate
                 {

@@ -78,6 +78,7 @@ public class NewInappsWindow : BaseWindow
             base.StartCoroutine(SetContentSizeCoroutine());
             m_textScrollRect.verticalNormalizedPosition = 1f;
             string text = LocalizationManager.Instance.GetString("details_text_android");
+            //wrap every url in <a></a> on its own line, from the end so indexes stay valid
             var matchCollection = Regex.Matches(text, "(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
             for (int i = matchCollection.Count - 1; i >= 0; i--)
             {
@@ -96,6 +97,7 @@ public class NewInappsWindow : BaseWindow
                 {
                     detailsText = detailsText + parts[index] + "\n";
                 }
+                //plain line, clone the details text for it
                 if (!string.IsNullOrEmpty(detailsText))
                 {
                     var lineText = UnityObject.Instantiate(m_detailsText);
@@ -117,6 +119,7 @@ public class NewInappsWindow : BaseWindow
                         lineText.alignment = TextAnchor.MiddleRight;
                     }
                 }
+                // link line, make a clickable url text
                 if (parts[index].Contains("<a>"))
                 {
                     var match = Regex.Match(parts[index], "(?<text>[^~]*)<a>(?<url>[^~]+)</a>");
@@ -256,6 +259,7 @@ public class NewInappsWindow : BaseWindow
 
     public override bool Close()
     {
+        //can't close while the close button is hidden
         if (m_closeButton.activeSelf)
         {
             AnalyticsManager.Instance.InappsWindowClosed();
@@ -298,6 +302,7 @@ public class NewInappsWindow : BaseWindow
     }
     IEnumerator WaitForRestored()
     {
+        //give the store 2 seconds to report restored purchases
         float timer = 2f;
         while (timer > 0f)
         {

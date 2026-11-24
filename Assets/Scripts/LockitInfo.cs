@@ -43,6 +43,7 @@ public class LockitInfo
             {
                 var dictionary = entry as Dictionary<string, object>;
                 string key = string.Empty;
+                // each row has a key, an id and one field per SystemLanguage name
                 foreach (string field in dictionary.Keys)
                 {
                     switch (field)
@@ -63,6 +64,7 @@ public class LockitInfo
                     }
                 }
             }
+            //put the how to cancel text inside the help text
             string helpKey = "help_text";
             string cancelKey = "how_to_cancel_android";
             if (m_dict.ContainsKey(helpKey))

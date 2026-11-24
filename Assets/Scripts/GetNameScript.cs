@@ -68,6 +68,7 @@ public class GetNameScript : MonoBehaviour
         ereyesterdayFilename = GetDailyIdentity(-2);
         CheckDailyPrefDataExists();
         CalcDailyPrefDateDiff();
+        //stars are the last part of the daily pref string, 99 means not played yet
         todayStars = GetDailyStars("dailytodaydata");
         yesterdayStars = GetDailyStars("dailyyesterdaydata");
         ereyesterdayStars = GetDailyStars("dailyereyesterdaydata");
@@ -116,6 +117,7 @@ public class GetNameScript : MonoBehaviour
             ((Component)starsParentEreyesterday.transform.Find("StarR")).GetComponent<Image>().enabled = true;
             ((Component)starsParentEreyesterday.transform.Find("StarMarkerR")).GetComponent<Image>().enabled = false;
         }
+        //show Play or Download on each of the 3 daily slots
         if (DailyDataExists(todayFilename))
         {
             SetDailyButtonVerb("Play", 0);
@@ -183,6 +185,7 @@ public class GetNameScript : MonoBehaviour
         string str = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
         bestTimeText.text = "Today's Personal Best Time is " + str;
          
+        // refresh the rollover countdown every minute
         base.InvokeRepeating("DailyRolloverCountdown", 0f, 60f);
         if (LevelProgressControl.control.isReturningFromLevel)
         {
@@ -192,6 +195,7 @@ public class GetNameScript : MonoBehaviour
                 //base.StartCoroutine(this.FlashSchedule());
             }
             //LevelProgressControl.control.dailyTodayPersonalBestBeaten = false;
+            //PuzzleStateId keeps the time since last ad, stored with a 287462819 offset and x3
             int stateId = PlayerPrefs.GetInt("PuzzleStateId", -1);
             if (stateId == -1)
             {
@@ -291,6 +295,7 @@ public class GetNameScript : MonoBehaviour
     }
     static int GetIdentifyIndex(string str, int maxSize)
     {
+        //pick the daily image from the hash of the day string
         uint number = (uint)str.GetHashCode();
         return (int)((number + (maxSize + 200)) % maxSize);
     }
@@ -309,6 +314,7 @@ public class GetNameScript : MonoBehaviour
     IEnumerator LoadSaveCoroutine(ImageInfo imageInfo, Image image, string id)
     {
         var resTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        //3D previews are bilinear, 2D pixel art stays point filtered
         resTex.filterMode = (FilterMode)(imageInfo.Is3D ? 1 : 0);
         var swd = MainManager.Instance.SavedWorksList.LoadById(id);
         yield return null;
@@ -335,6 +341,7 @@ public class GetNameScript : MonoBehaviour
 
             var saveId = MainManager.Instance.SavedWorksList.LastSaveOfImageId(imageInfo.Id);
 
+            //3D work already saved, just show its saved preview
             if (imageInfo.Is3D && saveId != null)
             {
                 bIsImageFetched = true;
@@ -343,6 +350,7 @@ public class GetNameScript : MonoBehaviour
                 SetDailyButtonVerb("Play", dailyOffset);
                 dlSpinner.SetActive(false); 
 
+                //mark this daily as downloaded
                 PlayerPrefsWrapper.SetBool("Daily-" + identify, true);
                 if (dailyOffset == 0)
                 {
@@ -449,12 +457,14 @@ public class GetNameScript : MonoBehaviour
 
     public static string GetDailyIdentity(int todayOffset)
     {
+        //daily puzzles roll over at midnight PST (UTC-8)
         DateTime dateTime = DateTime.UtcNow.AddHours(-8.0);
         if (todayOffset != 0)
         {
             dateTime = dateTime.AddDays((double)todayOffset);
         }
         Debug.Log(dateTime.Date);
+        // identity is DayOfYear-Year, like 045-2019
         string text = string.Format("{0,3:D3}-{1}", dateTime.DayOfYear, dateTime.Year);
         Debug.Log("Today's identity string: DayOfYear : Year -> " + text);
         return text;
@@ -525,6 +535,7 @@ public class GetNameScript : MonoBehaviour
     {
         Debug.Log("*** CleanDailyPuzzleDataFiles ***");
         var files = Directory.GetFiles(Application.persistentDataPath, "???-20??*.*", SearchOption.TopDirectoryOnly);
+        //only clean when more than 12 daily files piled up, the 3 current days are kept
         if (files.Length > 12)
         {
             var dataFiles = files;
@@ -563,6 +574,7 @@ public class GetNameScript : MonoBehaviour
         int todayYear = Convert.ToInt32(parts[1]);
         int todayDays = todayYear * 365 + todayDay;
         Debug.Log("Integer version: today day " + todayDay + " today year " + todayYear + " total days " + todayDays);
+        //saved format is DayOfYear-Year-stars
         string @string = PlayerPrefs.GetString("dailytodaydata", "nodata");
         if (@string.Equals("nodata"))
         {
@@ -572,6 +584,7 @@ public class GetNameScript : MonoBehaviour
         int savedDay = Convert.ToInt32(savedParts[0]);
         int savedYear = Convert.ToInt32(savedParts[1]);
         int savedState = Convert.ToInt32(savedParts[2]);
+        //shift the saved days back depending on how many days passed, new days start at 99 (not played)
         switch (todayDays - (savedYear * 365 + savedDay))
         {
             case 0:
@@ -630,6 +643,7 @@ public class GetNameScript : MonoBehaviour
 
     void CheckDailyPrefDataExists()
     {
+        //first launch, create empty entries for the 3 days
         string @string = PlayerPrefs.GetString("dailytodaydata", "nodata");
         if (@string.Equals("nodata"))
         {
@@ -700,6 +714,7 @@ public class GetNameScript : MonoBehaviour
         //{
         //    this.leaderboardButton.interactable = false;
         //}
+        //dim the day labels while the buttons are disabled
         float a = 1f;
         if (!bSetting)
         {
@@ -719,6 +734,7 @@ public class GetNameScript : MonoBehaviour
         Debug.Log("UTC Rollover midnight 24 hrs early (PST) : " + midnight);
         DateTime nextMidnight = midnight.AddDays(1.0);
         Debug.Log("UTC Rollover midnight (PST) : " + nextMidnight);
+        // time left until next PST midnight
         var timeSpan = nextMidnight.Subtract(dateTime);
         Debug.Log("Time until roll over " + timeSpan);
         string str = string.Format("{0:D2}:{1:D2}", timeSpan.Hours, timeSpan.Minutes);
@@ -727,6 +743,7 @@ public class GetNameScript : MonoBehaviour
 
     IEnumerator FlashSchedule()
     {
+        //blink the best time text
         while (true)
         {
             yield return (object)new WaitForSeconds(1f);

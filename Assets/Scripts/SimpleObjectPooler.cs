@@ -45,6 +45,7 @@ public class SimpleObjectPooler : ObjectPooler
                 return _pooledGameObjects[i];
             }
         }
+        //all objects busy, grow the pool if allowed
         if (PoolCanExpand)
         {
             return AddOneObjectToThePool();

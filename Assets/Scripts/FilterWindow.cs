@@ -61,6 +61,7 @@ public class FilterWindow : BaseWindow
         AnalyticsManager.Instance.FilterWindowOpened();
         m_savedWorkData = savedWorkData;
         ReinitImage(uvRect);
+        //filter elements are created only the first time
         if (m_filters == null)
         {
             m_filters = MainManager.Instance.FilterManager.GetFilters();
@@ -101,6 +102,7 @@ public class FilterWindow : BaseWindow
         }
         m_image.enabled = true;
         m_filterImage.enabled = false;
+        // library images have an url, user photos are loaded by id
         if (m_savedWorkData.ImageInfo.Url != null)
         {
             DataManager.Instance.GetImageAsset(m_savedWorkData.ImageInfo, delegate (bool res, Texture2D tex)
@@ -116,6 +118,7 @@ public class FilterWindow : BaseWindow
                     m_filterImage.enabled = true;
                     m_filterName.text = filter.name;
 
+                    //repeat the filter once per image pixel
                     m_filterImage.material.SetFloat("RepeatX", _imageSize.x);
                     m_filterImage.material.SetFloat("RepeatY", _imageSize.y);
                 }
@@ -253,6 +256,7 @@ public class FilterWindow : BaseWindow
 
     void OnScrolledImageHandler(float delta)
     {
+        // each wheel step zooms by 10%
         m_currentImageZoom *= Mathf.Pow(1.1f, delta);
         m_currentImageZoom = Mathf.Max(1f, m_currentImageZoom);
         m_currentImageZoom = Mathf.Min(m_currentImageZoom, m_maxZoom);
@@ -286,6 +290,7 @@ public class FilterWindow : BaseWindow
         var canvas = m_image.canvas;
         Rect uvRect = m_image.uvRect;
         float pixelScale = canvas.pixelRect.height / (float)Screen.height;
+        //convert the drag from pixels to uv space
         delta.x /= canvas.pixelRect.width / uvRect.width;
         delta.y /= canvas.pixelRect.width / uvRect.height;
         uvRect.center -= delta;
@@ -297,6 +302,7 @@ public class FilterWindow : BaseWindow
     void CheckBorders()
     {
         Rect uvRect = m_image.uvRect;
+        // push the visible rect back inside the 0..1 image
         if (uvRect.min.x < 0f)
         {
             float leftX = uvRect.center.x - uvRect.min.x;
@@ -323,6 +329,7 @@ public class FilterWindow : BaseWindow
 
     public void OkButtonClick()
     {
+        //keep the crop and filter for the share window
         m_savedWorkData.UvRect = new SerializableRect(m_image.uvRect);
         m_savedWorkData.FilterId = m_currentIndex;
         var shareWindow = WindowManager.Instance.OpenShareWindow();

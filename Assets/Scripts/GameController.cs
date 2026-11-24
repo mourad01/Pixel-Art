@@ -91,6 +91,7 @@ public class GameController : UnitySingleton<GameController>
     }
     public bool CheckColorLeft(int colorIndex, bool soundEnabled)
     {
+        //vox color indexes start at 1, the palette list at 0
         if (OnCountLeft != null)
         {
             OnCountLeft(_colors[colorIndex - 1], _vox.ColorsCount[colorIndex]);
@@ -119,6 +120,7 @@ public class GameController : UnitySingleton<GameController>
                     AudioManager.Instance.PlayCompleteColor();
             }
             colorsCounter++;
+            //every cube painted, the model is done
             if (colorsCounter == _vox.CubesCount)
             {
                 UnitySingleton<ProgressManager>.instance.SetComplete();
@@ -167,6 +169,7 @@ public class GameController : UnitySingleton<GameController>
         {
             list = savedWorkData3D.Progress;
         }
+        // replay the saved progress without sounds
         if (list != null && list.Count() > 0)
         {
             _voxCubeProgress = list;
@@ -187,6 +190,7 @@ public class GameController : UnitySingleton<GameController>
                 _voxCubeProgress.Add(false);
             }
         }
+        //color index 0 cubes have nothing to paint, mark them done
         foreach (VoxCubeItem voxCubeItem in _voxCubeItems)
         {
             if (voxCubeItem.ColorIndex == 0)

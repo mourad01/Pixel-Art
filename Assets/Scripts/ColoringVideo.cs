@@ -52,6 +52,7 @@ public class ColoringVideo : MonoBehaviour
         int width = ((Texture2D)m_resRenderer.sharedMaterial.mainTexture).width;
         int height = ((Texture2D)m_resRenderer.sharedMaterial.mainTexture).height;
         int counter = 0;
+        // replay the saved history steps on the empty texture
         int stepSize = m_savedWorkData.History2.Steps.Count / 7 / 30;
         for (int i = 0; i < m_savedWorkData.History2.Steps.Count; i++)
         {

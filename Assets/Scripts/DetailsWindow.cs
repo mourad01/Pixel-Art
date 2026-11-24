@@ -58,6 +58,7 @@ public class DetailsWindow : BaseWindow
             m_scrollRect.verticalNormalizedPosition = 1f;
             string @string = LocalizationManager.Instance.GetString("details_text_android");
             @string = string.Format(@string, _price1, _price2, _price3);
+            //put each url on its own line inside <a></a>, going backwards to keep indexes valid
             var matchCollection = Regex.Matches(@string, "(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
             for (int i = matchCollection.Count - 1; i >= 0; i--)
             {
@@ -124,6 +125,7 @@ public class DetailsWindow : BaseWindow
     IEnumerator SetContentSizeCoroutine()
     {
         yield return null;
+        // toggle to force the layout to rebuild
         m_scrollRect.gameObject.SetActive(false);
         m_scrollRect.gameObject.SetActive(true);
         m_scrollRect.verticalNormalizedPosition = 1f;

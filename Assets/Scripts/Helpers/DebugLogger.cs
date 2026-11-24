@@ -2,6 +2,7 @@ using UnityDebug = global::UnityEngine.Debug;
 using System;
 public class DebugLogger
 {
+    //set to false to mute every log below
     public static bool IsDevelopmentBuild = true;
 
     public static void Log(object message)

@@ -177,6 +177,7 @@ public class LassoButton : MonoBehaviour
 
     public void CheatButtonClick()
     {
+        //debug, gives 5 lassos
         WorkbookModel.Instance.SpecBoostersModel.AddLasso();
         WorkbookModel.Instance.SpecBoostersModel.AddLasso();
         WorkbookModel.Instance.SpecBoostersModel.AddLasso();

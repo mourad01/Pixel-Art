@@ -34,6 +34,7 @@ public class ServerConnector : MonoBehaviour
     public IEnumerator LoadStreamingAsset(string url, Action<WWW> handler)
     {
 #if !UNITY_ANDROID || UNITY_EDITOR
+        // outside android the streaming path needs a file:// prefix
         if (!url.StartsWith("file://", StringComparison.CurrentCultureIgnoreCase)) {
             url = "file://" + url;
         }
@@ -61,6 +62,7 @@ public class ServerConnector : MonoBehaviour
         var localFile = System.IO.Path.Combine(Application.streamingAssetsPath, AppPathsConfig.ImagesFile);
         Debug.Log("Local stream asset: " + localFile);
 #if UNITY_ANDROID || UNITY_IOS
+        //on mobile streaming assets are read through WWW
         StartCoroutine(LoadStreamingAsset(localFile, (www) =>
         {
             if (!string.IsNullOrEmpty(www.error))
@@ -104,6 +106,7 @@ public class ServerConnector : MonoBehaviour
     public void GetImagesList(Action<ImagesInfo> handler)
     {
         Debug.Log("GetImagesList begin");
+        // download the list from the host, fall back to the bundled file
         if (InternetConnection.IsAvailable)
         {
             var url = AppPathsConfig.Host + AppPathsConfig.ImagesFile;
@@ -172,6 +175,7 @@ public class ServerConnector : MonoBehaviour
     }
     public void GetImageAsset(ImageInfo imageInfo, Action<bool, byte[]> handler)
     {
+        //use the bundled image first, download it only when missing
         StartCoroutine(GetLocalStreamData(imageInfo.Url, handler, ()=>
         {
             if (InternetConnection.IsAvailable)
@@ -235,6 +239,7 @@ public class ServerConnector : MonoBehaviour
     }
     IEnumerator CheckInternetCoroutine()
     {
+        // poll every 5 seconds and notify when internet comes back
         while (true)
         {
             var internetAvailable = InternetConnection.IsAvailable;
@@ -268,6 +273,7 @@ public class ServerConnector : MonoBehaviour
         }
         else
         { 
+            //server error page still comes back without a www error
             if (www.text.Contains("Fatal error"))
             {
                 handler.SafeInvoke(false, null);
@@ -310,6 +316,7 @@ public class ServerConnector : MonoBehaviour
     IEnumerator SendDirectServerRequestForBinaryResponse(string url, Action<bool, byte[]> handler, float timeout = -1f)
     {
         var www = new WWW(url);
+        // give up if the download is not done before the timeout
         if (timeout > 0f)
         {
             while (timeout > 0f && !www.isDone)

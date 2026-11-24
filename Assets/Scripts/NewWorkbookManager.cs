@@ -66,6 +66,7 @@ public class NewWorkbookManager : MonoBehaviour
     public ISavedWorkData SaveWork(bool force = false)
     {
         Debug.Log("save");
+        //save only works that already exist, have progress or are forced
         if (m_savedWorkData != null || SavedWorkData.IsNeedToSave(m_numberColoring) || force)
         {
             var res = m_numberColoring.GetRes();
@@ -114,6 +115,7 @@ public class NewWorkbookManager : MonoBehaviour
     {
         while (true)
         { 
+            // wait until StopInitAndShowInterCoroutine lets us start
             if (m_stopInit)
             {
                 yield return null;
@@ -124,6 +126,7 @@ public class NewWorkbookManager : MonoBehaviour
                 yield return null;
                 continue;
             }*/
+            //library image or user photo, go back to library if it fails
             if (m_imageInfo.Url != null)
             {
                 DataManager.Instance.GetImageAsset(m_imageInfo, delegate (bool res, Texture2D tex)
@@ -234,6 +237,7 @@ public class NewWorkbookManager : MonoBehaviour
             }
         }*/
 
+        // open the workbook and restore saved progress
         var workbook = WindowManager.Instance.OpenWorkbook();
         workbook.RemoveVideoWaiter();
         if (m_savedWorkData != null)
@@ -243,6 +247,7 @@ public class NewWorkbookManager : MonoBehaviour
         workbook.Init(m_numberColoring.GetColors());
         m_cameraManager.Init((float)m_tex.width, (float)m_tex.height);
 
+        //wait for the frame rate to settle before the tutorial
         while (Time.deltaTime > 0.1f)
         {
             yield return null;
@@ -264,6 +269,7 @@ public class NewWorkbookManager : MonoBehaviour
 
     IEnumerator SaveWorkCoroutine()
     {
+        // autosave every 30 seconds
         while (true)
         {
             yield return new WaitForSeconds(30f);

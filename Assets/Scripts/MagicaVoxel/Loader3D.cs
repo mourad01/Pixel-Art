@@ -63,6 +63,7 @@ namespace VoxDLL
                 Debug.LogError("[Loader3D] Game object 3DVox not found. Create in scene this object!");
                 return;
             }
+            //voxels are built as children of the 3DVox object
             MVImporter.CreateIndividualVoxelGameObjects(v, gameObject.transform, defaultMaterial, sizePerVox);
         }
     }

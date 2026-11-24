@@ -73,6 +73,7 @@ public class Popup : MonoBehaviour
             m_blockPlane.SetActive(true);
         }
         m_messagePanel.anchoredPosition = m_messageClosedPos;
+        //slide in for 0.3s, then auto close after m_showTime (0 keeps it open)
         var time = 0.3f;
         var speed = (m_messageOpenedPos - m_messageClosedPos) / time;
 

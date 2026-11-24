@@ -61,6 +61,7 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         if (Input.touches.Length > 1)
         {
             var touches = Input.touches;
+            //remember the finger distance to start the pinch
             Vector2 dir = touches[0].position - touches[1].position;
             m_touchesDelta = Mathf.Sqrt(dir.x * dir.x + dir.y * dir.y);
             m_mousePrev = Input.mousePosition;
@@ -76,6 +77,7 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
 
     void CheckLongTap()
     {
+        // holding longer than 0.15s switches to brush mode
         if (m_downTime > DateTime.MinValue && (DateTime.Now - m_downTime).TotalSeconds > (double)m_longTapTime)
         {
             WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType = ColorizationModeModel.BrushType.Plural;
@@ -103,6 +105,7 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         switch (CurrentTapState)
         {
             case TapState.Down:
+                //short tap colors one cube
                 UnityObject.FindObjectOfType<TouchManager>().CheckCube(data.position, true);
                 break;
         }
@@ -120,6 +123,7 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                 break;
             case TapState.Drag:
                 {
+                    // drag across the screen width rotates the model 180 degrees
                     Vector2 dragOffset = (Vector2)Input.mousePosition - m_mousePrev;
                     float yawDelta = dragOffset.x / (float)Screen.width * 180f;
                     float pitchDelta = dragOffset.y / (float)Screen.width * 180f;
@@ -134,10 +138,12 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                     {
                         pitch += 360f;
                     }
+                    //never look straight from top or bottom
                     pitch = Mathf.Clamp(pitch, -80f, 80f);
                     rotation.eulerAngles = new Vector3(pitch, y, 0f);
                     Camera.main.transform.rotation = rotation;
                     m_mousePrev = Input.mousePosition;
+                    // slowly bring the camera back to the center, 0.2 per drag event max
                     Vector3 centerOffset = Vector3.zero - Camera.main.transform.position;
                     if (centerOffset.magnitude > 0.2f)
                     {
@@ -153,6 +159,7 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                     {
                         Vector2 pinchOffset = touches[0].position - touches[1].position;
                         float touchDistance = Mathf.Sqrt(pinchOffset.x * pinchOffset.x + pinchOffset.y * pinchOffset.y);
+                        //pinch zoom, ortho size kept between 3 and 25
                         float zoom = touchDistance / m_touchesDelta;
                         float value = Camera.main.orthographicSize / zoom;
                         value = Mathf.Clamp(value, 3f, 25f);
@@ -179,6 +186,7 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                 };
                     deltas[1] = Mathf.Abs(data.delta.x);
                     deltas[2] = Mathf.Abs(data.delta.y);
+                    // check one cube per pixel along the drag so fast moves leave no gaps
                     float steps = Mathf.Max(deltas);
                     Vector2 a = data.delta / steps;
                     Vector2 start = prevPos;
@@ -198,6 +206,7 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         float value = Camera.main.orthographicSize * Mathf.Pow(1.1f, 0f - data.scrollDelta.y);
         value = Mathf.Clamp(value, 3f, 25f);
         Vector2 position = data.position;
+        //zoom toward the mouse by keeping its world point fixed
         Vector3 a = Camera.main.ScreenToWorldPoint(position);
         Camera.main.orthographicSize = value;
         Vector3 b = Camera.main.ScreenToWorldPoint(position);

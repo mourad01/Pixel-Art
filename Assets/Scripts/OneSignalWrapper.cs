@@ -45,6 +45,7 @@ public class OneSignalWrapper
     {
         try
         {
+            //app opened from the push, keep its extra data
             if (!res.notification.isAppInFocus)
             {
                 startParameters = res.notification.payload.additionalData;

@@ -34,6 +34,7 @@ public class IapPopup : BaseWindow
 
     void Awake()
     {
+        //both previews share one grey material
         var image = m_image1;
         var material = new Material(Shader.Find("Custom/GreyTextureShader"));
         m_image2.material = material;
@@ -72,6 +73,7 @@ public class IapPopup : BaseWindow
         m_imageInfo = null;
         FinishHandler = handler;
         SwitchAbTestGroup(abTestGroup);
+        //booster or photo mode shows its own icon and text instead of an image
         var sprite = m_defaultTex;
         switch (mode)
         {
@@ -135,6 +137,7 @@ public class IapPopup : BaseWindow
             case ABTestGroup.RewardedNo_ContentMedium:
             case ABTestGroup.RewardedNo_ContentHard:
             case ABTestGroup.RewardedNo_ContentEasy:
+                //groups without rewarded video only get the subscribe part
                 m_subscrPart.SetActive(true);
                 m_subscrVideoPart.SetActive(false);
                 break;

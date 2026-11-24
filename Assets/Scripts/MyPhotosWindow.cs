@@ -63,12 +63,15 @@ public class MyPhotosWindow : BaseWindow
     {
         m_photoInfos = new List<PhotoInfo>();
         m_photoInfos.AddRange(MainManager.Instance.SavedWorksList.GetPhotos());
+        //empty first slot is the "new photo" button
         m_photoInfos.Insert(0, new PhotoInfo(string.Empty, PhotoSource.Unknown));
+        //photos are shown two per row
         m_pairsCount = (m_photoInfos.Count + 1) / 2;
         m_delta = 20f;
         float contentWidth = ((RectTransform)transform).rect.width - m_delta * 2f;
         m_previewSize = (contentWidth - m_delta) / 2f;
         m_scrollRect.content.sizeDelta = new Vector2(contentWidth, (float)m_pairsCount * (m_previewSize + m_delta) + m_delta);
+        // pool of 10 rows recycled while scrolling
         if (m_imageGroups.Count == 0)
         {
             for (int i = 0; i < 10; i++)
@@ -101,6 +104,7 @@ public class MyPhotosWindow : BaseWindow
     {
         if (!m_lock && m_imageGroups.Count > 0)
         {
+            //convert scroll position to the top visible row
             float scrolled = m_scrollRect.content.sizeDelta.y * (1f - pos.y);
             int index = Mathf.RoundToInt((scrolled - m_delta) / (m_previewSize + m_delta));
             if (index < m_pairsCount)
@@ -125,6 +129,7 @@ public class MyPhotosWindow : BaseWindow
                                               orderby a.Index
                                               select a).ToList();
                 m_currentGroupIndex = index;
+                //keep rows from 4 above to 5 below the current one filled
                 for (int i = -4; i < 6; i++)
                 {
                     int localIndex = m_currentGroupIndex + i;
@@ -133,6 +138,7 @@ public class MyPhotosWindow : BaseWindow
                         var groupOfMyPhotos = m_imageGroups.FirstOrDefault((GroupOfMyPhotos a) => a.Index == localIndex);
                         if (groupOfMyPhotos == null)
                         {
+                            //reuse the row furthest away in the scroll direction
                             groupOfMyPhotos = ((!forward) ? list[list.Count - 1] : list[0]);
                             groupOfMyPhotos.Clear();
                             groupOfMyPhotos.Index = localIndex;
@@ -266,6 +272,7 @@ public class MyPhotosWindow : BaseWindow
         if (!m_lock && m_currentGroupIndex >= 0)
         {
             m_lock = true;
+            // photo already has a save, offer continue / share too
             if (swd != null)
             {
                 ActionSheetWrapper.ShowSavedWorkActionSheet(delegate (ActionSheetResult a)

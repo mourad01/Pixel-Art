@@ -53,6 +53,7 @@ public class ProgressManager : UnitySingleton<ProgressManager>
 
     public void StopSaveProcess()
     {
+        //passes a new enumerator, so the running autosave loop keeps going
         base.StopCoroutine(Process());
     }
 
@@ -82,6 +83,7 @@ public class ProgressManager : UnitySingleton<ProgressManager>
         var voxCubeProgress = UnitySingleton<GameController>.instance.VoxCubeProgress;
         if (voxCubeProgress != null)
         {
+            //save again once the hi res shot is ready
             camShot.ColorPalleteComplete += new Action<byte[]>(WaitForScreenshot);
             camShot.TakeHiResShot();
         }
@@ -100,6 +102,7 @@ public class ProgressManager : UnitySingleton<ProgressManager>
     }
     IEnumerator Process()
     {
+        //autosave every 30s, skip one cycle if the last shot is still pending
         while (true)
         {
             yield return new WaitForSeconds(TimeDelayForSave);

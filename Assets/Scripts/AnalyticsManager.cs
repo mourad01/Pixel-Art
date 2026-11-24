@@ -18,6 +18,7 @@ public class AnalyticsManager : MonoBehaviour
             Instance = this;
         }
         m_startTime = DateTime.Now;
+        //no platform is added in this class so the list stays empty
         m_platforms = new List<AnalyticsPlatform>();
     }
 
@@ -55,6 +56,7 @@ public class AnalyticsManager : MonoBehaviour
         {
             platform.SendEvent(AnalyticsEvents.IapScr_opened);
         }
+        // 3 options subscription screen with its placement
         foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.sub_3options_displayed, new Dictionary<string, object> {
@@ -76,6 +78,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SubscriptionClick(SubscriptionType subscriptionType)
     {
+        //week is the default, month and year override it
         var eventType = AnalyticsEvents.WeekSubscrBtn_tapped;
         switch (subscriptionType)
         {
@@ -124,6 +127,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void TrialWindowAction(string action, string placement, bool onStart = false, bool subCampaign = false)
     {
+        //campaign, launch and regular trial windows each have their own event
         if (subCampaign)
         {
             foreach (AnalyticsPlatform platform in m_platforms)
@@ -404,6 +408,7 @@ public class AnalyticsManager : MonoBehaviour
             platform.SendEvent(AnalyticsEvents.Element_colored, new Dictionary<string, object> {
                 {
                     "brush",
+                    //only the Plural brush counts as a brush
                     ((brushType != ColorizationModeModel.BrushType.Plural) ? "no" : "yes")
                 },
                 {
@@ -428,6 +433,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ColoringSession(double seconds)
     {
+        // analytics errors are swallowed so they never break the coloring screen
         try
         {
             foreach (AnalyticsPlatform platform in m_platforms)
@@ -438,6 +444,7 @@ public class AnalyticsManager : MonoBehaviour
                         seconds
                     }
                 });
+                //same duration again, rounded to whole seconds
                 platform.SendEvent(AnalyticsEvents.time_gamescreen, new Dictionary<string, object> {
                     {
                         "seconds",
@@ -469,6 +476,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void TrialInappsWindowOpened(bool onStart, string placement, bool subCampaign = false)
     {
+        // 7 day trial screen
         foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.IapScr_7d_opened);
@@ -574,6 +582,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void InappPurchaseFailed(SubscriptionType type, string placement, float responseTime, string reason, string nativeFailReason = "")
     {
+        //player closing the store dialog is a cancel, not a fail
         if (reason == "UserCancelled")
         {
             foreach (AnalyticsPlatform platform in m_platforms)
@@ -593,6 +602,7 @@ public class AnalyticsManager : MonoBehaviour
                 });
             }
         }
+        //short subscription name used by sub_result
         string value = string.Empty;
         switch (type)
         {
@@ -631,6 +641,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SendTrial(string productId, string transactionId, string originalTransactionId)
     {
+        //test devices go to the sandbox event so real stats stay clean
         if (AnalyticsHelper.IsTestDevice())
         {
             foreach (AnalyticsPlatform platform in m_platforms)
@@ -803,6 +814,7 @@ public class AnalyticsManager : MonoBehaviour
                 }
             });
         }
+        //milestones for the 1st, 2nd, 3rd and 5th completed picture
         AppData.PictureCompletedCount++;
         if (!AppData.PictureCompleted)
         {
@@ -826,6 +838,7 @@ public class AnalyticsManager : MonoBehaviour
                     analyticsEvents = AnalyticsEvents.picture_completed_5th;
                     break;
             }
+            // 4th picture stays Undefined (0) and sends nothing
             if (analyticsEvents != 0)
             {
                 foreach (AnalyticsPlatform platform in m_platforms)
@@ -836,6 +849,7 @@ public class AnalyticsManager : MonoBehaviour
         }
     }
 
+    //boosters: bomb is reported as grenade, lasso as magicwand
     public void BombClicked(int count)
     {
         foreach (AnalyticsPlatform platform in m_platforms)
@@ -1007,6 +1021,7 @@ public class AnalyticsManager : MonoBehaviour
 
     void OnApplicationQuit()
     {
+        //total time since Awake
         SendSessionTime((int)(DateTime.Now - m_startTime).TotalSeconds);
     }
 }

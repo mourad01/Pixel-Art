@@ -80,6 +80,7 @@ public class BestFit : MonoBehaviour
         {
             return;
         }
+        //only watch the text for the first second
         timer -= Time.deltaTime;
         if (timer < 0f)
         {
@@ -95,6 +96,7 @@ public class BestFit : MonoBehaviour
         {
             return;
         }
+        //rect changed, refit unless it only got smaller in width
         if (!(m_rect.size.x > m_transform.rect.size.x))
         {
             if (m_rect.size.y > m_transform.rect.size.y)
@@ -117,6 +119,7 @@ public class BestFit : MonoBehaviour
             Start();
         }
         m_textText = m_text.text;
+        // dynamic fonts can use unity best fit, the others are measured by hand
         if (m_text.font.dynamic)
         {
             m_text.resizeTextForBestFit = true;
@@ -147,6 +150,7 @@ public class BestFit : MonoBehaviour
         }
         else
         {
+            //measure the width of each word at the font base size
             var textGenerator = new TextGenerator();
             var generationSettings = m_text.GetGenerationSettings(m_transform.rect.size);
             textGenerator.Populate(m_textText, generationSettings);
@@ -189,6 +193,7 @@ public class BestFit : MonoBehaviour
 
     void CheckRange(float[] wordLengths, int minSize, int maxSize, float baseSpaceLength)
     {
+        //binary search for the biggest size that fits
         int middle = (minSize + maxSize) / 2;
         if (!CheckSize(wordLengths, middle, baseSpaceLength))
         {
@@ -229,6 +234,7 @@ public class BestFit : MonoBehaviour
         {
             return false;
         }
+        //wrap words into lines and fail if the lines don't fit in height
         var list = new List<float>();
         list.Add(0f);
         int line = 0;

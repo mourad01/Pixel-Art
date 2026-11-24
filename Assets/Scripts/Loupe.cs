@@ -25,6 +25,7 @@ public class Loupe : MonoBehaviour
         float width = ((RectTransform)m_canvas.transform).rect.width;
         v.x -= ((RectTransform)m_canvas.transform).rect.width / 2f;
         v.y -= height / 2f;
+        //loupe sits above the finger, near the top edge slide it to the side instead
         if (v.y + sizeDelta.y > height / 2f)
         {
             Vector2 size = Size;
@@ -35,6 +36,7 @@ public class Loupe : MonoBehaviour
             float dx = Mathf.Sqrt(x * size3.x / 4f - dy * dy);
             v.x -= dx;
             v.y = height / 2f - sizeDelta.y / 2f;
+            //no room on the left, flip to the right
             if (v.x - sizeDelta.x / 2f < (0f - width) / 2f)
             {
                 v.x += dx * 2f;
@@ -44,6 +46,7 @@ public class Loupe : MonoBehaviour
         {
             v.y += sizeDelta.y / 2f;
         }
+        // clamp to the left / right screen edges
         float x2 = v.x;
         Vector2 size4 = Size;
         if (x2 + size4.x / 4f > width / 2f)

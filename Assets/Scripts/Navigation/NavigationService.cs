@@ -36,6 +36,7 @@ namespace Assets.Scripts.Navigation
                 _currentScene.OnNavigatedFrom();
             }
             _navigationArgs = navigator;
+            //first navigation loads directly, later ones load async
             if (_currentScene != null)
             {
                 LoadLevelAsynchronously(navigator.SceneName, allowSceneActivation);
@@ -66,6 +67,7 @@ namespace Assets.Scripts.Navigation
             _asyncOperation.allowSceneActivation = allowSceneActivation;
             if (!_asyncOperation.isDone)
             {
+                // unity stops at 0.9 while scene activation is not allowed
                 if (_asyncOperation.progress >= 0.9f)
                 {
                     OnAsyncLoadingComplete();

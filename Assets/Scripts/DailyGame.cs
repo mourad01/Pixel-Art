@@ -66,6 +66,7 @@ public class DailyGame : MonoBehaviour
                 Instance.puzzleState = PuzzleState.PUZZLE_PAUSED;
             }
         }
+        //drop the instance when the art is not a daily one
         if (!isdaily)
         {
             Instance = null;
@@ -95,6 +96,7 @@ public class DailyGame : MonoBehaviour
         {
             timer += Time.smoothDeltaTime;
             var timeSpan = TimeSpan.FromSeconds((double)timer);
+            // refresh the labels once per second
             if (previousSeconds < (long)timeSpan.TotalSeconds)
             {
                 guiTimerText.text = string.Format("Time {0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
@@ -134,6 +136,7 @@ public class DailyGame : MonoBehaviour
 
             int starsCount = CalculateStarsWon();
             int oldStarsCount = 0;
+            //result is saved as "basename-stars" in the prefs slot of that day
             switch (LevelProgressControl.control.dailyDayOffset)
             {
                 case -2:
@@ -170,6 +173,7 @@ public class DailyGame : MonoBehaviour
                         if (leaderBoardScript != null)
                         {
 #if UNITY_ANDROID
+                            // google play games leaderboard id
                             this.leaderBoardScript.ReportLeaderboardScore(score, GPGSIds.leaderboard_best_time);
 #else
                             //pixelart_dailybest
@@ -196,6 +200,7 @@ public class DailyGame : MonoBehaviour
         movesText.CrossFadeAlpha(1f, 0.5f, false); 
         guiTimerText.CrossFadeAlpha(1f, 0.5f, false); 
         yield return (object)new WaitForSeconds(0.6f);
+        //fill the won stars one by one
         int starsWon = CalculateStarsWon();
         if (starsWon >= 1)
         {
@@ -218,6 +223,7 @@ public class DailyGame : MonoBehaviour
     }
     int CalculateStarsWon()
     {
+        // faster time and fewer errors give more stars
         float duration = Time.deltaTime - startTime;
         if (duration <= numberOfCells + starAwardIncrement && errorsCount < 3)
         {

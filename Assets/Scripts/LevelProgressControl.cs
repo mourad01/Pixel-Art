@@ -20,6 +20,7 @@ public class LevelProgressControl : MonoBehaviour
     public static int NumberOfPacks = 60;
     public static int NumberOfActivePacks = 18;
     public static int LevelsToUnlock = 6;
+    //xor key used to hide values saved in PlayerPrefs
     public static long CipherKey = 1273017494670060202L;
     public static int HintPotMax = 999;
     public static int adPeriodInSeconds = 300;
@@ -112,6 +113,7 @@ public class LevelProgressControl : MonoBehaviour
         {
             UnityObject.DontDestroyOnLoad(gameObject);
             control = this;
+            //one slot per level of every pack
             levelOffsetArray = new int[LevelsPerPack * NumberOfPacks];
             completeArray = new int[LevelsPerPack * NumberOfPacks];
             movesPerfectArray = new int[LevelsPerPack * NumberOfPacks];
@@ -125,6 +127,7 @@ public class LevelProgressControl : MonoBehaviour
             LoadProgressData();
 
 
+            // Google Play Games setup
             #if (UNITY_ANDROID || (UNITY_IPHONE && !NO_GPGS))
             PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
                 // enables saving game progress.
@@ -156,6 +159,7 @@ public class LevelProgressControl : MonoBehaviour
     public void SaveProgressData()
     {
         var binaryFormatter = new BinaryFormatter();
+        //lpC10.dat is the 10 chapter save, lp.dat is the legacy one
         var fileStream = File.Create(Application.persistentDataPath + "/lpC10.dat");
         var playerData = new PlayerData(LevelsPerPack, NumberOfPacks);
         Array.Copy(levelOffsetArray, playerData.levelOffsetArray, levelOffsetArray.Length);
@@ -175,6 +179,7 @@ public class LevelProgressControl : MonoBehaviour
 
     public void SaveProgressDataPrefsOnly()
     {
+        //hint pot time and count, then the two iap flags as bool + offset, all xored
         PlayerPrefs.SetString("PuzzleColorId", (hintPotLastPeriod ^ CipherKey).ToString());
         PlayerPrefs.SetString("PuzzleColorKey", (hintPotCount ^ CipherKey).ToString());
         PlayerPrefs.SetString("PuzzleShapeSeed", (Convert.ToInt64(iapUnlockLevels) + 2927 ^ CipherKey).ToString());
@@ -246,6 +251,7 @@ public class LevelProgressControl : MonoBehaviour
     public void LoadProgressData()
     {
         LoadPlayerPrefs();
+        //new save first, then the legacy file, otherwise fresh start
         if (File.Exists(Application.persistentDataPath + "/lpC10.dat"))
         {
             Debug.Log("10-CHAPTER FILE EXISTS");
@@ -333,6 +339,7 @@ public class LevelProgressControl : MonoBehaviour
 
     public void LoadPlayerPrefs()
     {
+        //PuzzleColorId = last hint pot refill time in ticks
         string str = PlayerPrefs.GetString("PuzzleColorId", "no");
         long savedPeriod = default(long);
         if (str.Equals("no"))
@@ -345,6 +352,7 @@ public class LevelProgressControl : MonoBehaviour
         {
             hintPotLastPeriod = savedPeriod ^ CipherKey;
         }
+        //PuzzleColorKey = hint count, new players get 3
         string colorKey = PlayerPrefs.GetString("PuzzleColorKey", "no");
         long savedColorKey = default(long);
         if (colorKey.Equals("no"))
@@ -365,6 +373,7 @@ public class LevelProgressControl : MonoBehaviour
             }
             hintPotCount = Convert.ToInt32(hintPotValue);
         }
+        //PuzzleShapeSeed = unlock levels purchase
         string shapeSeed = PlayerPrefs.GetString("PuzzleShapeSeed", "no");
         long savedShapeSeed = default(long);
         if (shapeSeed.Equals("no"))
@@ -389,6 +398,7 @@ public class LevelProgressControl : MonoBehaviour
             }
             iapUnlockLevels = Convert.ToBoolean(unlockLevelsValue);
         }
+        //PuzzleDiffTrackSeed = disable ads purchase
         string diffTrackSeed = PlayerPrefs.GetString("PuzzleDiffTrackSeed", "no");
         long savedDiffTrackSeed = default(long);
         if (diffTrackSeed.Equals("no"))
@@ -413,6 +423,7 @@ public class LevelProgressControl : MonoBehaviour
             }
             iapDisableAds = Convert.ToBoolean(disableAdsValue);
         }
+        // 0 means no daily best yet, fall back to 600
         int number = PlayerPrefs.GetInt("DailyPersonalBest", 0);
         if (number == 0)
         {
@@ -445,6 +456,7 @@ public class LevelProgressControl : MonoBehaviour
                 Debug.Log("timediff.TotalHours : " + timeSpan.TotalHours);
                 Debug.Log("timediff.Days*24 + timeDiff.Hours : " + (timeSpan.Days * 24 + timeSpan.Hours));
             }
+            //hint pot is ready again after more than 6 hours
             if (timeSpan.Days * 24 + timeSpan.Hours > 6)
             {
                 return true;

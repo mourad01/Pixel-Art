@@ -25,6 +25,7 @@ public class SwipeReceiver : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         m_lastTime = DateTime.Now;
         m_lastPos = eventData.position;
+        //vertical moves over 50 px are passed to the parent scroll rect
         float dy = m_lastPos.y - m_pos.y;
         if (!(dy > 50f) && !(dy < -50f) && !m_skip)
         {
@@ -47,6 +48,7 @@ public class SwipeReceiver : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             base.GetComponentInParent<ScrollRect>().SendMessage("OnEndDrag", eventData);
         }
+        // swipe needs 100 px sideways and no pause longer than 0.3s
         else if (!((DateTime.Now - m_lastTime).TotalSeconds > 0.3))
         {
             Vector2 dir = eventData.position - m_pos;

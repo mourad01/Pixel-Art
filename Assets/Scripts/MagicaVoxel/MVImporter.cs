@@ -64,6 +64,7 @@ public static class MVImporter
         var gameObjects = new List<GameObject>();
         var voxCubeItems = new List<VoxCubeItem>();
 
+        //first pass, count visible voxels per color and collect the used palette
         for (int i = 0; i < chunk.sizeX; i++)
         {
             for (int j = 0; j < chunk.sizeY; j++)
@@ -84,6 +85,7 @@ public static class MVImporter
         }
 
         usedPallate.Sort();
+        //second pass, one cube per visible voxel numbered by its place in the used palette
         for (int i = 0; i < chunk.sizeX; i++)
         {
             for (int j = 0; j < chunk.sizeY; j++)
@@ -102,6 +104,7 @@ public static class MVImporter
                         var gameObject = CreateGameObject(parent, new Vector3(single, single1, single2), string.Format("Voxel ({0}, {1}, {2})", i, j, k), mesh, mat);
                         var voxCubeItem = gameObject.AddComponent<VoxCubeItem>();
                         voxCubeItem.ColorIndex = colorNum + 1;
+                        // a side is open when the neighbour is empty or outside the model
                         var flagArray = new bool[] {
                             (j + 1 >= chunk.sizeY ? true : chunk.voxels[i, j + 1, k] == 0),
                             (j - 1 < 0 ? true : chunk.voxels[i, j - 1, k] == 0),
@@ -117,6 +120,7 @@ public static class MVImporter
                 }
             }
         }
+        //send only the colors this model really uses
         if (ColorsPalleteLoadComplete != null)
         {
             var colors = new Color[usedPallate.Count];
@@ -137,6 +141,7 @@ public static class MVImporter
 
     static bool IsVoxelVisible(MVVoxelChunk chunk, int px, int py, int pz)
     {
+        //border voxels are always visible, inner ones only if a neighbour is empty
         if (px != 0 && px != chunk.sizeX - 1)
         {
             if (py != 0 && py != chunk.sizeY - 1)
@@ -203,6 +208,7 @@ public static class MVImporter
         float single = sizePerVox / 2f;
         int quadCount = 0;
         int faceCount = 0;
+        //greedy meshing, merge same color faces into bigger quads for each of the 6 directions
         for (int i = 0; i < 6; i++)
         {
             for (int j = 0; j < chunk.sizeX; j++)
@@ -220,6 +226,7 @@ public static class MVImporter
                             int end = j;
                             int p = k;
                             int m = l;
+                            // x faces grow along y then z, y faces along x then z, z faces along x then y
                             switch (i)
                             {
                                 case 0:
@@ -295,6 +302,7 @@ public static class MVImporter
                                         break;
                                     }
                             }
+                            //clear the merged cells so they are not emitted twice
                             for (int r = j; r <= end; r++)
                             {
                                 for (int s = k; s <= p; s++)
@@ -377,11 +385,13 @@ public static class MVImporter
                             nums.Add(quadCount * 4 + 2);
                             nums.Add(quadCount * 4 + 3);
                             nums.Add(quadCount * 4);
+                            //uv points at the color column of a 256 wide palette texture
                             vector2s.Add(new Vector2(((float)colorIndice - 1f) / 256f, 0f));
                             vector2s.Add(new Vector2((float)colorIndice / 256f, 0f));
                             vector2s.Add(new Vector2((float)colorIndice / 256f, 1f));
                             vector2s.Add(new Vector2(((float)colorIndice - 1f) / 256f, 1f));
                             quadCount++;
+                            //start a new mesh before the 65k vertex limit
                             if (vector3s.Count + 4 >= 65000)
                             {
                                 var mesh = new Mesh();
@@ -476,6 +486,7 @@ public static class MVImporter
 
     public static void GenerateFaces(MVVoxelChunk voxelChunk)
     {
+        //face kept only where the neighbour is empty, 0 = +x, 1 = -x, 2 = +y, 3 = -y, 4 = +z, 5 = -z
         voxelChunk.faces = new MVFaceCollection[6];
         for (int i = 0; i < 6; i++)
         {
@@ -526,6 +537,7 @@ public static class MVImporter
     {
         byte[] numArray = null;
         numArray = File.ReadAllBytes(path);
+        //file must start with "VOX "
         if (numArray[0] == 86 && numArray[1] == 79 && numArray[2] == 88 && numArray[3] == 32)
         {
             return LoadVOXFromData(numArray, generateFaces);
@@ -536,6 +548,7 @@ public static class MVImporter
 
     public static MVMainChunk LoadVOXFromData(byte[] data, bool generateFaces = true)
     {
+        //reset color stats from the previous model
         usedPallate.Clear();
         for (int i = 0; i < 256; i++)
         {
@@ -551,6 +564,7 @@ public static class MVImporter
                 var dummy = binaryReader.ReadInt32();
                 _white.version = binaryReader.ReadBytes(4);
                 var numArray = binaryReader.ReadBytes(4);
+                // "MAIN"
                 if (numArray[0] != 77 || numArray[1] != 65 || numArray[2] != 73 || numArray[3] != 78)
                 {
                     Debug.LogError("[MVImport] Invalid MainChunk ID, main chunk expected");
@@ -565,6 +579,7 @@ public static class MVImporter
                     while (readSize < childrenSize)
                     {
                         numArray = binaryReader.ReadBytes(4);
+                        //child chunks: PACK is skipped, SIZE, XYZI and RGBA are read, unknown ids skipped
                         if (numArray[0] == 80 && numArray[1] == 65 && numArray[2] == 67 && numArray[3] == 75)
                         {
                             int contentSize = binaryReader.ReadInt32();
@@ -635,6 +650,7 @@ public static class MVImporter
             br.ReadBytes(childrenSize);
             Debug.LogWarning("[MVImporter] Nested chunk not supported");
         }
+        // +12 for the chunk header (id, content size, children size)
         return chunkSize + childrenSize + 12;
     }
 
@@ -642,6 +658,7 @@ public static class MVImporter
     {
         int chunkSize = br.ReadInt32();
         int childrenSize = br.ReadInt32();
+        //vox is z up, so z and y are swapped for Unity
         mainChunk.sizeX = br.ReadInt32();
         mainChunk.sizeZ = br.ReadInt32();
         mainChunk.sizeY = br.ReadInt32();

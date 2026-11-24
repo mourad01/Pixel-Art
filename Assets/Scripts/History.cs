@@ -22,6 +22,7 @@ public class History
             {
                 if (!string.IsNullOrEmpty(text))
                 {
+                    //one step per line, pixels as x:y separated by ;
                     var historyStep = new HistoryStep();
                     var parts = text.Split(new char[1] {
                         ';'
@@ -57,6 +58,7 @@ public class History
 
     public void Save()
     {
+        //close and reopen the writer to flush it to disk
         if (m_streamWriter != null)
         {
             m_streamWriter.Close();

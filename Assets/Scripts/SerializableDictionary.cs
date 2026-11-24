@@ -113,6 +113,7 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
         var wasEmpty = reader.IsEmptyElement;
 
         reader.Read();
+        //an empty element has no end tag to read
         if (wasEmpty)
         {
             return;

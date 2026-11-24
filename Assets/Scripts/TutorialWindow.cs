@@ -31,6 +31,7 @@ public class TutorialWindow : BaseWindow
         m_currentIndex = 0;
         m_placement = placement;
         m_type = type;
+        //each page fills the whole window
         foreach (TutorialPage page in m_pages)
         {
             ((RectTransform)page.transform).sizeDelta = new Vector2(((RectTransform)transform).rect.width, ((RectTransform)transform).rect.height);

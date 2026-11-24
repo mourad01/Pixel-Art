@@ -44,6 +44,7 @@ public class MultipleObjectPooler : ObjectPooler
 
     public override GameObject GetPooledGameObject()
     {
+        //pick random objects until an inactive one is found
         int index = Random.Range(0, _pooledGameObjects.Count);
         int tries = 0;
         while (_pooledGameObjects[index].gameObject.activeInHierarchy && tries < _pooledGameObjects.Count)
@@ -77,6 +78,7 @@ public class MultipleObjectPooler : ObjectPooler
                 gameObject = _pooledGameObjects[i];
             }
         }
+        // all of this type are busy, clone one of them
         if (PoolCanExpand && gameObject != null)
         {
             var pooledInstance = Object.Instantiate(gameObject);

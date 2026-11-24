@@ -31,6 +31,7 @@ public abstract class UnitySingleton<T> : MonoBehaviour where T : MonoBehaviour
                 if (_instance == null)
                 {
 
+                    //none in the scene, reuse or create an object named after the type
                     string goName = typeof(T).ToString();
 
                     var go = GameObject.Find(goName);

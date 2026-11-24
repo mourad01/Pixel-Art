@@ -42,6 +42,7 @@ public class ImagesInfo
                 dict[image.Id] = image; 
             }
 
+            //new images go first, then the existing ones in their old order
             var list = new List<ImageInfo>();
             foreach(var image in m_images)
             {
@@ -59,6 +60,7 @@ public class ImagesInfo
 
             foreach(var image in list)
             {
+                //drop entries whose png (and .vox for 3D) is missing
                 string fileName = Path.Combine(onlineDatasetLocation, image.Url);
                 if (File.Exists(fileName) && (!image.Is3D || File.Exists(fileName + ".vox")))
                 {

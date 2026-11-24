@@ -87,6 +87,7 @@ public class ConsoleLog : MonoBehaviour
 
     void OnEnable()
     {
+        //collect every Unity log for the in game console
         Application.logMessageReceived += new Application.LogCallback(HandleLog);
     }
 
@@ -125,6 +126,7 @@ public class ConsoleLog : MonoBehaviour
         for (int i = 0; i < m_logs.Count; i++)
         {
             var log = m_logs[i];
+            //skip repeated messages when collapsed, and non errors in errors only mode
             if ((!m_collapse || i <= 0 || !(log.Message == m_logs[i - 1].Message)) && (!m_showErrors || IsError(log.Type)))
             {
                 GUI.contentColor = s_logTypeColors[log.Type];

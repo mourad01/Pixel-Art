@@ -70,6 +70,7 @@ public class DialogToolWrapper : MonoBehaviour
     //    androidJavaClass.CallStatic("ShowOneButtonDialog", title, message, buttonText);
     //}
 
+    //button index 1 is the yes button of the dialog
     public static void UpgradeDialogCallbackHandler(int buttonIndexS)
     {
         if (buttonIndexS == 1)

@@ -16,6 +16,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     [SerializeField] Canvas m_canvas;
 
     DateTime m_downTime = DateTime.MinValue;
+    //hold longer than this to switch to brush mode
     float m_longTapTime = 0.15f;
     Vector3 m_tapPosition = Vector3.zero;
     Vector2 m_mousePrev = Vector2.zero;
@@ -51,6 +52,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
             case TapState.BrushMode:
                 if (!CheckMultiTouch())
                 {
+                    //finger position in canvas units to check the loupe against the workspace edges
                     Vector3 mousePosition = Input.mousePosition;
                     int height = Screen.height;
                     int width = Screen.width;
@@ -60,6 +62,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                     var workspaceRect = NewWorkbookManager.Instance.CameraManager.WorkspaceRect;
                     float x = pos.x;
                     Vector2 size = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
+                    //loupe going past the right edge
                     float rightEdge = x + size.x / 4f;
                     if (rightEdge > workspaceRect.offsetMax.x)
                     {
@@ -75,6 +78,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                     {
                         float posX = pos.x;
                         Vector2 size3 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
+                        // or past the left edge
                         float leftEdge = posX - size3.x / 4f;
                         if (leftEdge < workspaceRect.offsetMin.x)
                         {
@@ -95,6 +99,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                     }
                     float y = pos.y;
                     Vector2 size5 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
+                    //loupe sits above the finger, check 0.75 of its height against the top
                     float topEdge = y + size5.y * 0.75f;
                     if (topEdge > rect.height + workspaceRect.offsetMax.y)
                     {
@@ -108,6 +113,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                     }
                     else if (!m_loupeEnabled)
                     {
+                        //without loupe, check the bottom tenth of the workspace
                         if (pos.y < rect.height + workspaceRect.offsetMin.y + workspaceRect.rect.height / 10f)
                         {
                             float moveYDown = rect.height + workspaceRect.offsetMin.y + workspaceRect.rect.height / 10f - pos.y;
@@ -133,6 +139,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
             Vector2 dir = touches[0].position - touches[1].position;
             m_touchesDelta = Mathf.Sqrt(dir.x * dir.x + dir.y * dir.y);
             m_mousePrev = Input.mousePosition;
+            //a second finger cancels brush mode
             if (CurrentTapState == TapState.BrushMode)
             {
                 NewWorkbookManager.Instance.CameraManager.SwitchLoupeOnOff(false);
@@ -216,6 +223,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                     {
                         Vector2 pinchOffset = touches[0].position - touches[1].position;
                         float touchDistance = Mathf.Sqrt(pinchOffset.x * pinchOffset.x + pinchOffset.y * pinchOffset.y);
+                        //zoom by the ratio between new and old finger distance
                         float koef = touchDistance / m_touchesDelta;
                         NewWorkbookManager.Instance.CameraManager.ChangeZoom(koef);
                         if (!m_currentZoomLogged)
@@ -231,6 +239,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                 }
             case TapState.BrushMode:
                 {
+                    //color every pixel between last and current position so fast swipes leave no gaps
                     Vector2 dir = data.position - data.delta;
                     var deltas = new float[3] {
                     1f,
@@ -264,6 +273,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
     void OnApplicationPause(bool pause)
     {
+        //leave brush mode when the app goes to background
         if (pause)
         {
             if (CurrentTapState == TapState.BrushMode)

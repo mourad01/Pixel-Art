@@ -40,6 +40,7 @@ public class SettingsWindow : BaseWindow
         m_soundsSwitcher.UpdateState(AppData.SoundsEnabled, true);
         m_highlightCellsSwitcher.UpdateState(AppData.BulbMode, true);
         m_loupeSwitcher.UpdateState(AppData.LoupeEnabled, true);
+        //hide vibration options on devices without vibration
         m_vibroRightPart.SetActive(VibroWrapper.IsVibroAvailable());
         m_vibroWrongPart.SetActive(VibroWrapper.IsVibroAvailable());
         //IAPWrapper instance = IAPWrapper.Instance;
@@ -68,6 +69,7 @@ public class SettingsWindow : BaseWindow
         AudioManager.Instance.PlayClick();
         //INPluginWrapper.Instance.UpdateSoundState();
 
+        //apply the new sound state to music and effects right away
         if (BackgroundMusic.musicMgr != null)
         {
             BackgroundMusic.musicMgr.RefreshSettings();
@@ -218,6 +220,7 @@ public class SettingsWindow : BaseWindow
     }
     IEnumerator WaitForRestored()
     {
+        // wait 2 seconds for restore callbacks
         var timer = 2f;
         while (true)
         {

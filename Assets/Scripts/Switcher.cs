@@ -45,6 +45,7 @@ public class Switcher : MonoBehaviour
         while (true)
         {
             var deltaTime = Mathf.Min(Time.deltaTime, 0.05f); 
+            // swap the background color once the pointer crosses the middle
             var newZeroSign = (m_pointer.anchoredPosition.x > 0f);
             if (zeroSign != newZeroSign)
             {

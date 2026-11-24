@@ -26,6 +26,7 @@ public class ButtonEffectComponent : MonoBehaviour
                             element.element.color = element.activeColor;
                             break;
                         case ButtonEffectType.HighlightColor:
+                            //keep the current color to restore it on release
                             m_tempColor = element.element.color;
                             element.element.color = element.activeColor;
                             break;

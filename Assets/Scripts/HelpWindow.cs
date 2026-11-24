@@ -41,6 +41,7 @@ public class HelpWindow : BaseWindow
             base.StartCoroutine(SetContentSizeCoroutine());
             m_scrollRect.verticalNormalizedPosition = 1f;
             string text = LocalizationManager.Instance.GetString("help_text");
+            //wrap every url in <a> tags and put it on its own line
             var matchCollection = Regex.Matches(text, "(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
             for (int i = matchCollection.Count - 1; i >= 0; i--)
             {
@@ -51,6 +52,7 @@ public class HelpWindow : BaseWindow
             var parts = text.Split(new string[1] {
                 "\n"
             }, StringSplitOptions.RemoveEmptyEntries);
+            //one text per plain line, one clickable button per url line
             for (int index = 0; index < parts.Length; index++)
             {
                 string helpText = string.Empty;

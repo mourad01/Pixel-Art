@@ -25,8 +25,10 @@ public class BackgroundMusic : MonoBehaviour
     public bool isMuted;
     void Awake()
     {
+        //keep a single music player across scenes
         if (musicMgr == null)
         {
+            //sound is on by default on first launch
             if (!PlayerPrefsWrapper.Exists(AppData.s_soundsKey))
             {
                 AppData.SoundsEnabled = true;
@@ -85,6 +87,7 @@ public class BackgroundMusic : MonoBehaviour
     {
         if (musicMgr != null)
         {
+            //alternate between track 2 and 3 for each game
             if (randomMusicTrack == BackgroundMusic.MusicTrackId.TRACK2)
             {
                 randomMusicTrack = BackgroundMusic.MusicTrackId.TRACK3;
@@ -144,6 +147,7 @@ public class BackgroundMusic : MonoBehaviour
         {
             yield return null;
         }
+        // fade out over about 1 second, then start the pending track
         float fadeVolume = 1f;
         while (fadeVolume > 0f)
         {

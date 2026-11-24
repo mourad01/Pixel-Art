@@ -20,6 +20,7 @@ public class NumberColoring : MonoBehaviour
     public Action<Color, int> OnCountLeft;
     public Action<Color> OnPaintedPixel;
 
+    //7x7 round shape painted by the bomb booster
     public int[,] m_bombMatrix = new int[7, 7] {
         {
             0, 0,
@@ -162,6 +163,7 @@ public class NumberColoring : MonoBehaviour
         m_pixels = tex.GetPixels();
         m_colors = m_pixels.Distinct().ToList();//Where(c => c.r != 1 && c.g != 1 && c.b != 1).ToList();
 
+        // white and transparent pixels are never colored
         m_colors.Remove(Color.white);
         m_colors.Remove(transparent);
 
@@ -171,6 +173,7 @@ public class NumberColoring : MonoBehaviour
         Color color = new Color(1f, 1f, 1f, 0f);
         Color white = Color.white;
         m_colorsToColor = 0;
+        //white pixels stay white, all others start empty
         for (int i = 0; i < startColors.Length; i++)
         {
             if (m_pixels[i] == white)
@@ -192,6 +195,7 @@ public class NumberColoring : MonoBehaviour
         var resPixels = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
         var rightPixels = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
 
+        // count pixels left to color for each color
         m_totalNumbers = 0;
         foreach (var c in m_colors)
         {
@@ -207,6 +211,7 @@ public class NumberColoring : MonoBehaviour
             m_colorsCount[c] = count;
         }
 
+        //keep the image aspect ratio once the numbers are generated
         base.StartCoroutine(GenerateNumbersCoroutine_new(delegate
         {
             if (m_width > m_height)
@@ -227,6 +232,7 @@ public class NumberColoring : MonoBehaviour
     {
         if (m_inited)
         {
+            // fade the gray image out while zooming in
             float value = Mathf.Lerp(1f, 0f, (m_cameraManager.Zoom - (m_cameraManager.MaxZoom - 1f) * 0.1f - 1f) / (m_cameraManager.MaxZoom * 0.4f));
             m_grayRenderer.sharedMaterial.SetFloat("_Alpha", value);
         }
@@ -284,6 +290,7 @@ public class NumberColoring : MonoBehaviour
 
                 point.y = y / scale.y;
                 Debug.Log(mainTexture.width);
+                //hit point goes from -1..1 on the quad to texture pixels
                 point.x = (point.x + 1f) / 2f* (float)mainTexture.width;
 
 
@@ -331,6 +338,7 @@ public class NumberColoring : MonoBehaviour
     {
 
         Color pixel = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixel((int)pixelPos.x, (int)pixelPos.y);
+        // lasso and bomb always use the right color of the tapped pixel
         if (WorkbookModel.Instance.SpecBoostersModel.LassoMode || WorkbookModel.Instance.SpecBoostersModel.BombMode)
         {
             color = pixel;
@@ -350,6 +358,7 @@ public class NumberColoring : MonoBehaviour
             }
             if (!pixelEqual)
             {
+                //plural brush only paints a wrong color near the center of the cell
                 if (WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType == ColorizationModeModel.BrushType.Plural)
                 {
                     int pixelX = (int)pixelPos.x;
@@ -373,6 +382,7 @@ public class NumberColoring : MonoBehaviour
                         return;
                     }
                 }
+                // wrong color is painted half transparent
                 color.a = 0.5f;
                 Color lhs = resPixel;
                 lhs.a = 0.5f;
@@ -388,6 +398,7 @@ public class NumberColoring : MonoBehaviour
         
         ((Texture2D)m_resMaterial.mainTexture).SetPixel((int)pixelPos.x, (int)pixelPos.y, color);
         ((Texture2D)m_resMaterial.mainTexture).Apply();
+        //full alpha means the right color was painted
         if (color.a > 0.9f)
         {
             VibroWrapper.PlayVibroRight();
@@ -411,6 +422,7 @@ public class NumberColoring : MonoBehaviour
                 WorkbookModel.Instance.SpecBoostersModel.SpendBomb();
                 AudioManager.Instance.PlayBomb();
                 AnalyticsManager.Instance.BombUsed(WorkbookModel.Instance.SpecBoostersModel.BombCount + 1);
+                // bomb can finish several colors at once so check them all
                 foreach (Color c in m_colors)
                 {
                     CheckColor(c, pixels, grayPixels);
@@ -471,6 +483,7 @@ public class NumberColoring : MonoBehaviour
     int CheckColor(Color color, Color[] resPixels, Color[] rightPixels, bool soundEnabled = true)
     {
         int count = 0;
+        //silent check recounts from the textures, otherwise use the cached count
         if (!soundEnabled)
         {
             for (int i = 0; i < rightPixels.Length; i++)
@@ -502,6 +515,7 @@ public class NumberColoring : MonoBehaviour
         return 0;
     }
 
+    // old grayscale version of the lasso fill, not called anymore
     void CheckLassoNeighbours1(Color[] rightPixels, Color[] coloredPixels, int x, int y, Color color)
     {
         try
@@ -570,8 +584,10 @@ public class NumberColoring : MonoBehaviour
         var nextStack = new Stack<Vector2>();
         bool first = true;
         stack.Push(new Vector2((float)x, (float)y));
+        //pack rgb in one int so colors compare exactly
         int startColor = (int)((color.r + color.g * 256f + color.b * 65536f) * 1000f);
         var historyStep = new HistoryStep();
+        // flood fill every connected pixel that should have this color
         while (stack.Count > 0)
         {
             while (stack.Count > 0)
@@ -613,6 +629,7 @@ public class NumberColoring : MonoBehaviour
     void CheckBombNeighbours(Color[] rightPixels, Color[] coloredPixels, int x, int y, Color color)
     {
         var historyStep = new HistoryStep();
+        //paint the right color under every 1 of the bomb matrix
         int radius = m_bombMatrix.GetLength(0) / 2;
         for (int i = -radius; i <= radius; i++)
         {
@@ -639,6 +656,7 @@ public class NumberColoring : MonoBehaviour
             texture2D.filterMode = FilterMode.Point;
             var texture2D2 = texture2D;
             var pixels = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
+            // drop wrong (half alpha) pixels from the saved png
             for (int i = 0; i < pixels.Length; i++)
             {
                 if (pixels[i].a < 1f)
@@ -665,6 +683,7 @@ public class NumberColoring : MonoBehaviour
 
     void AddHistoryStep(HistoryStep historyStep)
     {
+        //first step of a new work creates its save data
         if (m_history == null)
         {
             var savedWorkData = NewWorkbookManager.Instance.SaveWork(true);
@@ -695,6 +714,7 @@ public class NumberColoring : MonoBehaviour
         yield return null;
         m_content.SetActive(true);
         yield return null;
+        // recount every color silently after the board is shown
         var allPix = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
         var rightPix = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
         foreach(var c in m_colors)
@@ -731,6 +751,7 @@ public class NumberColoring : MonoBehaviour
         var sizeKoef = CELL_SIZE;
         var newWidth = m_width * sizeKoef;
         var newHeight = m_height * sizeKoef;
+        //numbers texture is cut in chunks of max 3600 px
         var maxSize = 3600;
         var colors = new Color[(sizeKoef) * (sizeKoef)];
         var borderColors = new Color[sizeKoef * borderWidth];
@@ -778,6 +799,7 @@ public class NumberColoring : MonoBehaviour
                             //}
                             int pixelNumber = colorsDict[m_pixels[curI + offset * m_width]];
                             bigTex.SetPixels(i * sizeKoef, j * sizeKoef, sizeKoef, sizeKoef, colors);
+                            // draw 1, 2 or 3 digits of the color number in the cell
                             if (pixelNumber < 10)
                             {
                                 bigTex.SetPixels(i * sizeKoef + 18, j * sizeKoef + 15, 14, 20, numberPixels[pixelNumber]);
@@ -823,6 +845,7 @@ public class NumberColoring : MonoBehaviour
                     //}
                 }
                 bigTex.Apply();
+                //one quad per chunk, placed in the -1..1 space of the board
                 var curNumbersContent = UnityObject.Instantiate(m_numbersContent);
                 curNumbersContent.SetParent(m_numbersContent.parent);
                 var mf = curNumbersContent.gameObject.AddComponent<MeshFilter>();

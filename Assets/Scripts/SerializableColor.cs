@@ -31,6 +31,7 @@ public class SerializableColor
         B = Convert.ToByte(b * 255f);
     }
 
+    //alpha is not saved, always 1
     public Color ToUnityEngineColor()
     {
         return new Color((float)(int)R / 255f, (float)(int)G / 255f, (float)(int)B / 255f, 1f);

@@ -47,6 +47,7 @@ public class ColorsPanel : MonoBehaviour
 
         Vector2 sizeDelta = ((RectTransform)transform).sizeDelta;
         float panelHeight = 0f - ((RectTransform)transform).anchoredPosition.y + sizeDelta.y;
+        //find how many colors fit in a row (min 5), two rows per page
         int count = 0;
         count = 10;
         while (!(sizeDelta.x / (float)count / panelHeight * 2f >= 0.25f))
@@ -70,6 +71,7 @@ public class ColorsPanel : MonoBehaviour
             colorsPage.OnColorClick += OnColorClickedHandler;
         }
         float y = m_pointsParent.sizeDelta.y;
+        // one row is enough when all colors fit in it
         if (colors.Count <= rowWidth)
         {
             var layoutElement = m_layoutElement;
@@ -94,12 +96,14 @@ public class ColorsPanel : MonoBehaviour
             colorButtonFirstClicked = true;
             GeneratePoints();
             m_positScrollRect.OnSelectIndex += OnIndexChangedHandler;
+            //skip the boosters page when it is shown
             m_positScrollRect.SetIndex(m_specPage.gameObject.activeSelf ? 1 : 0);
         }
         else
         {
             m_colorPointer.gameObject.SetActive(false);
         }
+        //listen to the 2D board or the 3D game controller
         if (SceneManager.GetActiveScene().name == "2DScene")
         {
             var numberColoring = NewWorkbookManager.Instance.NumberColoring;
@@ -149,6 +153,7 @@ public class ColorsPanel : MonoBehaviour
         WorkbookModel.Instance.CurrentColorModel.UpdateColor(colorImage.Color);
         m_colorPointer.UpdateColor(colorImage, pos);
 
+        //show the remaining count panel only if this color still has cells left
         if (isWorking3D)
         {
             bool stillAvailable = UnitySingleton<GameController>.Instance.CheckColorLeft(colorImage.ColorIndex, !colorButtonFirstClicked);
@@ -254,6 +259,7 @@ public class ColorsPanel : MonoBehaviour
         {
             AppData.SpecPageOpened = true;
         }
+        //leaving the boosters page turns bomb and lasso off
         if (index > 0)
         {
             WorkbookModel.Instance.SpecBoostersModel.BombMode = false;

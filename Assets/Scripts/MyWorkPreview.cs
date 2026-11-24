@@ -56,6 +56,7 @@ public class MyWorkPreview : MonoBehaviour
         IsInited = true;
         m_saveId = saveId;
         m_image.material = new Material(Shader.Find("Custom/GreyTextureShader"));
+        //free textures of the previous save shown here
         if (m_image.texture != null)
         {
             UnityObject.Destroy(m_image.texture);
@@ -93,6 +94,7 @@ public class MyWorkPreview : MonoBehaviour
                     m_image.texture = tex;
                     m_image.enabled = true;
                     m_imageWaiter.SetActive(false);
+                    // saved progress goes on top of the grey image, bilinear for 3D, point for 2D
                     var texture2D2 = new Texture2D(1, 1, TextureFormat.ARGB32, false);
                     texture2D2.filterMode = (FilterMode)(m_swd.ImageInfo.Is3D ? 1 : 0);
                     texture2D2.LoadImage(m_swd.Preview);
@@ -119,6 +121,7 @@ public class MyWorkPreview : MonoBehaviour
                 DataManager.Instance.GetPhotoAsset(m_swd.ImageInfo.Id, delegate (bool res, Texture2D tex)
                 {
                     m_image.texture = tex;
+                    //photos keep their aspect ratio
                     if (tex.width > tex.height)
                     {
                         m_image.transform.localScale = new Vector3(1f, (float)tex.height / (float)tex.width, 1f);

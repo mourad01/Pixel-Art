@@ -42,6 +42,7 @@ public class PickerController : UnitySingleton<PickerController>
         Debug.Log("Loading image from gallery " + path);
         var url = path;
 #if UNITY_ANDROID
+        //WWW needs a file url for the picked path
         if (!url.StartsWith("file:"))
         {
             url = "file://" + url;
@@ -118,6 +119,7 @@ public class PickerController : UnitySingleton<PickerController>
     public void OpenGallery()
     {
         Debug.Log("open gallery");
+        // picked path is loaded into a texture by LoadImage
         NativeGallery.GetImageFromGallery(new NativeGallery.MediaPickCallback((path) =>
         {
             GetImageCompleteWrapper(path);

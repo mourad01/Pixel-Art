@@ -94,6 +94,7 @@ public class ImageLayersManager : MonoBehaviour, IPointerDownHandler, IPointerUp
     void CheckLongTap()
     {
         bool tapped = false;
+        //held more than 0.7s, switch to the brush and show the loupe
         if ((DateTime.Now - m_downTime).TotalSeconds > (double)m_longTapTime)
         {
             if (WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType != 0 && m_brushDrag)
@@ -116,6 +117,7 @@ public class ImageLayersManager : MonoBehaviour, IPointerDownHandler, IPointerUp
             CurrentTapState = TapState.Down;
             m_downTime = DateTime.Now;
             m_tapPosition = Input.mousePosition;
+            //brush already active, start in brush mode right away
             if (WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType == ColorizationModeModel.BrushType.Plural)
             {
                 CurrentTapState = TapState.BrushMode;
@@ -161,6 +163,7 @@ public class ImageLayersManager : MonoBehaviour, IPointerDownHandler, IPointerUp
             case TapState.BrushMode:
                 {
                     m_brushDrag = true;
+                    //click every pixel along the drag so fast moves leave no gaps
                     Vector2 dir = data.position - data.delta;
                     var deltas = new float[3] {
                     1f,
@@ -211,6 +214,7 @@ public class ImageLayersManager : MonoBehaviour, IPointerDownHandler, IPointerUp
             float y = point.y;
             Vector3 scale = raycastHits[0].collider.transform.lossyScale;
             point.y = y / scale.y;
+            //local -1..1 hit point to texture pixel coordinates
             point.x = (point.x + 1f) / 2f * (float)mainTexture.width;
             point.y = (point.y + 1f) / 2f * (float)mainTexture.height;
             pixelPos = point;

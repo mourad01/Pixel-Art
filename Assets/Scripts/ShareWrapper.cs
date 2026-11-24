@@ -81,6 +81,7 @@ public class ShareWrapper : MonoBehaviour
          *	Pinterest - "com.pinterest"
         */
         string applicationId = null;
+        //only instagram and facebook need their app installed
         if (socialType == SocialType.Instagram)
         {
             applicationId = "com.instagram.android";
@@ -121,6 +122,7 @@ public class ShareWrapper : MonoBehaviour
             return ShareStatus.AppNotInstalled;
         }
 
+        // ACTION_SEND intent, setPackage sends it to instagram or facebook when chosen
         AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent");
         AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent");
         intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND"));
@@ -189,6 +191,7 @@ public class ShareWrapper : MonoBehaviour
 
     public static AndroidJavaObject Texture2DToAndroidBitmap(Texture2D texture2D)
     {
+        //pass the texture to android as png bytes
         var encoded = texture2D.EncodeToPNG();
         using (var bf = new AndroidJavaClass("android.graphics.BitmapFactory"))
         {
@@ -198,6 +201,7 @@ public class ShareWrapper : MonoBehaviour
     public static void SaveIntoGallery(string imagePath, string title, string description, Action<bool> handler)
     {
 #if UNITY_EDITOR
+        // no gallery in the editor, just report success
         handler(true);
 #else
         NativeGallery.SaveImageToGallery(imagePath, title, "Capture_{0}.jpg", (error) =>

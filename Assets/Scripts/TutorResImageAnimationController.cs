@@ -22,6 +22,7 @@ public class TutorResImageAnimationController : MonoBehaviour
         m_resImage.sprite = Sprite.Create(texture2D, new Rect(0f, 0f, (float)m_startTex.width, (float)m_startTex.height), new Vector2(0.5f, 0.5f));
     }
 
+    //called by the tutorial animation, each event paints one yellow pixel, -1 resets
     public void AnimationEventHandler(int index)
     {
         switch (index)

@@ -55,6 +55,7 @@ public static class NativeShare
         using (AndroidJavaClass intentClass = new AndroidJavaClass("android.content.Intent"))
         using (AndroidJavaObject intentObject = new AndroidJavaObject("android.content.Intent"))
         {
+            //build an ACTION_SEND intent with subject and text
             using (intentObject.Call<AndroidJavaObject>("setAction", intentClass.GetStatic<string>("ACTION_SEND")))
             { }
             using (intentObject.Call<AndroidJavaObject>("setType", mimeType))
@@ -140,6 +141,7 @@ public static class NativeShare
     {
         SocialSharingStruct conf = new SocialSharingStruct();
         conf.text = body;
+        //native side expects files and url in one string split by ';'
         string paths = string.Join(";", filePaths);
         if (string.IsNullOrEmpty(paths))
             paths = url;

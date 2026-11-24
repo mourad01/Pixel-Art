@@ -76,11 +76,13 @@ public class NewLibraryWindow : BaseWindow
         m_imagesInfo = imagesInfo;
         m_currentGroupIndex = -1;
         m_images = m_imagesInfo.Images;
+        //two previews per row
         m_pairsCount = (m_images.Count + 1) / 2;
         m_delta = 20f;
         float size = ((RectTransform)transform).rect.width - m_delta * 2f;
         m_previewSize = (size - m_delta) / 2f;
         m_scrollRect.content.sizeDelta = new Vector2(size, (float)m_pairsCount * (m_previewSize + m_delta) + m_delta);
+        // pool of 10 rows reused while scrolling
         if (m_imageGroups.Count == 0)
         {
             for (int i = 0; i < 10; i++)
@@ -96,6 +98,7 @@ public class NewLibraryWindow : BaseWindow
                 m_imageGroups.Add(groupOfPreviews);
             }
         }
+        //jump to the row of the last opened image
         int index = m_images.FindIndex((ImageInfo a) => a.Id == MainMenu.ImageId) / 2;
         if (index < 0)
         {
@@ -120,6 +123,7 @@ public class NewLibraryWindow : BaseWindow
         var blockPlane = m_blockPlane;
         Vector2 velocity = m_scrollRect.velocity;
         int active;
+        // block taps while the list scrolls fast
         if (!(velocity.y > 500f))
         {
             active = ((m_scrollRect.velocity.y < -500f) ? 1 : 0);
@@ -155,6 +159,7 @@ public class NewLibraryWindow : BaseWindow
             Vector2 sizeDelta = ((Component)m_imageGroups[0]).GetComponent<RectTransform>().sizeDelta;
             float y = sizeDelta.y;
             int spacing = 20;
+            //row index under the current scroll position
             float scrolled = m_scrollRect.content.sizeDelta.y * (1f - pos.y);
             int index = Mathf.RoundToInt((scrolled - (float)spacing) / (y + (float)spacing));
             OnSelectIndexHandler(index, false);
@@ -197,6 +202,7 @@ public class NewLibraryWindow : BaseWindow
             LevelProgressControl.control.postcardOrigin = SceneManager.GetActiveScene().name;
             LevelProgressControl.control.puzzleBasename = strIdent;
         }
+        //datafile key holds the daily puzzle name
         PlayerPrefs.SetString("datafile", strIdent); 
     }
     public static void ExecutePuzzle(ImageInfo imageInfo)
@@ -210,6 +216,7 @@ public class NewLibraryWindow : BaseWindow
     }
     public void DrawAction(ImageInfo imageInfo, ImagePreview preview)
     {
+        // image is not cached and there is no internet
         if (!InternetConnection.IsAvailable && !DataManager.Instance.CheckLocalAsset(imageInfo))
         {
             DialogToolWrapper.ShowNoInternetDialog();
@@ -228,6 +235,7 @@ public class NewLibraryWindow : BaseWindow
                 }
             }
 
+            //no saved work for this image, start a new one
             if (text == null)
             { 
                 NewImageButtonClick(imageInfo, ImageOpenType.New, preview);
@@ -320,6 +328,7 @@ public class NewLibraryWindow : BaseWindow
                                                   orderby a.Index
                                                   select a).ToList();
                     m_currentGroupIndex = index;
+                    // fill rows from 4 above to 5 below the current one
                     for (int i = -4; i < 6; i++)
                     {
                         int localIndex = m_currentGroupIndex + i;
@@ -328,6 +337,7 @@ public class NewLibraryWindow : BaseWindow
                             var groupOfPreviews = m_imageGroups.FirstOrDefault((GroupOfPreviews a) => a.Index == localIndex);
                             if (groupOfPreviews == null)
                             {
+                                //recycle the row left behind by the scroll
                                 groupOfPreviews = ((!forward) ? list[m_imageGroups.Count - 1] : list[0]);
                                 groupOfPreviews.Index = localIndex;
                                 groupOfPreviews.Clear();

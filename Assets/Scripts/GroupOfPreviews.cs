@@ -108,6 +108,7 @@ public class GroupOfPreviews : MonoBehaviour
     }
     IEnumerator LoadIconsCoroutine()
     {
+        //one icon per frame
         for(int i = 0; i < m_previews.Count; i++)
         {
             if (m_previews[i].Inited)

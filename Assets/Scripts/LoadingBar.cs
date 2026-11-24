@@ -41,6 +41,7 @@ public class LoadingBar : MonoBehaviour
     }
     IEnumerator BarCoroutine()
     {
+        //shift the colors one image forward every m_deltaTime
         int step = 0;
         int index = 0;
         while (true)

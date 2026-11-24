@@ -27,6 +27,7 @@ public static class AppPathsConfig
     public static void Init()
     {
         Host = "https://inotechvn.com/pixelart/";
+        //local folders for saves, user photos, exported images and downloads
         SavesPath = Application.persistentDataPath + "/Worked/";
         PhotosPath = Application.persistentDataPath + "/MyArt/";
         SavedImagesPath = Application.persistentDataPath + "/Images/";
@@ -62,6 +63,7 @@ public static class AppPathsConfig
     {
         try
         {
+            //empty the temp cache folder on every launch
             var stringBuilder = new StringBuilder();
             var files = Directory.GetFiles(Application.temporaryCachePath);
             var cacheFiles = files;

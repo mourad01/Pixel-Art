@@ -108,6 +108,7 @@ public class ImagePreview : MonoBehaviour
             m_image.material = new Material(Shader.Find("Custom/GreyTextureShader"));
             m_materialInited = true;
         }
+        //free the old textures, the today art keeps its own
         if (m_image.texture != null && !m_isTodayArt)
         {
             UnityObject.Destroy(m_image.texture);
@@ -167,6 +168,7 @@ public class ImagePreview : MonoBehaviour
                                 m_image.texture = tex;
                                 m_imageWaiter.SetActive(false);
                                 m_image.gameObject.SetActive(true);
+                                //draw the player progress on top if there is a save
                                 if (m_saveId != null)
                                 {
                                     if (gameObject.activeInHierarchy)
@@ -248,6 +250,7 @@ public class ImagePreview : MonoBehaviour
     public void Click()
     {
 
+        // locked images need a rewarded video, others show an interstitial
         if (m_adLocked.activeInHierarchy)
         {
             AdsManager.instance.ShowReward(()=>{
@@ -281,12 +284,14 @@ public class ImagePreview : MonoBehaviour
 
         //yield return null;
 
+        //saved preview goes in _ResTex of the grey shader
         resTex.LoadImage(swd.Preview);
         m_image.material.SetTexture("_ResTex", resTex);
         m_completedMark.SetActive(swd.Completed);
 
         RecheckShaker(!swd.Completed);
         var filter = MainManager.Instance.FilterManager.GetFilter(swd.FilterId);
+        //tile the filter once per pixel of the image
         if (filter != null)
         {
             m_filterImage.material.mainTextureScale = new Vector2((float)resTex.width, (float)resTex.height);

@@ -24,6 +24,7 @@ public class TutorBrushResImageAnimationController : MonoBehaviour
         m_loupeResImage.sprite = m_resImage.sprite;
     }
 
+    // each animation event paints one green pixel of the brush demo, -1 resets
     public void AnimationEventHandler(int index)
     {
         switch (index)

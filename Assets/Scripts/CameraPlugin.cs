@@ -31,6 +31,7 @@ public class CameraPlugin : MonoBehaviour
 
     public void Initilized()
     {
+        //ask for the android camera permission first
         if (!UniAndroidPermission.IsPermitted(AndroidPermission.CAMERA))
         {
             UniAndroidPermission.RequestPermission(AndroidPermission.CAMERA, delegate
@@ -91,6 +92,7 @@ public class CameraPlugin : MonoBehaviour
     {
         if (isAvalibleCam)
         {
+            //crop a centered square from the camera frame
             int side = Mathf.Min(webcamTexture.width, webcamTexture.height);
             texture = new Texture2D(side, side, TextureFormat.RGB24, false)
             {
@@ -105,6 +107,7 @@ public class CameraPlugin : MonoBehaviour
                 UnityObject.Destroy(webcamTexture);
             }
             Debug.Log(orient);
+            // undo the camera rotation so the photo is upright
             switch (orient)
             {
                 case 90:
@@ -151,6 +154,7 @@ public class CameraPlugin : MonoBehaviour
             webcamTexture.Stop();
             UnityObject.Destroy(webcamTexture);
         }
+        //cycle to the next camera (front / back)
         indexCam++;
         if (indexCam >= devices.Count())
         {
@@ -169,6 +173,7 @@ public class CameraPlugin : MonoBehaviour
             }
             else
             {
+                //live preview, a new square texture every frame
                 int side = Mathf.Min(webcamTexture.width, webcamTexture.height);
                 orient = -webcamTexture.videoRotationAngle;
                 texture = new Texture2D(side, side, TextureFormat.ARGB32, false)

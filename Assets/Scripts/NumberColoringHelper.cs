@@ -15,6 +15,7 @@ public class NumberColoringHelper
             spriteRenderer = loupeBackground.AddComponent<SpriteRenderer>();
         }
         loupeBackground.layer = LayerMask.NameToLayer("Loupe");
+        //grid layer tiled with grid_cell
         var gridObject = default(GameObject);
         var meshFilter = default(MeshFilter);
         CreateOrResetObject("grid", out gridObject, out gridMr, out meshFilter);
@@ -22,6 +23,7 @@ public class NumberColoringHelper
         var mainTexture = (Texture2D)Resources.Load("grid_cell");
         gridMr.sharedMaterial = new Material(Shader.Find("Custom/TilingShader"));
         gridMr.sharedMaterial.mainTexture = mainTexture;
+        //gray picture, its collider receives the tap raycasts
         var grayscaleObject = default(GameObject);
         var grayFilter = default(MeshFilter);
         CreateOrResetObject("gray_texture", out grayscaleObject, out grayMr, out grayFilter);
@@ -38,6 +40,7 @@ public class NumberColoringHelper
             numbersContentParent = new GameObject("numbers_content").transform;
             numbersContentParent.SetParent(gameObject.transform);
         }
+        //numbers sit at z -0.5, the colored result goes in front at -1
         numbersContentParent.transform.localPosition = new Vector3(0f, 0f, -0.5f);
         CreateTextPrefab(gameObject.transform, out numberPrefab);
         var resultObject = default(GameObject);
@@ -82,6 +85,7 @@ public class NumberColoringHelper
         {
             mf = go.AddComponent<MeshFilter>();
         }
+        // 2x2 quad from -1 to 1 with full uv
         mf.sharedMesh = new Mesh();
         mf.sharedMesh.vertices = new Vector3[4] {
             new Vector2(-1f, -1f),

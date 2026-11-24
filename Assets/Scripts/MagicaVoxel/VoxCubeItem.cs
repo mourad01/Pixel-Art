@@ -59,6 +59,7 @@ public class VoxCubeItem : MonoBehaviour
         Color = color;
         //this.ColorIndex = this._colorSettings.GetNumberByColor(this.Color) + 1;
         _mesh = mesh;
+        //color index 0 has nothing to color so the cube starts done
         if (ColorIndex == 0)
         {
             SetSuccessColorCube();
@@ -105,6 +106,7 @@ public class VoxCubeItem : MonoBehaviour
             _renderer.material.SetInt("_Highlighted", 0);
             _renderer.material.color = (colorByIndex);
         }
+        // flash the selected color for 0.1s then restore the faces
         yield return new WaitForSeconds(0.1f);
         int index = 0;
         foreach (MeshRenderer meshRenderer in voxCubeItem._renderers)
@@ -161,6 +163,7 @@ public class VoxCubeItem : MonoBehaviour
         Color color;
         foreach (MeshRenderer _renderer in _renderers)
         {
+            //highlighted cubes use the grey number texture, others the black one
             if (highlight)
             {
                 _renderer.material.mainTexture = (SetHighLightTextureOnFaceCube());
@@ -236,6 +239,7 @@ public class VoxCubeItem : MonoBehaviour
         {
             return -1;
         }
+        // 1 right color, 0 wrong color, -1 already colored
         if (ColorIndex == Loader3D.CurrentIndex)
         {
             SetSuccessColorCube();

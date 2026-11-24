@@ -18,6 +18,7 @@ public class TouchManager : MonoBehaviour
         cam = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
+    //old mouse input, not called anymore (InputReceiver3D uses CheckCube)
     void Update1()
     {
         if (!Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
@@ -84,6 +85,7 @@ public class TouchManager : MonoBehaviour
             if (voxCubeItem != null)
             {
                 int result = voxCubeItem.TochCubeItem();
+                // -1 means the cube was already colored
                 if (result >= 0)
                 {
                     if (result > 0)

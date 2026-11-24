@@ -11,6 +11,7 @@ public static class CryptoScript
         string hard = "hard";
         string password = "password";
         string sixty = 60.ToString(CultureInfo.InvariantCulture);
+        //key is built in pieces: veryvery_very_very60hard
         string key = very + veryUnder + veryUnder + very + sixty + hard;
         return Algorithm(Encoding.UTF8.GetBytes(text), Encoding.UTF8.GetBytes(key), key.Length, Encoding.UTF8);
     }
@@ -31,6 +32,7 @@ public static class CryptoScript
     {
         int num = 1;
         var result = new byte[text.Length];
+        //repeating key xor, the same call encrypts and decrypts
         for (int i = 0; i < text.Length; i++)
         {
             result[i] = (byte)(text[i] ^ password[i % passworLength]);

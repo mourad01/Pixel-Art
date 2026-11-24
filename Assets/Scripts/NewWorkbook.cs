@@ -67,6 +67,7 @@ public class NewWorkbook : BaseWindow
         try
         {
             var filterWindow = WindowManager.Instance.OpenFilterWindow();
+            //hide the board while the filter window is open
             filterWindow.OnOpen = () =>
             {
                 NewWorkbookManager.Instance.NumberColoring.gameObject.SetActive(false);
@@ -116,6 +117,7 @@ public class NewWorkbook : BaseWindow
         yield return new WaitForSeconds(0.1f);
 
         m_blockPlane.SetActive(false);
+        // content starts enlarged by the panel heights and shrinks to fit in 0.5s
         var topPanelsHeight = m_topPanels.Sum((RectTransform a) => a.rect.height);
         var bottomPanelsHeight = m_bottomPanels.Sum((RectTransform a) => a.rect.height);
         m_content.anchoredPosition = new Vector2(0f, (topPanelsHeight - bottomPanelsHeight) / 2f);
@@ -150,6 +152,7 @@ public class NewWorkbook : BaseWindow
     }
     IEnumerator CompletePlateAppearCoroutine()
     {
+        //wait until the player lifts the finger
         while (Input.touchCount != 0)
         {
             yield return null;
@@ -164,6 +167,7 @@ public class NewWorkbook : BaseWindow
         {
             completePlateElement.SetAlpha(0);
         } 
+        // fade the plate elements back to their alpha
         var time = 0.1f;
         var timer = time;
 

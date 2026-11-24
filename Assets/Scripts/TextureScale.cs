@@ -50,6 +50,7 @@ public class TextureScale
         }
         w = tex.width;
         w2 = newWidth;
+        //split the rows between one thread per core
         int cores = Mathf.Min(SystemInfo.processorCount, newHeight);
         int slice = newHeight / cores;
         finishCount = 0;
@@ -68,6 +69,7 @@ public class TextureScale
                 var thread = new Thread(start);
                 thread.Start(parameter);
             }
+            // last slice runs on the main thread, then wait for the others
             parameter = new ThreadData(slice * i, newHeight);
             if (useBilinear)
             {
@@ -117,6 +119,7 @@ public class TextureScale
                 newColors[newRow + j] = ColorLerpUnclamped(ColorLerpUnclamped(texColors[row + x], texColors[row + x + 1], value), ColorLerpUnclamped(texColors[nextRow + x], texColors[nextRow + x + 1], value), (float)i * ratioY - (float)yFloor);
             }
         }
+        //count this slice as finished
         mutex.WaitOne();
         finishCount++;
         mutex.ReleaseMutex();

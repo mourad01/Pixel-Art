@@ -84,6 +84,7 @@ public class LocalizationManager
         }
         catch
         {
+            //missing translation, show the key itself
             return key;
         }
     }

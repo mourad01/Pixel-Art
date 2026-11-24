@@ -32,6 +32,7 @@ public class ColorsPage : MonoBehaviour
             m_colorImages.Add(colorImage);
             colorImage.Init(colors[i], startIndex + i + 1);
             colorImage.OnClick += OnColorClickedHandler;
+            //fill the first row, the rest goes to the second one
             if (i < rowWidth)
             {
                 colorImage.transform.SetParent(m_firstRow);
@@ -75,6 +76,7 @@ public class ColorsPage : MonoBehaviour
     void OnColorClickedHandler(ColorImage colorImage)
     {
         int index = m_colorImages.IndexOf(colorImage);
+        //colors at the bottom corners get a special position
         if (m_colorImages.Count <= m_rowWidth)
         {
             if (index == 0 && m_pageIndex == 0)

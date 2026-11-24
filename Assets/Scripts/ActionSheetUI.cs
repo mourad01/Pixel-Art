@@ -37,6 +37,7 @@ public class ActionSheetUI : MonoBehaviour
             if (i < buttons.Length)
             {
                 buttons[i].gameObject.SetActive(true);
+                //buttons are filled from the bottom so titles go in reverse
                 int index = buttonTitles.Length - i - 1;
                 buttons[i].GetComponent<ActionSheetButton>().index = index;
                 buttons[i].GetComponentInChildren<Text>().text = buttonTitles[index];
@@ -112,6 +113,7 @@ public class ActionSheetUI : MonoBehaviour
         questionPanel.gameObject.SetActive(false);
     }
 
+    // question callback gets 1 for yes and 0 for cancel
     public void OnButtonCancel()
     {
         gameObject.SetActive(false);

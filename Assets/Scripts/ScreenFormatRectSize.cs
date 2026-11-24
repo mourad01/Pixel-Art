@@ -17,6 +17,7 @@ internal class ScreenFormatRectSize : MonoBehaviour
 
     void Update()
     {
+        //wait m_takts frames, then apply the 4:3 size once if the ratio is under 1.51
         if (taktsCounter < m_takts)
         {
             taktsCounter++;

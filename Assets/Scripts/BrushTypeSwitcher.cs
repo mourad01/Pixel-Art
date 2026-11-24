@@ -30,6 +30,7 @@ public class BrushTypeSwitcher : MonoBehaviour
         var deltaTime = Mathf.Min(0.05f, Time.deltaTime);
         var delta = speed * deltaTime;
         Vector2 closingPosition = m_content.anchoredPosition + delta;
+        //once hidden, swap the brush icon and slide it back
         if (closingPosition.y > closedPos.y)
         {
             m_content.anchoredPosition = closedPos;

@@ -25,6 +25,7 @@ public class ScreenSizer : MonoBehaviour
                 y = m_canvas.rect.height;
                 if (m_heightDependsOnWidth)
                 {
+                    //aspect ratio under 1.55 uses the 3x4 extra height
                     bool is3x4 = false;
                     if (Screen.width > Screen.height)
                     {
@@ -49,6 +50,7 @@ public class ScreenSizer : MonoBehaviour
 
     void FindCanvas()
     {
+        //walk up the parents until a Canvas is found
         var transform = base.transform;
         while (true)
         {

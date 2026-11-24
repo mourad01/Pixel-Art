@@ -51,6 +51,7 @@ public class NewMyWorksWindow : BaseWindow
     public void Init()
     {
         m_currentGroupIndex = -1;
+        //first open builds the list in Update, later opens only refresh rows
         if (!m_inited)
         {
             m_needReinit = true;
@@ -67,6 +68,7 @@ public class NewMyWorksWindow : BaseWindow
         var saves = MainManager.Instance.SavedWorksList.GetSaves();
         m_saveIds = new List<string>();
         m_saveIds.AddRange(saves.Distinct());
+        // two saved works per row
         m_pairsCount = (m_saveIds.Count + 1) / 2;
         m_delta = 20f;
         float contentWidth = ((RectTransform)transform).rect.width - m_delta * 2f;
@@ -107,6 +109,7 @@ public class NewMyWorksWindow : BaseWindow
         var blockPlane = m_blockPlane;
         Vector2 velocity = m_scrollRect.velocity;
         int active;
+        //block taps while the list scrolls fast
         if (!(velocity.y > 500f))
         {
             active = ((m_scrollRect.velocity.y < -500f) ? 1 : 0);
@@ -146,6 +149,7 @@ public class NewMyWorksWindow : BaseWindow
                                              orderby a.Index
                                              select a).ToList();
                 m_currentGroupIndex = index;
+                // only rows near the current one get a pooled group
                 for (int i = -4; i < 6; i++)
                 {
                     int localIndex = m_currentGroupIndex + i;
@@ -184,6 +188,7 @@ public class NewMyWorksWindow : BaseWindow
                             list.Remove(groupOfMyWorks);
                         }
                     }
+                    //clear the extra row left after a delete
                     else if (localIndex == m_pairsCount)
                     {
                         var groupOfMyWorks = m_imageGroups.FirstOrDefault((GroupOfMyWorks a) => a.Index == localIndex);
@@ -260,6 +265,7 @@ public class NewMyWorksWindow : BaseWindow
     {
         var savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
         var imageInfo = DataManager.Instance.GetImageInfo(savedWorkData.ImageInfo.Id);
+        // image may be gone from the list, use the saved info then
         if (imageInfo == null)
         {
             imageInfo = savedWorkData.ImageInfo;

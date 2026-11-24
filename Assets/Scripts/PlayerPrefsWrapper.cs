@@ -23,6 +23,7 @@ public class PlayerPrefsWrapper
         PlayerPrefs.SetString(key, value);
     }
 
+    //bools are saved as "1" or "0" strings, lists as one string split by new lines
     public static bool GetBool(string key)
     {
         return PlayerPrefs.GetString(key) == "1";

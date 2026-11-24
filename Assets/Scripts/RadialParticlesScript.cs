@@ -26,6 +26,7 @@ public class RadialParticlesScript : MonoBehaviour
 
     void Update()
     {
+        //radius follows a sine from 0 to 90 degrees over the lifetime
         currDegrees += curveRate * Time.smoothDeltaTime;
         currRadius = Mathf.Sin(0.0174532924f * currDegrees) * maxRadius;
         currRadius = Mathf.Clamp(currRadius * 1.5f, 0f, maxRadius);
@@ -77,6 +78,7 @@ public class RadialParticlesScript : MonoBehaviour
             offset = Mathf.Sin(step * (float)i) * radius;
             var val = particles[i];
             val.position = new Vector3(x, offset, transform.position.z);
+            // fade out during the second half of the lifetime
             if (particles[i].remainingLifetime < processLifetime * 0.5f)
             {
                 a = particles[i].remainingLifetime / processLifetime;

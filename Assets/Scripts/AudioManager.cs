@@ -22,6 +22,7 @@ public class AudioManager : MonoBehaviour
             Object.DontDestroyOnLoad(gameObject);
             m_audioTrackSrc = base.GetComponent<AudioSource>();
 
+            //sounds setting mutes the whole source
             isMuted = !AppData.SoundsEnabled;
             m_audioTrackSrc.mute = isMuted;
         }

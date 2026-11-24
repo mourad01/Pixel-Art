@@ -29,6 +29,7 @@ public class ActionSheetWrapper : MonoBehaviour
 
     public static void ShowEmptyPhotoActionSheet(Action<ActionSheetResult> callback)
     {
+        //no continue option here, so button indexes start at new
         actionSheet.ShowButtons(new string[] {
            // LocalizationManager.Instance.GetString("continue"),
             LocalizationManager.Instance.GetString("new"),

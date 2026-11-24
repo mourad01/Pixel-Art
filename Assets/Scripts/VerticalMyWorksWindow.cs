@@ -58,6 +58,7 @@ public class VerticalMyWorksWindow : MonoBehaviour
         {
             string save = saves[i];
             m_saveIds.Add(save);
+            //reuse old previews, create new ones only when needed
             if (i >= m_imageElements.Count)
             {
                 var myWorkPreview = UnityObject.Instantiate(m_myWorkPreviewPrefab);
@@ -69,6 +70,7 @@ public class VerticalMyWorksWindow : MonoBehaviour
             m_imageElements[i].Init(save);
             m_imageElements[i].gameObject.SetActive(true);
         }
+        // hide previews left over from deleted works
         for (; i < m_imageElements.Count; i++)
         {
             m_imageElements[i].gameObject.SetActive(false);
@@ -174,6 +176,7 @@ public class VerticalMyWorksWindow : MonoBehaviour
         }
         else
         {
+            //locked image, open the shop
             var newInappsWindow = WindowManager.Instance.OpenInappsWindow();
             newInappsWindow.Init("image", null);
         }
@@ -214,6 +217,7 @@ public class VerticalMyWorksWindow : MonoBehaviour
         if (index >= 0 && index < m_imageElements.Count && !m_lock && index != m_currentImageIndex)
         {
             m_currentImageIndex = index;
+            // keep icons loaded 2 around the current one, unload at 5 away
             if (index >= 0)
             {
                 m_imageElements[index].LoadIcon();
@@ -275,6 +279,7 @@ public class VerticalMyWorksWindow : MonoBehaviour
     {
         yield return null;
 
+        //push previews slightly forward on z
         for (int i = 0; i < m_imageElements.Count; i++)
         {
             Vector3 localPosition = ((RectTransform)m_imageElements[i].transform).localPosition;

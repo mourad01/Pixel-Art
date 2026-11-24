@@ -102,6 +102,7 @@ public class SavedWorkData : ISavedWorkData
         texture2D.LoadImage(Preview);
         History2 = new History();
         History2.Init(FullFileName + ".his");
+        //move the old in-save history to the .his file, or rebuild it for very old saves
         if (History != null && History.Count > 0)
         {
             foreach (HistoryStep historyStep in History)
@@ -123,6 +124,7 @@ public class SavedWorkData : ISavedWorkData
         texture2D.LoadImage(Preview);
         var pixels = texture2D.GetPixels();
         int width = texture2D.width;
+        //one step per colored pixel of the preview, order is unknown so it gets shuffled
         for (int i = 0; i < pixels.Length; i++)
         {
             if (pixels[i].a > 0.5f && pixels[i] != Color.white)

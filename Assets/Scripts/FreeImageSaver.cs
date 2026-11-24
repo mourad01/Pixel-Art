@@ -30,6 +30,7 @@ public class FreeImageSaver : MonoBehaviour
         resTex.filterMode = FilterMode.Point;
         resTex.LoadImage(swd.Preview);
         var filter = MainManager.Instance.FilterManager.GetFilter(swd.FilterId);
+        //library image by url or user photo by id, both exported at 800px
         if (swd.ImageInfo.Url != null)
         {
             DataManager.Instance.GetImageAsset(swd.ImageInfo, delegate (bool res, Texture2D tex)
@@ -105,6 +106,7 @@ public class FreeImageSaver : MonoBehaviour
             newWidth = maxSize;
             newHeight = (int)((float)height / (float)width) * newWidth;
         }
+        //render the camera into a temporary texture and read the pixels back
         var renderTexture = cam.targetTexture = new RenderTexture(newWidth, newHeight, 24);
         cam.Render();
         RenderTexture.active = renderTexture;
@@ -132,6 +134,7 @@ public class FreeImageSaver : MonoBehaviour
             newHeight = (int)((float)height / (float)width) * newWidth;
         }
         var renderTexture = new RenderTexture(newWidth, newHeight, 24);
+        // 8x msaa when antialiasing is asked
         renderTexture.antiAliasing = ((!antialising) ? 1 : 8);
         var activeTexture = cam.targetTexture = renderTexture;
         cam.Render();
@@ -140,6 +143,7 @@ public class FreeImageSaver : MonoBehaviour
         texture2D.ReadPixels(new Rect(0f, 0f, (float)newWidth, (float)newHeight), 0, 0);
         RenderTexture.active = null;
         cam.targetTexture = null;
+        //bytes are jpg quality 100 even though the method says png
         var result = texture2D.EncodeToJPG(100);
         UnityObject.Destroy(activeTexture);
         UnityObject.Destroy(texture2D);

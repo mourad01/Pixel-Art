@@ -41,6 +41,7 @@ public class WindowManager : MonoBehaviour
     {
         get
         {
+            //banner follows the top window
             var baseWindow = m_openedWindows.LastOrDefault();
             return baseWindow != null && baseWindow.EnableBanner;
         }
@@ -54,6 +55,7 @@ public class WindowManager : MonoBehaviour
 
     public MainMenu OpenMainMenu()
     {
+        //main menu already lives in the scene, no prefab
         if (m_mainMenu == null)
         {
 
@@ -76,6 +78,7 @@ public class WindowManager : MonoBehaviour
 
     public CreationWindow OpenCreationWindow()
     {
+        // create the window from its prefab the first time, then reuse it
         if (m_creationWindow == null)
         {
             m_creationWindow = Object.Instantiate(PrefabLoader.Load<CreationWindow>("creation_window"));
@@ -127,6 +130,7 @@ public class WindowManager : MonoBehaviour
 
     public NewWorkbook3D OpenWorkbook3D()
     {
+        //2D and 3D workbooks share the same "workbook" object
         if (m_workbook3D == null)
         {
             m_workbook3D = ((Component)m_uiParent.Find("workbook")).GetComponent<NewWorkbook3D>();
@@ -140,6 +144,7 @@ public class WindowManager : MonoBehaviour
 
     public TutorialWindow OpenTutorial()
     {
+        //both tutorials use the 3D tutorial prefab
         if (m_tutorialWindow == null)
         {
             var r = PrefabLoader.Load<TutorialWindow>("tutorial_window_3d");
@@ -221,6 +226,7 @@ public class WindowManager : MonoBehaviour
             m_shareWindow.transform.localScale = Vector2.one;
             ((RectTransform)m_shareWindow.transform).anchoredPosition = Vector3.zero;
             ((RectTransform)m_shareWindow.transform).sizeDelta = Vector2.zero;
+            //hide the game scene while sharing
             m_shareWindow.OnOpen += () =>
             {
                 if (GameScene.Instance != null)
@@ -357,6 +363,7 @@ public class WindowManager : MonoBehaviour
 
     void Update()
     {
+        // android back button closes the top window
         if (Input.GetKeyDown(KeyCode.Escape) && m_openedWindows.Count > 0)
         {
             var window = m_openedWindows.Last();
@@ -371,6 +378,7 @@ public class WindowManager : MonoBehaviour
             m_openedWindows.Remove(window);
 
             //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
+            //window under it becomes the active screen again
             var baseWindow = m_openedWindows.Last();
             baseWindow.SendActiveScreenEvent();
         }

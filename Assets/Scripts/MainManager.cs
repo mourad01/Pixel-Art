@@ -99,6 +99,7 @@ public class MainManager : MonoBehaviour
     public void OnLowMemoryMessage(string message)
     {
         Debug.Log("OnLowMemoryMessageReceived: " + message);
+        //free what we can when the OS warns about memory
         Resources.UnloadUnusedAssets();
         GC.Collect();
     }
@@ -133,6 +134,7 @@ public class MainManager : MonoBehaviour
     void Update()
     {
         m_secondsInGame += Time.deltaTime;
+        //fire once when 9768 seconds are played in the first 7 days
         int rateDelay = 9768;
         if (m_secondsInGame >= (float)rateDelay && (DateTime.UtcNow - AppData.FirstLaunch).TotalDays <= 7.0 && !AppData.WeekSecondsTracked)
         {
@@ -145,6 +147,7 @@ public class MainManager : MonoBehaviour
     {
         try
         {
+            //going to background, keep play time and save the works list outside 2DScene
             if (pauseStatus)
             {
                 if (m_secondsInGame > (float)AppData.SecondsInGame)
@@ -163,6 +166,7 @@ public class MainManager : MonoBehaviour
             {
                 Debug.Log("unpause_AppData.SecondsInGame: " + AppData.SecondsInGame);
                 m_secondsInGame = (float)AppData.SecondsInGame;
+                //away more than 10 seconds, check session events and reload the library images
                 if ((DateTime.Now - AppData.EndSessionTime).TotalSeconds > 10.0)
                 {
                     AppData.CheckSessionEvents();
@@ -292,6 +296,7 @@ public class MainManager : MonoBehaviour
 
             yield return SceneManager.LoadSceneAsync("2DScene");
 
+            //wait for the workbook manager of the new scene
             while (NewWorkbookManager.Instance == null)
             {
                 yield return null;

@@ -12,6 +12,7 @@ public class MVMainChunk
     public byte[] version;
 
     #region default_palatte
+    //used by the importer when the vox file has no RGBA chunk
     public static Color[] defaultPalatte = new Color[] {
         new Color(1.000000f, 1.000000f, 1.000000f),
         new Color(1.000000f, 1.000000f, 0.800000f),
@@ -283,6 +284,7 @@ public class MVMainChunk
         {
             return null;
         }
+        //one pixel per color, point filter so colors never blend
         var texture2D = new Texture2D((int)palatte.Length, 1, TextureFormat.RGBA32, false);
         texture2D.SetPixels(palatte);
         texture2D.Apply(false);

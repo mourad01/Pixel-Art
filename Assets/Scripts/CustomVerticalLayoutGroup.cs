@@ -63,6 +63,7 @@ public class CustomVerticalLayoutGroup : MonoBehaviour
                 }
             }
         }
+        //spread the free height evenly around the children
         float childsHeight = m_childs.Sum((RectTransform a) => a.rect.height);
         float freeSpace = m_rectHeight - childsHeight;
         float gap = freeSpace / (float)m_childs.Count;

@@ -31,6 +31,7 @@ public class DebugController : MonoBehaviour
         }
         else if (EnableDebugTexts && GUILayout.Button("fps: " + m_fps.ToString()))
         {
+            //fps button cycles the frame cap, unlimited > 30 > 20
             int targetFrameRate = Application.targetFrameRate;
             Debug.Log(": " + targetFrameRate);
             if (targetFrameRate < 0)
@@ -71,6 +72,7 @@ public class DebugController : MonoBehaviour
 
     void CalculateFps()
     {
+        //average fps over each update interval
         m_timeleft -= Time.deltaTime;
         m_accum += Time.timeScale / Time.deltaTime;
         m_frames++;

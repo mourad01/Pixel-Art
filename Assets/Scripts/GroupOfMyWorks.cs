@@ -26,6 +26,7 @@ public class GroupOfMyWorks : MonoBehaviour
         set
         {
             m_index = value;
+            //index -1 means the row is free in the pool
             gameObject.SetActive(m_index >= 0);
         }
     }
@@ -111,6 +112,7 @@ public class GroupOfMyWorks : MonoBehaviour
             {
                 m_previews[i].LoadIcon();
             }
+            // one preview per frame
             yield return null;
         }
     }

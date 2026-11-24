@@ -58,6 +58,7 @@ internal class LocalNotificationWrapper : MonoBehaviour
 
     public void CancelAll()
     {
+        //after a restart the ids come from the saved AppData list
         if (m_currentNotificationsIds.Count == 0)
         {
             var localNotifications = AppData.LocalNotifications;
@@ -76,6 +77,7 @@ internal class LocalNotificationWrapper : MonoBehaviour
 
     public void OnApplicationPause(bool val)
     {
+        //back in the app clears notifications, going to background schedules them
         if (!val)
         {
             CancelAll();
@@ -98,6 +100,7 @@ internal class LocalNotificationWrapper : MonoBehaviour
                 int notificationId = 0;
 
                     DateTime dateTime = DateTime.Now;
+                    //remind in 3 hours, only if that falls between 9h and 21h
                     dateTime += new TimeSpan(3, 0, 0);
                     if (dateTime.Hour >= 9 && dateTime.Hour < 21)
                     {

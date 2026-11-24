@@ -122,6 +122,7 @@ public class NewWorkbook3D : BaseWindow
         yield return new WaitForSeconds(0.1f);
 
         m_blockPlane.SetActive(false);
+        //start the content squeezed by the top and bottom panels, then grow it to full size in 0.5s
         var topPanelsHeight = m_topPanels.Sum((RectTransform a) => a.rect.height);
         var bottomPanelsHeight = m_bottomPanels.Sum((RectTransform a) => a.rect.height);
         m_content.anchoredPosition = new Vector2(0f, (topPanelsHeight - bottomPanelsHeight) / 2f);
@@ -139,6 +140,7 @@ public class NewWorkbook3D : BaseWindow
             var sizeDelta = sizeSpeed * deltaTime;
             var posDelta = posSpeed * deltaTime; 
             var newSign = (m_content.sizeDelta.y + sizeDelta.y > 0f);
+            // overshoot, snap to the final size
             if (sign != newSign)
             {
                 m_content.sizeDelta = Vector2.zero;
@@ -156,11 +158,13 @@ public class NewWorkbook3D : BaseWindow
     }
     IEnumerator CompletePlateAppearCoroutine()
     {
+        //wait for the player to lift all fingers
         while (Input.touchCount != 0)
         {
             yield return null;
         }
         m_completedPlane.SetActive(true);
+        //keep the original alphas and fade everything in from 0
         var alphas = m_completePlateElements.Select(delegate (MaskableGraphic a)
         {
             return a.color.a;

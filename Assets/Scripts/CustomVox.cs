@@ -63,12 +63,14 @@ public class CashImage3D
         int sizeY = mv.sizeY;
         int sizeZ = mv.sizeZ;
         int size = Mathf.Max(sizeX, Mathf.Max(sizeY, sizeZ));
+        //camera size = diagonal of the model box
         float initialDistance = Mathf.Sqrt((float)(sizeX * sizeX + sizeY * sizeY + sizeZ * sizeZ));
         CamSize = initialDistance;
 
         MaxVisibleCount = 0;
         colorCount = new Dictionary<int, int>();
 
+        //count cubes per used color, keys start at 1
         int count = 0;
         for (int i = 0; i < MVImporter.usedPallate.Count; i++)
         {

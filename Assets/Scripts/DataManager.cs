@@ -68,6 +68,7 @@ public class DataManager : MonoBehaviour
             //{
             //	this.m_imagesInfo = res;
             //});
+            //load the embedded list first, then ask the server for a newer one
             base.StartCoroutine(m_serverConnector.GetLocalStreamData((res) =>
             {
                 Debug.Log("GetImages this.m_imagesInfo = res; count = " + res.Count);
@@ -99,6 +100,7 @@ public class DataManager : MonoBehaviour
         if (File.Exists(path))
         {
             Debug.Log("CheckDownloadedFile OK");
+            //the images list is saved as text, assets as binary
             if (typeof(T) == typeof(ImagesInfo))
             {
                 return Serializer.LoadFromTextFile<T>(path);
@@ -184,6 +186,7 @@ public class DataManager : MonoBehaviour
     IEnumerator SearchForLocalFile<T>(string fileName, Action<T> handler)
     { 
         Debug.Log("SearchForLocalFile"); 
+        //downloaded copy wins, otherwise fall back to StreamingAssets
         var downloadedVersion = CheckDownloadedFile<T>(fileName);
         if (downloadedVersion != null && !downloadedVersion.Equals(default(T)))
         {
@@ -228,6 +231,7 @@ public class DataManager : MonoBehaviour
         }
         
         yield return null;
+        //cache the server list and only notify again if the count changed
         m_serverConnector.GetImagesList(delegate (ImagesInfo imagesInfo)         {
             Debug.Log("GetImagesListCoroutine GetImagesList response");
             if (imagesInfo != null){
@@ -250,12 +254,14 @@ public class DataManager : MonoBehaviour
         { 
             if (foundAsset != null)
             {
+                //3D previews are bilinear, 2D pixel art stays point filtered
                 var texture2D = new Texture2D(1, 1, TextureFormat.RGB24, false);
                 texture2D.filterMode = (FilterMode)(imageInfo.Is3D ? 1 : 0);
                 texture2D.LoadImage(foundAsset.Bytes);
                 handler.SafeInvoke(true, texture2D);
                 return;
             }
+            // not cached yet, download it and save it as CashImage
             Texture2D serverTex = null; 
             m_serverConnector.GetImageAsset(imageInfo, delegate (bool res, byte[] bytes)
             { 
@@ -303,6 +309,7 @@ public class DataManager : MonoBehaviour
             catch
             {
             } 
+            //download the vox model and cache it next to the png
             m_serverConnector.GetImageAsset3D(imageInfo, delegate (bool res, byte[] bytes)
             { 
             CashImage3D customVox = null;

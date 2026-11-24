@@ -70,6 +70,7 @@ public class MouseOrbit_1 : MonoBehaviour
 
     void Update()
     {
+        //ignore touches on the UI
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(0))
         {
             return;
@@ -82,6 +83,7 @@ public class MouseOrbit_1 : MonoBehaviour
         {
             isCanRotate = false;
         }
+        // one finger orbits around the target
         if (target && isCanRotate && !isCanZoom)
         {
             float axis = Input.GetAxis("Mouse X");
@@ -104,6 +106,7 @@ public class MouseOrbit_1 : MonoBehaviour
             touchDelta = curDist.magnitude - prevDist.magnitude;
             speedTouch0 = Input.GetTouch(0).deltaPosition.magnitude / Input.GetTouch(0).deltaTime;
             speedTouch1 = Input.GetTouch(1).deltaPosition.magnitude / Input.GetTouch(1).deltaTime;
+            //pinch only counts when both fingers move fast enough
             float koef = touchDelta / 10f;
             if (touchDelta + varianceInDistances <= 1f && speedTouch0 > minPinchSpeed && speedTouch1 > minPinchSpeed)
             {
@@ -118,6 +121,7 @@ public class MouseOrbit_1 : MonoBehaviour
         {
             isCanZoom = false;
         }
+        // B toggles ortho and perspective camera
         if (Input.GetKeyUp(KeyCode.B))
         {
             if (selectedCamera.orthographic)
@@ -181,6 +185,7 @@ public class MouseOrbit_1 : MonoBehaviour
         {
             selectedCamera.orthographicSize -= scrollSpeedOrto * koef;
         }
+        //zoom as 0..1 between the min and max camera range
         zoom = ((!selectedCamera.orthographic) ? (1f - (selectedCamera.fieldOfView - distanceMinPersp) / (distanceMaxPersp - distanceMinPersp)) : (1f - (selectedCamera.orthographicSize - distanceMinOrto) / (distanceMaxOrto - distanceMinOrto)));
         UnitySingleton<GameController>.Instance.ChangeCamDepthPosition(ZoomCheck(zoom));
     }

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 public static class AppData
 {
+    //PlayerPrefs keys
     static string s_uidKey = "uid"; 
     static string s_appRatedKey = "app_rated";
     static string s_sessionIdKey = "session_id";
@@ -48,6 +49,7 @@ public static class AppData
 
     public static bool Inited { get; private set; }
 
+    // random id made on first read and kept in prefs
     public static string Uid
     {
         get
@@ -98,6 +100,7 @@ public static class AppData
         }
     }
 
+    //saved as a list of date strings
     public static List<DateTime> LastRateUsShows
     {
         get
@@ -440,6 +443,7 @@ public static class AppData
     {
         get
         {
+            // always 2, the saved value is never read back
             return 2;
         }
         set
@@ -530,6 +534,7 @@ public static class AppData
         Inited = true;
         string uid = Uid; 
         bool isOldUser = false;
+        //users that already had a session before this key existed are old users
         if (!PlayerPrefsWrapper.Exists(s_isOldUserKey))
         {
             IsOldUser = (SessionId > 0);
@@ -537,6 +542,7 @@ public static class AppData
             isOldUser = true;
         }
         SessionId++;
+        // split the old vibro setting into right and wrong vibro
         if (!PlayerPrefsWrapper.Exists(s_vibroRightKey))
         {
             if (isOldUser)
@@ -562,6 +568,7 @@ public static class AppData
         {
             SoundsEnabled = true;
         }
+        //new players start with 5 lassos and 5 bombs
         if (!PlayerPrefsWrapper.Exists(s_lassoCountKey))
         {
             LassoCount = 5;
@@ -596,6 +603,7 @@ public static class AppData
 
     public static void CheckSessionEvents()
     {
+        // retention events for launch 1 or 2 days after install
         if (!PlayerPrefsWrapper.Exists(s_launchNextDayKey))
         {
             // AnalyticsManager.Instance.Test();
@@ -626,6 +634,7 @@ public static class AppData
             {
             }
         }
+        //first session of the day is tracked once per day
         if (PlayerPrefsWrapper.Exists(s_lastDayTracked) && !(LastDayTracked < DateTime.Today))
         {
             return;
@@ -644,6 +653,7 @@ public static class AppData
             lastRateUsShows = new List<DateTime>();
         }
         lastRateUsShows.Add(DateTime.Now);
+        // keep only the last 2 views
         while (lastRateUsShows.Count > 2)
         {
             lastRateUsShows.RemoveAt(0);

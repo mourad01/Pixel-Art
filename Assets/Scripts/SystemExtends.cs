@@ -47,6 +47,7 @@ public static class SystemExtends
 
     public static void Shuffle<T>(this IList<T> list)
     {
+        // fisher-yates shuffle
         int count = ((ICollection<T>)list).Count;
         while (count > 1)
         {

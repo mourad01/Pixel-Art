@@ -138,6 +138,7 @@ public class LeaderboardScript : MonoBehaviour
         }
         else
         {
+            //sign in first, then open the leaderboard
             try
             {
                 Social.localUser.Authenticate((b) =>
@@ -208,6 +209,7 @@ public class LeaderboardScript : MonoBehaviour
 
     public int GetChapterNumber(int postcardIndex)
     {
+        // 6 postcards per chapter
         return postcardIndex / 6 + 1;
     }
 
@@ -220,6 +222,7 @@ public class LeaderboardScript : MonoBehaviour
         {
             completed += LevelProgressControl.control.postcardCompleteStateArray[i];
         }
+        //chapter done when the 6 postcard states add up to 12
         if (completed == 12)
         {
             return true;
@@ -231,6 +234,7 @@ public class LeaderboardScript : MonoBehaviour
     {
         UnityDebug.Log("TestChapter3Starred : " + num);
         int stars = 0;
+        // 72 levels per chapter, 3 stars each = 216
         int first = (num - 1) * 72;
         int last = first + 72;
         for (int i = first; i < last; i++)

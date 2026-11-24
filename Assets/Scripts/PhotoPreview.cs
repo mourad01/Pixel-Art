@@ -89,6 +89,7 @@ public class PhotoPreview : MonoBehaviour
 
     public void LoadIcon()
     {
+        //empty slot shows the plus button to add a photo
         if (string.IsNullOrEmpty(m_photoInfo.Id))
         {
             m_image.gameObject.SetActive(false);
@@ -113,6 +114,7 @@ public class PhotoPreview : MonoBehaviour
                             {
                                 m_loadedIcon = true;
                                 m_image.texture = tex;
+                                //keep the photo aspect ratio inside the square preview
                                 if (tex.width > tex.height)
                                 {
                                     m_image.transform.localScale = new Vector3(1f, (float)tex.height / (float)tex.width, 1f);
@@ -123,6 +125,7 @@ public class PhotoPreview : MonoBehaviour
                                 }
                                 m_imageWaiter.SetActive(false);
                                 m_image.gameObject.SetActive(true);
+                                //draw the last saved progress and filter over the photo
                                 string text = MainManager.Instance.SavedWorksList.LastSaveOfImageId(m_photoInfo.Id);
                                 if (text != null)
                                 {

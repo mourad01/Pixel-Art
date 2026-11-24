@@ -207,6 +207,7 @@ public class TrialInappsWindow : BaseWindow
 
     public override bool Close()
     {
+        //back only closes the window when the close button is visible
         if (m_closeButton.activeSelf)
         {
             AnalyticsManager.Instance.InappsWindowClosed();
@@ -236,12 +237,14 @@ public class TrialInappsWindow : BaseWindow
     IEnumerator SetContentSizeCoroutine()
     {
         yield return null;
+        //toggle the scroll view so its layout gets rebuilt
         m_textScrollRect.gameObject.SetActive(false);
         m_textScrollRect.gameObject.SetActive(true);
         m_textScrollRect.verticalNormalizedPosition = 1f;
     }
     IEnumerator WaitForRestored()
     {
+        //give the store 2 seconds to send back restored purchases
         var timer = 2f;
         while (timer > 0f)
         {

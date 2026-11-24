@@ -51,6 +51,7 @@ public class SavedWorkData3D : ISavedWorkData
         }
     }
 
+    //one flag per vox cube, true when it is colored
     public List<bool> Progress { get; private set; }
 
     public bool Is3D
@@ -118,6 +119,7 @@ public class SavedWorkData3D : ISavedWorkData
         ImageInfo = ii;
     }
 
+    // 3D works keep no history file
     public void InitHistory()
     {
     }

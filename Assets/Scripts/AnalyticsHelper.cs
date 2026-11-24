@@ -76,6 +76,7 @@ public static class AnalyticsHelper
         {
             return "WEB";
         }
+        //Windows Store players fall to the bottom, handheld or PC
         if (!RuntimePlatformIs("MetroPlayerX86") && !RuntimePlatformIs("MetroPlayerX64") && !RuntimePlatformIs("MetroPlayerARM") && !RuntimePlatformIs("WSAPlayerX86") && !RuntimePlatformIs("WSAPlayerX64") && !RuntimePlatformIs("WSAPlayerARM"))
         {
             if (RuntimePlatformIs("WP8Player"))
@@ -121,6 +122,7 @@ public static class AnalyticsHelper
 
     static bool RuntimePlatformIs(string platformName)
     {
+        //compare by name so removed platforms in newer Unity versions still compile
         return Enum.IsDefined(typeof(RuntimePlatform), platformName) && Application.platform.ToString() == platformName;
     }
 
@@ -133,6 +135,7 @@ public static class AnalyticsHelper
 
     static bool IsTablet()
     {
+        //screen diagonal over 6 inches counts as tablet
         return ScreenSizeInches() > 6f;
     }
 }

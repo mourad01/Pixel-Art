@@ -74,6 +74,7 @@ public class CameraManager : MonoBehaviour
     {
         float offset = 0.9f;
 
+        //picture is normalized so its longest side is 2 world units
         float halfSize = Mathf.Max(width, height) / 2f;
         m_bounds = new Rect(-width / halfSize / 2f - offset, -height / halfSize / 2f - 2 * offset, width / halfSize + 2 * offset, height / halfSize + 2 * offset);
 
@@ -95,6 +96,7 @@ public class CameraManager : MonoBehaviour
 
     void InternalUpdate(Vector2 cameraDeltaPos)
     {
+        //sum the anchored y of the workspace up to the Canvas to find its top
         float topOffset = 0f;
         var rectTransform = m_cameraSpace;
 
@@ -111,6 +113,7 @@ public class CameraManager : MonoBehaviour
             topOffset = topOffset + rectTransform.anchoredPosition.y;
             rectTransform = (RectTransform)rectTransform.parent;
         }
+        // camera viewport covers the workspace area only
         float top = 0f - topOffset;
         float y = 1f - (top + m_cameraSpace.sizeDelta.y) / m_canvasRectTransform.rect.height;
         float camHeight = (m_cameraSpace.sizeDelta.y + 150f) / m_canvasRectTransform.rect.height;
@@ -119,12 +122,14 @@ public class CameraManager : MonoBehaviour
         float a = camHeight * (float)Screen.height / (m_camera.rect.width * (float)Screen.width);
         a = (DefaultOrtoSize = Mathf.Max(a, 1.2f));
         m_camera.orthographicSize = a / m_zoom;
+        //max zoom depends on the loupe precision and the screen height
         float precision = MySystemInfo.IsTablet ? (m_loupe.Precision / (400f / (m_canvasRectTransform.rect.height * m_camera.rect.height))) : (m_loupe.Precision / (500f / (m_canvasRectTransform.rect.height * m_camera.rect.height)));
         m_maxZoom = (a / precision);
         Rect rect = default(Rect);
         rect.height = m_camera.orthographicSize * 2f;
         rect.width = (float)Screen.width * m_camera.rect.width * rect.height / ((float)Screen.height * m_camera.rect.height);
         rect.center = (Vector2)m_camera.transform.position + cameraDeltaPos;
+        //clamp the camera inside the picture bounds, center it when the view is bigger
         Rect zeroBounds = (!(m_zoom > 1f)) ? m_zeroBounds : m_bounds;
         if (rect.width > zeroBounds.width)
         {
@@ -161,6 +166,7 @@ public class CameraManager : MonoBehaviour
 
     public void Move(Vector2 deltaPos)
     {
+        //screen pixels to world units
         float d = m_camera.orthographicSize / m_camera.rect.height / (float)Screen.height * 2f;
         InternalUpdate(-deltaPos * d);
     }
@@ -180,6 +186,7 @@ public class CameraManager : MonoBehaviour
 
     public void EndZoom()
     {
+        //pinched too far, ease back to the recommended zoom
         if (m_zoom > RecommendMaxZoom)
         {
             base.StartCoroutine(ToRecommendMaxZoomCoroutine());
@@ -215,6 +222,7 @@ public class CameraManager : MonoBehaviour
 
     public void Scroll(float delta)
     {
+        // mouse wheel, 10% per notch
         m_zoom *= Mathf.Pow(1.1f, delta);
         m_zoom = Mathf.Max(1f, m_zoom);
         m_zoom = Mathf.Min(m_zoom, m_maxZoom);
@@ -245,6 +253,7 @@ public class CameraManager : MonoBehaviour
         {
             var deltaTime = Time.deltaTime;
             timer -= deltaTime;
+            //zoom to max in 0.3s while keeping worldPos under the same spot
             if (timer > 0)
             {
                 m_zoom += (m_maxZoom - (float)startZoom) * deltaTime / time;

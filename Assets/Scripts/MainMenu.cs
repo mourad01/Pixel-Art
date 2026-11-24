@@ -66,6 +66,7 @@ public class MainMenu : BaseWindow
 
     void Start()
     {
+        //refresh the daily puzzle countdown every minute
         base.InvokeRepeating("DailyRolloverCountdown", 0f, 60f);
 
         //TimeSpan timeSpan = TimeSpan.FromSeconds((double)LevelProgressControl.control.dailyTodayPersonalBest);
@@ -75,6 +76,7 @@ public class MainMenu : BaseWindow
     }
     void DailyRolloverCountdown()
     {
+        //daily puzzle rolls over at midnight PST (UTC-8)
         DateTime dateTime = DateTime.UtcNow.AddHours(-8.0);
         Debug.Log("UTC Now today (PST) : " + dateTime);
         DateTime midnight = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
@@ -107,6 +109,7 @@ public class MainMenu : BaseWindow
     public void Init(MainMenuPage page)
     {
         Application.targetFrameRate = -1;
+        //load the image list only once, then fill and open the library
         if (!m_inited)
         {
             m_inited = true;
@@ -170,6 +173,7 @@ public class MainMenu : BaseWindow
 
     public override bool Close()
     {
+        //back goes to the library from a tab, otherwise minimize the app
         if (m_myWorksWindow.isActiveAndEnabled)
         {
             m_myWorksWindow.Close();
@@ -191,6 +195,7 @@ public class MainMenu : BaseWindow
     {
         if (m_currentWindow != m_newLibraryWindow && !m_buttonsBlocked)
         {
+            //tabs stay blocked until the next window starts opening
             m_buttonsBlocked = true;
             //AdsWrapper.Instance.ShowInter("tab_change");
             WindowManager.Instance.CloseMe(m_currentWindow, WindowOpenStyle.FromRight);
@@ -209,6 +214,7 @@ public class MainMenu : BaseWindow
             m_buttonsBlocked = true;
             //AdsWrapper.Instance.ShowInter("tab_change");
             m_myWorksWindow.Init();
+            //slide direction depends on which side the current tab is
             if (m_currentWindow == m_newLibraryWindow)
             {
                 WindowManager.Instance.CloseMe(m_currentWindow, WindowOpenStyle.FromLeft);
@@ -305,6 +311,7 @@ public class MainMenu : BaseWindow
     }
     IEnumerator WaitInitLibraryAndClosePlaneCoroutine()
     {
+        //first launch only, keep the block plane up to 0.5s while the open tab is still loading
         if (FirstOpen)
         {
             FirstOpen = false;

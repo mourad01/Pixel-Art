@@ -27,6 +27,7 @@ public class BigPreview : MonoBehaviour
         if (swd != null)
         {
             var texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            //bilinear for 3D shots, point for pixel art
             texture2D.filterMode = (FilterMode)(swd.ImageInfo.Is3D ? 1 : 0);
             texture2D.LoadImage(swd.Preview);
             m_image.material.SetTexture("_ResTex", texture2D);
@@ -65,6 +66,7 @@ public class BigPreview : MonoBehaviour
 
     IEnumerator FlyCoroutine()
     {
+        //start over the small preview, then fly to the top center at double size in 0.2s
         m_content.sizeDelta = m_sampleTransform.rect.max - m_sampleTransform.rect.min;
         m_content.pivot = m_sampleTransform.pivot;
         m_content.position = m_sampleTransform.position;

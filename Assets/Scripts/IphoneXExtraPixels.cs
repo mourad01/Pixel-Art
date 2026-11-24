@@ -62,6 +62,7 @@ public class IphoneXExtraPixels : MonoBehaviour
     {
         yield return null;
 
+        //notch / home bar pixels converted to canvas units
         m_pixels = ((!m_bottom) ? ScreenToolWrapper.IphoneXExtraPixels : ScreenToolWrapper.IphoneXExtraBottomPixels);
         Height = m_pixels / (float)Screen.height * m_canvas.rect.height * ScreenToolWrapper.Density;
         m_sizeDelta = new Vector2(0f, Height);

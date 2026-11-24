@@ -54,6 +54,7 @@ internal static class JSONHelper
     public static JSONObject ConvertToJSON(Dictionary<string, int> collection)
     {
         var jSONObject = new JSONObject(JSONObject.Type.OBJECT);
+        //ints are stored as strings, ConvertToIntDictionary parses them back
         foreach (KeyValuePair<string, int> item in collection)
         {
             jSONObject.AddField(item.Key, item.Value.ToString());
@@ -116,6 +117,7 @@ internal static class JSONHelper
     public static JSONObject ConvertToJSON(Dictionary<string, DateTime> collection)
     {
         var jSONObject = new JSONObject(JSONObject.Type.OBJECT);
+        // invariant format so dates parse the same on every device locale
         foreach (KeyValuePair<string, DateTime> item in collection)
         {
             jSONObject.AddField(item.Key, item.Value.ToString(NumberFormatInfo.InvariantInfo));
@@ -172,6 +174,7 @@ internal static class JSONHelper
     public static List<int> ConvertToIntList(JSONObject jsonData)
     {
         var list = new List<int>();
+        //numbers come back as float
         foreach (JSONObject jsonObject in jsonData.list)
         {
             list.Add((int)jsonObject.f);

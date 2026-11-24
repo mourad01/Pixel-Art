@@ -63,6 +63,7 @@ public class PositScrollRect : ScrollRect
     {
         m_list = new List<RectTransform>();
         m_drag = false;
+        //only active children are pages
         int childCount = content.childCount;
         for (int i = 0; i < childCount; i++)
         {
@@ -75,6 +76,7 @@ public class PositScrollRect : ScrollRect
         m_contentGroup = ((Component)content).GetComponent<HorizontalOrVerticalLayoutGroup>();
         m_rectTransform = (transform as RectTransform);
         m_canvas = FindParentCanvas();
+        //canvas size along the scroll axis, used to convert pointer pixels to canvas units
         if (horizontal)
         {
             m_screenWidth = (m_canvas.transform as RectTransform).rect.width;
@@ -86,6 +88,7 @@ public class PositScrollRect : ScrollRect
         m_rectWidth = m_rectTransform.rect.width;
         m_rectHeight = m_rectTransform.rect.height;
         SetContentSize();
+        // snap back to the first page
         if (!withoutPosCorrection)
         {
             var content = base.content;
@@ -117,6 +120,7 @@ public class PositScrollRect : ScrollRect
 
     public void SetContentSize()
     {
+        //content size = sum of pages + spacing between them
         if (horizontal)
         {
             float totalWidth = 0f;
@@ -175,6 +179,7 @@ public class PositScrollRect : ScrollRect
         {
             return;
         }
+        //only move if we are not already on the last page
         if (horizontal)
         {
             if (content.anchoredPosition.x - m_rectTransform.rect.width - 5f > (0f - m_list[m_currentElement].rect.width) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
@@ -220,6 +225,7 @@ public class PositScrollRect : ScrollRect
                 content.localPosition += new Vector3(0f, scrollOffset.y, 0f);
                 m_drag = true;
             }
+            // remember the finger so a second touch can't take over the drag
             m_pointerId = data.pointerId;
             OnDragStart.SafeInvoke();
         }
@@ -270,6 +276,7 @@ public class PositScrollRect : ScrollRect
                 }
                 base.content.localPosition += new Vector3(move.x, 0f, 0f);
                 float dragDistance = base.content.localPosition.x - m_startDragPos;
+                //a drag shorter than 100 snaps back, longer ones move by whole pages
                 if (dragDistance > 0f)
                 {
                     if (dragDistance < 100f)
@@ -278,6 +285,7 @@ public class PositScrollRect : ScrollRect
                     }
                     else
                     {
+                        //dragged past the first page
                         if (base.content.anchoredPosition.x > 0f)
                         {
                             base.StartCoroutine(MoveCoroutine(0f - base.content.anchoredPosition.x));
@@ -295,6 +303,7 @@ public class PositScrollRect : ScrollRect
                 }
                 else
                 {
+                    //dragged past the last page, clamp to it
                     if (base.content.anchoredPosition.x - m_rectTransform.rect.width < (0f - m_list[0].rect.width) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
                     {
                         float lastPos = (0f - (m_list[0].rect.width + m_contentGroup.spacing)) * (float)(m_list.Count - 1);
@@ -407,6 +416,7 @@ public class PositScrollRect : ScrollRect
             }
             else
             {
+                //pages have different widths, walk them until we pass the content position
                 float pos = (0f - m_contentGroup.spacing) / 2f + (float)m_contentGroup.padding.left;
                 for (int i = 0; i < m_list.Count; i++)
                 {
@@ -457,6 +467,7 @@ public class PositScrollRect : ScrollRect
                         pos = m_list[i].rect.height * (float)i + m_contentGroup.spacing * (float)i;
                         distance = Mathf.Abs(content.anchoredPosition.y - pos);
                     }
+                    //pages closer than DistForScale to the center grow up to Scale
                     if (all || distance < DistForScale + m_list[i].rect.width + m_contentGroup.spacing)
                     {
                         float par = (!(distance < DistForScale)) ? 1f : Mathf.Lerp(Scale, 1f, distance / DistForScale);
@@ -515,6 +526,7 @@ public class PositScrollRect : ScrollRect
 
             yield return null;
 
+            //move done, snap exactly on the page
             m_drag = false;
             UpdateImageIndex();
             SetIndex(m_currentElement);
@@ -535,6 +547,7 @@ public class PositScrollRect : ScrollRect
                 resPos -= m_list[i].rect.width + m_contentGroup.spacing;
             }
             var delta = resPos - content.anchoredPosition.x;
+            // cap the step so a frame hitch doesn't jump pages
             var deltaTime = Mathf.Min(0.05f, Time.deltaTime);
             var newDelta = Mathf.Min(Mathf.Abs(delta), Mathf.Abs(Speed * deltaTime));
             if (delta < 0f)

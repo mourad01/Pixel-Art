@@ -88,6 +88,7 @@ public class SpecBoostersModel
         OnStateChanged.SafeInvoke(this);
     }
 
+    //lasso and bomb can't be on at the same time
     public void ChangeLassoMode(bool forceEnable = false)
     {
         LassoMode = (forceEnable || !LassoMode);

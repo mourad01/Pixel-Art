@@ -107,6 +107,7 @@ public class MouseOrbit : MonoBehaviour
 
     void Update()
     {
+        //ignore touches that are over the UI
         if (EventSystem.current != null)
         {
             if (EventSystem.current.IsPointerOverGameObject(0))
@@ -126,6 +127,7 @@ public class MouseOrbit : MonoBehaviour
                 isClick = true;
                 text2 = "Touch start ";
             }
+            //finger held more than 1 second becomes a long click
             if (isClick && Time.time - startClickTime > 1f)
             {
                 UnitySingleton<GameController>.Instance.IsLongClick = true;
@@ -148,6 +150,7 @@ public class MouseOrbit : MonoBehaviour
         }
         if (!UnitySingleton<GameController>.Instance.IsLongClick)
         {
+            // orbit rotation, the camera also drifts back to the center
             if (target && isRotate && !isZoom && !isMove)
             {
                 x += Input.GetAxis("Mouse X") * xSpeedRotate * distance * 0.02f;
@@ -165,6 +168,7 @@ public class MouseOrbit : MonoBehaviour
                 transform.rotation = rotation;
                 transform.position = Vector3.Lerp(transform.position, Vector3.zero, Time.deltaTime * (float)speedToZeroMove);
             }
+            //two fingers, pinch zoom or pan
             if (Input.touchCount == 2)
             {
                 curDist = Input.GetTouch(0).position - Input.GetTouch(1).position;
@@ -183,6 +187,7 @@ public class MouseOrbit : MonoBehaviour
                         startPos1 = touches[0].position;
                         startPos2 = touches[1].position;
                     }
+                    //once both fingers moved more than 10 pixels, store the direction of each one
                     if (touches[0].phase == TouchPhase.Moved && touches[1].phase == TouchPhase.Moved && (startPos1 - touches[0].position).magnitude > 10f && (startPos2 - touches[1].position).magnitude > 10f)
                     {
                         movePos1 = touches[0].position;
@@ -234,6 +239,7 @@ public class MouseOrbit : MonoBehaviour
                 isMove = false;
                 touchDirectional = new List<Directional>();
             }
+            //B switches between orthographic and perspective
             if (Input.GetKeyUp(KeyCode.B))
             {
                 if (selectedCamera.orthographic)
@@ -250,6 +256,7 @@ public class MouseOrbit : MonoBehaviour
 
     void OnGUI()
     {
+        //touch debug text in test mode
         if (VoxConstants.isTest)
         {
             int width = Screen.width;
@@ -317,6 +324,7 @@ public class MouseOrbit : MonoBehaviour
         if (CheckDirectional() == SwipeType.zoom)
         {
             isZoom = true;
+            //fingers closing zoom out, opening zoom in, both must move fast enough
             if (touchDelta + varianceInDistances <= 1f && speedTouch0 > minPinchSpeed && speedTouch1 > minPinchSpeed)
             {
                 ZoomOut(koef);
@@ -346,6 +354,7 @@ public class MouseOrbit : MonoBehaviour
         {
             selectedCamera.orthographicSize -= scrollSpeedOrto * koef;
         }
+        //zoom level as 0..1 between the min and max limits
         zoom = ((!selectedCamera.orthographic) ? (1f - (selectedCamera.fieldOfView - distanceMinPersp) / (distanceMaxPersp - distanceMinPersp)) : (1f - (selectedCamera.orthographicSize - distanceMinOrto) / (distanceMaxOrto - distanceMinOrto)));
         transform.position = Vector3.Lerp(transform.position, Vector3.zero, Time.deltaTime * (float)speedToZeroMove * 5f);
         UnitySingleton<GameController>.Instance.ChangeCamDepthPosition(ZoomCheck(zoom));
@@ -368,6 +377,7 @@ public class MouseOrbit : MonoBehaviour
 
     SwipeType CheckDirectional()
     {
+        //fingers going opposite ways is a pinch, same way is a pan
         if (touchDirectional.Count == 4)
         {
             if (touchDirectional[0] != touchDirectional[2] && touchDirectional[1] != touchDirectional[3])

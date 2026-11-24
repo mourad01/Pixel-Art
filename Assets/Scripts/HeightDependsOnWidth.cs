@@ -26,6 +26,7 @@ public class HeightDependsOnWidth : MonoBehaviour
 
     void Update()
     {
+        //update once more next frame, then stop updating
         base.StartCoroutine(UpdateHeightCoroutine());
         enabled = false;
     }

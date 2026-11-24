@@ -45,6 +45,7 @@ public class ImageInfo : IAccessStatusInfo
            
             
 
+            //every image is free now that the ab test check is off
             return AccessStatus.Free;
         }
     }
@@ -73,6 +74,7 @@ public class ImageInfo : IAccessStatusInfo
 
     public ImageInfo(Dictionary<string, object> dict)
     {
+        //entry from the images list, Premium "0" means free
         Name = ((long)dict["Name"]).ToString();
         Id = (string)dict["ID"];
         AccessStatus = (AccessStatus)((!((string)dict["Premium"] == "0")) ? 1 : 0);
