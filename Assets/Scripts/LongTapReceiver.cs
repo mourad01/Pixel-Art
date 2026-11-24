@@ -4,18 +4,18 @@ using UnityEngine.EventSystems;
 
 public class LongTapReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IEventSystemHandler
 {
-    private DateTime m_downTime = DateTime.MaxValue;
+    DateTime m_downTime = DateTime.MaxValue;
 
-    [SerializeField] private float m_duration = 1f;
+    [SerializeField] float m_duration = 1f;
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        this.m_downTime = DateTime.Now;
+        m_downTime = DateTime.Now;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if ((DateTime.Now - this.m_downTime).TotalSeconds > (double)this.m_duration)
+        if ((DateTime.Now - m_downTime).TotalSeconds > (double)m_duration)
         {
             DebugController.Instance.ClickDebugTexts();
         }

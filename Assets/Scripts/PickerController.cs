@@ -7,9 +7,8 @@ public class PickerController : UnitySingleton<PickerController>
 { 
     public Action<bool> InitComplete;
 
-    private Action<Texture2D> localImageComplete;
-
-    private bool isInited = false;
+    Action<Texture2D> localImageComplete;
+    bool isInited = false;
 
     protected void Awake()
     { 
@@ -34,11 +33,11 @@ public class PickerController : UnitySingleton<PickerController>
     public void Initilized()
     {
         isInited = true;
-        this.InitComplete(true);
+        InitComplete(true);
         //this._handler.Init(this.InitComplete);
     }
 
-    private System.Collections.IEnumerator LoadImage(string path)
+    System.Collections.IEnumerator LoadImage(string path)
     {
         Debug.Log("Loading image from gallery " + path);
         var url = path;
@@ -62,7 +61,7 @@ public class PickerController : UnitySingleton<PickerController>
             localImageComplete(texture);
         }
     }
-    private void GetImageCompleteWrapper(string path)
+    void GetImageCompleteWrapper(string path)
     {
         StartCoroutine(LoadImage(path));
     }

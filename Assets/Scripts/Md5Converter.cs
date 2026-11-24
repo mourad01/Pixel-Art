@@ -7,12 +7,12 @@ public class Md5Converter
     {
         using (MD5 mD = MD5.Create())
         {
-            byte[] bytes = Encoding.ASCII.GetBytes(input);
-            byte[] array = mD.ComputeHash(bytes);
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < array.Length; i++)
+            var bytes = Encoding.ASCII.GetBytes(input);
+            var hash = mD.ComputeHash(bytes);
+            var stringBuilder = new StringBuilder();
+            for (int i = 0; i < hash.Length; i++)
             {
-                stringBuilder.Append(array[i].ToString("X2"));
+                stringBuilder.Append(hash[i].ToString("X2"));
             }
             return stringBuilder.ToString().ToLower();
         }

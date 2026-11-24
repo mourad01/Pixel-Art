@@ -9,14 +9,11 @@ using VoxDLL;
 
 public static class MVImporter
 {
-    private static Action<Color[]> ColorsPalleteLoadComplete;
-
-    private static Action<List<VoxCubeItem>> CubesDataLoadComplete;
-
-    private static ColorSettings colorSettings;
+    static Action<Color[]> ColorsPalleteLoadComplete;
+    static Action<List<VoxCubeItem>> CubesDataLoadComplete;
+    static ColorSettings colorSettings;
 
     public static List<int> usedPallate = new List<int>();
-
     public static int[] colorCountArray = new int[256];
 
     public static Material DefaultMaterial
@@ -29,17 +26,17 @@ public static class MVImporter
 
     public static void AddColorSettings(ColorSettings settings)
     {
-        MVImporter.colorSettings = settings;
+        colorSettings = settings;
     }
 
     public static GameObject CreateGameObject(Transform parent, Vector3 pos, string name, Mesh mesh, Material mat)
     {
-        GameObject gameObject = Resources.Load("Prefabs/3D Cube") as GameObject;
+        var gameObject = Resources.Load("Prefabs/3D Cube") as GameObject;
         if (gameObject == null)
         {
             Debug.LogError("Prefabs/Cube not found");
         }
-        GameObject voxelInstance = UnityObject.Instantiate<GameObject>(gameObject);
+        var voxelInstance = UnityObject.Instantiate<GameObject>(gameObject);
         voxelInstance.name = (name);
         voxelInstance.transform.SetParent(parent);
         voxelInstance.transform.localPosition = (pos);
@@ -48,24 +45,24 @@ public static class MVImporter
 
     public static GameObject[] CreateIndividualVoxelGameObjects(MVMainChunk chunk, Transform parent, Material mat, float sizePerVox)
     {
-        return MVImporter.CreateIndividualVoxelGameObjectsForChunk(chunk.voxelChunk, chunk.palatte, parent, mat, sizePerVox);
+        return CreateIndividualVoxelGameObjectsForChunk(chunk.voxelChunk, chunk.palatte, parent, mat, sizePerVox);
     }
 
     public static GameObject[] CreateIndividualVoxelGameObjects(MVMainChunk chunk, Transform parent, Material mat, float sizePerVox, Vector3 origin)
     {
-        return MVImporter.CreateIndividualVoxelGameObjectsForChunk(chunk.voxelChunk, chunk.palatte, parent, mat, sizePerVox, origin);
+        return CreateIndividualVoxelGameObjectsForChunk(chunk.voxelChunk, chunk.palatte, parent, mat, sizePerVox, origin);
     }
 
     public static GameObject[] CreateIndividualVoxelGameObjectsForChunk(MVVoxelChunk chunk, Color[] palatte, Transform parent, Material mat, float sizePerVox)
     {
         Vector3 chunkCenter = new Vector3((float)chunk.sizeX / 2f, (float)chunk.sizeY / 2f, (float)chunk.sizeZ / 2f);
-        return MVImporter.CreateIndividualVoxelGameObjectsForChunk(chunk, palatte, parent, mat, sizePerVox, chunkCenter);
+        return CreateIndividualVoxelGameObjectsForChunk(chunk, palatte, parent, mat, sizePerVox, chunkCenter);
     }
 
     public static GameObject[] CreateIndividualVoxelGameObjectsForChunk(MVVoxelChunk chunk, Color[] palatte, Transform parent, Material mat, float sizePerVox, Vector3 origin)
     {
-        List<GameObject> gameObjects = new List<GameObject>();
-        List<VoxCubeItem> voxCubeItems = new List<VoxCubeItem>();
+        var gameObjects = new List<GameObject>();
+        var voxCubeItems = new List<VoxCubeItem>();
 
         for (int i = 0; i < chunk.sizeX; i++)
         {
@@ -73,20 +70,20 @@ public static class MVImporter
             {
                 for (int k = 0; k < chunk.sizeZ; k++)
                 {
-                    if (chunk.voxels[i, j, k] != 0 && MVImporter.IsVoxelVisible(chunk, i, j, k))
+                    if (chunk.voxels[i, j, k] != 0 && IsVoxelVisible(chunk, i, j, k))
                     {
                         int colorIndex = chunk.voxels[i, j, k] - 1;
-                        MVImporter.colorCountArray[colorIndex]++;
-                        if (MVImporter.usedPallate.IndexOf(colorIndex) == -1)
+                        colorCountArray[colorIndex]++;
+                        if (usedPallate.IndexOf(colorIndex) == -1)
                         {
-                            MVImporter.usedPallate.Add(colorIndex);
+                            usedPallate.Add(colorIndex);
                         }
                     }
                 }
             }
         }
 
-        MVImporter.usedPallate.Sort();
+        usedPallate.Sort();
         for (int i = 0; i < chunk.sizeX; i++)
         {
             for (int j = 0; j < chunk.sizeY; j++)
@@ -94,25 +91,25 @@ public static class MVImporter
                 for (int k = 0; k < chunk.sizeZ; k++)
                 {
                     int index = chunk.voxels[i, j, k];
-                    if (index != 0 && MVImporter.IsVoxelVisible(chunk, i, j, k))
+                    if (index != 0 && IsVoxelVisible(chunk, i, j, k))
                     {
-                        int colorNum = MVImporter.usedPallate.IndexOf(index - 1);
+                        int colorNum = usedPallate.IndexOf(index - 1);
 
                         float single = ((float)i - origin.x + 0.5f) * sizePerVox;
                         float single1 = ((float)j - origin.y + 0.5f) * sizePerVox;
                         float single2 = ((float)k - origin.z + 0.5f) * sizePerVox;
-                        Mesh mesh = MVImporter.CubeMeshWithColor(sizePerVox, palatte[index], colorNum);
-                        GameObject gameObject = MVImporter.CreateGameObject(parent, new Vector3(single, single1, single2), string.Format("Voxel ({0}, {1}, {2})", i, j, k), mesh, mat);
-                        VoxCubeItem voxCubeItem = gameObject.AddComponent<VoxCubeItem>();
+                        var mesh = CubeMeshWithColor(sizePerVox, palatte[index], colorNum);
+                        var gameObject = CreateGameObject(parent, new Vector3(single, single1, single2), string.Format("Voxel ({0}, {1}, {2})", i, j, k), mesh, mat);
+                        var voxCubeItem = gameObject.AddComponent<VoxCubeItem>();
                         voxCubeItem.ColorIndex = colorNum + 1;
-                        bool[] flagArray = new bool[] {
+                        var flagArray = new bool[] {
                             (j + 1 >= chunk.sizeY ? true : chunk.voxels[i, j + 1, k] == 0),
                             (j - 1 < 0 ? true : chunk.voxels[i, j - 1, k] == 0),
                             (k - 1 < 0 ? true : chunk.voxels[i, j, k - 1] == 0),
                             (k + 1 >= chunk.sizeZ ? true : chunk.voxels[i, j, k + 1] == 0),
                             (i - 1 < 0 ? true : chunk.voxels[i - 1, j, k] == 0),
                             (i + 1 >= chunk.sizeX ? true : chunk.voxels[i + 1, j, k] == 0) };
-                        voxCubeItem.Init(MVImporter.colorSettings, palatte[index-1], mesh, flagArray);
+                        voxCubeItem.Init(colorSettings, palatte[index-1], mesh, flagArray);
                         gameObject.tag = ("Player");
                         voxCubeItems.Add(voxCubeItem);
                         gameObjects.Add(gameObject);
@@ -120,25 +117,25 @@ public static class MVImporter
                 }
             }
         }
-        if (MVImporter.ColorsPalleteLoadComplete != null)
+        if (ColorsPalleteLoadComplete != null)
         {
-            var colors = new Color[MVImporter.usedPallate.Count];
-            for (int i = 0; i < MVImporter.usedPallate.Count; i++)
+            var colors = new Color[usedPallate.Count];
+            for (int i = 0; i < usedPallate.Count; i++)
             {
-                colors[i] = palatte[MVImporter.usedPallate[i]];
+                colors[i] = palatte[usedPallate[i]];
             }
-            MVImporter.ColorsPalleteLoadComplete(colors);
+            ColorsPalleteLoadComplete(colors);
         }
         Debug.Log(string.Concat("Cube Items count = ", voxCubeItems.Count<VoxCubeItem>()));
-        if (MVImporter.CubesDataLoadComplete != null)
+        if (CubesDataLoadComplete != null)
         {
-            MVImporter.CubesDataLoadComplete(voxCubeItems);
+            CubesDataLoadComplete(voxCubeItems);
         }
 
         return gameObjects.ToArray();
     }
 
-    private static bool IsVoxelVisible(MVVoxelChunk chunk, int px, int py, int pz)
+    static bool IsVoxelVisible(MVVoxelChunk chunk, int px, int py, int pz)
     {
         if (px != 0 && px != chunk.sizeX - 1)
         {
@@ -181,30 +178,30 @@ public static class MVImporter
 
     public static Mesh[] CreateMeshes(MVMainChunk chunk, float sizePerVox)
     {
-        return MVImporter.CreateMeshesFromChunk(chunk.voxelChunk, chunk.palatte, sizePerVox);
+        return CreateMeshesFromChunk(chunk.voxelChunk, chunk.palatte, sizePerVox);
     }
 
     public static Mesh[] CreateMeshesFromChunk(MVVoxelChunk chunk, Color[] palatte, float sizePerVox)
     {
         Vector3 chunkCenter = new Vector3((float)chunk.sizeX / 2f, (float)chunk.sizeY / 2f, (float)chunk.sizeZ / 2f);
-        return MVImporter.CreateMeshesFromChunk(chunk, palatte, sizePerVox, chunkCenter);
+        return CreateMeshesFromChunk(chunk, palatte, sizePerVox, chunkCenter);
     }
 
     public static Mesh[] CreateMeshesFromChunk(MVVoxelChunk chunk, Color[] palatte, float sizePerVox, Vector3 origin)
     {
-        List<Vector3> vector3s = new List<Vector3>();
-        List<Vector3> vector3s1 = new List<Vector3>();
-        List<Color> colors = new List<Color>();
-        List<int> nums = new List<int>();
-        List<Vector2> vector2s = new List<Vector2>();
-        Vector3[] _right = new Vector3[] { Vector3.right, Vector3.left, Vector3.up, Vector3.down, Vector3.forward, Vector3.back };
-        List<Mesh> meshes = new List<Mesh>();
+        var vector3s = new List<Vector3>();
+        var vector3s1 = new List<Vector3>();
+        var colors = new List<Color>();
+        var nums = new List<int>();
+        var vector2s = new List<Vector2>();
+        var _right = new Vector3[] { Vector3.right, Vector3.left, Vector3.up, Vector3.down, Vector3.forward, Vector3.back };
+        var meshes = new List<Mesh>();
         if (sizePerVox <= 0f)
         {
             sizePerVox = 0.1f;
         }
         float single = sizePerVox / 2f;
-        int num = 0;
+        int quadCount = 0;
         int value1 = 0;
         for (int i = 0; i < 6; i++)
         {
@@ -214,8 +211,8 @@ public static class MVImporter
                 {
                     for (int l = 0; l < chunk.sizeZ; l++)
                     {
-                        int value2 = chunk.faces[i].colorIndices[j, k, l];
-                        if (value2 != 0)
+                        int colorIndice = chunk.faces[i].colorIndices[j, k, l];
+                        if (colorIndice != 0)
                         {
                             float single1 = ((float)j - origin.x + 0.5f) * sizePerVox;
                             float single2 = ((float)k - origin.y + 0.5f) * sizePerVox;
@@ -229,19 +226,19 @@ public static class MVImporter
                                 case 1:
                                     {
                                         p = k + 1;
-                                        while (p < chunk.sizeY && chunk.faces[i].colorIndices[j, p, l] == value2)
+                                        while (p < chunk.sizeY && chunk.faces[i].colorIndices[j, p, l] == colorIndice)
                                         {
                                             p++;
                                         }
                                         p--;
                                         for (m = l + 1; m < chunk.sizeZ; m++)
                                         {
-                                            bool flag = true;
+                                            bool sameColor = true;
                                             for (int n = k; n <= p; n++)
                                             {
-                                                flag = flag & chunk.faces[i].colorIndices[j, n, m] == value2;
+                                                sameColor = sameColor & chunk.faces[i].colorIndices[j, n, m] == colorIndice;
                                             }
-                                            if (!flag)
+                                            if (!sameColor)
                                             {
                                                 break;
                                             }
@@ -253,7 +250,7 @@ public static class MVImporter
                                 case 3:
                                     {
                                         value3 = j + 1;
-                                        while (value3 < chunk.sizeX && chunk.faces[i].colorIndices[value3, k, l] == value2)
+                                        while (value3 < chunk.sizeX && chunk.faces[i].colorIndices[value3, k, l] == colorIndice)
                                         {
                                             value3++;
                                         }
@@ -263,7 +260,7 @@ public static class MVImporter
                                             bool matchesDepthRow = true;
                                             for (int o = j; o <= value3; o++)
                                             {
-                                                matchesDepthRow = matchesDepthRow & chunk.faces[i].colorIndices[o, k, m] == value2;
+                                                matchesDepthRow = matchesDepthRow & chunk.faces[i].colorIndices[o, k, m] == colorIndice;
                                             }
                                             if (!matchesDepthRow)
                                             {
@@ -277,7 +274,7 @@ public static class MVImporter
                                 case 5:
                                     {
                                         value3 = j + 1;
-                                        while (value3 < chunk.sizeX && chunk.faces[i].colorIndices[value3, k, l] == value2)
+                                        while (value3 < chunk.sizeX && chunk.faces[i].colorIndices[value3, k, l] == colorIndice)
                                         {
                                             value3++;
                                         }
@@ -287,7 +284,7 @@ public static class MVImporter
                                             bool matchesHeightRow = true;
                                             for (int q = j; q <= value3; q++)
                                             {
-                                                matchesHeightRow = matchesHeightRow & chunk.faces[i].colorIndices[q, p, l] == value2;
+                                                matchesHeightRow = matchesHeightRow & chunk.faces[i].colorIndices[q, p, l] == colorIndice;
                                             }
                                             if (!matchesHeightRow)
                                             {
@@ -369,25 +366,25 @@ public static class MVImporter
                             vector3s1.Add(_right[i]);
                             vector3s1.Add(_right[i]);
                             vector3s1.Add(_right[i]);
-                            Color color = palatte[value2 - 1];
+                            Color color = palatte[colorIndice - 1];
                             colors.Add(color);
                             colors.Add(color);
                             colors.Add(color);
                             colors.Add(color);
-                            nums.Add(num * 4);
-                            nums.Add(num * 4 + 1);
-                            nums.Add(num * 4 + 2);
-                            nums.Add(num * 4 + 2);
-                            nums.Add(num * 4 + 3);
-                            nums.Add(num * 4);
-                            vector2s.Add(new Vector2(((float)value2 - 1f) / 256f, 0f));
-                            vector2s.Add(new Vector2((float)value2 / 256f, 0f));
-                            vector2s.Add(new Vector2((float)value2 / 256f, 1f));
-                            vector2s.Add(new Vector2(((float)value2 - 1f) / 256f, 1f));
-                            num++;
+                            nums.Add(quadCount * 4);
+                            nums.Add(quadCount * 4 + 1);
+                            nums.Add(quadCount * 4 + 2);
+                            nums.Add(quadCount * 4 + 2);
+                            nums.Add(quadCount * 4 + 3);
+                            nums.Add(quadCount * 4);
+                            vector2s.Add(new Vector2(((float)colorIndice - 1f) / 256f, 0f));
+                            vector2s.Add(new Vector2((float)colorIndice / 256f, 0f));
+                            vector2s.Add(new Vector2((float)colorIndice / 256f, 1f));
+                            vector2s.Add(new Vector2(((float)colorIndice - 1f) / 256f, 1f));
+                            quadCount++;
                             if (vector3s.Count + 4 >= 65000)
                             {
-                                Mesh mesh = new Mesh();
+                                var mesh = new Mesh();
                                 mesh.vertices = vector3s.ToArray();
                                 mesh.colors = colors.ToArray();
                                 mesh.normals = (vector3s1.ToArray());
@@ -399,8 +396,8 @@ public static class MVImporter
                                 colors.Clear();
                                 vector3s1.Clear();
                                 nums.Clear();
-                                value1 += num;
-                                num = 0;
+                                value1 += quadCount;
+                                quadCount = 0;
                             }
                         }
                     }
@@ -409,14 +406,14 @@ public static class MVImporter
         }
         if (vector3s.Count > 0)
         {
-            Mesh mesh1 = new Mesh();
-            mesh1.vertices = (vector3s.ToArray());
-            mesh1.colors = colors.ToArray();
-            mesh1.normals = (vector3s1.ToArray());
-            mesh1.triangles = (nums.ToArray());
-            mesh1.uv = (vector2s.ToArray());
-            meshes.Add(mesh1);
-            value1 += num;
+            var mesh = new Mesh();
+            mesh.vertices = (vector3s.ToArray());
+            mesh.colors = colors.ToArray();
+            mesh.normals = (vector3s1.ToArray());
+            mesh.triangles = (nums.ToArray());
+            mesh.uv = (vector2s.ToArray());
+            meshes.Add(mesh);
+            value1 += quadCount;
         }
         Debug.Log(string.Format("[MVImport] Mesh generated, total quads {0}", value1));
         return meshes.ToArray();
@@ -424,30 +421,30 @@ public static class MVImporter
 
     public static GameObject[] CreateVoxelGameObjects(MVMainChunk chunk, Transform parent, Material mat, float sizePerVox)
     {
-        return MVImporter.CreateVoxelGameObjectsForChunk(chunk.voxelChunk, chunk.palatte, parent, mat, sizePerVox);
+        return CreateVoxelGameObjectsForChunk(chunk.voxelChunk, chunk.palatte, parent, mat, sizePerVox);
     }
 
     public static GameObject[] CreateVoxelGameObjects(MVMainChunk chunk, Transform parent, Material mat, float sizePerVox, Vector3 origin)
     {
-        return MVImporter.CreateVoxelGameObjectsForChunk(chunk.voxelChunk, chunk.palatte, parent, mat, sizePerVox, origin);
+        return CreateVoxelGameObjectsForChunk(chunk.voxelChunk, chunk.palatte, parent, mat, sizePerVox, origin);
     }
 
     public static GameObject[] CreateVoxelGameObjectsForChunk(MVVoxelChunk chunk, Color[] palatte, Transform parent, Material mat, float sizePerVox)
     {
         Vector3 chunkCenter = new Vector3((float)chunk.sizeX / 2f, (float)chunk.sizeY / 2f, (float)chunk.sizeZ / 2f);
-        return MVImporter.CreateVoxelGameObjectsForChunk(chunk, palatte, parent, mat, sizePerVox, chunkCenter);
+        return CreateVoxelGameObjectsForChunk(chunk, palatte, parent, mat, sizePerVox, chunkCenter);
     }
 
     public static GameObject[] CreateVoxelGameObjectsForChunk(MVVoxelChunk chunk, Color[] palatte, Transform parent, Material mat, float sizePerVox, Vector3 origin)
     {
-        List<GameObject> gameObjects = new List<GameObject>();
-        int num = 0;
-        Mesh[] meshArray = MVImporter.CreateMeshesFromChunk(chunk, palatte, sizePerVox, origin);
+        var gameObjects = new List<GameObject>();
+        int index = 0;
+        var meshArray = CreateMeshesFromChunk(chunk, palatte, sizePerVox, origin);
         for (int i = 0; i < (int)meshArray.Length; i++)
         {
-            Mesh mesh = meshArray[i];
-            GameObject gameObject = new GameObject();
-            gameObject.name = (string.Format("VoxelMesh ({0})", num));
+            var mesh = meshArray[i];
+            var gameObject = new GameObject();
+            gameObject.name = (string.Format("VoxelMesh ({0})", index));
             gameObject.transform.SetParent(parent);
             gameObject.transform.localPosition = (Vector3.zero);
             gameObject.transform.localRotation = (Quaternion.Euler(Vector3.zero));
@@ -456,7 +453,7 @@ public static class MVImporter
             gameObject.AddComponent<MeshRenderer>().material = (mat);
             gameObject.AddComponent<MVVoxModelMesh>();
             gameObjects.Add(gameObject);
-            num++;
+            index++;
         }
         return gameObjects.ToArray();
     }
@@ -464,11 +461,11 @@ public static class MVImporter
     public static Mesh CubeMeshWithColor(float size, Color c, int cidx)
     {
         float half = size / 2f;
-        Vector3[] cubeVertices = new Vector3[] { new Vector3(-half, -half, -half), new Vector3(-half, half, -half), new Vector3(half, half, -half), new Vector3(half, -half, -half), new Vector3(half, -half, half), new Vector3(half, half, half), new Vector3(-half, half, half), new Vector3(-half, -half, half) };
-        int[] vertices = new int[] { 0, 1, 2, 0, 2, 3, 3, 2, 5, 3, 5, 4, 5, 2, 1, 5, 1, 6, 3, 4, 7, 3, 7, 0, 0, 7, 6, 0, 6, 1, 4, 5, 6, 4, 6, 7 };
-        Color[] colors = new Color[] { c, c, c, c, c, c, c, c };
-        Vector2[] uvs = new Vector2[] { new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f) };
-        Mesh mesh = new Mesh();
+        var cubeVertices = new Vector3[] { new Vector3(-half, -half, -half), new Vector3(-half, half, -half), new Vector3(half, half, -half), new Vector3(half, -half, -half), new Vector3(half, -half, half), new Vector3(half, half, half), new Vector3(-half, half, half), new Vector3(-half, -half, half) };
+        var vertices = new int[] { 0, 1, 2, 0, 2, 3, 3, 2, 5, 3, 5, 4, 5, 2, 1, 5, 1, 6, 3, 4, 7, 3, 7, 0, 0, 7, 6, 0, 6, 1, 4, 5, 6, 4, 6, 7 };
+        var colors = new Color[] { c, c, c, c, c, c, c, c };
+        var uvs = new Vector2[] { new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f), new Vector2(((float)cidx - 0.5f) / 256f, 0.5f) };
+        var mesh = new Mesh();
         mesh.vertices = (cubeVertices);
         mesh.uv = (uvs);
         mesh.colors = colors;
@@ -521,8 +518,8 @@ public static class MVImporter
 
     public static void Init(Action<Color[]> actionColorsComplete, Action<List<VoxCubeItem>> actionCubesComplete)
     {
-        MVImporter.ColorsPalleteLoadComplete = actionColorsComplete;
-        MVImporter.CubesDataLoadComplete = actionCubesComplete;
+        ColorsPalleteLoadComplete = actionColorsComplete;
+        CubesDataLoadComplete = actionCubesComplete;
     }
 
     public static MVMainChunk LoadVOX(string path, bool generateFaces = true)
@@ -531,7 +528,7 @@ public static class MVImporter
         numArray = File.ReadAllBytes(path);
         if (numArray[0] == 86 && numArray[1] == 79 && numArray[2] == 88 && numArray[3] == 32)
         {
-            return MVImporter.LoadVOXFromData(numArray, generateFaces);
+            return LoadVOXFromData(numArray, generateFaces);
         }
         Debug.LogError("Invalid VOX file, magic number mismatch");
         return null;
@@ -539,10 +536,10 @@ public static class MVImporter
 
     public static MVMainChunk LoadVOXFromData(byte[] data, bool generateFaces = true)
     {
-        MVImporter.usedPallate.Clear();
+        usedPallate.Clear();
         for (int i = 0; i < 256; i++)
         {
-            MVImporter.colorCountArray[i] = 0;
+            colorCountArray[i] = 0;
         }
 
         MVMainChunk mVMainChunk;
@@ -550,10 +547,10 @@ public static class MVImporter
         {
             using (BinaryReader binaryReader = new BinaryReader(memoryStream))
             {
-                MVMainChunk _white = new MVMainChunk();
+                var _white = new MVMainChunk();
                 var dummy = binaryReader.ReadInt32();
                 _white.version = binaryReader.ReadBytes(4);
-                byte[] numArray = binaryReader.ReadBytes(4);
+                var numArray = binaryReader.ReadBytes(4);
                 if (numArray[0] != 77 || numArray[1] != 65 || numArray[2] != 73 || numArray[3] != 78)
                 {
                     Debug.LogError("[MVImport] Invalid MainChunk ID, main chunk expected");
@@ -561,9 +558,9 @@ public static class MVImporter
                 }
                 else
                 {
-                    int num = binaryReader.ReadInt32();
+                    int chunkSize = binaryReader.ReadInt32();
                     int value1 = binaryReader.ReadInt32();
-                    binaryReader.ReadBytes(num);
+                    binaryReader.ReadBytes(chunkSize);
                     int value2 = 0;
                     while (value2 < value1)
                     {
@@ -577,11 +574,11 @@ public static class MVImporter
                         }
                         else if (numArray[0] == 83 && numArray[1] == 73 && numArray[2] == 90 && numArray[3] == 69)
                         {
-                            value2 += MVImporter.ReadSizeChunk(binaryReader, _white);
+                            value2 += ReadSizeChunk(binaryReader, _white);
                         }
                         else if (numArray[0] == 88 && numArray[1] == 89 && numArray[2] == 90 && numArray[3] == 73)
                         {
-                            value2 += MVImporter.ReadVoxelChunk(binaryReader, _white.voxelChunk);
+                            value2 += ReadVoxelChunk(binaryReader, _white.voxelChunk);
                         }
                         else if (numArray[0] != 82 || numArray[1] != 71 || numArray[2] != 66 || numArray[3] != 65)
                         {
@@ -598,7 +595,7 @@ public static class MVImporter
                             {
                                 _white.palatte[i] = Color.white;
                             }
-                            value2 += MVImporter.ReadPalattee(binaryReader, _white.palatte);
+                            value2 += ReadPalattee(binaryReader, _white.palatte);
                             //if (MVImporter.ColorsPalleteLoadComplete == null)
                             //{
                             //	continue;
@@ -608,7 +605,7 @@ public static class MVImporter
                     }
                     if (generateFaces)
                     {
-                        MVImporter.GenerateFaces(_white.voxelChunk);
+                        GenerateFaces(_white.voxelChunk);
                     }
                     if (_white.palatte == null)
                     {
@@ -625,9 +622,9 @@ public static class MVImporter
         return mVMainChunk;
     }
 
-    private static int ReadPalattee(BinaryReader br, Color[] colors)
+    static int ReadPalattee(BinaryReader br, Color[] colors)
     {
-        int num = br.ReadInt32();
+        int chunkSize = br.ReadInt32();
         int value1 = br.ReadInt32();
         for (int i = 0; i < 256; i++)
         {
@@ -638,12 +635,12 @@ public static class MVImporter
             br.ReadBytes(value1);
             Debug.LogWarning("[MVImporter] Nested chunk not supported");
         }
-        return num + value1 + 12;
+        return chunkSize + value1 + 12;
     }
 
-    private static int ReadSizeChunk(BinaryReader br, MVMainChunk mainChunk)
+    static int ReadSizeChunk(BinaryReader br, MVMainChunk mainChunk)
     {
-        int num = br.ReadInt32();
+        int chunkSize = br.ReadInt32();
         int value1 = br.ReadInt32();
         mainChunk.sizeX = br.ReadInt32();
         mainChunk.sizeZ = br.ReadInt32();
@@ -658,12 +655,12 @@ public static class MVImporter
             br.ReadBytes(value1);
             Debug.LogWarning("[MVImporter] Nested chunk not supported");
         }
-        return num + value1 + 12;
+        return chunkSize + value1 + 12;
     }
 
-    private static int ReadVoxelChunk(BinaryReader br, MVVoxelChunk chunk)
+    static int ReadVoxelChunk(BinaryReader br, MVVoxelChunk chunk)
     {
-        int num = br.ReadInt32();
+        int chunkSize = br.ReadInt32();
         int value1 = br.ReadInt32();
         int value2 = br.ReadInt32();
         for (int i = 0; i < value2; i++)
@@ -678,6 +675,6 @@ public static class MVImporter
             br.ReadBytes(value1);
             Debug.LogWarning("[MVImporter] Nested chunk not supported");
         }
-        return num + value1 + 12;
+        return chunkSize + value1 + 12;
     }
 }

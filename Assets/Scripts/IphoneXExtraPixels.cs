@@ -8,64 +8,63 @@ using UnityEngine.UI;
 
 public class IphoneXExtraPixels : MonoBehaviour
 {
-    private Vector2 m_sizeDelta = Vector2.zero;
+    Vector2 m_sizeDelta = Vector2.zero;
 
-    [SerializeField] private RectTransform m_canvas;
+    [SerializeField] RectTransform m_canvas;
 
-    private LayoutElement m_layoutElement;
+    LayoutElement m_layoutElement;
+    float m_pixels;
 
-    private float m_pixels;
-
-    [SerializeField] private bool m_bottom;
+    [SerializeField] bool m_bottom;
 
     public float Height { get;  set; }
 
-    private void Awake()
+    void Awake()
     {
-        base.StartCoroutine(this.InitCoroutine());
-        this.m_layoutElement = base.GetComponent<LayoutElement>();
+        base.StartCoroutine(InitCoroutine());
+        m_layoutElement = base.GetComponent<LayoutElement>();
     }
 
-    private void UpdateVisibility()
+    void UpdateVisibility()
     {
-        if (this.m_pixels == 0f)
+        if (m_pixels == 0f)
         {
-            (base.transform as RectTransform).sizeDelta = Vector2.zero;
-            if (this.m_layoutElement != null)
+            (transform as RectTransform).sizeDelta = Vector2.zero;
+            if (m_layoutElement != null)
             {
-                LayoutElement layoutElement = this.m_layoutElement;
-                float num = 0f;
-                this.m_layoutElement.preferredHeight = num;
-                layoutElement.minHeight = num;
+                var layoutElement = m_layoutElement;
+                float height = 0f;
+                m_layoutElement.preferredHeight = height;
+                layoutElement.minHeight = height;
             }
         }
         else
         {
-            (base.transform as RectTransform).sizeDelta = this.m_sizeDelta;
-            if (this.m_layoutElement != null)
+            (transform as RectTransform).sizeDelta = m_sizeDelta;
+            if (m_layoutElement != null)
             {
-                LayoutElement layoutElement2 = this.m_layoutElement;
-                float num = 0f;
-                this.m_layoutElement.preferredHeight = num;
-                layoutElement2.minHeight = num;
+                var layoutElement = m_layoutElement;
+                float height = 0f;
+                m_layoutElement.preferredHeight = height;
+                layoutElement.minHeight = height;
             }
-            if (this.m_layoutElement != null)
+            if (m_layoutElement != null)
             {
-                LayoutElement layoutElement3 = this.m_layoutElement;
-                float num = this.m_sizeDelta.y;
-                this.m_layoutElement.preferredHeight = num;
-                layoutElement3.minHeight = num;
+                var layoutElement3 = m_layoutElement;
+                float height = m_sizeDelta.y;
+                m_layoutElement.preferredHeight = height;
+                layoutElement3.minHeight = height;
             }
         }
     }
 
-    private IEnumerator InitCoroutine()
+    IEnumerator InitCoroutine()
     {
         yield return null;
 
-        this.m_pixels = ((!this.m_bottom) ? ScreenToolWrapper.IphoneXExtraPixels : ScreenToolWrapper.IphoneXExtraBottomPixels);
-        this.Height = this.m_pixels / (float)Screen.height * this.m_canvas.rect.height * ScreenToolWrapper.Density;
-        this.m_sizeDelta = new Vector2(0f, this.Height);
-        this.UpdateVisibility();
+        m_pixels = ((!m_bottom) ? ScreenToolWrapper.IphoneXExtraPixels : ScreenToolWrapper.IphoneXExtraBottomPixels);
+        Height = m_pixels / (float)Screen.height * m_canvas.rect.height * ScreenToolWrapper.Density;
+        m_sizeDelta = new Vector2(0f, Height);
+        UpdateVisibility();
     }
 }

@@ -7,7 +7,7 @@ internal static class JSONHelper
 {
     public static JSONObject ConvertToJSON(List<string> collection)
     {
-        JSONObject jSONObject = new JSONObject(JSONObject.Type.ARRAY);
+        var jSONObject = new JSONObject(JSONObject.Type.ARRAY);
         foreach (string item in collection)
         {
             jSONObject.Add(item);
@@ -17,27 +17,27 @@ internal static class JSONHelper
 
     public static List<string> ConvertToStringList(JSONObject jsonData)
     {
-        List<string> list = new List<string>();
-        foreach (JSONObject item in jsonData.list)
+        var list = new List<string>();
+        foreach (JSONObject jsonObject in jsonData.list)
         {
-            list.Add(item.str);
+            list.Add(jsonObject.str);
         }
         return list;
     }
 
     public static JSONObject ConvertToJSON(Dictionary<string, bool> collection)
     {
-        JSONObject jSONObject = new JSONObject(JSONObject.Type.OBJECT);
-        foreach (KeyValuePair<string, bool> item in collection)
+        var jSONObject = new JSONObject(JSONObject.Type.OBJECT);
+        foreach (KeyValuePair<string, bool> keyValuePair in collection)
         {
-            jSONObject.AddField(item.Key, item.Value);
+            jSONObject.AddField(keyValuePair.Key, keyValuePair.Value);
         }
         return jSONObject;
     }
 
     public static Dictionary<string, bool> ConvertToBoolDictionary(JSONObject jsonData)
     {
-        Dictionary<string, bool> dictionary = new Dictionary<string, bool>();
+        var dictionary = new Dictionary<string, bool>();
         if (!jsonData.IsNull)
         {
             {
@@ -53,7 +53,7 @@ internal static class JSONHelper
 
     public static JSONObject ConvertToJSON(Dictionary<string, int> collection)
     {
-        JSONObject jSONObject = new JSONObject(JSONObject.Type.OBJECT);
+        var jSONObject = new JSONObject(JSONObject.Type.OBJECT);
         foreach (KeyValuePair<string, int> item in collection)
         {
             jSONObject.AddField(item.Key, item.Value.ToString());
@@ -63,7 +63,7 @@ internal static class JSONHelper
 
     public static JSONObject ConvertToJSON(Dictionary<string, object> collection)
     {
-        JSONObject jSONObject = new JSONObject(JSONObject.Type.OBJECT);
+        var jSONObject = new JSONObject(JSONObject.Type.OBJECT);
         foreach (KeyValuePair<string, object> item in collection)
         {
             jSONObject.AddField(item.Key, item.Value.ToString());
@@ -73,7 +73,7 @@ internal static class JSONHelper
 
     public static JSONObject ConvertToJSON(Dictionary<int, int> collection)
     {
-        JSONObject jSONObject = new JSONObject(JSONObject.Type.OBJECT);
+        var jSONObject = new JSONObject(JSONObject.Type.OBJECT);
         foreach (KeyValuePair<int, int> item in collection)
         {
             jSONObject.AddField(item.Key.ToString(), item.Value.ToString());
@@ -83,7 +83,7 @@ internal static class JSONHelper
 
     public static Dictionary<int, int> ConvertToIntDictionary(JSONObject jsonData)
     {
-        Dictionary<int, int> dictionary = new Dictionary<int, int>();
+        var dictionary = new Dictionary<int, int>();
         if (!jsonData.IsNull)
         {
             {
@@ -99,7 +99,7 @@ internal static class JSONHelper
 
     public static Dictionary<string, string> ConvertToStrDictionary(JSONObject jsonData)
     {
-        Dictionary<string, string> dictionary = new Dictionary<string, string>();
+        var dictionary = new Dictionary<string, string>();
         if (!jsonData.IsNull)
         {
             {
@@ -115,7 +115,7 @@ internal static class JSONHelper
 
     public static JSONObject ConvertToJSON(Dictionary<string, DateTime> collection)
     {
-        JSONObject jSONObject = new JSONObject(JSONObject.Type.OBJECT);
+        var jSONObject = new JSONObject(JSONObject.Type.OBJECT);
         foreach (KeyValuePair<string, DateTime> item in collection)
         {
             jSONObject.AddField(item.Key, item.Value.ToString(NumberFormatInfo.InvariantInfo));
@@ -125,7 +125,7 @@ internal static class JSONHelper
 
     public static JSONObject ConvertToJSON(Dictionary<int, DateTime> collection)
     {
-        Dictionary<string, string> dictionary = new Dictionary<string, string>();
+        var dictionary = new Dictionary<string, string>();
         foreach (KeyValuePair<int, DateTime> item in collection)
         {
             dictionary.Add(item.Key.ToString(), item.Value.ToString(NumberFormatInfo.InvariantInfo));
@@ -135,7 +135,7 @@ internal static class JSONHelper
 
     public static Dictionary<string, DateTime> ConvertToStringDateTimeDictionary(JSONObject jsonData)
     {
-        Dictionary<string, DateTime> dictionary = new Dictionary<string, DateTime>();
+        var dictionary = new Dictionary<string, DateTime>();
         if (!jsonData.IsNull)
         {
             {
@@ -151,7 +151,7 @@ internal static class JSONHelper
 
     public static Dictionary<int, DateTime> ConvertToIntDateTimeDictionary(JSONObject jsonData)
     {
-        Dictionary<int, DateTime> dictionary = new Dictionary<int, DateTime>();
+        var dictionary = new Dictionary<int, DateTime>();
         foreach (string key in jsonData.keys)
         {
             dictionary.Add(int.Parse(key), DateTime.Parse(jsonData[key].str));
@@ -161,7 +161,7 @@ internal static class JSONHelper
 
     public static JSONObject ConvertToJSON(List<int> collection)
     {
-        JSONObject jSONObject = new JSONObject(JSONObject.Type.ARRAY);
+        var jSONObject = new JSONObject(JSONObject.Type.ARRAY);
         foreach (int item in collection)
         {
             jSONObject.Add(item);
@@ -171,17 +171,17 @@ internal static class JSONHelper
 
     public static List<int> ConvertToIntList(JSONObject jsonData)
     {
-        List<int> list = new List<int>();
-        foreach (JSONObject item in jsonData.list)
+        var list = new List<int>();
+        foreach (JSONObject jsonObject in jsonData.list)
         {
-            list.Add((int)item.f);
+            list.Add((int)jsonObject.f);
         }
         return list;
     }
 
     public static JSONObject ConvertToJSON(List<byte> collection)
     {
-        JSONObject jSONObject = new JSONObject(JSONObject.Type.ARRAY);
+        var jSONObject = new JSONObject(JSONObject.Type.ARRAY);
         foreach (byte item in collection)
         {
             jSONObject.Add(item);
@@ -191,17 +191,17 @@ internal static class JSONHelper
 
     public static List<byte> ConvertToByteList(JSONObject jsonData)
     {
-        List<byte> list = new List<byte>();
-        foreach (JSONObject item in jsonData.list)
+        var list = new List<byte>();
+        foreach (JSONObject jsonObject in jsonData.list)
         {
-            list.Add((byte)item.f);
+            list.Add((byte)jsonObject.f);
         }
         return list;
     }
 
     public static JSONObject ConvertToJSON(Vector3 vector)
     {
-        JSONObject jSONObject = new JSONObject();
+        var jSONObject = new JSONObject();
         jSONObject.AddField("x", vector.x);
         jSONObject.AddField("y", vector.y);
         jSONObject.AddField("z", vector.z);
@@ -219,7 +219,7 @@ internal static class JSONHelper
 
     public static JSONObject ConvertToJSON(Quaternion quaternion)
     {
-        JSONObject jSONObject = new JSONObject();
+        var jSONObject = new JSONObject();
         jSONObject.AddField("x", quaternion.x);
         jSONObject.AddField("y", quaternion.y);
         jSONObject.AddField("z", quaternion.z);

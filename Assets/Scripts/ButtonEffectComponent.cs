@@ -8,15 +8,15 @@ using UnityEngine.UI;
 [RequireComponent(typeof(EventTrigger))]
 public class ButtonEffectComponent : MonoBehaviour
 {
-    private Color m_tempColor;
+    Color m_tempColor;
 
-    [SerializeField] private List<ButtonEffect> m_elements;
+    [SerializeField] List<ButtonEffect> m_elements;
 
     public void ButtonDownHandler()
     {
-        if (base.enabled)
+        if (enabled)
         {
-            foreach (ButtonEffect element in this.m_elements)
+            foreach (ButtonEffect element in m_elements)
             {
                 if (element.element != null)
                 {
@@ -26,7 +26,7 @@ public class ButtonEffectComponent : MonoBehaviour
                             element.element.color = element.activeColor;
                             break;
                         case ButtonEffectType.HighlightColor:
-                            this.m_tempColor = element.element.color;
+                            m_tempColor = element.element.color;
                             element.element.color = element.activeColor;
                             break;
                         case ButtonEffectType.Sprite:
@@ -46,9 +46,9 @@ public class ButtonEffectComponent : MonoBehaviour
 
     public void ButtonUpHandler()
     {
-        if (base.enabled)
+        if (enabled)
         {
-            foreach (ButtonEffect element in this.m_elements)
+            foreach (ButtonEffect element in m_elements)
             {
                 if (element.element != null)
                 {
@@ -58,7 +58,7 @@ public class ButtonEffectComponent : MonoBehaviour
                             element.element.color = element.defaultColor;
                             break;
                         case ButtonEffectType.HighlightColor:
-                            element.element.color = this.m_tempColor;
+                            element.element.color = m_tempColor;
                             break;
                         case ButtonEffectType.Sprite:
                             ((Image)element.element).sprite = element.defaultSprite;

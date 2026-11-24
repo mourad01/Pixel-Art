@@ -5,27 +5,19 @@ using UnityEngine;
 
 public class CameraPlugin : MonoBehaviour
 {
-    private WebCamTexture webcamTexture;
-
-    private string _deviceName;
-
-    private Texture2D texture;
-
-    private Texture2D gallery;
-
-    private bool isAvalibleCam;
-
-    private WebCamDevice[] devices;
-
-    private int indexCam;
-
-    private int orient;
+    WebCamTexture webcamTexture;
+    string _deviceName;
+    Texture2D texture;
+    Texture2D gallery;
+    bool isAvalibleCam;
+    WebCamDevice[] devices;
+    int indexCam;
+    int orient;
 
     public Action<Texture2D, float> OnUpdateTexture;
-
     public Action<bool> InitComplete;
 
-    private bool m_force;
+    bool m_force;
 
     public float Quality { get; set; }
 
@@ -33,7 +25,7 @@ public class CameraPlugin : MonoBehaviour
     {
         get
         {
-            return this.devices[this.indexCam];
+            return devices[indexCam];
         }
     }
 
@@ -44,40 +36,40 @@ public class CameraPlugin : MonoBehaviour
             UniAndroidPermission.RequestPermission(AndroidPermission.CAMERA, delegate
             {
                 DebugLogger.Log("[CameraPlugin] RequestPremission complete");
-                this.Init();
+                Init();
             }, delegate
             {
                 DebugLogger.LogError("[CameraPlugin] RequestPremission Error");
-                this.InitComplete.SafeInvoke(false);
+                InitComplete.SafeInvoke(false);
             });
         }
         else
         {
-            this.Init();
+            Init();
         }
     }
 
-    private void Init()
+    void Init()
     {
-        this.isAvalibleCam = true;
-        if (this.webcamTexture != null && this.webcamTexture.isPlaying)
+        isAvalibleCam = true;
+        if (webcamTexture != null && webcamTexture.isPlaying)
         {
-            this.webcamTexture.Stop();
+            webcamTexture.Stop();
         }
-        this.devices = WebCamTexture.devices;
-        if (this.devices == null || this.devices.Length == 0)
+        devices = WebCamTexture.devices;
+        if (devices == null || devices.Length == 0)
         {
             Debug.LogError("[CameraPlugin] devices == null || devices.Length == 0");
         }
         else
         {
-            this._deviceName = this.devices[this.indexCam].name;
-            if (this._deviceName != null)
+            _deviceName = devices[indexCam].name;
+            if (_deviceName != null)
             {
-                this.webcamTexture = new WebCamTexture(this._deviceName);
+                webcamTexture = new WebCamTexture(_deviceName);
                 try
                 {
-                    this.webcamTexture.Play();
+                    webcamTexture.Play();
                 }
                 catch (Exception ex)
                 {
@@ -86,7 +78,7 @@ public class CameraPlugin : MonoBehaviour
                     return;
                 }
                 DebugLogger.Log("[CameraPlugin] Init Camera");
-                this.InitComplete.SafeInvoke(true);
+                InitComplete.SafeInvoke(true);
             }
             else
             {
@@ -97,117 +89,117 @@ public class CameraPlugin : MonoBehaviour
 
     public Texture2D TakeSnapshot()
     {
-        if (this.isAvalibleCam)
+        if (isAvalibleCam)
         {
-            int num = Mathf.Min(this.webcamTexture.width, this.webcamTexture.height);
-            this.texture = new Texture2D(num, num, TextureFormat.RGB24, false)
+            int side = Mathf.Min(webcamTexture.width, webcamTexture.height);
+            texture = new Texture2D(side, side, TextureFormat.RGB24, false)
             {
                 filterMode = FilterMode.Point
             };
-            this.texture.SetPixels(this.webcamTexture.GetPixels((this.webcamTexture.width - num) / 2, (this.webcamTexture.height - num) / 2, num, num));
-            this.texture.Apply();
-            this.isAvalibleCam = false;
-            if (this.webcamTexture != null)
+            texture.SetPixels(webcamTexture.GetPixels((webcamTexture.width - side) / 2, (webcamTexture.height - side) / 2, side, side));
+            texture.Apply();
+            isAvalibleCam = false;
+            if (webcamTexture != null)
             {
-                this.webcamTexture.Stop();
-                UnityObject.Destroy(this.webcamTexture);
+                webcamTexture.Stop();
+                UnityObject.Destroy(webcamTexture);
             }
-            Debug.Log(this.orient);
-            switch (this.orient)
+            Debug.Log(orient);
+            switch (orient)
             {
                 case 90:
-                    this.texture = GameHelper.Rotate(this.texture, false);
+                    texture = GameHelper.Rotate(texture, false);
                     break;
                 case 180:
-                    this.texture = GameHelper.Rotate(this.texture, false);
-                    this.texture = GameHelper.Rotate(this.texture, false);
+                    texture = GameHelper.Rotate(texture, false);
+                    texture = GameHelper.Rotate(texture, false);
                     break;
                 case 270:
-                    this.texture = GameHelper.Rotate(this.texture, true);
+                    texture = GameHelper.Rotate(texture, true);
                     break;
                 case -90:
-                    this.texture = GameHelper.Rotate(this.texture, true);
+                    texture = GameHelper.Rotate(texture, true);
                     break;
                 case -180:
-                    this.texture = GameHelper.Rotate(this.texture, true);
-                    this.texture = GameHelper.Rotate(this.texture, true);
+                    texture = GameHelper.Rotate(texture, true);
+                    texture = GameHelper.Rotate(texture, true);
                     break;
                 case -270:
-                    this.texture = GameHelper.Rotate(this.texture, false);
+                    texture = GameHelper.Rotate(texture, false);
                     break;
             }
-            return this.texture;
+            return texture;
         }
         return null;
     }
 
     public Texture2D GetTextureByQuality()
     {
-        return this.texture;
+        return texture;
     }
 
     public void ForceUpdate()
     {
-        this.m_force = true;
-        this.Update();
+        m_force = true;
+        Update();
     }
 
     public void ChangeCamera()
     {
-        if (this.webcamTexture != null)
+        if (webcamTexture != null)
         {
-            this.webcamTexture.Stop();
-            UnityObject.Destroy(this.webcamTexture);
+            webcamTexture.Stop();
+            UnityObject.Destroy(webcamTexture);
         }
-        this.indexCam++;
-        if (this.indexCam >= this.devices.Count())
+        indexCam++;
+        if (indexCam >= devices.Count())
         {
-            this.indexCam = 0;
+            indexCam = 0;
         }
-        this.Init();
+        Init();
     }
 
-    private void Update()
+    void Update()
     {
-        if (this.isAvalibleCam)
+        if (isAvalibleCam)
         {
-            if (this.webcamTexture == null)
+            if (webcamTexture == null)
             {
                 Debug.LogError("[CameraPlugin] webcamTexture is null");
             }
             else
             {
-                int num = Mathf.Min(this.webcamTexture.width, this.webcamTexture.height);
-                this.orient = -this.webcamTexture.videoRotationAngle;
-                this.texture = new Texture2D(num, num, TextureFormat.ARGB32, false)
+                int side = Mathf.Min(webcamTexture.width, webcamTexture.height);
+                orient = -webcamTexture.videoRotationAngle;
+                texture = new Texture2D(side, side, TextureFormat.ARGB32, false)
                 {
                     filterMode = FilterMode.Point
                 };
-                this.texture.SetPixels(this.webcamTexture.GetPixels((this.webcamTexture.width - num) / 2, (this.webcamTexture.height - num) / 2, num, num));
-                this.texture.Apply();
-                this.OnUpdateTexture.SafeInvoke(this.texture, (float)this.orient);
+                texture.SetPixels(webcamTexture.GetPixels((webcamTexture.width - side) / 2, (webcamTexture.height - side) / 2, side, side));
+                texture.Apply();
+                OnUpdateTexture.SafeInvoke(texture, (float)orient);
             }
         }
     }
 
     public void Stop()
     {
-        this.isAvalibleCam = false;
-        if (this.webcamTexture != null)
+        isAvalibleCam = false;
+        if (webcamTexture != null)
         {
-            this.webcamTexture.Stop();
-            UnityObject.Destroy(this.webcamTexture);
-            this.webcamTexture = null;
+            webcamTexture.Stop();
+            UnityObject.Destroy(webcamTexture);
+            webcamTexture = null;
         }
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
-        if (this.webcamTexture != null)
+        if (webcamTexture != null)
         {
-            this.webcamTexture.Stop();
-            UnityObject.Destroy(this.webcamTexture);
-            this.webcamTexture = null;
+            webcamTexture.Stop();
+            UnityObject.Destroy(webcamTexture);
+            webcamTexture = null;
         }
     }
 }

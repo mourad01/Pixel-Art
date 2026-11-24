@@ -12,25 +12,19 @@ using VoxDLL;
 internal class GameScene : BaseScene
 {
     [Range(0.01f, 5f)]
-    [SerializeField] private float sizePerVox = 1f;
+    [SerializeField] float sizePerVox = 1f;
 
-    [SerializeField] private Material voxMaterial;
+    [SerializeField] Material voxMaterial;
+    [SerializeField] Transform meshOrigin;
+    [SerializeField] GameObject saveCamera;
+    [SerializeField] Camera videoCamera;
 
-    [SerializeField] private Transform meshOrigin;
+    MVMainChunk v;
+    Loader3D load3D;
+    bool m_stopInit = true;
+    ImageInfo m_imageInfo;
 
-    [SerializeField] private GameObject saveCamera;
-
-    [SerializeField] private Camera videoCamera;
-
-    private MVMainChunk v;
-
-    private Loader3D load3D;
-
-    private bool m_stopInit = true;
-
-    private ImageInfo m_imageInfo;
-
-    [SerializeField] private GameObject m_videoWaiter;
+    [SerializeField] GameObject m_videoWaiter;
 
     public static GameScene Instance;
 
@@ -52,8 +46,8 @@ internal class GameScene : BaseScene
     public override void OnNavigatedTo(NavigationArgs args)
     {
         try { 
-        GameNavigationArgs gameNavigationArgs = args as GameNavigationArgs;
-        base.StartCoroutine(this.InitCoroutine(gameNavigationArgs.ImageInfo, gameNavigationArgs.Data, gameNavigationArgs.SavedWorkData, gameNavigationArgs.ImageOpenType));
+        var gameNavigationArgs = args as GameNavigationArgs;
+        base.StartCoroutine(InitCoroutine(gameNavigationArgs.ImageInfo, gameNavigationArgs.Data, gameNavigationArgs.SavedWorkData, gameNavigationArgs.ImageOpenType));
         }
         catch(NullReferenceException e)
         {
@@ -63,8 +57,7 @@ internal class GameScene : BaseScene
 
     public override void OnNavigatedFrom()
     {
-        BackButtonManager instance = UnitySingleton<BackButtonManager>.Instance;
-        instance.BackButtonAction = (Action)Delegate.Remove(instance.BackButtonAction, new Action(((BaseScene)this).BackButtonActions));
+        UnitySingleton<BackButtonManager>.Instance.BackButtonAction -= ((BaseScene)this).BackButtonActions;
     }
 
     public override void BackButtonActions()
@@ -74,45 +67,45 @@ internal class GameScene : BaseScene
 
     public void CheatColorAll()
     {
-        VoxCubeItem[] array = UnityObject.FindObjectsOfType<VoxCubeItem>();
-        VoxCubeItem[] array2 = array;
-        foreach (VoxCubeItem voxCubeItem in array2)
+        var objectsOfType = UnityObject.FindObjectsOfType<VoxCubeItem>();
+        var voxCubeItems = objectsOfType;
+        foreach (VoxCubeItem voxCubeItem in voxCubeItems)
         {
             voxCubeItem.CheatTochCubeItem();
             UnitySingleton<GameController>.Instance.SetCubeItemProgress(voxCubeItem);
         }
     }
 
-    private void VoxLoadCompleteHandler(List<Color> list)
+    void VoxLoadCompleteHandler(List<Color> list)
     {
-        base.StartCoroutine(this.OpenUICoroutine(list));
+        base.StartCoroutine(OpenUICoroutine(list));
     }
 
-    private void ClearVoxMeshes()
+    void ClearVoxMeshes()
     {
-        MVVoxModelMesh[] componentsInChildren = base.gameObject.GetComponentsInChildren<MVVoxModelMesh>();
-        MVVoxModelMesh[] array = componentsInChildren;
-        foreach (MVVoxModelMesh mVVoxModelMesh in array)
+        var componentsInChildren = gameObject.GetComponentsInChildren<MVVoxModelMesh>();
+        var mvVoxModelMeshs = componentsInChildren;
+        foreach (MVVoxModelMesh mVVoxModelMesh in mvVoxModelMeshs)
         {
             UnityObject.DestroyImmediate(mVVoxModelMesh.gameObject);
         }
-        MVVoxModelVoxel[] componentsInChildren2 = base.gameObject.GetComponentsInChildren<MVVoxModelVoxel>();
-        MVVoxModelVoxel[] array2 = componentsInChildren2;
-        foreach (MVVoxModelVoxel mVVoxModelVoxel in array2)
+        var mvVoxModelVoxels = gameObject.GetComponentsInChildren<MVVoxModelVoxel>();
+        var voxels = mvVoxModelVoxels;
+        foreach (MVVoxModelVoxel mVVoxModelVoxel in voxels)
         {
             UnityObject.DestroyImmediate(mVVoxModelVoxel.gameObject);
         }
     }
 
-    private void VoxLoad(byte[] data = null)
+    void VoxLoad(byte[] data = null)
     {
         if (data != null)
         {
-            this.load3D = new Loader3D();
-            this.load3D.Init(new Action<Color[]>(this.LoadPalleteComplete), new Action<List<VoxCubeItem>>(this.LoadVoxCubeComplete));
+            load3D = new Loader3D();
+            load3D.Init(new Action<Color[]>(LoadPalleteComplete), new Action<List<VoxCubeItem>>(LoadVoxCubeComplete));
             if (data != null)
             {
-                this.load3D.Load(data);
+                load3D.Load(data);
             }
         }
         else
@@ -121,31 +114,31 @@ internal class GameScene : BaseScene
         }
     }
 
-    private void LoadVoxCubeComplete(List<VoxCubeItem> items)
+    void LoadVoxCubeComplete(List<VoxCubeItem> items)
     {
         UnitySingleton<GameController>.Instance.VoxCubeItems = items;
     }
 
-    private void LoadPalleteComplete(Color[] colors)
+    void LoadPalleteComplete(Color[] colors)
     {
         UnitySingleton<GameController>.Instance.Initilized(colors);
     }
 
-    private void LoadCustomVox(CashImage3D vox = null)
+    void LoadCustomVox(CashImage3D vox = null)
     {
         UnitySingleton<GameController>.Instance.SetCustomData(vox);
-        this.VoxLoad(vox.Vox);
-        vox.Init(this.load3D.MV);
+        VoxLoad(vox.Vox);
+        vox.Init(load3D.MV);
 
         Vector3 position = vox.Position.ToVector3();
-        this.videoCamera.transform.position = position;
-        this.saveCamera.transform.position = position; 
+        videoCamera.transform.position = position;
+        saveCamera.transform.position = position; 
         Quaternion rotation = vox.Rotation.ToQuaternion();
-        this.videoCamera.transform.rotation = rotation;
-        this.saveCamera.transform.rotation = rotation;
-        Camera component = this.saveCamera.GetComponent<Camera>(); 
-        ((Component)this.videoCamera).GetComponent<Camera>().orthographicSize = vox.CamSize / 2f;
-        component.orthographicSize = vox.CamSize / 2f;
+        videoCamera.transform.rotation = rotation;
+        saveCamera.transform.rotation = rotation;
+        var saveCam = saveCamera.GetComponent<Camera>(); 
+        ((Component)videoCamera).GetComponent<Camera>().orthographicSize = vox.CamSize / 2f;
+        saveCam.orthographicSize = vox.CamSize / 2f;
         Camera.main.orthographicSize = vox.CamSize / 1.5f;
         Camera.main.transform.position = Vector3.zero;
         Camera.main.transform.rotation = vox.Rotation.ToQuaternion();
@@ -153,12 +146,12 @@ internal class GameScene : BaseScene
         UnitySingleton<GameController>.Instance.ChangeCamDepthPosition(z);
     }
 
-    private void OnFailLoad()
+    void OnFailLoad()
     {
         Debug.LogError("[MVVoxModel] Invalid load data from StreamingAssets");
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
     }
 
@@ -181,14 +174,14 @@ internal class GameScene : BaseScene
         }
         this.m_stopInit = false;*/
     //}
-    private IEnumerator InitCoroutine(ImageInfo info, CashImage3D vox, SavedWorkData3D savedWorkData, ImageOpenType imageOpenType)
+    IEnumerator InitCoroutine(ImageInfo info, CashImage3D vox, SavedWorkData3D savedWorkData, ImageOpenType imageOpenType)
     {  
-        this.m_imageInfo = info;
+        m_imageInfo = info;
         yield return null;
 
         while (true)
         {
-            if (this.m_stopInit)
+            if (m_stopInit)
             {
                 yield return null;
                 continue;
@@ -236,18 +229,18 @@ internal class GameScene : BaseScene
                     } 
                 }
             }*/
-            this.m_videoWaiter.SetActive(false);
+            m_videoWaiter.SetActive(false);
             WorkbookModel.Init();
             UnitySingleton<ProgressManager>.Instance.Init(info, saveCamera, savedWorkData);
-            this.ClearVoxMeshes();
-            UnitySingleton<GameController>.Instance.VoxLoadComplete += new Action<List<Color>>(this.VoxLoadCompleteHandler);
-            UnitySingleton<GameController>.Instance.VideoCamera = this.videoCamera;
-            this.LoadCustomVox(vox);
+            ClearVoxMeshes();
+            UnitySingleton<GameController>.Instance.VoxLoadComplete += new Action<List<Color>>(VoxLoadCompleteHandler);
+            UnitySingleton<GameController>.Instance.VideoCamera = videoCamera;
+            LoadCustomVox(vox);
             AnalyticsManager.Instance.ImageOpened(info, (int)vox.CubesCount, vox.ColorsCount.Count, imageOpenType);
             yield break;
         }
     }
-    private IEnumerator OpenUICoroutine(List<Color> colors)
+    IEnumerator OpenUICoroutine(List<Color> colors)
     {
         yield return null;
         var workbook = WindowManager.Instance.OpenWorkbook3D();
@@ -257,19 +250,18 @@ internal class GameScene : BaseScene
         UnityObject.FindObjectOfType<CameraManager3D>().Init();
         if (!AppData.TutorialCompleted)
         {
-            TutorialWindow tutorialWindow = WindowManager.Instance.OpenTutorial3D();
+            var tutorialWindow = WindowManager.Instance.OpenTutorial3D();
             if (tutorialWindow != null)
             {
                 tutorialWindow.Init("picture", "3D");
-                this.gameObject.SetActive(false);
-                TutorialWindow tutorialWindow2 = tutorialWindow;
-                tutorialWindow2.OnStartClose = (Action)Delegate.Combine(tutorialWindow2.OnStartClose, (Action)delegate
+                gameObject.SetActive(false);
+                tutorialWindow.OnStartClose += delegate
                 {
-                    if ((UnityEngine.Object)this.gameObject != (UnityEngine.Object)null)
+                    if ((UnityEngine.Object)gameObject != (UnityEngine.Object)null)
                     {
-                        this.gameObject.SetActive(true);
+                        gameObject.SetActive(true);
                     }
-                });
+                };
             }
         }
     }

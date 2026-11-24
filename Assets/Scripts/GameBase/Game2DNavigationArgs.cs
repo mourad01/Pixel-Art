@@ -2,12 +2,10 @@ namespace Assets.Scripts.Navigation.Scenes.Game
 {
     internal class WorkbookNavigationArgs : NavigationArgs
     {
-        private const string GameSceneName = "2DScene";
+        const string GameSceneName = "2DScene";
 
         public ImageInfo ImageInfo;
-
         public MainMenuPage Page;
-
         public SavedWorkData SavedWorkData;
 
         public int Part
@@ -19,22 +17,22 @@ namespace Assets.Scripts.Navigation.Scenes.Game
         public WorkbookNavigationArgs(ImageInfo imageInfo, MainMenuPage page)
             : base(SceneType.Workbook, "2DScene")
         {
-            this.ImageInfo = imageInfo;
-            this.Page = page;
+            ImageInfo = imageInfo;
+            Page = page;
         }
 
         public WorkbookNavigationArgs(SavedWorkData savedWorkData = null)
             : base(SceneType.Workbook, "2DScene")
         {
-            this.SavedWorkData = savedWorkData;
+            SavedWorkData = savedWorkData;
         }
 
         public WorkbookNavigationArgs(ImageInfo imageInfo, int part, SavedWorkData savedWorkData = null)
             : base(SceneType.Workbook, "2DScene")
         {
-            this.ImageInfo = imageInfo;
-            this.SavedWorkData = savedWorkData;
-            this.Part = part;
+            ImageInfo = imageInfo;
+            SavedWorkData = savedWorkData;
+            Part = part;
         }
     }
 }

@@ -12,35 +12,35 @@ public static class AnalyticsHelper
 
     public static string GetPlatform()
     {
-        if (AnalyticsHelper.RuntimePlatformIs("OSXEditor"))
+        if (RuntimePlatformIs("OSXEditor"))
         {
             return "MAC_CLIENT";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("OSXPlayer"))
+        if (RuntimePlatformIs("OSXPlayer"))
         {
             return "MAC_CLIENT";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("WindowsPlayer"))
+        if (RuntimePlatformIs("WindowsPlayer"))
         {
             return "PC_CLIENT";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("OSXWebPlayer"))
+        if (RuntimePlatformIs("OSXWebPlayer"))
         {
             return "WEB";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("OSXDashboardPlayer"))
+        if (RuntimePlatformIs("OSXDashboardPlayer"))
         {
             return "MAC_CLIENT";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("WindowsWebPlayer"))
+        if (RuntimePlatformIs("WindowsWebPlayer"))
         {
             return "WEB";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("WindowsEditor"))
+        if (RuntimePlatformIs("WindowsEditor"))
         {
             return "PC_CLIENT";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("IPhonePlayer"))
+        if (RuntimePlatformIs("IPhonePlayer"))
         {
             string deviceModel = SystemInfo.deviceModel;
             if (deviceModel.Contains("iPad"))
@@ -49,92 +49,92 @@ public static class AnalyticsHelper
             }
             return "IOS_MOBILE";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("PS3"))
+        if (RuntimePlatformIs("PS3"))
         {
             return "PS3";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("XBOX360"))
+        if (RuntimePlatformIs("XBOX360"))
         {
             return "XBOX360";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("Android"))
+        if (RuntimePlatformIs("Android"))
         {
-            return (!AnalyticsHelper.IsTablet()) ? "ANDROID_MOBILE" : "ANDROID_TABLET";
+            return (!IsTablet()) ? "ANDROID_MOBILE" : "ANDROID_TABLET";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("NaCL"))
+        if (RuntimePlatformIs("NaCL"))
         {
             return "WEB";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("LinuxPlayer"))
+        if (RuntimePlatformIs("LinuxPlayer"))
         {
             return "PC_CLIENT";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("WebGLPlayer"))
+        if (RuntimePlatformIs("WebGLPlayer"))
         {
             return "WEB";
         }
-        if (AnalyticsHelper.RuntimePlatformIs("FlashPlayer"))
+        if (RuntimePlatformIs("FlashPlayer"))
         {
             return "WEB";
         }
-        if (!AnalyticsHelper.RuntimePlatformIs("MetroPlayerX86") && !AnalyticsHelper.RuntimePlatformIs("MetroPlayerX64") && !AnalyticsHelper.RuntimePlatformIs("MetroPlayerARM") && !AnalyticsHelper.RuntimePlatformIs("WSAPlayerX86") && !AnalyticsHelper.RuntimePlatformIs("WSAPlayerX64") && !AnalyticsHelper.RuntimePlatformIs("WSAPlayerARM"))
+        if (!RuntimePlatformIs("MetroPlayerX86") && !RuntimePlatformIs("MetroPlayerX64") && !RuntimePlatformIs("MetroPlayerARM") && !RuntimePlatformIs("WSAPlayerX86") && !RuntimePlatformIs("WSAPlayerX64") && !RuntimePlatformIs("WSAPlayerARM"))
         {
-            if (AnalyticsHelper.RuntimePlatformIs("WP8Player"))
+            if (RuntimePlatformIs("WP8Player"))
             {
-                return (!AnalyticsHelper.IsTablet()) ? "WINDOWS_MOBILE" : "WINDOWS_TABLET";
+                return (!IsTablet()) ? "WINDOWS_MOBILE" : "WINDOWS_TABLET";
             }
-            if (!AnalyticsHelper.RuntimePlatformIs("BB10Player") && !AnalyticsHelper.RuntimePlatformIs("BlackBerryPlayer"))
+            if (!RuntimePlatformIs("BB10Player") && !RuntimePlatformIs("BlackBerryPlayer"))
             {
-                if (AnalyticsHelper.RuntimePlatformIs("TizenPlayer"))
+                if (RuntimePlatformIs("TizenPlayer"))
                 {
-                    return (!AnalyticsHelper.IsTablet()) ? "ANDROID_MOBILE" : "ANDROID_TABLET";
+                    return (!IsTablet()) ? "ANDROID_MOBILE" : "ANDROID_TABLET";
                 }
-                if (AnalyticsHelper.RuntimePlatformIs("PSP2"))
+                if (RuntimePlatformIs("PSP2"))
                 {
                     return "PSVITA";
                 }
-                if (AnalyticsHelper.RuntimePlatformIs("PS4"))
+                if (RuntimePlatformIs("PS4"))
                 {
                     return "PS4";
                 }
-                if (AnalyticsHelper.RuntimePlatformIs("PSMPlayer"))
+                if (RuntimePlatformIs("PSMPlayer"))
                 {
                     return "WEB";
                 }
-                if (AnalyticsHelper.RuntimePlatformIs("XboxOne"))
+                if (RuntimePlatformIs("XboxOne"))
                 {
                     return "XBOXONE";
                 }
-                if (AnalyticsHelper.RuntimePlatformIs("SamsungTVPlayer"))
+                if (RuntimePlatformIs("SamsungTVPlayer"))
                 {
                     return "ANDROID_CONSOLE";
                 }
                 return "UNKNOWN";
             }
-            return (!AnalyticsHelper.IsTablet()) ? "BLACKBERRY_MOBILE" : "BLACKBERRY_TABLET";
+            return (!IsTablet()) ? "BLACKBERRY_MOBILE" : "BLACKBERRY_TABLET";
         }
         if (SystemInfo.deviceType == DeviceType.Handheld)
         {
-            return (!AnalyticsHelper.IsTablet()) ? "WINDOWS_MOBILE" : "WINDOWS_TABLET";
+            return (!IsTablet()) ? "WINDOWS_MOBILE" : "WINDOWS_TABLET";
         }
         return "PC_CLIENT";
     }
 
-    private static bool RuntimePlatformIs(string platformName)
+    static bool RuntimePlatformIs(string platformName)
     {
         return Enum.IsDefined(typeof(RuntimePlatform), platformName) && Application.platform.ToString() == platformName;
     }
 
-    private static float ScreenSizeInches()
+    static float ScreenSizeInches()
     {
-        float num = (float)Screen.width / Screen.dpi;
+        float widthInches = (float)Screen.width / Screen.dpi;
         float value2 = (float)Screen.height / Screen.dpi;
-        return (float)Math.Sqrt((double)(num * num + value2 * value2));
+        return (float)Math.Sqrt((double)(widthInches * widthInches + value2 * value2));
     }
 
-    private static bool IsTablet()
+    static bool IsTablet()
     {
-        return AnalyticsHelper.ScreenSizeInches() > 6f;
+        return ScreenSizeInches() > 6f;
     }
 }
 

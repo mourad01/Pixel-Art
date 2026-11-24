@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class Tutorial3DMoveVox : MonoBehaviour
 {
-    private void Start()
+    void Start()
     {
-        VoxCubeItem[] componentsInChildren = ((Component)base.transform).GetComponentsInChildren<VoxCubeItem>();
-        VoxCubeItem[] array = componentsInChildren;
-        foreach (VoxCubeItem voxCubeItem in array)
+        var componentsInChildren = ((Component)transform).GetComponentsInChildren<VoxCubeItem>();
+        var voxCubeItems = componentsInChildren;
+        foreach (VoxCubeItem voxCubeItem in voxCubeItems)
         {
             voxCubeItem.gameObject.AddComponent<Tutorial3DMoveVoxCube>();
         }
-        base.transform.localScale = Vector3.one;
+        transform.localScale = Vector3.one;
         Object.FindObjectOfType<TutorialWindow>().transform.localScale = Vector3.one;
     }
 }

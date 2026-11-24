@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class SetRectAsTarget : MonoBehaviour
 {
-    [SerializeField] private RectTransform m_target;
+    [SerializeField] RectTransform m_target;
 
-    private void Start()
+    void Start()
     {
-        Rect rect = ((RectTransform)this.m_target.transform).rect;
-        RectTransform rectTransform = (RectTransform)base.transform;
+        Rect rect = ((RectTransform)m_target.transform).rect;
+        var rectTransform = (RectTransform)transform;
         rectTransform.sizeDelta = new Vector2(rect.width, rect.height);
         rectTransform.anchoredPosition = rect.center;
     }

@@ -10,23 +10,15 @@ using UnityEngine.UI;
 
 public class NewWorkbook3D : BaseWindow
 {
-    [SerializeField] private RectTransform m_content;
-
-    [SerializeField] private List<RectTransform> m_topPanels;
-
-    [SerializeField] private List<RectTransform> m_bottomPanels;
-
-    [SerializeField] private Animator m_colorPanelAnimator;
-
-    [SerializeField] private ColorsPanel m_colorsPanel;
-
-    [SerializeField] private GameObject m_blockPlane;
-
-    [SerializeField] private GameObject m_videoWaiter;
-
-    [SerializeField] private GameObject m_completedPlane;
-
-    [SerializeField] private List<MaskableGraphic> m_completePlateElements;
+    [SerializeField] RectTransform m_content;
+    [SerializeField] List<RectTransform> m_topPanels;
+    [SerializeField] List<RectTransform> m_bottomPanels;
+    [SerializeField] Animator m_colorPanelAnimator;
+    [SerializeField] ColorsPanel m_colorsPanel;
+    [SerializeField] GameObject m_blockPlane;
+    [SerializeField] GameObject m_videoWaiter;
+    [SerializeField] GameObject m_completedPlane;
+    [SerializeField] List<MaskableGraphic> m_completePlateElements;
 
     protected override string WindowName
     {
@@ -46,34 +38,33 @@ public class NewWorkbook3D : BaseWindow
 
     public override void Open()
     {
-        base.StartCoroutine(this.OpenCoroutine());
+        base.StartCoroutine(OpenCoroutine());
     }
 
     public void RemoveVideoWaiter()
     {
-        this.m_videoWaiter.SetActive(false);
+        m_videoWaiter.SetActive(false);
     }
 
     public void Init(List<Color> colors)
     {
-        GameController instance = UnitySingleton<GameController>.Instance;
-        instance.OnComplete = (Action)Delegate.Combine(instance.OnComplete, (Action)delegate
+        UnitySingleton<GameController>.Instance.OnComplete += delegate
         {
-            base.StartCoroutine(this.CompletePlateAppearCoroutine());
+            base.StartCoroutine(CompletePlateAppearCoroutine());
 
             if (DailyGame.IsDailyArt())
             {
                 DailyGame.Instance.Complete();
             }
-        });
-        this.m_colorsPanel.Init(colors);
+        };
+        m_colorsPanel.Init(colors);
     }
 
     public void OkButtonClick()
     {
         UnitySingleton<ProgressManager>.Instance.SaveWork(delegate (SavedWorkData3D swd)
         {
-            ShareWindow shareWindow = WindowManager.Instance.OpenShareWindow();
+            var shareWindow = WindowManager.Instance.OpenShareWindow();
             shareWindow.Init(swd);
             AudioManager.Instance.PlayClick();
             //AdsWrapper.Instance.ShowInterOrRate("end_level");
@@ -84,7 +75,7 @@ public class NewWorkbook3D : BaseWindow
     {
         UnitySingleton<ProgressManager>.Instance.SaveWork(delegate
         {
-            this.Exit();
+            Exit();
         });
         AnalyticsManager.Instance.BackButtonClicked();
         AudioManager.Instance.PlayClick();
@@ -96,7 +87,7 @@ public class NewWorkbook3D : BaseWindow
 
     public void CloseCompletedPlateButtonClick()
     {
-        this.m_completedPlane.SetActive(false);
+        m_completedPlane.SetActive(false);
         //AdsWrapper.Instance.ShowInterOrRate("end_level");
         AudioManager.Instance.PlayClick();
         AnalyticsManager.Instance.BackButtonClicked();
@@ -106,7 +97,7 @@ public class NewWorkbook3D : BaseWindow
     {
         UnitySingleton<ProgressManager>.Instance.SaveWork(delegate (SavedWorkData3D swd)
         {
-            ShareWindow shareWindow = WindowManager.Instance.OpenShareWindow();
+            var shareWindow = WindowManager.Instance.OpenShareWindow();
             shareWindow.Init(swd);
         });
     }
@@ -115,7 +106,7 @@ public class NewWorkbook3D : BaseWindow
     {
         UnitySingleton<ProgressManager>.Instance.SaveWork(delegate
         {
-            this.Exit();
+            Exit();
         });
         return false;
     }
@@ -125,21 +116,21 @@ public class NewWorkbook3D : BaseWindow
         //AdsWrapper.Instance.ShowInter("gamescreen_exit");
         MainManager.Instance.StartLibrary(MainMenu.LastPage);
     }
-    private IEnumerator OpenCoroutine()
+    IEnumerator OpenCoroutine()
     {
-        this.SendActiveScreenEvent();
+        SendActiveScreenEvent();
         yield return new WaitForSeconds(0.1f);
 
-        this.m_blockPlane.SetActive(false);
-        var topPanelsHeight = this.m_topPanels.Sum((RectTransform a) => a.rect.height);
-        var bottomPanelsHeight = this.m_bottomPanels.Sum((RectTransform a) => a.rect.height);
-        this.m_content.anchoredPosition = new Vector2(0f, (topPanelsHeight - bottomPanelsHeight) / 2f);
-        this.m_content.sizeDelta = new Vector2(0f, topPanelsHeight + bottomPanelsHeight);
-        Vector2 sizeDelta2 = this.m_content.sizeDelta;
+        m_blockPlane.SetActive(false);
+        var topPanelsHeight = m_topPanels.Sum((RectTransform a) => a.rect.height);
+        var bottomPanelsHeight = m_bottomPanels.Sum((RectTransform a) => a.rect.height);
+        m_content.anchoredPosition = new Vector2(0f, (topPanelsHeight - bottomPanelsHeight) / 2f);
+        m_content.sizeDelta = new Vector2(0f, topPanelsHeight + bottomPanelsHeight);
+        Vector2 sizeDelta2 = m_content.sizeDelta;
         var sign = (sizeDelta2.y > 0f);
         var time = 0.5f;
-        var sizeSpeed = -this.m_content.sizeDelta / time;
-        var posSpeed = -this.m_content.anchoredPosition / time;
+        var sizeSpeed = -m_content.sizeDelta / time;
+        var posSpeed = -m_content.anchoredPosition / time;
 
         yield return null;
 
@@ -148,38 +139,38 @@ public class NewWorkbook3D : BaseWindow
             var deltaTime = Mathf.Min(0.05f, Time.deltaTime);
             var sizeDelta = sizeSpeed * deltaTime;
             var posDelta = posSpeed * deltaTime; 
-            var newSign = (this.m_content.sizeDelta.y + sizeDelta.y > 0f);
+            var newSign = (m_content.sizeDelta.y + sizeDelta.y > 0f);
             if (sign != newSign)
             {
-                this.m_content.sizeDelta = Vector2.zero;
-                this.m_content.anchoredPosition = Vector2.zero;
+                m_content.sizeDelta = Vector2.zero;
+                m_content.anchoredPosition = Vector2.zero;
                 if (!AppData.SpecPageOpened && AppData.TutorialCompleted)
                 {
-                    this.m_colorPanelAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+                    m_colorPanelAnimator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
                 }
                 yield break;
             } 
-            this.m_content.sizeDelta += sizeDelta; 
-            this.m_content.anchoredPosition += posDelta;
+            m_content.sizeDelta += sizeDelta; 
+            m_content.anchoredPosition += posDelta;
             yield return null;
         }
     }
-    private IEnumerator CompletePlateAppearCoroutine()
+    IEnumerator CompletePlateAppearCoroutine()
     {
         while (Input.touchCount != 0)
         {
             yield return null;
         }
-        this.m_completedPlane.SetActive(true);
-        var alphas = this.m_completePlateElements.Select(delegate (MaskableGraphic a)
+        m_completedPlane.SetActive(true);
+        var alphas = m_completePlateElements.Select(delegate (MaskableGraphic a)
         {
             Color color = a.color;
             return color.a;
         }).ToList();
 
-        foreach (var item in this.m_completePlateElements)
+        foreach (var completePlateElement in m_completePlateElements)
         {
-            item.SetAlpha(0);
+            completePlateElement.SetAlpha(0);
         } 
         var time = 0.1f;
         var timer = time;
@@ -190,15 +181,15 @@ public class NewWorkbook3D : BaseWindow
             timer -= Mathf.Min(Time.deltaTime, 0.05f);
             if (timer < 0f)
             {
-                for (int i = 0; i < this.m_completePlateElements.Count; i++)
+                for (int i = 0; i < m_completePlateElements.Count; i++)
                 {
-                    this.m_completePlateElements[i].SetAlpha(alphas[i]);
+                    m_completePlateElements[i].SetAlpha(alphas[i]);
                 }
                 yield break;
             }
-            for (int j = 0; j < this.m_completePlateElements.Count; j++)
+            for (int j = 0; j < m_completePlateElements.Count; j++)
             {
-                this.m_completePlateElements[j].SetAlpha(alphas[j] * (time - timer));
+                m_completePlateElements[j].SetAlpha(alphas[j] * (time - timer));
             }
             yield return null;
         }

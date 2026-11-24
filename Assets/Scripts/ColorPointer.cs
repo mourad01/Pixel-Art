@@ -5,10 +5,9 @@ using UnityEngine.UI;
 
 public class ColorPointer : MonoBehaviour
 {
-    private ColorImage m_colorImage;
+    ColorImage m_colorImage;
 
     [SerializeField] Image m_image;
-
     [SerializeField] GameObject m_iphoneXAngle;
 
     public void UpdateColor(ColorImage colorImage, SpecialColorPosition pos)
@@ -19,9 +18,9 @@ public class ColorPointer : MonoBehaviour
         }
         m_colorImage = colorImage;
         m_colorImage.Select();
-        base.transform.SetParent(colorImage.transform);
-        ((RectTransform)base.transform).sizeDelta = Vector2.zero;
-        ((RectTransform)base.transform).anchoredPosition = Vector2.zero;
+        transform.SetParent(colorImage.transform);
+        ((RectTransform)transform).sizeDelta = Vector2.zero;
+        ((RectTransform)transform).anchoredPosition = Vector2.zero;
         m_iphoneXAngle.SetActive(false);
     }
 }

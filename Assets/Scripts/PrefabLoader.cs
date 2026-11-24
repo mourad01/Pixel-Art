@@ -6,8 +6,8 @@ public class PrefabLoader : MonoBehaviour
 
     public BaseWindow[] windows;
 
-    private static PrefabLoader instance;
-    private void Awake()
+    static PrefabLoader instance;
+    void Awake()
     {
         instance = this;
         DontDestroyOnLoad(gameObject);

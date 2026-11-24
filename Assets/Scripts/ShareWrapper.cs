@@ -72,7 +72,7 @@ public class ShareWrapper : MonoBehaviour
 #endif
     }
 
-    private static bool CanShare(SocialType socialType)
+    static bool CanShare(SocialType socialType)
     {
         /*
          *  Facebook - "com.facebook.katana"
@@ -96,7 +96,7 @@ public class ShareWrapper : MonoBehaviour
         return true;
     }
 
-    private static ShareStatus PlatformShare(NativeShareType type, SocialType socialType, string text, string pathToImage)
+    static ShareStatus PlatformShare(NativeShareType type, SocialType socialType, string text, string pathToImage)
     {
         /*
          *  Facebook - "com.facebook.katana"
@@ -189,7 +189,7 @@ public class ShareWrapper : MonoBehaviour
 
     public static AndroidJavaObject Texture2DToAndroidBitmap(Texture2D texture2D)
     {
-        byte[] encoded = texture2D.EncodeToPNG();
+        var encoded = texture2D.EncodeToPNG();
         using (var bf = new AndroidJavaClass("android.graphics.BitmapFactory"))
         {
             return bf.CallStatic<AndroidJavaObject>("decodeByteArray", encoded, 0, encoded.Length);

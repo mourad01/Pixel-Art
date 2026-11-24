@@ -7,39 +7,28 @@ using UnityEngine.UI;
 
 public class MainMenu : BaseWindow
 {
-    private static bool FirstOpen = true;
+    static bool FirstOpen = true;
 
-    private bool m_buttonsBlocked;
+    bool m_buttonsBlocked;
 
-    [SerializeField] private GameObject m_blockPlane;
-
-    [SerializeField] private NewLibraryWindow m_newLibraryWindow;
-
-    [SerializeField] private NewMyWorksWindow m_myWorksWindow;
-
-    [SerializeField] private MyPhotosWindow m_photosWindow;
-
-    [SerializeField] private SettingsWindow m_settingsWindow;
-
-    [SerializeField] private LibraryTabButton m_libraryTab;
-
-    [SerializeField] private LibraryTabButton m_myWorksTab;
-
-    [SerializeField] private LibraryTabButton m_photosTab;
-
-    [SerializeField] private LibraryTabButton m_settingsTab;
-
-    [SerializeField] private Text rolloverTimeText;
-
-    [SerializeField] private Text bestTimeText;
+    [SerializeField] GameObject m_blockPlane;
+    [SerializeField] NewLibraryWindow m_newLibraryWindow;
+    [SerializeField] NewMyWorksWindow m_myWorksWindow;
+    [SerializeField] MyPhotosWindow m_photosWindow;
+    [SerializeField] SettingsWindow m_settingsWindow;
+    [SerializeField] LibraryTabButton m_libraryTab;
+    [SerializeField] LibraryTabButton m_myWorksTab;
+    [SerializeField] LibraryTabButton m_photosTab;
+    [SerializeField] LibraryTabButton m_settingsTab;
+    [SerializeField] Text rolloverTimeText;
+    [SerializeField] Text bestTimeText;
 
     public ImagePreview todayArt;
 
-    [SerializeField] private Material grayMaterial;
+    [SerializeField] Material grayMaterial;
 
-    private bool m_inited; 
-
-    private BaseWindow m_currentWindow;
+    bool m_inited; 
+    BaseWindow m_currentWindow;
 
     public static MainMenuPage LastPage { get; set; }
 
@@ -65,21 +54,17 @@ public class MainMenu : BaseWindow
 
     public static MainMenu Instance;
 
-    private void Awake()
+    void Awake()
     {
         Instance = this;
-        NewMyWorksWindow myWorksWindow = this.m_myWorksWindow;
-        myWorksWindow.OnStartOpen = (Action)Delegate.Combine(myWorksWindow.OnStartOpen, new Action(this.OnMyWorksStartOpenHandler));
-        NewLibraryWindow newLibraryWindow = this.m_newLibraryWindow;
-        newLibraryWindow.OnStartOpen = (Action)Delegate.Combine(newLibraryWindow.OnStartOpen, new Action(this.OnLibraryStartOpenHandler));
-        MyPhotosWindow photosWindow = this.m_photosWindow;
-        photosWindow.OnStartOpen = (Action)Delegate.Combine(photosWindow.OnStartOpen, new Action(this.OnCreationTabStartOpenHandler));
-        SettingsWindow settingsWindow = this.m_settingsWindow;
-        settingsWindow.OnStartOpen = (Action)Delegate.Combine(settingsWindow.OnStartOpen, new Action(this.OnSettingsStartOpenHandler));
+        m_myWorksWindow.OnStartOpen += OnMyWorksStartOpenHandler;
+        m_newLibraryWindow.OnStartOpen += OnLibraryStartOpenHandler;
+        m_photosWindow.OnStartOpen += OnCreationTabStartOpenHandler;
+        m_settingsWindow.OnStartOpen += OnSettingsStartOpenHandler;
         BackgroundMusic.PlayMainBackground();
     }
 
-    private void Start()
+    void Start()
     {
         base.InvokeRepeating("DailyRolloverCountdown", 0f, 60f);
 
@@ -88,7 +73,7 @@ public class MainMenu : BaseWindow
         //this.bestTimeText.text =  str;
 
     }
-    private void DailyRolloverCountdown()
+    void DailyRolloverCountdown()
     {
         DateTime dateTime = DateTime.UtcNow.AddHours(-8.0);
         Debug.Log("UTC Now today (PST) : " + dateTime);
@@ -96,10 +81,10 @@ public class MainMenu : BaseWindow
         Debug.Log("UTC Rollover midnight 24 hrs early (PST) : " + dateTime2);
         DateTime dateTime3 = dateTime2.AddDays(1.0);
         Debug.Log("UTC Rollover midnight (PST) : " + dateTime3);
-        TimeSpan timeSpan = dateTime3.Subtract(dateTime);
+        var timeSpan = dateTime3.Subtract(dateTime);
         Debug.Log("Time until roll over " + timeSpan);
         string str = string.Format("{0:D2}:{1:D2}", timeSpan.Hours, timeSpan.Minutes);
-        this.rolloverTimeText.text = "New Puzzle in " + str;
+        rolloverTimeText.text = "New Puzzle in " + str;
     }
 
     public void RefreshTodayArt()
@@ -109,9 +94,9 @@ public class MainMenu : BaseWindow
             GetNameScript.GetTodayArt(todayArt, grayMaterial);
             DailyRolloverCountdown();
 
-            TimeSpan timeSpan = TimeSpan.FromSeconds((double)LevelProgressControl.control.dailyTodayPersonalBest);
+            var timeSpan = TimeSpan.FromSeconds((double)LevelProgressControl.control.dailyTodayPersonalBest);
             string str = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
-            this.bestTimeText.text = str;
+            bestTimeText.text = str;
         }
         catch(NullReferenceException e)
         {
@@ -122,44 +107,44 @@ public class MainMenu : BaseWindow
     public void Init(MainMenuPage page)
     {
         Application.targetFrameRate = -1;
-        if (!this.m_inited)
+        if (!m_inited)
         {
-            this.m_inited = true;
+            m_inited = true;
             Debug.Log("Main menu initialize");
             DataManager.Instance.GetImages(false, delegate (ImagesInfo list)
             {
                 Debug.Log("Main Menu 136");
-                if (this.m_newLibraryWindow != null)
+                if (m_newLibraryWindow != null)
                 {
                     Debug.Log("Main Menu 139");
-                    this.m_newLibraryWindow.FastOpen();
-                    this.m_newLibraryWindow.Init(list);
-                    base.StartCoroutine(this.WaitInitLibraryAndClosePlaneCoroutine());
+                    m_newLibraryWindow.FastOpen();
+                    m_newLibraryWindow.Init(list);
+                    base.StartCoroutine(WaitInitLibraryAndClosePlaneCoroutine());
                 }
             });
         }
-        base.gameObject.SetActive(true);
+        gameObject.SetActive(true);
         switch (page)
         {
             case MainMenuPage.Library:
-                this.m_currentWindow = this.m_newLibraryWindow;
-                this.OnLibraryStartOpenHandler();
+                m_currentWindow = m_newLibraryWindow;
+                OnLibraryStartOpenHandler();
                 AnalyticsManager.Instance.LibraryOpened();
                 break;
             case MainMenuPage.MyWorks:
-                this.m_newLibraryWindow.FastClose();
-                this.m_myWorksWindow.FastOpen();
-                this.m_currentWindow = this.m_myWorksWindow;
-                this.m_myWorksWindow.Init();
-                this.OnMyWorksStartOpenHandler();
+                m_newLibraryWindow.FastClose();
+                m_myWorksWindow.FastOpen();
+                m_currentWindow = m_myWorksWindow;
+                m_myWorksWindow.Init();
+                OnMyWorksStartOpenHandler();
                 AnalyticsManager.Instance.MyWorksOpened();
                 break;
             case MainMenuPage.Photos:
-                this.m_newLibraryWindow.FastClose();
-                this.m_photosWindow.FastOpen();
-                this.m_currentWindow = this.m_photosWindow;
-                this.m_photosWindow.Init();
-                this.OnCreationTabStartOpenHandler();
+                m_newLibraryWindow.FastClose();
+                m_photosWindow.FastOpen();
+                m_currentWindow = m_photosWindow;
+                m_photosWindow.Init();
+                OnCreationTabStartOpenHandler();
                 AnalyticsManager.Instance.PhotosOpened();
                 break;
         }
@@ -168,34 +153,34 @@ public class MainMenu : BaseWindow
     public override void InitCanvas(Canvas canvas, bool setClosePosition = true)
     {
         base.InitCanvas(canvas, setClosePosition);
-        this.m_newLibraryWindow.InitCanvas(canvas, false);
-        this.m_myWorksWindow.InitCanvas(canvas, true);
-        this.m_photosWindow.InitCanvas(canvas, true);
-        this.m_settingsWindow.InitCanvas(canvas, true);
+        m_newLibraryWindow.InitCanvas(canvas, false);
+        m_myWorksWindow.InitCanvas(canvas, true);
+        m_photosWindow.InitCanvas(canvas, true);
+        m_settingsWindow.InitCanvas(canvas, true);
     }
 
     public void UpdateLibrary(ImagesInfo imagesInfo)
     {
-        if (this.m_newLibraryWindow != null)
+        if (m_newLibraryWindow != null)
         {
             Debug.Log("reinit imagesInfo");
-            this.m_newLibraryWindow.Init(imagesInfo);
+            m_newLibraryWindow.Init(imagesInfo);
         }
     }
 
     public override bool Close()
     {
-        if (this.m_myWorksWindow.isActiveAndEnabled)
+        if (m_myWorksWindow.isActiveAndEnabled)
         {
-            this.m_myWorksWindow.Close();
-            this.m_newLibraryWindow.DefferedOpen(0.1f);
+            m_myWorksWindow.Close();
+            m_newLibraryWindow.DefferedOpen(0.1f);
             AnalyticsManager.Instance.LibraryOpened();
             return false;
         }
-        if (this.m_photosWindow.isActiveAndEnabled)
+        if (m_photosWindow.isActiveAndEnabled)
         {
-            this.m_photosWindow.Close();
-            this.m_newLibraryWindow.DefferedOpen(0.1f);
+            m_photosWindow.Close();
+            m_newLibraryWindow.DefferedOpen(0.1f);
             AnalyticsManager.Instance.PhotosOpened();
         }
         SystemToolsWrapper.Minimize();
@@ -204,14 +189,14 @@ public class MainMenu : BaseWindow
 
     public void LibraryButtonClick()
     {
-        if (this.m_currentWindow != this.m_newLibraryWindow && !this.m_buttonsBlocked)
+        if (m_currentWindow != m_newLibraryWindow && !m_buttonsBlocked)
         {
-            this.m_buttonsBlocked = true;
+            m_buttonsBlocked = true;
             //AdsWrapper.Instance.ShowInter("tab_change");
-            WindowManager.Instance.CloseMe(this.m_currentWindow, WindowOpenStyle.FromRight);
-            this.m_currentWindow = this.m_newLibraryWindow;
-            this.m_newLibraryWindow.DefferedOpen(0.1f);
-            this.SelectTab(this.m_libraryTab);
+            WindowManager.Instance.CloseMe(m_currentWindow, WindowOpenStyle.FromRight);
+            m_currentWindow = m_newLibraryWindow;
+            m_newLibraryWindow.DefferedOpen(0.1f);
+            SelectTab(m_libraryTab);
             AnalyticsManager.Instance.LibraryOpened();
             AudioManager.Instance.PlayClick();
         }
@@ -219,23 +204,23 @@ public class MainMenu : BaseWindow
 
     public void MyWorkButtonClick()
     {
-        if (this.m_currentWindow != this.m_myWorksWindow && !this.m_buttonsBlocked)
+        if (m_currentWindow != m_myWorksWindow && !m_buttonsBlocked)
         {
-            this.m_buttonsBlocked = true;
+            m_buttonsBlocked = true;
             //AdsWrapper.Instance.ShowInter("tab_change");
-            this.m_myWorksWindow.Init();
-            if (this.m_currentWindow == this.m_newLibraryWindow)
+            m_myWorksWindow.Init();
+            if (m_currentWindow == m_newLibraryWindow)
             {
-                WindowManager.Instance.CloseMe(this.m_currentWindow, WindowOpenStyle.FromLeft);
-                this.m_myWorksWindow.DefferedOpen(0.1f);
+                WindowManager.Instance.CloseMe(m_currentWindow, WindowOpenStyle.FromLeft);
+                m_myWorksWindow.DefferedOpen(0.1f);
             }
             else
             {
-                WindowManager.Instance.CloseMe(this.m_currentWindow, WindowOpenStyle.FromRight);
-                this.m_myWorksWindow.DefferedOpen(WindowOpenStyle.FromLeft, 0.1f);
+                WindowManager.Instance.CloseMe(m_currentWindow, WindowOpenStyle.FromRight);
+                m_myWorksWindow.DefferedOpen(WindowOpenStyle.FromLeft, 0.1f);
             }
-            this.m_currentWindow = this.m_myWorksWindow;
-            this.SelectTab(this.m_myWorksTab);
+            m_currentWindow = m_myWorksWindow;
+            SelectTab(m_myWorksTab);
             AnalyticsManager.Instance.MyWorksOpened();
             AudioManager.Instance.PlayClick();
         }
@@ -243,23 +228,23 @@ public class MainMenu : BaseWindow
 
     public void CreateButtonClick()
     {
-        if (this.m_currentWindow != this.m_photosWindow && !this.m_buttonsBlocked)
+        if (m_currentWindow != m_photosWindow && !m_buttonsBlocked)
         {
-            this.m_buttonsBlocked = true;
+            m_buttonsBlocked = true;
             //AdsWrapper.Instance.ShowInter("tab_change");
-            this.m_photosWindow.Init();
-            if (this.m_currentWindow == this.m_newLibraryWindow || this.m_currentWindow == this.m_myWorksWindow)
+            m_photosWindow.Init();
+            if (m_currentWindow == m_newLibraryWindow || m_currentWindow == m_myWorksWindow)
             {
-                WindowManager.Instance.CloseMe(this.m_currentWindow, WindowOpenStyle.FromLeft);
-                this.m_photosWindow.DefferedOpen(0.1f);
+                WindowManager.Instance.CloseMe(m_currentWindow, WindowOpenStyle.FromLeft);
+                m_photosWindow.DefferedOpen(0.1f);
             }
             else
             {
-                WindowManager.Instance.CloseMe(this.m_currentWindow, WindowOpenStyle.FromRight);
-                this.m_photosWindow.DefferedOpen(WindowOpenStyle.FromLeft, 0.1f);
+                WindowManager.Instance.CloseMe(m_currentWindow, WindowOpenStyle.FromRight);
+                m_photosWindow.DefferedOpen(WindowOpenStyle.FromLeft, 0.1f);
             }
-            this.m_currentWindow = this.m_photosWindow;
-            this.SelectTab(this.m_photosTab);
+            m_currentWindow = m_photosWindow;
+            SelectTab(m_photosTab);
             AnalyticsManager.Instance.PhotosOpened();
             AudioManager.Instance.PlayClick();
         }
@@ -267,76 +252,76 @@ public class MainMenu : BaseWindow
 
     public void QuestionButtonClick()
     {
-        if (this.m_currentWindow != this.m_settingsWindow && !this.m_buttonsBlocked)
+        if (m_currentWindow != m_settingsWindow && !m_buttonsBlocked)
         {
-            this.m_buttonsBlocked = true;
-            WindowManager.Instance.CloseMe(this.m_currentWindow, WindowOpenStyle.FromLeft);
-            this.m_currentWindow = this.m_settingsWindow;
+            m_buttonsBlocked = true;
+            WindowManager.Instance.CloseMe(m_currentWindow, WindowOpenStyle.FromLeft);
+            m_currentWindow = m_settingsWindow;
             AnalyticsManager.Instance.MyWorksOpened();
             AudioManager.Instance.PlayClick();
-            this.m_settingsWindow.DefferedOpen(0.1f);
-            this.SelectTab(this.m_settingsTab);
+            m_settingsWindow.DefferedOpen(0.1f);
+            SelectTab(m_settingsTab);
         }
     }
 
-    private void OnMyWorksStartOpenHandler()
+    void OnMyWorksStartOpenHandler()
     {
-        this.m_buttonsBlocked = false;
-        this.SelectTab(this.m_myWorksTab);
+        m_buttonsBlocked = false;
+        SelectTab(m_myWorksTab);
     }
 
-    private void OnCreationTabStartOpenHandler()
+    void OnCreationTabStartOpenHandler()
     {
-        this.m_buttonsBlocked = false;
-        this.SelectTab(this.m_photosTab);
+        m_buttonsBlocked = false;
+        SelectTab(m_photosTab);
     }
 
-    private void OnLibraryStartOpenHandler()
+    void OnLibraryStartOpenHandler()
     {
-        this.m_buttonsBlocked = false;
-        this.SelectTab(this.m_libraryTab);
+        m_buttonsBlocked = false;
+        SelectTab(m_libraryTab);
     }
 
-    private void OnSettingsStartOpenHandler()
+    void OnSettingsStartOpenHandler()
     {
-        this.m_buttonsBlocked = false;
-        this.SelectTab(this.m_settingsTab);
+        m_buttonsBlocked = false;
+        SelectTab(m_settingsTab);
     }
 
-    private void SelectTab(LibraryTabButton tab)
+    void SelectTab(LibraryTabButton tab)
     {
-        this.m_libraryTab.SetHighlighted(this.m_libraryTab == tab);
-        this.m_myWorksTab.SetHighlighted(this.m_myWorksTab == tab);
-        this.m_photosTab.SetHighlighted(this.m_photosTab == tab);
-        this.m_settingsTab.SetHighlighted(this.m_settingsTab == tab);
+        m_libraryTab.SetHighlighted(m_libraryTab == tab);
+        m_myWorksTab.SetHighlighted(m_myWorksTab == tab);
+        m_photosTab.SetHighlighted(m_photosTab == tab);
+        m_settingsTab.SetHighlighted(m_settingsTab == tab);
     }
 
     public override void SendActiveScreenEvent()
     {
-        if (this.m_inited)
+        if (m_inited)
         {
-            this.m_currentWindow.SendActiveScreenEvent();
+            m_currentWindow.SendActiveScreenEvent();
         }
     }
-    private IEnumerator WaitInitLibraryAndClosePlaneCoroutine()
+    IEnumerator WaitInitLibraryAndClosePlaneCoroutine()
     {
-        if (MainMenu.FirstOpen)
+        if (FirstOpen)
         {
-            MainMenu.FirstOpen = false;
+            FirstOpen = false;
             float timer = 0.5f;
             yield return null;
 
             while (true)
             {
                 timer -= Time.deltaTime;
-                if (!(timer < 0f) && (!this.m_newLibraryWindow.isActiveAndEnabled || !this.m_newLibraryWindow.Inited) && (!this.m_myWorksWindow.isActiveAndEnabled || !this.m_myWorksWindow.Inited))
+                if (!(timer < 0f) && (!m_newLibraryWindow.isActiveAndEnabled || !m_newLibraryWindow.Inited) && (!m_myWorksWindow.isActiveAndEnabled || !m_myWorksWindow.Inited))
                 {
-                    if (!this.m_photosWindow.isActiveAndEnabled)
+                    if (!m_photosWindow.isActiveAndEnabled)
                     {
                         yield return null;
                         continue;
                     }
-                    if (!this.m_photosWindow.Inited)
+                    if (!m_photosWindow.Inited)
                     {
                         yield return null;
                         continue;
@@ -345,7 +330,7 @@ public class MainMenu : BaseWindow
                 break;
             }
         }
-        this.m_blockPlane.SetActive(false);
+        m_blockPlane.SetActive(false);
     }
 
     public void OpenDailyArt()

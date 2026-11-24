@@ -5,9 +5,9 @@ using UnityEngine;
 [Serializable]
 public class CashImage3D
 {
-    private byte[] vox;
-    private long MaxVisibleCount;
-    private IDictionary<int, int> colorCount;
+    byte[] vox;
+    long MaxVisibleCount;
+    IDictionary<int, int> colorCount;
 
     public SerializableVector3 Position
     {
@@ -30,7 +30,7 @@ public class CashImage3D
     {
         get
         {
-            return this.vox;
+            return vox;
         }
     }
 
@@ -38,7 +38,7 @@ public class CashImage3D
     {
         get
         {
-            return this.colorCount;
+            return colorCount;
         }
     }
 
@@ -46,7 +46,7 @@ public class CashImage3D
     {
         get
         {
-            return this.MaxVisibleCount;
+            return MaxVisibleCount;
         }
     }
 
@@ -64,7 +64,7 @@ public class CashImage3D
         int sizeZ = mv.sizeZ;
         int size = Mathf.Max(sizeX, Mathf.Max(sizeY, sizeZ));
         float initialDistance = Mathf.Sqrt((float)(sizeX * sizeX + sizeY * sizeY + sizeZ * sizeZ));
-        this.CamSize = initialDistance;
+        CamSize = initialDistance;
 
         MaxVisibleCount = 0;
         colorCount = new Dictionary<int, int>();

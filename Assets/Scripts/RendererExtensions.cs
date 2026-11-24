@@ -2,21 +2,21 @@ using UnityEngine;
 
 public static class RendererExtensions
 {
-    private static int CountCornersVisibleFrom(this RectTransform rectTransform, Camera camera)
+    static int CountCornersVisibleFrom(this RectTransform rectTransform, Camera camera)
     {
         Rect rect = new Rect(0f, 0f, (float)Screen.width, (float)Screen.height);
-        Vector3[] array = new Vector3[4];
-        rectTransform.GetWorldCorners(array);
-        int num = 0;
-        for (int i = 0; i < array.Length; i++)
+        var corners = new Vector3[4];
+        rectTransform.GetWorldCorners(corners);
+        int visibleCount = 0;
+        for (int i = 0; i < corners.Length; i++)
         {
-            Vector3 point = camera.WorldToScreenPoint(array[i]);
+            Vector3 point = camera.WorldToScreenPoint(corners[i]);
             if (rect.Contains(point))
             {
-                num++;
+                visibleCount++;
             }
         }
-        return num;
+        return visibleCount;
     }
 
     public static bool IsFullyVisibleFrom(this RectTransform rectTransform, Camera camera)

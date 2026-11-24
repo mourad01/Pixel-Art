@@ -4,14 +4,11 @@ using UnityEngine.UI;
 public class BulbButton : MonoBehaviour
 {
     [SerializeField] GameObject m_highlightedGrid;
-
     [SerializeField] Image m_image;
-
     [SerializeField] Sprite m_enableSprite;
-
     [SerializeField] Sprite m_disableSprite;
 
-    private void Start()
+    void Start()
     {
         UpdateState();
     }
@@ -22,7 +19,7 @@ public class BulbButton : MonoBehaviour
         UpdateState();
     }
 
-    private void UpdateState()
+    void UpdateState()
     {
         m_image.sprite = ((!AppData.BulbMode) ? m_disableSprite : m_enableSprite);
         m_highlightedGrid.SetActive(AppData.BulbMode);

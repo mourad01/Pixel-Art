@@ -13,17 +13,17 @@ namespace AU
     {
         public static Transform FindTransformInChildren(Transform parent, String name, Transform d = null)
         {
-            Transform trans = parent.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == name);
+            var trans = parent.GetComponentsInChildren<Transform>().FirstOrDefault(t => t.name == name);
             if (trans == null) return d;
             return trans;
         }
 
         public static T GetCopyOf<T>(this Object comp, T other) where T : class
         {
-            Type type = comp.GetType();
+            var type = comp.GetType();
             if (type != other.GetType()) return null; // type mis-match
-            BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Default | BindingFlags.DeclaredOnly;
-            PropertyInfo[] pinfos = type.GetProperties(flags);
+            var flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Default | BindingFlags.DeclaredOnly;
+            var pinfos = type.GetProperties(flags);
             foreach (var pinfo in pinfos)
             {
                 if (pinfo.CanWrite)
@@ -35,7 +35,7 @@ namespace AU
                     catch { }
                 }
             }
-            FieldInfo[] finfos = type.GetFields(flags);
+            var finfos = type.GetFields(flags);
             foreach (var finfo in finfos)
             {
                 finfo.SetValue(comp, finfo.GetValue(other));
@@ -103,7 +103,7 @@ namespace AU
         {
             try
             {
-                UnityEngine.Object parent = PrefabUtility.GetPrefabParent(obj);
+                var parent = PrefabUtility.GetPrefabParent(obj);
                 if (parent != null)
                     PrefabUtility.ReplacePrefab(parent as GameObject, parent, ReplacePrefabOptions.ConnectToPrefab);
             }
@@ -134,7 +134,7 @@ namespace AU
             {
                 return null;
             }
-            T r = Resources.Load(path, typeof(T)) as T;
+            var r = Resources.Load(path, typeof(T)) as T;
             if (r == null)
                 Debug.LogError("[AssetUtility] Failed to load " + path);
             return r;
@@ -154,7 +154,7 @@ namespace AU
             if (asIndex > 0)
                 path = path.Substring(asIndex);
 
-            T r = AssetDatabase.LoadAssetAtPath(path, typeof(T)) as T;
+            var r = AssetDatabase.LoadAssetAtPath(path, typeof(T)) as T;
             if (r == null)
                 Debug.LogError("[AssetUtility] Failed to load " + path);
             return r;
@@ -168,7 +168,7 @@ namespace AU
                 v = null;
                 return false;
             }
-            T r = Resources.Load(path, typeof(T)) as T;
+            var r = Resources.Load(path, typeof(T)) as T;
             if (r == null)
             {
                 v = null;

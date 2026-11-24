@@ -15,116 +15,112 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         BrushMode
     }
 
-    [SerializeField] private Canvas m_canvas;
+    [SerializeField] Canvas m_canvas;
 
-    private DateTime m_downTime = DateTime.MinValue;
-
-    private float m_longTapTime = 0.15f;
-
-    private Vector3 m_tapPosition = Vector3.zero;
-
-    private Vector2 m_mousePrev = Vector2.zero;
-
-    private float m_touchesDelta = -3.40282347E+38f;
+    DateTime m_downTime = DateTime.MinValue;
+    float m_longTapTime = 0.15f;
+    Vector3 m_tapPosition = Vector3.zero;
+    Vector2 m_mousePrev = Vector2.zero;
+    float m_touchesDelta = -3.40282347E+38f;
 
     public TapState CurrentTapState { get; private set; }
 
-    private void Update()
+    void Update()
     {
-        switch (this.CurrentTapState)
+        switch (CurrentTapState)
         {
             case TapState.Down:
-                if (!this.CheckMultiTouch())
+                if (!CheckMultiTouch())
                 {
-                    this.CheckLongTap();
+                    CheckLongTap();
                 }
                 break;
             case TapState.Drag:
-                this.CheckMultiTouch();
+                CheckMultiTouch();
                 break;
             case TapState.Multitouch:
                 if (Input.touches.Length == 0)
                 {
-                    this.CurrentTapState = TapState.None;
+                    CurrentTapState = TapState.None;
                 }
                 break;
             case TapState.BrushMode:
-                if (this.CheckMultiTouch())
+                if (CheckMultiTouch())
                 {
                     break;
                 }
                 break;
             case TapState.None:
-                this.CheckMultiTouch();
+                CheckMultiTouch();
                 break;
         }
     }
 
-    private bool CheckMultiTouch()
+    bool CheckMultiTouch()
     {
         if (Input.touches.Length > 1)
         {
-            Touch[] touches = Input.touches;
-            Vector2 vector = touches[0].position - touches[1].position;
-            this.m_touchesDelta = Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y);
-            this.m_mousePrev = Input.mousePosition;
-            if (this.CurrentTapState == TapState.BrushMode)
+            var touches = Input.touches;
+            Vector2 dir = touches[0].position - touches[1].position;
+            m_touchesDelta = Mathf.Sqrt(dir.x * dir.x + dir.y * dir.y);
+            m_mousePrev = Input.mousePosition;
+            if (CurrentTapState == TapState.BrushMode)
             {
                 WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType = ColorizationModeModel.BrushType.Singular;
             }
-            this.CurrentTapState = TapState.Multitouch;
+            CurrentTapState = TapState.Multitouch;
             return true;
         }
         return false;
     }
 
-    private void CheckLongTap()
+    void CheckLongTap()
     {
-        if (this.m_downTime > DateTime.MinValue && (DateTime.Now - this.m_downTime).TotalSeconds > (double)this.m_longTapTime)
+        if (m_downTime > DateTime.MinValue && (DateTime.Now - m_downTime).TotalSeconds > (double)m_longTapTime)
         {
             WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType = ColorizationModeModel.BrushType.Plural;
-            this.CurrentTapState = TapState.BrushMode;
+            CurrentTapState = TapState.BrushMode;
         }
     }
 
     public void OnPointerDown(PointerEventData data)
     {
-        if (!this.CheckMultiTouch())
+        if (!CheckMultiTouch())
         {
-            if (this.CurrentTapState == TapState.BrushMode)
+            if (CurrentTapState == TapState.BrushMode)
             {
                 WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType = ColorizationModeModel.BrushType.Singular;
             }
-            this.CurrentTapState = TapState.Down;
-            this.m_downTime = DateTime.Now;
-            this.m_tapPosition = Input.mousePosition;
-            this.m_mousePrev = Input.mousePosition;
+            CurrentTapState = TapState.Down;
+            m_downTime = DateTime.Now;
+            m_tapPosition = Input.mousePosition;
+            m_mousePrev = Input.mousePosition;
         }
     }
 
     public void OnPointerUp(PointerEventData data)
     {
-        switch (this.CurrentTapState)
+        switch (CurrentTapState)
         {
             case TapState.Down:
                 UnityObject.FindObjectOfType<TouchManager>().CheckCube(data.position, true);
                 break;
         }
-        this.CurrentTapState = TapState.None;
+        CurrentTapState = TapState.None;
     }
 
     public void OnDrag(PointerEventData data)
     {
-        switch (this.CurrentTapState)
+        switch (CurrentTapState)
         {
             case TapState.None:
                 break;
             case TapState.Down:
-                this.CurrentTapState = TapState.Drag;
+                CurrentTapState = TapState.Drag;
                 break;
             case TapState.Drag:
                 {
-                    Vector2 dragOffset = (Vector2)Input.mousePosition - this.m_mousePrev;
+                    Vector2 dragOffset = (Vector2)Input.mousePosition - m_mousePrev;
                     float value2 = dragOffset.x / (float)Screen.width * 180f;
                     float value3 = dragOffset.y / (float)Screen.width * 180f;
                     Quaternion rotation = Camera.main.transform.rotation;
@@ -143,57 +139,57 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
                     value4 = Mathf.Clamp(value4, -80f, 80f);
                     rotation.eulerAngles = new Vector3(value4, y, 0f);
                     Camera.main.transform.rotation = rotation;
-                    this.m_mousePrev = Input.mousePosition;
+                    m_mousePrev = Input.mousePosition;
                     Vector3 centerOffset = Vector3.zero - Camera.main.transform.position;
                     if (centerOffset.magnitude > 0.2f)
                     {
                         centerOffset = centerOffset / centerOffset.magnitude * 0.2f;
                     }
-                    Transform transform = Camera.main.transform;
+                    var transform = Camera.main.transform;
                     transform.position += centerOffset;
                     break;
                 }
             case TapState.Multitouch:
                 {
-                    Touch[] touches = Input.touches;
+                    var touches = Input.touches;
                     if (touches.Length >= 2)
                     {
                         Vector2 pinchOffset = touches[0].position - touches[1].position;
                         float value5 = Mathf.Sqrt(pinchOffset.x * pinchOffset.x + pinchOffset.y * pinchOffset.y);
-                        float value6 = value5 / this.m_touchesDelta;
+                        float value6 = value5 / m_touchesDelta;
                         float value = Camera.main.orthographicSize / value6;
                         value = Mathf.Clamp(value, 3f, 25f);
                         Vector3 pointerWorldPosition = Camera.main.ScreenToWorldPoint(data.position);
-                        Vector3 a3 = Camera.main.ScreenToWorldPoint(this.m_mousePrev);
+                        Vector3 a3 = Camera.main.ScreenToWorldPoint(m_mousePrev);
                         Camera.main.orthographicSize = value;
-                        this.m_touchesDelta = value5;
+                        m_touchesDelta = value5;
                         Vector3 b = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                        Vector3 b2 = a3 - b;
-                        Transform transform2 = Camera.main.transform;
-                        transform2.position += b2;
+                        Vector3 dir = a3 - b;
+                        var transform2 = Camera.main.transform;
+                        transform2.position += dir;
                         float z = Mathf.InverseLerp(15f, 5f, value);
                         UnitySingleton<GameController>.Instance.ChangeCamDepthPosition(z);
-                        this.m_mousePrev = Input.mousePosition;
+                        m_mousePrev = Input.mousePosition;
                     }
                     break;
                 }
             case TapState.BrushMode:
                 {
-                    Vector2 vector = data.position - data.delta;
-                    float[] obj = new float[3] {
+                    Vector2 prevPos = data.position - data.delta;
+                    var deltas = new float[3] {
                     1f,
                     0f,
                     0f
                 };
                     Vector2 delta = data.delta;
-                    obj[1] = Mathf.Abs(delta.x);
+                    deltas[1] = Mathf.Abs(delta.x);
                     Vector2 delta2 = data.delta;
-                    obj[2] = Mathf.Abs(delta2.y);
-                    float num = Mathf.Max(obj);
-                    Vector2 a = data.delta / num;
-                    Vector2 a2 = vector;
-                    TouchManager touchManager = UnityObject.FindObjectOfType<TouchManager>();
-                    for (int i = 1; (float)i < num; i++)
+                    deltas[2] = Mathf.Abs(delta2.y);
+                    float steps = Mathf.Max(deltas);
+                    Vector2 a = data.delta / steps;
+                    Vector2 a2 = prevPos;
+                    var touchManager = UnityObject.FindObjectOfType<TouchManager>();
+                    for (int i = 1; (float)i < steps; i++)
                     {
                         touchManager.CheckCube(a2 + (float)i * a, false);
                     }
@@ -219,16 +215,16 @@ public class InputReceiver3D : MonoBehaviour, IPointerDownHandler, IPointerUpHan
         UnitySingleton<GameController>.Instance.ChangeCamDepthPosition(z);
     }
 
-    private void OnApplicationPause(bool pause)
+    void OnApplicationPause(bool pause)
     {
         if (pause)
         {
-            if (this.CurrentTapState == TapState.BrushMode)
+            if (CurrentTapState == TapState.BrushMode)
             {
-                this.CurrentTapState = TapState.None;
+                CurrentTapState = TapState.None;
                 WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType = ColorizationModeModel.BrushType.Singular;
             }
-            this.m_downTime = DateTime.MinValue;
+            m_downTime = DateTime.MinValue;
         }
     }
 }

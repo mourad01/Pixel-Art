@@ -3,8 +3,8 @@ public static class GameHelper
 {
     public static Texture2D Rotate(Texture2D originalTexture, bool clockwise)
     {
-        Color32[] pixels = originalTexture.GetPixels32();
-        Color32[] colors = new Color32[pixels.Length];
+        var pixels = originalTexture.GetPixels32();
+        var colors = new Color32[pixels.Length];
         int width = originalTexture.width;
         int height = originalTexture.height;
         for (int i = 0; i < height; i++)
@@ -16,7 +16,7 @@ public static class GameHelper
                 colors[destIndex] = pixels[sourceIndex];
             }
         }
-        Texture2D texture2D = new Texture2D(height, width);
+        var texture2D = new Texture2D(height, width);
         texture2D.SetPixels32(colors);
         texture2D.Apply();
         return texture2D;

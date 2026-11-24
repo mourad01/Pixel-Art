@@ -8,7 +8,7 @@ using UnityEngine;
 public class SavedWorkData3D : ISavedWorkData
 {
     [NonSerialized]
-    private History m_history;
+    History m_history;
 
     public string Id { get; private set; }
 
@@ -26,9 +26,9 @@ public class SavedWorkData3D : ISavedWorkData
     {
         get
         {
-            if (this.UvRect != null)
+            if (UvRect != null)
             {
-                return this.UvRect.ToRect();
+                return UvRect.ToRect();
             }
             return new Rect(0f, 0f, 1f, 1f);
         }
@@ -43,11 +43,11 @@ public class SavedWorkData3D : ISavedWorkData
     {
         get
         {
-            return this.m_history;
+            return m_history;
         }
         private set
         {
-            this.m_history = value;
+            m_history = value;
         }
     }
 
@@ -57,7 +57,7 @@ public class SavedWorkData3D : ISavedWorkData
     {
         get
         {
-            return this.ImageInfo.Is3D;
+            return ImageInfo.Is3D;
         }
     }
 
@@ -65,30 +65,30 @@ public class SavedWorkData3D : ISavedWorkData
     {
         get
         {
-            return SavedWorksList.GetPathToSave(this.Id);
+            return SavedWorksList.GetPathToSave(Id);
         }
     }
 
     public SavedWorkData3D()
     {
-        this.Id = Guid.NewGuid().ToString();
-        this.UvRect = new SerializableRect(new Rect(0f, 0f, 1f, 1f));
-        this.Progress = new List<bool>();
+        Id = Guid.NewGuid().ToString();
+        UvRect = new SerializableRect(new Rect(0f, 0f, 1f, 1f));
+        Progress = new List<bool>();
     }
 
     public void Init(ImageInfo imageInfo, byte[] preview, bool completed, List<HistoryStep> history)
     {
-        this.ImageInfo = imageInfo;
-        this.Preview = preview;
-        this.Completed = completed;
+        ImageInfo = imageInfo;
+        Preview = preview;
+        Completed = completed;
     }
 
     public void Init(ImageInfo imageInfo, byte[] preview, bool completed, List<HistoryStep> history, List<bool> progress)
     {
-        this.ImageInfo = imageInfo;
-        this.Preview = preview;
-        this.Completed = completed;
-        this.Progress = progress;
+        ImageInfo = imageInfo;
+        Preview = preview;
+        Completed = completed;
+        Progress = progress;
     }
 
     public static bool IsNeedToSave(NumberColoring go)
@@ -102,20 +102,20 @@ public class SavedWorkData3D : ISavedWorkData
 
     public void SetFile(string file)
     {
-        this.FileName = file;
+        FileName = file;
     }
 
     public void Apply(NumberColoring nc)
     {
-        Transform transform = nc.transform;
-        Texture2D texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        var transform = nc.transform;
+        var texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
         texture2D.filterMode = FilterMode.Point;
-        texture2D.LoadImage(this.Preview);
+        texture2D.LoadImage(Preview);
     }
 
     public void SetImageInfo(ImageInfo ii)
     {
-        this.ImageInfo = ii;
+        ImageInfo = ii;
     }
 
     public void InitHistory()
@@ -124,7 +124,7 @@ public class SavedWorkData3D : ISavedWorkData
 
     public override string ToString()
     {
-        return "SavedWorkData3D " + this.Id;
+        return "SavedWorkData3D " + Id;
     }
 }
 

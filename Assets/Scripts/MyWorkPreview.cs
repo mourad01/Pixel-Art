@@ -9,19 +9,14 @@ public class MyWorkPreview : MonoBehaviour
 {
     public Action<string, MyWorkPreview> OnClick;
 
-    private string m_saveId;
+    string m_saveId;
+    ISavedWorkData m_swd;
 
-    private ISavedWorkData m_swd;
-
-    [SerializeField] private RawImage m_image;
-
-    [SerializeField] private GameObject m_imageWaiter;
-
-    [SerializeField] private GameObject m_completedTick;
-
-    [SerializeField] private RawImage m_filterImage;
-
-    [SerializeField] private GameObject m_3dMark;
+    [SerializeField] RawImage m_image;
+    [SerializeField] GameObject m_imageWaiter;
+    [SerializeField] GameObject m_completedTick;
+    [SerializeField] RawImage m_filterImage;
+    [SerializeField] GameObject m_3dMark;
 
     public bool IsInited { get; private set; }
 
@@ -29,7 +24,7 @@ public class MyWorkPreview : MonoBehaviour
     {
         get
         {
-            return this.m_image.texture != null;
+            return m_image.texture != null;
         }
     }
 
@@ -37,8 +32,8 @@ public class MyWorkPreview : MonoBehaviour
     {
         get
         {
-            if (this.m_image.texture != null && this.m_image.texture is Texture2D)
-                return (Texture2D)this.m_image.texture;
+            if (m_image.texture != null && m_image.texture is Texture2D)
+                return (Texture2D)m_image.texture;
             return null;
         }
     }
@@ -47,111 +42,111 @@ public class MyWorkPreview : MonoBehaviour
     {
         get
         {
-            return this.m_saveId;
+            return m_saveId;
         }
     }
 
-    private void Awake()
+    void Awake()
     {
-        this.m_filterImage.material = new Material(Shader.Find("Custom/TilingShader"));
+        m_filterImage.material = new Material(Shader.Find("Custom/TilingShader"));
     }
 
     public void Init(string saveId)
     {
-        this.IsInited = true;
-        this.m_saveId = saveId;
-        this.m_image.material = new Material(Shader.Find("Custom/GreyTextureShader"));
-        if (this.m_image.texture != null)
+        IsInited = true;
+        m_saveId = saveId;
+        m_image.material = new Material(Shader.Find("Custom/GreyTextureShader"));
+        if (m_image.texture != null)
         {
-            UnityObject.Destroy(this.m_image.texture);
+            UnityObject.Destroy(m_image.texture);
         }
-        Texture texture = this.m_image.material.GetTexture("_ResTex");
+        var texture = m_image.material.GetTexture("_ResTex");
         if (texture != null)
         {
             UnityObject.Destroy(texture);
-            this.m_image.material.SetTexture("_ResTex", null);
+            m_image.material.SetTexture("_ResTex", null);
         }
-        this.m_image.texture = null;
-        this.m_swd = MainManager.Instance.SavedWorksList.LoadById(this.m_saveId);
-        if (this.m_swd != null)
+        m_image.texture = null;
+        m_swd = MainManager.Instance.SavedWorksList.LoadById(m_saveId);
+        if (m_swd != null)
         {
-            this.m_completedTick.SetActive(this.m_swd.Completed);
-            this.m_3dMark.SetActive(this.m_swd.ImageInfo.Is3D);
+            m_completedTick.SetActive(m_swd.Completed);
+            m_3dMark.SetActive(m_swd.ImageInfo.Is3D);
         }
         else
         {
-            this.m_completedTick.SetActive(false);
-            this.m_3dMark.SetActive(false);
-            this.m_imageWaiter.SetActive(true);
+            m_completedTick.SetActive(false);
+            m_3dMark.SetActive(false);
+            m_imageWaiter.SetActive(true);
         }
     }
 
     public void LoadIcon()
     {
-        if (this.m_image.texture == null && this.m_swd != null)
+        if (m_image.texture == null && m_swd != null)
         {
-            this.m_imageWaiter.SetActive(true);
-            if (this.m_swd.ImageInfo.Url != null)
+            m_imageWaiter.SetActive(true);
+            if (m_swd.ImageInfo.Url != null)
             {
-                DataManager.Instance.GetImageAsset(this.m_swd.ImageInfo, delegate (bool res, Texture2D tex)
+                DataManager.Instance.GetImageAsset(m_swd.ImageInfo, delegate (bool res, Texture2D tex)
                 {
-                    this.m_image.texture = tex;
-                    this.m_image.enabled = true;
-                    this.m_imageWaiter.SetActive(false);
-                    Texture2D texture2D2 = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-                    texture2D2.filterMode = (FilterMode)(this.m_swd.ImageInfo.Is3D ? 1 : 0);
-                    texture2D2.LoadImage(this.m_swd.Preview);
-                    this.m_image.material.SetTexture("_ResTex", texture2D2);
-                    Texture2D filter2 = MainManager.Instance.FilterManager.GetFilter(this.m_swd.FilterId);
-                    if (filter2 != null)
+                    m_image.texture = tex;
+                    m_image.enabled = true;
+                    m_imageWaiter.SetActive(false);
+                    var texture2D2 = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+                    texture2D2.filterMode = (FilterMode)(m_swd.ImageInfo.Is3D ? 1 : 0);
+                    texture2D2.LoadImage(m_swd.Preview);
+                    m_image.material.SetTexture("_ResTex", texture2D2);
+                    var filter = MainManager.Instance.FilterManager.GetFilter(m_swd.FilterId);
+                    if (filter != null)
                     {
-                        this.m_filterImage.material.mainTextureScale = new Vector2((float)texture2D2.width, (float)texture2D2.height);
-                        this.m_filterImage.texture = filter2;
-                        this.m_filterImage.enabled = true;
-                        this.m_filterImage.transform.localScale = this.m_image.transform.localScale;
+                        m_filterImage.material.mainTextureScale = new Vector2((float)texture2D2.width, (float)texture2D2.height);
+                        m_filterImage.texture = filter;
+                        m_filterImage.enabled = true;
+                        m_filterImage.transform.localScale = m_image.transform.localScale;
 
-                        this.m_filterImage.material.SetFloat("RepeatX", this.m_image.texture.width);
-                        this.m_filterImage.material.SetFloat("RepeatY", this.m_image.texture.height);
+                        m_filterImage.material.SetFloat("RepeatX", m_image.texture.width);
+                        m_filterImage.material.SetFloat("RepeatY", m_image.texture.height);
                     }
                     else
                     {
-                        this.m_filterImage.enabled = false;
+                        m_filterImage.enabled = false;
                     }
                 });
             }
             else
             {
-                DataManager.Instance.GetPhotoAsset(this.m_swd.ImageInfo.Id, delegate (bool res, Texture2D tex)
+                DataManager.Instance.GetPhotoAsset(m_swd.ImageInfo.Id, delegate (bool res, Texture2D tex)
                 {
-                    this.m_image.texture = tex;
+                    m_image.texture = tex;
                     if (tex.width > tex.height)
                     {
-                        this.m_image.transform.localScale = new Vector3(1f, (float)tex.height / (float)tex.width, 1f);
+                        m_image.transform.localScale = new Vector3(1f, (float)tex.height / (float)tex.width, 1f);
                     }
                     else
                     {
-                        this.m_image.transform.localScale = new Vector3((float)tex.width / (float)tex.height, 1f, 1f);
+                        m_image.transform.localScale = new Vector3((float)tex.width / (float)tex.height, 1f, 1f);
                     }
-                    this.m_image.enabled = true;
-                    this.m_imageWaiter.SetActive(false);
-                    Texture2D texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+                    m_image.enabled = true;
+                    m_imageWaiter.SetActive(false);
+                    var texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
                     texture2D.filterMode = FilterMode.Point;
-                    texture2D.LoadImage(this.m_swd.Preview);
-                    this.m_image.material.SetTexture("_ResTex", texture2D);
-                    Texture2D filter = MainManager.Instance.FilterManager.GetFilter(this.m_swd.FilterId);
+                    texture2D.LoadImage(m_swd.Preview);
+                    m_image.material.SetTexture("_ResTex", texture2D);
+                    var filter = MainManager.Instance.FilterManager.GetFilter(m_swd.FilterId);
                     if (filter != null)
                     {
-                        this.m_filterImage.material.mainTextureScale = new Vector2((float)texture2D.width, (float)texture2D.height);
-                        this.m_filterImage.texture = filter;
-                        this.m_filterImage.enabled = true;
-                        this.m_filterImage.transform.localScale = this.m_image.transform.localScale;
+                        m_filterImage.material.mainTextureScale = new Vector2((float)texture2D.width, (float)texture2D.height);
+                        m_filterImage.texture = filter;
+                        m_filterImage.enabled = true;
+                        m_filterImage.transform.localScale = m_image.transform.localScale;
 
-                        this.m_filterImage.material.SetFloat("RepeatX", this.m_image.texture.width);
-                        this.m_filterImage.material.SetFloat("RepeatY", this.m_image.texture.height);
+                        m_filterImage.material.SetFloat("RepeatX", m_image.texture.width);
+                        m_filterImage.material.SetFloat("RepeatY", m_image.texture.height);
                     }
                     else
                     {
-                        this.m_filterImage.enabled = false;
+                        m_filterImage.enabled = false;
                     }
                 });
             }
@@ -160,16 +155,16 @@ public class MyWorkPreview : MonoBehaviour
 
     public void UnloadIcon()
     {
-        if (this.m_image.texture != null)
+        if (m_image.texture != null)
         {
-            this.m_image.texture = null;
-            this.m_image.enabled = false;
+            m_image.texture = null;
+            m_image.enabled = false;
         }
     }
 
     public void Click()
     {
-        this.OnClick.SafeInvoke(this.m_saveId, this);
+        OnClick.SafeInvoke(m_saveId, this);
         AudioManager.Instance.PlayClick();
     }
 }

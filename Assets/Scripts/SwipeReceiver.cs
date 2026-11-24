@@ -6,38 +6,33 @@ using UnityEngine.UI;
 public class SwipeReceiver : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IEventSystemHandler
 {
     public Action OnSwipeLeft;
-
     public Action OnSwipeRight;
-
     public Action OnSkipIt;
 
-    private Vector2 m_pos = Vector2.zero;
-
-    private Vector2 m_lastPos = Vector2.zero;
-
-    private DateTime m_lastTime = DateTime.MinValue;
-
-    private bool m_skip;
+    Vector2 m_pos = Vector2.zero;
+    Vector2 m_lastPos = Vector2.zero;
+    DateTime m_lastTime = DateTime.MinValue;
+    bool m_skip;
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        this.m_lastTime = DateTime.Now;
-        this.m_pos = eventData.position;
-        this.m_skip = false;
+        m_lastTime = DateTime.Now;
+        m_pos = eventData.position;
+        m_skip = false;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        this.m_lastTime = DateTime.Now;
-        this.m_lastPos = eventData.position;
-        float num = this.m_lastPos.y - this.m_pos.y;
-        if (!(num > 50f) && !(num < -50f) && !this.m_skip)
+        m_lastTime = DateTime.Now;
+        m_lastPos = eventData.position;
+        float dy = m_lastPos.y - m_pos.y;
+        if (!(dy > 50f) && !(dy < -50f) && !m_skip)
         {
             return;
         }
-        if (!this.m_skip)
+        if (!m_skip)
         {
-            this.m_skip = true;
+            m_skip = true;
             base.GetComponentInParent<ScrollRect>().SendMessage("OnBeginDrag", eventData);
         }
         else
@@ -48,24 +43,24 @@ public class SwipeReceiver : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (this.m_skip)
+        if (m_skip)
         {
             base.GetComponentInParent<ScrollRect>().SendMessage("OnEndDrag", eventData);
         }
-        else if (!((DateTime.Now - this.m_lastTime).TotalSeconds > 0.3))
+        else if (!((DateTime.Now - m_lastTime).TotalSeconds > 0.3))
         {
-            Vector2 vector = eventData.position - this.m_pos;
-            float x = vector.x;
-            Vector2 totalSwipeOffset = eventData.position - this.m_lastPos;
+            Vector2 dir = eventData.position - m_pos;
+            float x = dir.x;
+            Vector2 totalSwipeOffset = eventData.position - m_lastPos;
             if (x * totalSwipeOffset.x >= 0f)
             {
-                if (vector.x > 100f)
+                if (dir.x > 100f)
                 {
-                    this.OnSwipeRight.SafeInvoke();
+                    OnSwipeRight.SafeInvoke();
                 }
-                else if (vector.x < -100f)
+                else if (dir.x < -100f)
                 {
-                    this.OnSwipeLeft.SafeInvoke();
+                    OnSwipeLeft.SafeInvoke();
                 }
             }
         }

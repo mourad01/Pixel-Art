@@ -3,102 +3,93 @@ using UnityEngine;
 public class RadialParticlesScript : MonoBehaviour
 {
     public int numParticles = 8;
-
     public float maxRadius = 2f;
-
     public float processLifetime = 1f;
-
     public float particleSize = 1f;
-
     public int loops = 3;
 
-    private float currDegrees;
+    float currDegrees;
+    float curveRate;
+    float currRadius;
+    int currLoop;
+    bool deactivateOnComplete = true;
+    ParticleSystem.Particle[] particles;
 
-    private float curveRate;
-
-    private float currRadius;
-
-    private int currLoop;
-
-    private bool deactivateOnComplete = true;
-
-    private ParticleSystem.Particle[] particles;
-
-    private void Start()
+    void Start()
     {
-        this.particles = new ParticleSystem.Particle[this.numParticles];
-        this.curveRate = 90f / this.processLifetime;
-        this.currLoop = this.loops;
-        this.Reset(this.deactivateOnComplete);
-        base.gameObject.SetActive(false);
+        particles = new ParticleSystem.Particle[numParticles];
+        curveRate = 90f / processLifetime;
+        currLoop = loops;
+        Reset(deactivateOnComplete);
+        gameObject.SetActive(false);
     }
 
-    private void Update()
+    void Update()
     {
-        this.currDegrees += this.curveRate * Time.smoothDeltaTime;
-        this.currRadius = Mathf.Sin(0.0174532924f * this.currDegrees) * this.maxRadius;
-        this.currRadius = Mathf.Clamp(this.currRadius * 1.5f, 0f, this.maxRadius);
-        this.UpdateParticles(this.currRadius);
-        if (this.currDegrees > 90f)
+        currDegrees += curveRate * Time.smoothDeltaTime;
+        currRadius = Mathf.Sin(0.0174532924f * currDegrees) * maxRadius;
+        currRadius = Mathf.Clamp(currRadius * 1.5f, 0f, maxRadius);
+        UpdateParticles(currRadius);
+        if (currDegrees > 90f)
         {
-            this.currLoop--;
-            if (this.currLoop > 0)
+            currLoop--;
+            if (currLoop > 0)
             {
-                this.Reset(this.deactivateOnComplete);
+                Reset(deactivateOnComplete);
             }
-            else if (this.deactivateOnComplete)
+            else if (deactivateOnComplete)
             {
-                base.gameObject.SetActive(false);
+                gameObject.SetActive(false);
             }
             else
             {
-                base.enabled = false;
+                enabled = false;
             }
         }
     }
 
     public void Reset(bool deactivateGO)
     {
-        this.deactivateOnComplete = deactivateGO;
-        this.currDegrees = 0f;
-        this.currRadius = Mathf.Sin(0.0174532924f * this.currDegrees) * this.maxRadius;
-        for (int i = 0; i < this.numParticles; i++)
+        deactivateOnComplete = deactivateGO;
+        currDegrees = 0f;
+        currRadius = Mathf.Sin(0.0174532924f * currDegrees) * maxRadius;
+        for (int i = 0; i < numParticles; i++)
         {
-            ParticleSystem.Particle val = this.particles[i];
-            Vector3 position = base.transform.position;
+            var val = particles[i];
+            Vector3 position = transform.position;
             val.position = new Vector3(0f, 0f, position.z);
-            this.particles[i].color = new Color(1f, 1f, 1f, 1f);
-            this.particles[i].size = this.particleSize;
-            this.particles[i].remainingLifetime = this.processLifetime;
-            this.particles[i].startLifetime = this.processLifetime;
+            particles[i].color = new Color(1f, 1f, 1f, 1f);
+            particles[i].size = particleSize;
+            particles[i].remainingLifetime = processLifetime;
+            particles[i].startLifetime = processLifetime;
         }
-        base.GetComponent<ParticleSystem>().SetParticles(this.particles, this.particles.Length);
-        base.gameObject.SetActive(true);
+        base.GetComponent<ParticleSystem>().SetParticles(particles, particles.Length);
+        gameObject.SetActive(true);
     }
 
-    private void UpdateParticles(float radius)
+    void UpdateParticles(float radius)
     {
         float a = 1f;
-        float num = 0f;
-        float value2 = 6.28318548f / (float)this.numParticles;
-        for (int i = 0; i < this.numParticles; i++)
+        float offset = 0f;
+        float value2 = 6.28318548f / (float)numParticles;
+        for (int i = 0; i < numParticles; i++)
         {
             float value3 = Mathf.Cos(value2 * (float)i) * radius;
-            num = Mathf.Sin(value2 * (float)i) * radius;
-            ParticleSystem.Particle val = this.particles[i];
+            offset = Mathf.Sin(value2 * (float)i) * radius;
+            var val = particles[i];
             float x = value3;
-            float y = num;
-            Vector3 position = base.transform.position;
+            float y = offset;
+            Vector3 position = transform.position;
             val.position = new Vector3(x, y, position.z);
-            if (this.particles[i].remainingLifetime < this.processLifetime * 0.5f)
+            if (particles[i].remainingLifetime < processLifetime * 0.5f)
             {
-                a = this.particles[i].remainingLifetime / this.processLifetime;
+                a = particles[i].remainingLifetime / processLifetime;
             }
-            this.particles[i].color = new Color(1f, 1f, 1f, a);
-            this.particles[i].size = this.particleSize;
-            this.particles[i].remainingLifetime -= Time.smoothDeltaTime;
+            particles[i].color = new Color(1f, 1f, 1f, a);
+            particles[i].size = particleSize;
+            particles[i].remainingLifetime -= Time.smoothDeltaTime;
         }
-        base.GetComponent<ParticleSystem>().SetParticles(this.particles, this.particles.Length);
+        base.GetComponent<ParticleSystem>().SetParticles(particles, particles.Length);
     }
 }
 

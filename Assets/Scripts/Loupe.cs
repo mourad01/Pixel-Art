@@ -2,13 +2,10 @@ using UnityEngine;
 
 public class Loupe : MonoBehaviour
 {
-    [SerializeField] private Transform m_loupeCamera;
-
-    [SerializeField] private Canvas m_canvas;
-
-    [SerializeField] private Color m_color = Color.white;
-
-    [SerializeField] private RectTransform m_loupeRect;
+    [SerializeField] Transform m_loupeCamera;
+    [SerializeField] Canvas m_canvas;
+    [SerializeField] Color m_color = Color.white;
+    [SerializeField] RectTransform m_loupeRect;
 
     public float Precision { get;   set; }
 
@@ -16,26 +13,26 @@ public class Loupe : MonoBehaviour
     {
         get
         {
-            return ((RectTransform)base.transform).sizeDelta;
+            return ((RectTransform)transform).sizeDelta;
         }
     }
 
     public void UpdatePosition(Vector3 screenPos, Vector3 worldPos)
     {
-        Vector2 v = screenPos / this.m_canvas.scaleFactor;
-        Vector2 sizeDelta = ((RectTransform)base.transform).sizeDelta;
-        float height = ((RectTransform)this.m_canvas.transform).rect.height;
-        float width = ((RectTransform)this.m_canvas.transform).rect.width;
-        v.x -= ((RectTransform)this.m_canvas.transform).rect.width / 2f;
+        Vector2 v = screenPos / m_canvas.scaleFactor;
+        Vector2 sizeDelta = ((RectTransform)transform).sizeDelta;
+        float height = ((RectTransform)m_canvas.transform).rect.height;
+        float width = ((RectTransform)m_canvas.transform).rect.width;
+        v.x -= ((RectTransform)m_canvas.transform).rect.width / 2f;
         v.y -= height / 2f;
         if (v.y + sizeDelta.y > height / 2f)
         {
-            Vector2 size = this.Size;
-            float num = size.y / 2f - Mathf.Abs(height / 2f - (v.y + sizeDelta.y));
-            Vector2 size2 = this.Size;
+            Vector2 size = Size;
+            float dy = size.y / 2f - Mathf.Abs(height / 2f - (v.y + sizeDelta.y));
+            Vector2 size2 = Size;
             float x = size2.x;
-            Vector2 size3 = this.Size;
-            float value2 = Mathf.Sqrt(x * size3.x / 4f - num * num);
+            Vector2 size3 = Size;
+            float value2 = Mathf.Sqrt(x * size3.x / 4f - dy * dy);
             v.x -= value2;
             v.y = height / 2f - sizeDelta.y / 2f;
             if (v.x - sizeDelta.x / 2f < (0f - width) / 2f)
@@ -48,52 +45,52 @@ public class Loupe : MonoBehaviour
             v.y += sizeDelta.y / 2f;
         }
         float x2 = v.x;
-        Vector2 size4 = this.Size;
+        Vector2 size4 = Size;
         if (x2 + size4.x / 4f > width / 2f)
         {
             float x3 = v.x;
             float value3 = width / 2f - v.x;
-            Vector2 size5 = this.Size;
+            Vector2 size5 = Size;
             v.x = x3 + (value3 - size5.x / 4f);
         }
         else
         {
             float x4 = v.x;
-            Vector2 size6 = this.Size;
+            Vector2 size6 = Size;
             if (x4 - size6.x / 4f < (0f - width) / 2f)
             {
                 float x5 = v.x;
                 float value4 = (0f - width) / 2f - v.x;
-                Vector2 size7 = this.Size;
+                Vector2 size7 = Size;
                 v.x = x5 + (value4 + size7.x / 4f);
             }
         }
-        base.transform.localPosition = v;
-        Vector3 position = this.m_loupeCamera.position;
+        transform.localPosition = v;
+        Vector3 position = m_loupeCamera.position;
         worldPos.z = position.z;
-        this.m_loupeCamera.position = worldPos;
+        m_loupeCamera.position = worldPos;
     }
 
     public void SwitchOnOff(bool value)
     {
         if (AppData.LoupeEnabled)
         {
-            base.gameObject.SetActive(value);
-            this.m_loupeCamera.gameObject.SetActive(value);
+            gameObject.SetActive(value);
+            m_loupeCamera.gameObject.SetActive(value);
         }
     }
 
     public void SetLoupePrecision(Camera mainCamera, float koef)
     {
-        float height = ((RectTransform)this.m_canvas.transform).rect.height;
-        float num = this.m_loupeRect.rect.height / (height * mainCamera.rect.height) * mainCamera.orthographicSize;
-        ((Component)this.m_loupeCamera).GetComponent<Camera>().orthographicSize = num * koef;
+        float height = ((RectTransform)m_canvas.transform).rect.height;
+        float orthoSize = m_loupeRect.rect.height / (height * mainCamera.rect.height) * mainCamera.orthographicSize;
+        ((Component)m_loupeCamera).GetComponent<Camera>().orthographicSize = orthoSize * koef;
     }
 
     public void SetLoupePrecision(float camSize)
     {
-        this.Precision = camSize;
-        ((Component)this.m_loupeCamera).GetComponent<Camera>().orthographicSize = camSize;
+        Precision = camSize;
+        ((Component)m_loupeCamera).GetComponent<Camera>().orthographicSize = camSize;
     }
 }
 

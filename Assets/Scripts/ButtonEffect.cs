@@ -6,15 +6,10 @@ using UnityEngine.UI;
 public class ButtonEffect
 {
     public MaskableGraphic element;
-
     public ButtonEffectType buttonEffectType = ButtonEffectType.Color;
-
     public Color defaultColor;
-
     public Color activeColor;
-
     public Sprite defaultSprite;
-
     public Sprite activeSprite;
 }
 

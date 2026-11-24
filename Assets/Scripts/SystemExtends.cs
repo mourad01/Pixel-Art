@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public static class SystemExtends
 {
-    private static Random rng = new Random();
+    static Random rng = new Random();
 
     public static void SafeInvoke(this Action action)
     {
@@ -47,14 +47,14 @@ public static class SystemExtends
 
     public static void Shuffle<T>(this IList<T> list)
     {
-        int num = ((ICollection<T>)list).Count;
-        while (num > 1)
+        int count = ((ICollection<T>)list).Count;
+        while (count > 1)
         {
-            num--;
-            int index = SystemExtends.rng.Next(num + 1);
-            T value = list[index];
-            list[index] = list[num];
-            list[num] = value;
+            count--;
+            int index = rng.Next(count + 1);
+            var value = list[index];
+            list[index] = list[count];
+            list[count] = value;
         }
     }
 }

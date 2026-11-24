@@ -15,7 +15,6 @@ public class MVVoxModel : MonoBehaviour
     public float sizePerVox = 1f;
 
     public Material voxMaterial;
-
     public Transform meshOrigin;
 
     [Tooltip("If the vox file contains a palette, should it be converted to a texture?")]
@@ -30,12 +29,12 @@ public class MVVoxModel : MonoBehaviour
     public void ClearVoxMeshes()
     {
         int i;
-        MVVoxModelMesh[] componentsInChildren = base.gameObject.GetComponentsInChildren<MVVoxModelMesh>();
+        var componentsInChildren = gameObject.GetComponentsInChildren<MVVoxModelMesh>();
         for (i = 0; i < (int)componentsInChildren.Length; i++)
         {
             UnityObject.DestroyImmediate(componentsInChildren[i].gameObject);
         }
-        MVVoxModelVoxel[] mVVoxModelVoxelArray = base.gameObject.GetComponentsInChildren<MVVoxModelVoxel>();
+        var mVVoxModelVoxelArray = gameObject.GetComponentsInChildren<MVVoxModelVoxel>();
         for (i = 0; i < (int)mVVoxModelVoxelArray.Length; i++)
         {
             UnityObject.DestroyImmediate(mVVoxModelVoxelArray[i].gameObject);
@@ -44,74 +43,74 @@ public class MVVoxModel : MonoBehaviour
 
     public void LoadVOXData(byte[] data, bool asIndividualVoxels)
     {
-        this.ClearVoxMeshes();
-        MVMainChunk mVMainChunk = MVImporter.LoadVOXFromData(data, true);
+        ClearVoxMeshes();
+        var mVMainChunk = MVImporter.LoadVOXFromData(data, true);
         if (mVMainChunk != null)
         {
-            Material material = (this.voxMaterial != null ? this.voxMaterial : MVImporter.DefaultMaterial);
-            if (this.paletteToTex)
+            var material = (voxMaterial != null ? voxMaterial : MVImporter.DefaultMaterial);
+            if (paletteToTex)
             {
                 material.mainTexture = (mVMainChunk.PaletteToTexture());
             }
             if (asIndividualVoxels)
             {
-                MVImporter.CreateIndividualVoxelGameObjects(mVMainChunk, base.gameObject.transform, material, this.sizePerVox);
+                MVImporter.CreateIndividualVoxelGameObjects(mVMainChunk, gameObject.transform, material, sizePerVox);
             }
             else
             {
-                MVImporter.CreateVoxelGameObjects(mVMainChunk, base.gameObject.transform, material, this.sizePerVox);
+                MVImporter.CreateVoxelGameObjects(mVMainChunk, gameObject.transform, material, sizePerVox);
             }
-            this.vox = mVMainChunk;
+            vox = mVMainChunk;
         }
     }
 
     public void LoadVOXFile(string path, bool asIndividualVoxels)
     {
-        this.ClearVoxMeshes();
+        ClearVoxMeshes();
         if (path == null || path.Length <= 0)
         {
             Debug.LogError("[MVVoxModel] Invalid file path");
         }
         else
         {
-            MVMainChunk mVMainChunk = MVImporter.LoadVOX(path, true);
+            var mVMainChunk = MVImporter.LoadVOX(path, true);
             if (mVMainChunk != null)
             {
-                Material material = (this.voxMaterial != null ? this.voxMaterial : MVImporter.DefaultMaterial);
-                if (this.paletteToTex)
+                var material = (voxMaterial != null ? voxMaterial : MVImporter.DefaultMaterial);
+                if (paletteToTex)
                 {
                     material.mainTexture = (mVMainChunk.PaletteToTexture());
                 }
                 if (!asIndividualVoxels)
                 {
-                    if (this.meshOrigin == null)
+                    if (meshOrigin == null)
                     {
-                        MVImporter.CreateVoxelGameObjects(mVMainChunk, base.gameObject.transform, material, this.sizePerVox);
+                        MVImporter.CreateVoxelGameObjects(mVMainChunk, gameObject.transform, material, sizePerVox);
                     }
                     else
                     {
-                        MVImporter.CreateVoxelGameObjects(mVMainChunk, base.gameObject.transform, material, this.sizePerVox, this.meshOrigin.localPosition);
+                        MVImporter.CreateVoxelGameObjects(mVMainChunk, gameObject.transform, material, sizePerVox, meshOrigin.localPosition);
                     }
                 }
-                else if (this.meshOrigin == null)
+                else if (meshOrigin == null)
                 {
-                    MVImporter.CreateIndividualVoxelGameObjects(mVMainChunk, base.gameObject.transform, material, this.sizePerVox);
+                    MVImporter.CreateIndividualVoxelGameObjects(mVMainChunk, gameObject.transform, material, sizePerVox);
                 }
                 else
                 {
-                    MVImporter.CreateIndividualVoxelGameObjects(mVMainChunk, base.gameObject.transform, material, this.sizePerVox, this.meshOrigin.localPosition);
+                    MVImporter.CreateIndividualVoxelGameObjects(mVMainChunk, gameObject.transform, material, sizePerVox, meshOrigin.localPosition);
                 }
-                this.vox = mVMainChunk;
+                vox = mVMainChunk;
                 return;
             }
         }
     }
 
-    private void Start()
+    void Start()
     {
-        if (this.reimportOnStart)
+        if (reimportOnStart)
         {
-            this.LoadVOXFile(this.ed_filePath, this.ed_importAsIndividualVoxels);
+            LoadVOXFile(ed_filePath, ed_importAsIndividualVoxels);
         }
     }
 }

@@ -3,19 +3,18 @@ using UnityEngine;
 
 public class PlatformElement : MonoBehaviour
 {
-    [SerializeField] private GameObject target;
+    [SerializeField] GameObject target;
+    [SerializeField] List<RuntimePlatform> platforms;
 
-    [SerializeField] private List<RuntimePlatform> platforms;
-
-    private void Awake()
+    void Awake()
     {
-        if (this.platforms.Contains(Application.platform))
+        if (platforms.Contains(Application.platform))
         {
-            this.target.SetActive(true);
+            target.SetActive(true);
         }
         else
         {
-            base.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
     }
 }

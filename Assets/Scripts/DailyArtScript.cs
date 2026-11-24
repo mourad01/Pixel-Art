@@ -7,7 +7,7 @@ public class DailyArtScript : MonoBehaviour {
 
     public Text title;
     // Use this for initialization
-    private void Awake()
+    void Awake()
     {
 #if UNITY_IOS
         //fix for iPhone X

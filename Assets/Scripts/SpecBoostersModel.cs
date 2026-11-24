@@ -3,25 +3,22 @@ using System;
 public class SpecBoostersModel
 {
     public Action<SpecBoostersModel> OnStateChanged;
-
     public Action<SpecBoostersModel> OnLassoModeChanged;
-
     public Action<SpecBoostersModel> OnBombModeChanged;
 
-    private bool m_lassoMode;
-
-    private bool m_bombMode;
+    bool m_lassoMode;
+    bool m_bombMode;
 
     public bool LassoMode
     {
         get
         {
-            return this.m_lassoMode;
+            return m_lassoMode;
         }
         set
         {
-            this.m_lassoMode = value;
-            this.OnLassoModeChanged.SafeInvoke(this);
+            m_lassoMode = value;
+            OnLassoModeChanged.SafeInvoke(this);
         }
     }
 
@@ -29,12 +26,12 @@ public class SpecBoostersModel
     {
         get
         {
-            return this.m_bombMode;
+            return m_bombMode;
         }
         set
         {
-            this.m_bombMode = value;
-            this.OnBombModeChanged.SafeInvoke(this);
+            m_bombMode = value;
+            OnBombModeChanged.SafeInvoke(this);
         }
     }
 
@@ -57,13 +54,13 @@ public class SpecBoostersModel
     public void AddLasso()
     {
         AppData.LassoCount++;
-        this.OnStateChanged.SafeInvoke(this);
+        OnStateChanged.SafeInvoke(this);
     }
 
     public void AddBomb()
     {
         AppData.BombCount++;
-        this.OnStateChanged.SafeInvoke(this);
+        OnStateChanged.SafeInvoke(this);
     }
 
     public void SpendLasso()
@@ -73,9 +70,9 @@ public class SpecBoostersModel
 
         if (AppData.LassoCount <= 0)
         {
-            this.LassoMode = false;
+            LassoMode = false;
         }
-        this.OnStateChanged.SafeInvoke(this);
+        OnStateChanged.SafeInvoke(this);
     }
 
     public void SpendBomb()
@@ -86,26 +83,26 @@ public class SpecBoostersModel
         }*/
         if (AppData.BombCount <= 0)
         {
-            this.BombMode = false;
+            BombMode = false;
         }
-        this.OnStateChanged.SafeInvoke(this);
+        OnStateChanged.SafeInvoke(this);
     }
 
     public void ChangeLassoMode(bool forceEnable = false)
     {
-        this.LassoMode = (forceEnable || !this.LassoMode);
-        if (this.LassoMode)
+        LassoMode = (forceEnable || !LassoMode);
+        if (LassoMode)
         {
-            this.BombMode = false;
+            BombMode = false;
         }
     }
 
     public void ChangeBombMode(bool forceEnable = false)
     {
-        this.BombMode = (forceEnable || !this.BombMode);
-        if (this.BombMode)
+        BombMode = (forceEnable || !BombMode);
+        if (BombMode)
         {
-            this.LassoMode = false;
+            LassoMode = false;
         }
     }
 }

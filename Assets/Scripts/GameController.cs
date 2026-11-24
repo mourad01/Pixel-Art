@@ -9,18 +9,13 @@ public class GameController : UnitySingleton<GameController>
     public Action<Color, int> OnCountLeft;
     public Action<Color> OnColorComplete;
     public Action<Color> OnPaintedPixel;
-
     public Action OnComplete;
 
-    private List<VoxCubeItem> _voxCubeItems;
-
-    private List<bool> _voxCubeProgress;
-
-    private CashImage3D _vox;
-
-    private int colorsCounter;
-
-    private List<Color> _colors;
+    List<VoxCubeItem> _voxCubeItems;
+    List<bool> _voxCubeProgress;
+    CashImage3D _vox;
+    int colorsCounter;
+    List<Color> _colors;
 
     public ColorSettings ColorSettings { get; set; }
 
@@ -32,14 +27,14 @@ public class GameController : UnitySingleton<GameController>
     {
         get
         {
-            return this._voxCubeItems;
+            return _voxCubeItems;
         }
         set
         {
-            if (this._voxCubeItems == null)
+            if (_voxCubeItems == null)
             {
-                this._voxCubeItems = new List<VoxCubeItem>();
-                this._voxCubeItems = value;
+                _voxCubeItems = new List<VoxCubeItem>();
+                _voxCubeItems = value;
             }
         }
     }
@@ -48,11 +43,11 @@ public class GameController : UnitySingleton<GameController>
     {
         get
         {
-            return this._voxCubeProgress;
+            return _voxCubeProgress;
         }
         private set
         {
-            this._voxCubeProgress = value;
+            _voxCubeProgress = value;
         }
     }
 
@@ -62,44 +57,44 @@ public class GameController : UnitySingleton<GameController>
 
     public void Initilized(Color[] colorPallete)
     {
-        this.ColorSettings = new ColorSettings(colorPallete);
-        this._colors = this.ColorSettings.GetColorPalleteList();
-        this.OnVoxLoadComplete(this._colors);
+        ColorSettings = new ColorSettings(colorPallete);
+        _colors = ColorSettings.GetColorPalleteList();
+        OnVoxLoadComplete(_colors);
 
         if (DailyGame.IsDailyArt())
         { 
-            DailyGame.UpdateGUI((int)this._vox.CubesCount);
+            DailyGame.UpdateGUI((int)_vox.CubesCount);
         }
     }
 
     public void SetCustomData(CashImage3D vox)
     {
-        this._vox = vox;
+        _vox = vox;
     }
 
     public void SetCurrentIndexCollorPallete(int index)
     {
         Loader3D.CurrentIndex = index;
-        this.SetHighLightColorInCubeItems();
+        SetHighLightColorInCubeItems();
     }
 
     public void ChangeCamDepthPosition(float z)
     {
-        this.SetTransparentColorByOffsetZ(z);
-        this.OnDepthCameraChange(z);
+        SetTransparentColorByOffsetZ(z);
+        OnDepthCameraChange(z);
     }
 
     public void SetCubeItemProgress(VoxCubeItem item)
     {
-        int index = this.VoxCubeItems.IndexOf(item);
-        this._voxCubeProgress[index] = true;
+        int index = VoxCubeItems.IndexOf(item);
+        _voxCubeProgress[index] = true;
     }
     public bool CheckColorLeft(int colorIndex, bool soundEnabled)
     {
         if (OnCountLeft != null)
         {
-            this.OnCountLeft(this._colors[colorIndex - 1], this._vox.ColorsCount[colorIndex]);
-            return this._vox.ColorsCount[colorIndex] > 0;
+            OnCountLeft(_colors[colorIndex - 1], _vox.ColorsCount[colorIndex]);
+            return _vox.ColorsCount[colorIndex] > 0;
         }
         return false;
     }
@@ -107,31 +102,31 @@ public class GameController : UnitySingleton<GameController>
     {
         if (colorIndex > 0)
         {
-            this._vox.ColorsCount[colorIndex] = this._vox.ColorsCount[colorIndex] - 1;
+            _vox.ColorsCount[colorIndex] = _vox.ColorsCount[colorIndex] - 1;
 
             CheckColorLeft(colorIndex, soundEnabled);
             if (soundEnabled)
             {
-                if (colorIndex < this._colors.Count)
-                    OnPaintedPixel(this._colors[colorIndex]);
+                if (colorIndex < _colors.Count)
+                    OnPaintedPixel(_colors[colorIndex]);
                 else
-                    OnPaintedPixel(this._colors[colorIndex - 1]);
+                    OnPaintedPixel(_colors[colorIndex - 1]);
             }
-            if (this._vox.ColorsCount[colorIndex] <= 0)
+            if (_vox.ColorsCount[colorIndex] <= 0)
             {
-                this.OnColorComplete.SafeInvoke(this._colors[colorIndex - 1]);
+                OnColorComplete.SafeInvoke(_colors[colorIndex - 1]);
                 if (soundEnabled)
                     AudioManager.Instance.PlayCompleteColor();
             }
-            this.colorsCounter++;
-            if (this.colorsCounter == this._vox.CubesCount)
+            colorsCounter++;
+            if (colorsCounter == _vox.CubesCount)
             {
                 UnitySingleton<ProgressManager>.instance.SetComplete();
-                this.OnComplete.SafeInvoke();
+                OnComplete.SafeInvoke();
                 AudioManager.Instance.PlayVictory();
                 UnitySingleton<ProgressManager>.instance.SaveWork(delegate (SavedWorkData3D swd)
                 {
-                    AnalyticsManager.Instance.ImageDone(swd.ImageInfo, this.colorsCounter, this._colors.Count);
+                    AnalyticsManager.Instance.ImageDone(swd.ImageInfo, colorsCounter, _colors.Count);
                 });
             }
         }
@@ -139,34 +134,34 @@ public class GameController : UnitySingleton<GameController>
 
     public void UpdateColors()
     {
-        this.SetProgressOnCubes();
+        SetProgressOnCubes();
     } 
 
-    private void SetHighLightColorInCubeItems()
+    void SetHighLightColorInCubeItems()
     {
         if (AppData.BulbMode)
         {
-            foreach (VoxCubeItem voxCubeItem in this.VoxCubeItems)
+            foreach (VoxCubeItem voxCubeItem in VoxCubeItems)
             {
                 voxCubeItem.SetHighLightColorByFaceCube();
             }
         }
     }
 
-    private void SetTransparentColorByOffsetZ(float z)
+    void SetTransparentColorByOffsetZ(float z)
     {
-        if (this.VoxCubeItems != null)
+        if (VoxCubeItems != null)
         {
-            foreach (VoxCubeItem voxCubeItem in this.VoxCubeItems)
+            foreach (VoxCubeItem voxCubeItem in VoxCubeItems)
             {
                 voxCubeItem.SetTransparentColorByOffsetZ(z);
             }
         }
     }
 
-    private void SetProgressOnCubes()
+    void SetProgressOnCubes()
     {
-        SavedWorkData3D savedWorkData3D = UnitySingleton<ProgressManager>.instance.LoadProgressTest();
+        var savedWorkData3D = UnitySingleton<ProgressManager>.instance.LoadProgressTest();
         List<bool> list = null;
         if (savedWorkData3D != null)
         {
@@ -174,29 +169,29 @@ public class GameController : UnitySingleton<GameController>
         }
         if (list != null && list.Count() > 0)
         {
-            this._voxCubeProgress = list;
-            for (int i = 0; i < this._voxCubeProgress.Count(); i++)
+            _voxCubeProgress = list;
+            for (int i = 0; i < _voxCubeProgress.Count(); i++)
             {
-                if (this._voxCubeProgress[i])
+                if (_voxCubeProgress[i])
                 {
-                    UnitySingleton<GameController>.Instance.OnCubeColored(this._voxCubeItems[i].ColorIndex, false);
-                    this._voxCubeItems[i].SetProgressForCube();
+                    UnitySingleton<GameController>.Instance.OnCubeColored(_voxCubeItems[i].ColorIndex, false);
+                    _voxCubeItems[i].SetProgressForCube();
                 }
             }
         }
-        else if (this._voxCubeProgress == null)
+        else if (_voxCubeProgress == null)
         {
-            this._voxCubeProgress = new List<bool>();
-            for (int j = 0; j < this._voxCubeItems.Count(); j++)
+            _voxCubeProgress = new List<bool>();
+            for (int j = 0; j < _voxCubeItems.Count(); j++)
             {
-                this._voxCubeProgress.Add(false);
+                _voxCubeProgress.Add(false);
             }
         }
-        foreach (VoxCubeItem voxCubeItem in this._voxCubeItems)
+        foreach (VoxCubeItem voxCubeItem in _voxCubeItems)
         {
             if (voxCubeItem.ColorIndex == 0)
             {
-                this.SetCubeItemProgress(voxCubeItem);
+                SetCubeItemProgress(voxCubeItem);
             }
         }
         UnitySingleton<ProgressManager>.instance.StartSaveProcess();
@@ -204,16 +199,16 @@ public class GameController : UnitySingleton<GameController>
 
     public void OnVoxLoadComplete(List<Color> list)
     {
-        Action<List<Color>> voxLoadComplete = this.VoxLoadComplete;
+        var voxLoadComplete = VoxLoadComplete;
         if (voxLoadComplete != null)
         {
             voxLoadComplete(list);
         }
     }
 
-    private void OnDepthCameraChange(float z)
+    void OnDepthCameraChange(float z)
     {
-        Action<float> depthCameraChange = this.DepthCameraChange;
+        var depthCameraChange = DepthCameraChange;
         if (depthCameraChange != null)
         {
             depthCameraChange(z);

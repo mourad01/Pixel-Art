@@ -3,22 +3,17 @@ using UnityEngine.UI;
 
 public class LibraryTabButton : MonoBehaviour
 {
-    [SerializeField] private Image m_image;
-
-    [SerializeField] private Sprite m_activeSprite;
-
-    [SerializeField] private Sprite m_nonactiveSprite;
-
-    [SerializeField] private Text m_text;
-
-    [SerializeField] private Color m_activeColor = Color.white;
-
-    [SerializeField] private Color m_nonactiveColor = Color.white;
+    [SerializeField] Image m_image;
+    [SerializeField] Sprite m_activeSprite;
+    [SerializeField] Sprite m_nonactiveSprite;
+    [SerializeField] Text m_text;
+    [SerializeField] Color m_activeColor = Color.white;
+    [SerializeField] Color m_nonactiveColor = Color.white;
 
     public void SetHighlighted(bool value)
     {
-        this.m_image.sprite = ((!value) ? this.m_nonactiveSprite : this.m_activeSprite);
-        this.m_text.color = ((!value) ? this.m_nonactiveColor : this.m_activeColor);
+        m_image.sprite = ((!value) ? m_nonactiveSprite : m_activeSprite);
+        m_text.color = ((!value) ? m_nonactiveColor : m_activeColor);
     }
 }
 

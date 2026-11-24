@@ -8,115 +8,109 @@ using UnityEngine;
 
 public class ProgressManager : UnitySingleton<ProgressManager>
 {
-    private ImageInfo _info;
-
-    private float TimeDelayForSave = 30f;
-
-    private CamShot camShot;
-
-    private bool isStartSaveWork;
-
-    private SavedWorkData3D m_savedWorkData;
-
-    private Action<SavedWorkData3D> saveWaiter;
-
-    private bool completed;
+    ImageInfo _info;
+    float TimeDelayForSave = 30f;
+    CamShot camShot;
+    bool isStartSaveWork;
+    SavedWorkData3D m_savedWorkData;
+    Action<SavedWorkData3D> saveWaiter;
+    bool completed;
 
     public void Init(ImageInfo info, GameObject saveCamera, SavedWorkData3D savedWorkData)
     {
         if (info == null)
         {
-            this._info = new ImageInfo("test");
+            _info = new ImageInfo("test");
         }
         else
         {
-            this._info = info;
+            _info = info;
         }
         if (saveCamera != null)
         {
-            this.camShot = saveCamera.GetComponent<CamShot>();
+            camShot = saveCamera.GetComponent<CamShot>();
         }
         else
         {
             Debug.LogError("Save Camera not found!!!");
         }
-        if (this.camShot == null)
+        if (camShot == null)
         {
             Debug.LogError("CamShot not found!!!");
         }
-        this.m_savedWorkData = savedWorkData;
-        if (this.m_savedWorkData != null)
+        m_savedWorkData = savedWorkData;
+        if (m_savedWorkData != null)
         {
-            this.completed = this.m_savedWorkData.Completed;
+            completed = m_savedWorkData.Completed;
         }
-        this.camShot.ColorPalleteComplete += new Action<byte[]>(this.CamShot_ColorPalleteComplete);
+        camShot.ColorPalleteComplete += new Action<byte[]>(CamShot_ColorPalleteComplete);
     }
 
     public void StartSaveProcess()
     {
-        base.StartCoroutine(this.Process());
+        base.StartCoroutine(Process());
     }
 
     public void StopSaveProcess()
     {
-        base.StopCoroutine(this.Process());
+        base.StopCoroutine(Process());
     }
 
     public SavedWorkData3D LoadProgressTest()
     {
-        return this.m_savedWorkData;
+        return m_savedWorkData;
     }
 
-    private void CamShot_ColorPalleteComplete(byte[] obj)
+    void CamShot_ColorPalleteComplete(byte[] obj)
     {
-        List<bool> voxCubeProgress = UnitySingleton<GameController>.instance.VoxCubeProgress;
+        var voxCubeProgress = UnitySingleton<GameController>.instance.VoxCubeProgress;
         if (voxCubeProgress != null)
         {
-            this.m_savedWorkData = MainManager.Instance.SavedWorksList.Save3D(this._info, obj, this.m_savedWorkData, this.completed, null, voxCubeProgress);
-            this.isStartSaveWork = false;
+            m_savedWorkData = MainManager.Instance.SavedWorksList.Save3D(_info, obj, m_savedWorkData, completed, null, voxCubeProgress);
+            isStartSaveWork = false;
         }
     }
 
     public void SetComplete()
     {
-        this.completed = true;
+        completed = true;
     }
 
     public void SaveWork(Action<SavedWorkData3D> handler)
     {
-        this.saveWaiter = handler;
-        List<bool> voxCubeProgress = UnitySingleton<GameController>.instance.VoxCubeProgress;
+        saveWaiter = handler;
+        var voxCubeProgress = UnitySingleton<GameController>.instance.VoxCubeProgress;
         if (voxCubeProgress != null)
         {
-            this.camShot.ColorPalleteComplete += new Action<byte[]>(this.WaitForScreenshot);
-            this.camShot.TakeHiResShot();
+            camShot.ColorPalleteComplete += new Action<byte[]>(WaitForScreenshot);
+            camShot.TakeHiResShot();
         }
-        handler.SafeInvoke(this.m_savedWorkData);
+        handler.SafeInvoke(m_savedWorkData);
     }
 
-    private void WaitForScreenshot(byte[] bytes)
+    void WaitForScreenshot(byte[] bytes)
     {
-        this.camShot.ColorPalleteComplete -= new Action<byte[]>(this.WaitForScreenshot);
-        List<bool> voxCubeProgress = UnitySingleton<GameController>.instance.VoxCubeProgress;
+        camShot.ColorPalleteComplete -= new Action<byte[]>(WaitForScreenshot);
+        var voxCubeProgress = UnitySingleton<GameController>.instance.VoxCubeProgress;
         if (voxCubeProgress != null)
         {
-            this.m_savedWorkData = MainManager.Instance.SavedWorksList.Save3D(this._info, bytes, this.m_savedWorkData, this.completed, null, voxCubeProgress);
-            this.isStartSaveWork = false;
+            m_savedWorkData = MainManager.Instance.SavedWorksList.Save3D(_info, bytes, m_savedWorkData, completed, null, voxCubeProgress);
+            isStartSaveWork = false;
         }
     }
-    private IEnumerator Process()
+    IEnumerator Process()
     {
         while (true)
         {
-            yield return new WaitForSeconds(this.TimeDelayForSave);
-            if (!this.isStartSaveWork)
+            yield return new WaitForSeconds(TimeDelayForSave);
+            if (!isStartSaveWork)
             {
-                this.isStartSaveWork = true;
-                this.camShot.TakeHiResShot();
+                isStartSaveWork = true;
+                camShot.TakeHiResShot();
             }
             else
             {
-                this.isStartSaveWork = false;
+                isStartSaveWork = false;
             }
         }
     }

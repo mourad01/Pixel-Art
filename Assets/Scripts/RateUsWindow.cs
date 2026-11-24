@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class RateUsWindow : MonoBehaviour
 {
-    private Action m_closeHandler;
+    Action m_closeHandler;
 
     public static bool NeedShow(RateUsReason reason)
     {
@@ -12,8 +12,8 @@ public class RateUsWindow : MonoBehaviour
 
     public void Init(Action closeHandler)
     {
-        this.m_closeHandler = closeHandler;
-        base.gameObject.SetActive(true);
+        m_closeHandler = closeHandler;
+        gameObject.SetActive(true);
         AppData.AddNewRateUsView();
     }
 
@@ -25,9 +25,9 @@ public class RateUsWindow : MonoBehaviour
 
     public void Close()
     {
-        base.gameObject.SetActive(false);
-        this.m_closeHandler.SafeInvoke();
-        this.m_closeHandler = null;
+        gameObject.SetActive(false);
+        m_closeHandler.SafeInvoke();
+        m_closeHandler = null;
     }
 }
 

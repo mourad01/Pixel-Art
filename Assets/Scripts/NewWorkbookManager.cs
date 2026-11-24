@@ -6,25 +6,17 @@ using UnityEngine.SceneManagement;
 
 public class NewWorkbookManager : MonoBehaviour
 {
-    private ImageInfo m_imageInfo;
+    ImageInfo m_imageInfo;
+    ImageOpenType m_imageOpenType;
+    ISavedWorkData m_savedWorkData;
+    Texture2D m_tex;
+    DateTime m_startSession = default(DateTime);
+    bool m_stopInit = true;
 
-    private ImageOpenType m_imageOpenType;
-
-    private ISavedWorkData m_savedWorkData;
-
-    private Texture2D m_tex;
-
-    private DateTime m_startSession = default(DateTime);
-
-    private bool m_stopInit = true;
-
-    [SerializeField] private NumberColoring m_numberColoring;
-
-    [SerializeField] private ColoringVideo m_coloringVideo;
-
-    [SerializeField] private CameraManager m_cameraManager;
-
-    [SerializeField] private GameObject m_videoWaiter;
+    [SerializeField] NumberColoring m_numberColoring;
+    [SerializeField] ColoringVideo m_coloringVideo;
+    [SerializeField] CameraManager m_cameraManager;
+    [SerializeField] GameObject m_videoWaiter;
 
     public static NewWorkbookManager Instance { get;  set; }
 
@@ -32,7 +24,7 @@ public class NewWorkbookManager : MonoBehaviour
     {
         get
         {
-            return this.m_cameraManager;
+            return m_cameraManager;
         }
     }
 
@@ -40,90 +32,89 @@ public class NewWorkbookManager : MonoBehaviour
     {
         get
         {
-            return this.m_numberColoring;
+            return m_numberColoring;
         }
     }
 
-    private void Awake()
+    void Awake()
     {
-        NewWorkbookManager.Instance = this;
+        Instance = this;
         WorkbookModel.Init();
-        CurrentColorModel currentColorModel = WorkbookModel.Instance.CurrentColorModel;
-        currentColorModel.OnStateChanged = (Action<CurrentColorModel, bool>)Delegate.Combine(currentColorModel.OnStateChanged, new Action<CurrentColorModel, bool>(this.OnCurrentColorChangedHandler));
+        WorkbookModel.Instance.CurrentColorModel.OnStateChanged += OnCurrentColorChangedHandler;
         //AdsWrapper.Instance.RequestVideo();
     }
 
-    private void Start()
+    void Start()
     {
-        base.StartCoroutine(this.StopInitAndShowInterCoroutine());
+        base.StartCoroutine(StopInitAndShowInterCoroutine());
     }
 
     public void Init(ImageInfo imageInfo, ImageOpenType imageOpenType, ISavedWorkData savedWorkData)
     {
         Application.targetFrameRate = 30;
-        this.m_imageInfo = imageInfo;
-        this.m_imageOpenType = imageOpenType;
-        this.m_savedWorkData = savedWorkData;
-        base.StartCoroutine(this.InitCoroutine());
+        m_imageInfo = imageInfo;
+        m_imageOpenType = imageOpenType;
+        m_savedWorkData = savedWorkData;
+        base.StartCoroutine(InitCoroutine());
     }
-    private void OnCurrentColorChangedHandler(CurrentColorModel model, bool val)
+    void OnCurrentColorChangedHandler(CurrentColorModel model, bool val)
     {
         Debug.Log("hoyyyyy");
-        this.NumberColoring.SetColor(model.Color);
+        NumberColoring.SetColor(model.Color);
     }
 
     public ISavedWorkData SaveWork(bool force = false)
     {
         Debug.Log("save");
-        if (this.m_savedWorkData != null || SavedWorkData.IsNeedToSave(this.m_numberColoring) || force)
+        if (m_savedWorkData != null || SavedWorkData.IsNeedToSave(m_numberColoring) || force)
         {
-            byte[] res = this.m_numberColoring.GetRes();
+            var res = m_numberColoring.GetRes();
             if (res != null)
             {
-                this.m_savedWorkData = MainManager.Instance.SavedWorksList.Save(this.m_imageInfo, res, this.m_savedWorkData, this.m_numberColoring.Completed);
+                m_savedWorkData = MainManager.Instance.SavedWorksList.Save(m_imageInfo, res, m_savedWorkData, m_numberColoring.Completed);
             }
         }
-        return this.m_savedWorkData;
+        return m_savedWorkData;
     }
 
     public void PlayVideo()
     {
-        this.SaveWork(false);
-        if (this.m_savedWorkData != null)
+        SaveWork(false);
+        if (m_savedWorkData != null)
         {
-            this.m_coloringVideo.Init(this.NumberColoring.GetFullTexture(), this.m_savedWorkData);
+            m_coloringVideo.Init(NumberColoring.GetFullTexture(), m_savedWorkData);
         }
     }
 
     public void Exit()
     {
-        this.SaveWork(false);
+        SaveWork(false);
         //AdsWrapper.Instance.ShowInter("gamescreen_exit");
         MainManager.Instance.StartLibrary(MainMenu.LastPage);
     }
 
-    private void OnApplicationPause(bool pause)
+    void OnApplicationPause(bool pause)
     {
         if (pause)
         {
-            this.SaveWork(false);
+            SaveWork(false);
         }
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         //AdsWrapper.Instance.OnWorkbookUnload();
-        AnalyticsManager.Instance.ColoringSession((DateTime.Now - this.m_startSession).TotalSeconds);
-        if (this.m_savedWorkData != null && this.m_savedWorkData.History2 != null)
+        AnalyticsManager.Instance.ColoringSession((DateTime.Now - m_startSession).TotalSeconds);
+        if (m_savedWorkData != null && m_savedWorkData.History2 != null)
         {
-            this.m_savedWorkData.History2.Close();
+            m_savedWorkData.History2.Close();
         }
     }
-    private IEnumerator InitCoroutine()
+    IEnumerator InitCoroutine()
     {
         while (true)
         { 
-            if (this.m_stopInit)
+            if (m_stopInit)
             {
                 yield return null;
                 continue;
@@ -133,9 +124,9 @@ public class NewWorkbookManager : MonoBehaviour
                 yield return null;
                 continue;
             }*/
-            if (this.m_imageInfo.Url != null)
+            if (m_imageInfo.Url != null)
             {
-                DataManager.Instance.GetImageAsset(this.m_imageInfo, delegate (bool res, Texture2D tex)
+                DataManager.Instance.GetImageAsset(m_imageInfo, delegate (bool res, Texture2D tex)
                 {
                     if ((UnityEngine.Object)tex == (UnityEngine.Object)null)
                     {
@@ -144,14 +135,14 @@ public class NewWorkbookManager : MonoBehaviour
                     }
                     else
                     {
-                        this.m_tex = tex;
-                        this.StartCoroutine(this.LoadImageCoroutine());
+                        m_tex = tex;
+                        StartCoroutine(LoadImageCoroutine());
                     }
                 });
             }
             else
             {
-                DataManager.Instance.GetPhotoAsset(this.m_imageInfo.Id, delegate (bool res, Texture2D tex)
+                DataManager.Instance.GetPhotoAsset(m_imageInfo.Id, delegate (bool res, Texture2D tex)
                 {
                     if ((UnityEngine.Object)tex == (UnityEngine.Object)null)
                     {
@@ -160,8 +151,8 @@ public class NewWorkbookManager : MonoBehaviour
                     }
                     else
                     {
-                        this.m_tex = tex;
-                        this.StartCoroutine(this.LoadImageCoroutine());
+                        m_tex = tex;
+                        StartCoroutine(LoadImageCoroutine());
                     }
                 });
             }
@@ -171,11 +162,11 @@ public class NewWorkbookManager : MonoBehaviour
     }
 
 
-    private IEnumerator StopInitAndShowInterCoroutine()
+    IEnumerator StopInitAndShowInterCoroutine()
     { 
         if (SceneManager.GetActiveScene().name != "2DScene")
         {
-            this.m_stopInit = false;
+            m_stopInit = false;
         }
         else
         {
@@ -187,7 +178,7 @@ public class NewWorkbookManager : MonoBehaviour
 
                 }
             }*/
-            if (this.m_imageInfo != null && (this.m_imageInfo.CustomAccessStatus == AccessStatus.Free  || AppData.UnlockedImages.Contains(this.m_imageInfo.Id)))
+            if (m_imageInfo != null && (m_imageInfo.CustomAccessStatus == AccessStatus.Free  || AppData.UnlockedImages.Contains(m_imageInfo.Id)))
             {
                 if (AppData.TutorialCompleted)
                 {
@@ -196,16 +187,16 @@ public class NewWorkbookManager : MonoBehaviour
                 }
             } 
         }
-        this.m_stopInit = false;
+        m_stopInit = false;
     }
 
 
-    private IEnumerator LoadImageCoroutine()
+    IEnumerator LoadImageCoroutine()
     { 
-        this.m_numberColoring.Init(this.m_imageInfo, this.m_imageOpenType, this.m_tex);
+        m_numberColoring.Init(m_imageInfo, m_imageOpenType, m_tex);
         yield return null;
 
-        this.CameraManager.EnableBackCamera();
+        CameraManager.EnableBackCamera();
         var video = false;
         /*if ((INPluginWrapper.Instance.GetAbTestGroup() == ABTestGroup.None || INPluginWrapper.Instance.GetAbTestGroup() == ABTestGroup.RewardedNo_ContentMedium_Old || INPluginWrapper.Instance.GetAbTestGroup() == ABTestGroup.RewardedNo_ContentMedium_Revealed) && this.m_imageInfo.CustomAccessStatus != 0  && !AppData.UnlockedImages.Contains(this.m_imageInfo.Id))
         {
@@ -245,12 +236,12 @@ public class NewWorkbookManager : MonoBehaviour
 
         var workbook = WindowManager.Instance.OpenWorkbook();
         workbook.RemoveVideoWaiter();
-        if (this.m_savedWorkData != null)
+        if (m_savedWorkData != null)
         {
-            this.m_savedWorkData.Apply(this.m_numberColoring);
+            m_savedWorkData.Apply(m_numberColoring);
         }
-        workbook.Init(this.m_numberColoring.GetColors());
-        this.m_cameraManager.Init((float)this.m_tex.width, (float)this.m_tex.height);
+        workbook.Init(m_numberColoring.GetColors());
+        m_cameraManager.Init((float)m_tex.width, (float)m_tex.height);
 
         while (Time.deltaTime > 0.1f)
         {
@@ -258,25 +249,25 @@ public class NewWorkbookManager : MonoBehaviour
         }
         if (!AppData.TutorialCompleted)
         {
-            TutorialWindow tutorialWindow = WindowManager.Instance.OpenTutorial();
+            var tutorialWindow = WindowManager.Instance.OpenTutorial();
             if (tutorialWindow != null)
             {
                 tutorialWindow.Init("picture", "2D");
             }
         }
-        this.m_startSession = DateTime.Now;
+        m_startSession = DateTime.Now;
         AnalyticsManager.Instance.StartColoringSession();
-        this.StartCoroutine(this.SaveWorkCoroutine());
+        StartCoroutine(SaveWorkCoroutine());
         yield break;
     }
 
 
-    private IEnumerator SaveWorkCoroutine()
+    IEnumerator SaveWorkCoroutine()
     {
         while (true)
         {
             yield return new WaitForSeconds(30f);
-            this.SaveWork(false);
+            SaveWork(false);
         }
     }
 }

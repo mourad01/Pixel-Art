@@ -2,15 +2,14 @@ using UnityEngine;
 
 public class ScreenFormatScale : MonoBehaviour
 {
-    [SerializeField] private float m_9x16Scale = 1f;
+    [SerializeField] float m_9x16Scale = 1f;
+    [SerializeField] float m_3x4Scale = 1f;
 
-    [SerializeField] private float m_3x4Scale = 1f;
-
-    private void Start()
+    void Start()
     {
-        float num = (float)Screen.height / (float)Screen.width;
-        float value2 = Mathf.Lerp(this.m_3x4Scale, this.m_9x16Scale, (num - 1.33f) / 0.449999928f);
-        base.transform.localScale = new Vector3(value2, value2, 1f);
+        float aspect = (float)Screen.height / (float)Screen.width;
+        float value2 = Mathf.Lerp(m_3x4Scale, m_9x16Scale, (aspect - 1.33f) / 0.449999928f);
+        transform.localScale = new Vector3(value2, value2, 1f);
     }
 }
 

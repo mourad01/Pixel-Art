@@ -8,39 +8,27 @@ public class PhotoPreview : MonoBehaviour
 {
     public Action<PhotoInfo, PhotoPreview> OnClick;
 
-    private PhotoInfo m_photoInfo;
+    PhotoInfo m_photoInfo;
+    bool m_loadIcon;
+    bool m_loadedIcon;
+    bool m_materialInited;
 
-    private bool m_loadIcon;
-
-    private bool m_loadedIcon;
-
-    private bool m_materialInited;
-
-    [SerializeField] private RawImage m_image;
-
-    [SerializeField] private RawImage m_filterImage;
-
-    [SerializeField] private Text m_title;
-
-    [SerializeField] private GameObject m_imageWaiter;
-
-    [SerializeField] private GameObject m_completedMark;
-
-    [SerializeField] private GameObject m_plus;
-
-    [SerializeField] private GameObject m_adIcon;
-
-    [SerializeField] private GameObject m_premiumIcon;
-
-    [SerializeField] private Sprite m_enabledPlusSprite;
-
-    [SerializeField] private Sprite m_disabledPlusSprite;
+    [SerializeField] RawImage m_image;
+    [SerializeField] RawImage m_filterImage;
+    [SerializeField] Text m_title;
+    [SerializeField] GameObject m_imageWaiter;
+    [SerializeField] GameObject m_completedMark;
+    [SerializeField] GameObject m_plus;
+    [SerializeField] GameObject m_adIcon;
+    [SerializeField] GameObject m_premiumIcon;
+    [SerializeField] Sprite m_enabledPlusSprite;
+    [SerializeField] Sprite m_disabledPlusSprite;
 
     public bool Inited
     {
         get
         {
-            return this.m_photoInfo != null;
+            return m_photoInfo != null;
         }
     }
 
@@ -48,7 +36,7 @@ public class PhotoPreview : MonoBehaviour
     {
         get
         {
-            return this.m_image.texture != null;
+            return m_image.texture != null;
         }
     }
 
@@ -56,7 +44,7 @@ public class PhotoPreview : MonoBehaviour
     {
         get
         {
-            return (this.m_photoInfo != null) ? this.m_photoInfo.Id : null;
+            return (m_photoInfo != null) ? m_photoInfo.Id : null;
         }
     }
 
@@ -64,14 +52,14 @@ public class PhotoPreview : MonoBehaviour
     {
         get
         {
-            return (Texture2D)this.m_image.texture;
+            return (Texture2D)m_image.texture;
         }
     }
 
-    private void Awake()
+    void Awake()
     {
-        DebugController instance = DebugController.Instance;
-        this.m_filterImage.material = new Material(Shader.Find("Custom/TilingShader"));
+        var debugController = DebugController.Instance;
+        m_filterImage.material = new Material(Shader.Find("Custom/TilingShader"));
         //IAPWrapper instance2 = IAPWrapper.Instance;
         //instance2.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance2.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
         //AdsWrapper instance3 = AdsWrapper.Instance;
@@ -80,91 +68,91 @@ public class PhotoPreview : MonoBehaviour
 
     public void Init(PhotoInfo photoInfo)
     {
-        if (this.m_title != null && photoInfo != null)
+        if (m_title != null && photoInfo != null)
         {
-            this.m_title.text = photoInfo.Id;
+            m_title.text = photoInfo.Id;
         }
-        this.m_photoInfo = photoInfo;
-        this.m_image.texture = null;
-        this.m_loadIcon = false;
-        this.m_loadedIcon = false;
-        if (!this.m_materialInited)
+        m_photoInfo = photoInfo;
+        m_image.texture = null;
+        m_loadIcon = false;
+        m_loadedIcon = false;
+        if (!m_materialInited)
         {
-            this.m_image.material = new Material(Shader.Find("Custom/GreyTextureShader"));
-            this.m_materialInited = true;
+            m_image.material = new Material(Shader.Find("Custom/GreyTextureShader"));
+            m_materialInited = true;
         }
-        this.m_image.material.SetTexture("_ResTex", null);
-        this.Reinit();
-        this.m_completedMark.SetActive(false);
-        this.OnVideoAvailabilityChangedHandler();
+        m_image.material.SetTexture("_ResTex", null);
+        Reinit();
+        m_completedMark.SetActive(false);
+        OnVideoAvailabilityChangedHandler();
     }
 
     public void LoadIcon()
     {
-        if (string.IsNullOrEmpty(this.m_photoInfo.Id))
+        if (string.IsNullOrEmpty(m_photoInfo.Id))
         {
-            this.m_image.gameObject.SetActive(false);
-            this.m_plus.SetActive(true);
-            this.m_adIcon.SetActive(false);
-            this.m_premiumIcon.SetActive(false);
+            m_image.gameObject.SetActive(false);
+            m_plus.SetActive(true);
+            m_adIcon.SetActive(false);
+            m_premiumIcon.SetActive(false);
         }
         else
         {
-            this.m_plus.SetActive(false);
-            if (!this.m_loadedIcon)
+            m_plus.SetActive(false);
+            if (!m_loadedIcon)
             {
-                if (!this.m_loadIcon)
+                if (!m_loadIcon)
                 {
-                    this.m_loadIcon = true;
-                    this.m_imageWaiter.SetActive(true);
-                    DataManager.Instance.GetPhotoAsset(this.m_photoInfo.Id, delegate (bool res, Texture2D tex)
+                    m_loadIcon = true;
+                    m_imageWaiter.SetActive(true);
+                    DataManager.Instance.GetPhotoAsset(m_photoInfo.Id, delegate (bool res, Texture2D tex)
                     {
                         if (res)
                         {
                             try
                             {
-                                this.m_loadedIcon = true;
-                                this.m_image.texture = tex;
+                                m_loadedIcon = true;
+                                m_image.texture = tex;
                                 if (tex.width > tex.height)
                                 {
-                                    this.m_image.transform.localScale = new Vector3(1f, (float)tex.height / (float)tex.width, 1f);
+                                    m_image.transform.localScale = new Vector3(1f, (float)tex.height / (float)tex.width, 1f);
                                 }
                                 else
                                 {
-                                    this.m_image.transform.localScale = new Vector3((float)tex.width / (float)tex.height, 1f, 1f);
+                                    m_image.transform.localScale = new Vector3((float)tex.width / (float)tex.height, 1f, 1f);
                                 }
-                                this.m_imageWaiter.SetActive(false);
-                                this.m_image.gameObject.SetActive(true);
-                                string text = MainManager.Instance.SavedWorksList.LastSaveOfImageId(this.m_photoInfo.Id);
+                                m_imageWaiter.SetActive(false);
+                                m_image.gameObject.SetActive(true);
+                                string text = MainManager.Instance.SavedWorksList.LastSaveOfImageId(m_photoInfo.Id);
                                 if (text != null)
                                 {
-                                    Texture2D texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+                                    var texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
                                     texture2D.filterMode = FilterMode.Point;
-                                    ISavedWorkData savedWorkData = MainManager.Instance.SavedWorksList.LoadById(text);
+                                    var savedWorkData = MainManager.Instance.SavedWorksList.LoadById(text);
                                     texture2D.LoadImage(savedWorkData.Preview);
-                                    this.m_image.material.SetTexture("_ResTex", texture2D);
-                                    this.m_completedMark.SetActive(savedWorkData.Completed);
-                                    Texture2D filter = MainManager.Instance.FilterManager.GetFilter(savedWorkData.FilterId);
+                                    m_image.material.SetTexture("_ResTex", texture2D);
+                                    m_completedMark.SetActive(savedWorkData.Completed);
+                                    var filter = MainManager.Instance.FilterManager.GetFilter(savedWorkData.FilterId);
                                     if (filter != null)
                                     {
-                                        this.m_filterImage.material.mainTextureScale = new Vector2((float)texture2D.width, (float)texture2D.height);
-                                        this.m_filterImage.texture = filter;
-                                        this.m_filterImage.enabled = true;
-                                        this.m_filterImage.transform.localScale = this.m_image.transform.localScale;
+                                        m_filterImage.material.mainTextureScale = new Vector2((float)texture2D.width, (float)texture2D.height);
+                                        m_filterImage.texture = filter;
+                                        m_filterImage.enabled = true;
+                                        m_filterImage.transform.localScale = m_image.transform.localScale;
 
-                                        this.m_filterImage.material.SetFloat("RepeatX", texture2D.width);
-                                        this.m_filterImage.material.SetFloat("RepeatY", texture2D.height);
+                                        m_filterImage.material.SetFloat("RepeatX", texture2D.width);
+                                        m_filterImage.material.SetFloat("RepeatY", texture2D.height);
                                     }
                                     else
                                     {
-                                        this.m_filterImage.enabled = false;
+                                        m_filterImage.enabled = false;
                                     }
                                 }
                                 else
                                 {
-                                    this.m_filterImage.enabled = false;
-                                    this.m_image.uvRect = new Rect(0f, 0f, 1f, 1f);
-                                    this.m_filterImage.uvRect = this.m_image.uvRect;
+                                    m_filterImage.enabled = false;
+                                    m_image.uvRect = new Rect(0f, 0f, 1f, 1f);
+                                    m_filterImage.uvRect = m_image.uvRect;
                                 }
                             }
                             catch (Exception ex)
@@ -172,21 +160,21 @@ public class PhotoPreview : MonoBehaviour
                                 Debug.Log(ex.Message);
                             }
                         }
-                        this.m_loadIcon = false;
+                        m_loadIcon = false;
                     });
                 }
             }
             else
             {
-                this.m_image.gameObject.SetActive(true);
+                m_image.gameObject.SetActive(true);
             }
         }
     }
 
     public void UnloadIcon()
     {
-        this.m_loadIcon = false;
-        this.m_image.gameObject.SetActive(false);
+        m_loadIcon = false;
+        m_image.gameObject.SetActive(false);
     }
 
     public void Reinit()
@@ -195,22 +183,22 @@ public class PhotoPreview : MonoBehaviour
 
     public void Click()
     {
-        this.OnClick.SafeInvoke(this.m_photoInfo, this);
+        OnClick.SafeInvoke(m_photoInfo, this);
         AudioManager.Instance.PlayClick();
     }
 
-    private void OnPurchaseHandler(bool res, SubscriptionType subscrType)
+    void OnPurchaseHandler(bool res, SubscriptionType subscrType)
     {
-        if (string.IsNullOrEmpty(this.m_photoInfo.Id))
+        if (string.IsNullOrEmpty(m_photoInfo.Id))
         {
-            this.m_adIcon.SetActive(false);
-            this.m_premiumIcon.SetActive(false);
+            m_adIcon.SetActive(false);
+            m_premiumIcon.SetActive(false);
         }
     }
 
-    private void OnVideoAvailabilityChangedHandler()
+    void OnVideoAvailabilityChangedHandler()
     {
-        if (this.m_plus.activeSelf)
+        if (m_plus.activeSelf)
         {
             if ( AppData.FreePhotos == 0)
             {
@@ -223,15 +211,15 @@ public class PhotoPreview : MonoBehaviour
             }
             else
             {
-                ((Component)this.m_plus.transform.Find("plus")).GetComponent<Image>().sprite = this.m_enabledPlusSprite;
-                this.m_adIcon.SetActive(false);
+                ((Component)m_plus.transform.Find("plus")).GetComponent<Image>().sprite = m_enabledPlusSprite;
+                m_adIcon.SetActive(false);
             }
         }
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
-        DebugController instance = DebugController.Instance;
+        var debugController = DebugController.Instance;
         //IAPWrapper instance2 = IAPWrapper.Instance;
         //instance2.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance2.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
         //AdsWrapper instance3 = AdsWrapper.Instance;

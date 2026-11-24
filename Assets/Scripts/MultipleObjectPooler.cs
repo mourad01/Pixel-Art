@@ -6,84 +6,81 @@ using UnityEngine;
 public class MultipleObjectPooler : ObjectPooler
 {
     public GameObject[] GameObjectsToPool;
-
     public int[] PoolSize;
-
     public bool PoolCanExpand = true;
 
     protected GameObject _waitingPool;
-
     protected List<GameObject> _pooledGameObjects;
 
     protected override void FillObjectPool()
     {
-        this._waitingPool = new GameObject("[MultipleObjectPooler] " + base.name);
-        this._pooledGameObjects = new List<GameObject>();
-        int num = 0;
-        GameObject[] gameObjectsToPool = this.GameObjectsToPool;
+        _waitingPool = new GameObject("[MultipleObjectPooler] " + name);
+        _pooledGameObjects = new List<GameObject>();
+        int poolIndex = 0;
+        var gameObjectsToPool = GameObjectsToPool;
         foreach (GameObject typeOfObject in gameObjectsToPool)
         {
-            if (num > this.PoolSize.Length)
+            if (poolIndex > PoolSize.Length)
             {
                 break;
             }
-            for (int j = 0; j < this.PoolSize[num]; j++)
+            for (int j = 0; j < PoolSize[poolIndex]; j++)
             {
-                this.AddOneObjectToThePool(typeOfObject);
+                AddOneObjectToThePool(typeOfObject);
             }
-            num++;
+            poolIndex++;
         }
     }
 
     protected virtual GameObject AddOneObjectToThePool(GameObject typeOfObject)
     {
-        GameObject gameObject = Object.Instantiate(typeOfObject);
-        gameObject.gameObject.SetActive(false);
-        gameObject.transform.parent = this._waitingPool.transform;
-        gameObject.name = typeOfObject.name + "-" + this._pooledGameObjects.Count;
-        this._pooledGameObjects.Add(gameObject);
-        return gameObject;
+        var instance = Object.Instantiate(typeOfObject);
+        instance.gameObject.SetActive(false);
+        instance.transform.parent = _waitingPool.transform;
+        instance.name = typeOfObject.name + "-" + _pooledGameObjects.Count;
+        _pooledGameObjects.Add(instance);
+        return instance;
     }
 
     public override GameObject GetPooledGameObject()
     {
-        int index = Random.Range(0, this._pooledGameObjects.Count);
-        int num = 0;
-        while (this._pooledGameObjects[index].gameObject.activeInHierarchy && num < this._pooledGameObjects.Count)
+        int index = Random.Range(0, _pooledGameObjects.Count);
+        int tries = 0;
+        while (_pooledGameObjects[index].gameObject.activeInHierarchy && tries < _pooledGameObjects.Count)
         {
-            index = Random.Range(0, this._pooledGameObjects.Count);
-            num++;
+            index = Random.Range(0, _pooledGameObjects.Count);
+            tries++;
         }
-        if (this._pooledGameObjects[index].gameObject.activeInHierarchy)
+        if (_pooledGameObjects[index].gameObject.activeInHierarchy)
         {
-            if (this.PoolCanExpand)
+            if (PoolCanExpand)
             {
-                index = Random.Range(0, this.GameObjectsToPool.Length);
-                return this.AddOneObjectToThePool(this.GameObjectsToPool[index]);
+                index = Random.Range(0, GameObjectsToPool.Length);
+                return AddOneObjectToThePool(GameObjectsToPool[index]);
             }
             return null;
         }
-        return this._pooledGameObjects[index];
+        return _pooledGameObjects[index];
     }
 
     public virtual GameObject GetPooledGameObjectOfType(string type)
     {
         GameObject gameObject = null;
-        for (int i = 0; i < this._pooledGameObjects.Count; i++)
+        for (int i = 0; i < _pooledGameObjects.Count; i++)
         {
-            if (this._pooledGameObjects[i].name.Contains(type))
+            if (_pooledGameObjects[i].name.Contains(type))
             {
-                if (!this._pooledGameObjects[i].gameObject.activeInHierarchy)
+                if (!_pooledGameObjects[i].gameObject.activeInHierarchy)
                 {
-                    return this._pooledGameObjects[i];
+                    return _pooledGameObjects[i];
                 }
-                gameObject = this._pooledGameObjects[i];
+                gameObject = _pooledGameObjects[i];
             }
         }
-        if (this.PoolCanExpand && gameObject != null)
+        if (PoolCanExpand && gameObject != null)
         {
-            GameObject pooledInstance = Object.Instantiate(gameObject);
-            this._pooledGameObjects.Add(pooledInstance);
+            var pooledInstance = Object.Instantiate(gameObject);
+            _pooledGameObjects.Add(pooledInstance);
             return pooledInstance;
         }
         return null;

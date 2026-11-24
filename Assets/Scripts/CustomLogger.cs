@@ -1,16 +1,16 @@
 public class CustomLogger
 {
-    private static CustomLogger instance;
+    static CustomLogger instance;
 
     public static CustomLogger Instance
     {
         get
         {
-            if (CustomLogger.instance == null)
+            if (instance == null)
             {
-                CustomLogger.instance = new CustomLogger();
+                instance = new CustomLogger();
             }
-            return CustomLogger.instance;
+            return instance;
         }
     }
 

@@ -5,27 +5,24 @@ using UnityEngine;
 public class BrushTypeSwitcher : MonoBehaviour
 {
     [SerializeField] RectTransform m_content;
-
     [SerializeField] GameObject m_singualarImage;
-
     [SerializeField] GameObject m_pluralImage;
 
-    private void Start()
+    void Start()
     {
-        ColorizationModeModel colorizationModeModel = WorkbookModel.Instance.ColorizationModeModel;
-        colorizationModeModel.OnSpaceTypeChanged = (Action<ColorizationModeModel>)Delegate.Combine(colorizationModeModel.OnSpaceTypeChanged, new Action<ColorizationModeModel>(OnStateChangedHandler));
+        WorkbookModel.Instance.ColorizationModeModel.OnSpaceTypeChanged += OnStateChangedHandler;
     }
 
-    private void OnStateChangedHandler(ColorizationModeModel model)
+    void OnStateChangedHandler(ColorizationModeModel model)
     {
         base.StopAllCoroutines();
         base.StartCoroutine(ChangeSpriteCoroutine(model));
     }
 
-    private IEnumerator ChangeSpriteCoroutine(ColorizationModeModel model)
+    IEnumerator ChangeSpriteCoroutine(ColorizationModeModel model)
     {
         Vector2 openedPos = Vector2.zero;
-        Vector2 sizeDelta = ((RectTransform)base.transform).sizeDelta;
+        Vector2 sizeDelta = ((RectTransform)transform).sizeDelta;
         Vector2 closedPos = new Vector2(0f, sizeDelta.y);
         float time = 0.1f;
         Vector2 speed = closedPos / time;
@@ -58,11 +55,11 @@ public class BrushTypeSwitcher : MonoBehaviour
                 m_content.anchoredPosition = openedPos;
                 yield break;
             }
-            RectTransform content = m_content;
+            var content = m_content;
             content.anchoredPosition += delta;
             yield return null;
         }
-        RectTransform movingContent = m_content;
+        var movingContent = m_content;
         movingContent.anchoredPosition += delta;
         yield return null;
     }

@@ -7,51 +7,47 @@ using UnityEngine.EventSystems;
 
 public class TouchManager : MonoBehaviour
 {
-    private RaycastHit hit;
+    RaycastHit hit;
+    Camera cam;
+    Vector3 startPosition;
+    bool isClick;
+    string nameHint;
 
-    private Camera cam;
-
-    private Vector3 startPosition;
-
-    private bool isClick;
-
-    private string nameHint;
-
-    private void Awake()
+    void Awake()
     {
-        this.cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+        cam = GameObject.Find("Main Camera").GetComponent<Camera>();
     }
 
-    private void Update1()
+    void Update1()
     {
-        if (!Physics.Raycast(this.cam.ScreenPointToRay(Input.mousePosition), out this.hit))
+        if (!Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out hit))
         {
             return;
         }
-        if (Input.GetMouseButtonDown(0) && !this.isClick)
+        if (Input.GetMouseButtonDown(0) && !isClick)
         {
-            this.isClick = true;
-            this.startPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            isClick = true;
+            startPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         }
 
         bool hasMouseUp = true;
         if (Input.GetMouseButtonUp(0))
         {
             hasMouseUp = false;
-            this.isClick = false;
+            isClick = false;
             Vector3 b = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            if (!(Math.Abs(Vector3.Distance(this.startPosition, b)) > 5f))
+            if (!(Math.Abs(Vector3.Distance(startPosition, b)) > 5f))
             {
                 if (EventSystem.current.IsPointerOverGameObject())
                 {
                     Debug.Log("Clicked on the UI");
                 }
-                else if (this.hit.collider.tag == VoxConstants.Tag)
+                else if (hit.collider.tag == VoxConstants.Tag)
                 {
-                    VoxCubeItem component = ((Component)this.hit.transform).GetComponent<VoxCubeItem>();
-                    if (component != null)
+                    var voxCubeItem = ((Component)hit.transform).GetComponent<VoxCubeItem>();
+                    if (voxCubeItem != null)
                     {
-                        component.TochCubeItem();
+                        voxCubeItem.TochCubeItem();
                     }
                 }
                 hasMouseUp = true;
@@ -62,15 +58,15 @@ public class TouchManager : MonoBehaviour
         {
             if (UnitySingleton<GameController>.Instance.IsLongClick)
             {
-                Vector3 vector = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 if (EventSystem.current.IsPointerOverGameObject())
                 {
                     Debug.Log("Clicked on the UI");
                 }
-                else if (this.hit.collider.tag == VoxConstants.Tag && !this.hit.collider.name.Equals(this.nameHint))
+                else if (hit.collider.tag == VoxConstants.Tag && !hit.collider.name.Equals(nameHint))
                 {
-                    this.nameHint = this.hit.collider.name;
-                    VoxCubeItem touchedCube = ((Component)this.hit.transform).GetComponent<VoxCubeItem>();
+                    nameHint = hit.collider.name;
+                    var touchedCube = ((Component)hit.transform).GetComponent<VoxCubeItem>();
                     if (touchedCube != null)
                     {
                         touchedCube.TochCubeItem();
@@ -82,22 +78,22 @@ public class TouchManager : MonoBehaviour
 
     public void CheckCube(Vector2 touchPos, bool isVibro = true)
     {
-        if (Physics.Raycast(this.cam.ScreenPointToRay(touchPos), out this.hit) && this.hit.collider.tag == VoxConstants.Tag)
+        if (Physics.Raycast(cam.ScreenPointToRay(touchPos), out hit) && hit.collider.tag == VoxConstants.Tag)
         {
-            VoxCubeItem component = ((Component)this.hit.transform).GetComponent<VoxCubeItem>();
-            if (component != null)
+            var voxCubeItem = ((Component)hit.transform).GetComponent<VoxCubeItem>();
+            if (voxCubeItem != null)
             {
-                int num = component.TochCubeItem();
-                if (num >= 0)
+                int result = voxCubeItem.TochCubeItem();
+                if (result >= 0)
                 {
-                    if (num > 0)
+                    if (result > 0)
                     {
-                        UnitySingleton<GameController>.Instance.OnCubeColored(component.ColorIndex);
-                        UnitySingleton<GameController>.Instance.SetCubeItemProgress(component);
+                        UnitySingleton<GameController>.Instance.OnCubeColored(voxCubeItem.ColorIndex);
+                        UnitySingleton<GameController>.Instance.SetCubeItemProgress(voxCubeItem);
                     }
                     if (isVibro)
                     {
-                        if (num > 0)
+                        if (result > 0)
                         {
                             VibroWrapper.PlayVibroRight();
                         }

@@ -14,15 +14,15 @@ public class SerializableRect
 
     public SerializableRect(Rect rect)
     {
-        this.X = rect.x;
-        this.Y = rect.y;
-        this.Width = rect.width;
-        this.Height = rect.height;
+        X = rect.x;
+        Y = rect.y;
+        Width = rect.width;
+        Height = rect.height;
     }
 
     public Rect ToRect()
     {
-        return new Rect(this.X, this.Y, this.Width, this.Height);
+        return new Rect(X, Y, Width, Height);
     }
 }
 

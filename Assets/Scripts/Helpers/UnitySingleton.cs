@@ -12,7 +12,7 @@ using UnityEngine;
 public abstract class UnitySingleton<T> : MonoBehaviour where T : MonoBehaviour
 {
 
-    private static T _instance = null;
+    static T _instance = null;
 
     /// <summary>
     /// gets the instance of this Singleton
@@ -33,7 +33,7 @@ public abstract class UnitySingleton<T> : MonoBehaviour where T : MonoBehaviour
 
                     string goName = typeof(T).ToString();
 
-                    GameObject go = GameObject.Find(goName);
+                    var go = GameObject.Find(goName);
                     if (go == null)
                     {
                         go = new GameObject();
@@ -78,13 +78,13 @@ public abstract class UnitySingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         if (parentGOName != null)
         {
-            GameObject parentGO = GameObject.Find(parentGOName);
+            var parentGO = GameObject.Find(parentGOName);
             if (parentGO == null)
             {
                 parentGO = new GameObject();
                 parentGO.name = parentGOName;
             }
-            this.transform.parent = parentGO.transform;
+            transform.parent = parentGO.transform;
         }
     }
 }

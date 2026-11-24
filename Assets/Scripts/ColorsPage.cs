@@ -10,100 +10,97 @@ public class ColorsPage : MonoBehaviour
 {
     public Action<ColorImage, SpecialColorPosition> OnColorClick;
 
-    private int m_rowWidth = -1;
+    int m_rowWidth = -1;
+    int m_pageIndex = -1;
 
-    private int m_pageIndex = -1;
+    [SerializeField] ColorImage m_colorPrefab;
 
-    [SerializeField] private ColorImage m_colorPrefab;
+    List<ColorImage> m_colorImages;
 
-    private List<ColorImage> m_colorImages;
-
-    [SerializeField] private RectTransform m_firstRow;
-
-    [SerializeField] private RectTransform m_secondRow;
+    [SerializeField] RectTransform m_firstRow;
+    [SerializeField] RectTransform m_secondRow;
 
     public void Init(List<Color> colors, int startIndex, int rowWidth, float colorSize, int pageIndex)
     {
-        this.m_colorImages = new List<ColorImage>();
-        this.m_rowWidth = rowWidth;
-        this.m_pageIndex = pageIndex;
-        bool flag = false;
+        m_colorImages = new List<ColorImage>();
+        m_rowWidth = rowWidth;
+        m_pageIndex = pageIndex;
+        bool hasSecondRow = false;
         for (int i = 0; i < colors.Count; i++)
         {
-            ColorImage colorImage = UnityObject.Instantiate(this.m_colorPrefab);
-            this.m_colorImages.Add(colorImage);
+            var colorImage = UnityObject.Instantiate(m_colorPrefab);
+            m_colorImages.Add(colorImage);
             colorImage.Init(colors[i], startIndex + i + 1);
-            ColorImage colorImage2 = colorImage;
-            colorImage2.OnClick = (Action<ColorImage>)Delegate.Combine(colorImage2.OnClick, new Action<ColorImage>(this.OnColorClickedHandler));
+            colorImage.OnClick += OnColorClickedHandler;
             if (i < rowWidth)
             {
-                colorImage.transform.SetParent(this.m_firstRow);
+                colorImage.transform.SetParent(m_firstRow);
             }
             else
             {
-                colorImage.transform.SetParent(this.m_secondRow);
-                flag = true;
+                colorImage.transform.SetParent(m_secondRow);
+                hasSecondRow = true;
             }
             colorImage.transform.localScale = Vector3.one;
             ((RectTransform)colorImage.transform).sizeDelta = new Vector2(colorSize, colorSize);
             ((RectTransform)colorImage.transform).anchoredPosition = new Vector2((float)(i % rowWidth) * colorSize, 0f);
             colorImage.gameObject.SetActive(true);
         }
-        ((RectTransform)base.transform).sizeDelta = new Vector2((float)rowWidth * colorSize, colorSize * (float)((!flag) ? 1 : 2));
-        ((RectTransform)this.m_firstRow.transform).sizeDelta = new Vector2((float)rowWidth * colorSize, colorSize);
-        ((RectTransform)this.m_secondRow.transform).sizeDelta = new Vector2((float)rowWidth * colorSize, (!flag) ? 0f : colorSize);
+        ((RectTransform)transform).sizeDelta = new Vector2((float)rowWidth * colorSize, colorSize * (float)((!hasSecondRow) ? 1 : 2));
+        ((RectTransform)m_firstRow.transform).sizeDelta = new Vector2((float)rowWidth * colorSize, colorSize);
+        ((RectTransform)m_secondRow.transform).sizeDelta = new Vector2((float)rowWidth * colorSize, (!hasSecondRow) ? 0f : colorSize);
     }
 
     public void SelectFirstColor()
     {
-        if (this.m_colorImages.Count <= this.m_rowWidth)
+        if (m_colorImages.Count <= m_rowWidth)
         {
-            this.OnColorClick(this.m_colorImages[0], SpecialColorPosition.BottomLeft);
+            OnColorClick(m_colorImages[0], SpecialColorPosition.BottomLeft);
         }
         else
         {
-            this.OnColorClick(this.m_colorImages[0], SpecialColorPosition.None);
+            OnColorClick(m_colorImages[0], SpecialColorPosition.None);
         }
     }
 
     public void DisableColor(Color color)
     {
-        ColorImage colorImage = this.m_colorImages.FirstOrDefault((ColorImage a) => a.Color == color);
+        var colorImage = m_colorImages.FirstOrDefault((ColorImage a) => a.Color == color);
         if (colorImage != null)
         {
             colorImage.Disable();
         }
     }
 
-    private void OnColorClickedHandler(ColorImage colorImage)
+    void OnColorClickedHandler(ColorImage colorImage)
     {
-        int num = this.m_colorImages.IndexOf(colorImage);
-        if (this.m_colorImages.Count <= this.m_rowWidth)
+        int index = m_colorImages.IndexOf(colorImage);
+        if (m_colorImages.Count <= m_rowWidth)
         {
-            if (num == 0 && this.m_pageIndex == 0)
+            if (index == 0 && m_pageIndex == 0)
             {
-                this.OnColorClick(colorImage, SpecialColorPosition.BottomLeft);
+                OnColorClick(colorImage, SpecialColorPosition.BottomLeft);
             }
-            else if (num == this.m_rowWidth - 1 && this.m_pageIndex == 0)
+            else if (index == m_rowWidth - 1 && m_pageIndex == 0)
             {
-                this.OnColorClick(colorImage, SpecialColorPosition.BottomRight);
+                OnColorClick(colorImage, SpecialColorPosition.BottomRight);
             }
             else
             {
-                this.OnColorClick(colorImage, SpecialColorPosition.None);
+                OnColorClick(colorImage, SpecialColorPosition.None);
             }
         }
-        else if (num == this.m_rowWidth)
+        else if (index == m_rowWidth)
         {
-            this.OnColorClick(colorImage, SpecialColorPosition.BottomLeft);
+            OnColorClick(colorImage, SpecialColorPosition.BottomLeft);
         }
-        else if (num == 2 * this.m_rowWidth - 1)
+        else if (index == 2 * m_rowWidth - 1)
         {
-            this.OnColorClick(colorImage, SpecialColorPosition.BottomRight);
+            OnColorClick(colorImage, SpecialColorPosition.BottomRight);
         }
         else
         {
-            this.OnColorClick(colorImage, SpecialColorPosition.None);
+            OnColorClick(colorImage, SpecialColorPosition.None);
         }
     }
 }

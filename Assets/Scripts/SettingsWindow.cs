@@ -8,27 +8,18 @@ using UnityEngine.UI;
 
 public class SettingsWindow : BaseWindow
 {
-    private bool restoredAnything;
+    bool restoredAnything;
 
-    [SerializeField] private Popup m_popup;
-
-    [SerializeField] private GameObject m_vibroRightPart;
-
-    [SerializeField] private GameObject m_vibroWrongPart;
-
-    [SerializeField] private Switcher m_vibroRightSwitcher;
-
-    [SerializeField] private Switcher m_vibroWrongSwitcher;
-
-    [SerializeField] private Switcher m_soundsSwitcher;
-
-    [SerializeField] private Switcher m_highlightCellsSwitcher;
-
-    [SerializeField] private Switcher m_loupeSwitcher;
-
-    [SerializeField] private GameObject m_removeAdsButton;
-
-    [SerializeField] private Text m_groupText;
+    [SerializeField] Popup m_popup;
+    [SerializeField] GameObject m_vibroRightPart;
+    [SerializeField] GameObject m_vibroWrongPart;
+    [SerializeField] Switcher m_vibroRightSwitcher;
+    [SerializeField] Switcher m_vibroWrongSwitcher;
+    [SerializeField] Switcher m_soundsSwitcher;
+    [SerializeField] Switcher m_highlightCellsSwitcher;
+    [SerializeField] Switcher m_loupeSwitcher;
+    [SerializeField] GameObject m_removeAdsButton;
+    [SerializeField] Text m_groupText;
 
     protected override string WindowName
     {
@@ -38,42 +29,42 @@ public class SettingsWindow : BaseWindow
         }
     }
 
-    private void OnGUI()
+    void OnGUI()
     {
     }
 
-    private void Awake()
+    void Awake()
     {
-        this.m_vibroRightSwitcher.UpdateState(AppData.VibroRightEnabled, true);
-        this.m_vibroWrongSwitcher.UpdateState(AppData.VibroWrongEnabled, true);
-        this.m_soundsSwitcher.UpdateState(AppData.SoundsEnabled, true);
-        this.m_highlightCellsSwitcher.UpdateState(AppData.BulbMode, true);
-        this.m_loupeSwitcher.UpdateState(AppData.LoupeEnabled, true);
-        this.m_vibroRightPart.SetActive(VibroWrapper.IsVibroAvailable());
-        this.m_vibroWrongPart.SetActive(VibroWrapper.IsVibroAvailable());
+        m_vibroRightSwitcher.UpdateState(AppData.VibroRightEnabled, true);
+        m_vibroWrongSwitcher.UpdateState(AppData.VibroWrongEnabled, true);
+        m_soundsSwitcher.UpdateState(AppData.SoundsEnabled, true);
+        m_highlightCellsSwitcher.UpdateState(AppData.BulbMode, true);
+        m_loupeSwitcher.UpdateState(AppData.LoupeEnabled, true);
+        m_vibroRightPart.SetActive(VibroWrapper.IsVibroAvailable());
+        m_vibroWrongPart.SetActive(VibroWrapper.IsVibroAvailable());
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandlerRemoveAds));
-        this.OnPurchaseHandlerRemoveAds(false, SubscriptionType.remove_ads);
+        OnPurchaseHandlerRemoveAds(false, SubscriptionType.remove_ads);
     }
 
     public void VibroRightButtonClick()
     {
         AppData.VibroRightEnabled = !AppData.VibroRightEnabled;
-        this.m_vibroRightSwitcher.UpdateState(AppData.VibroRightEnabled, false);
+        m_vibroRightSwitcher.UpdateState(AppData.VibroRightEnabled, false);
         AudioManager.Instance.PlayClick();
     }
 
     public void VibroWrongButtonClick()
     {
         AppData.VibroWrongEnabled = !AppData.VibroWrongEnabled;
-        this.m_vibroWrongSwitcher.UpdateState(AppData.VibroWrongEnabled, false);
+        m_vibroWrongSwitcher.UpdateState(AppData.VibroWrongEnabled, false);
         AudioManager.Instance.PlayClick();
     }
 
     public void SoundButtonClick()
     {
         AppData.SoundsEnabled = !AppData.SoundsEnabled;
-        this.m_soundsSwitcher.UpdateState(AppData.SoundsEnabled, false);
+        m_soundsSwitcher.UpdateState(AppData.SoundsEnabled, false);
         AudioManager.Instance.PlayClick();
         //INPluginWrapper.Instance.UpdateSoundState();
 
@@ -90,27 +81,27 @@ public class SettingsWindow : BaseWindow
     public void HighlightCellsClick()
     {
         AppData.BulbMode = !AppData.BulbMode;
-        this.m_highlightCellsSwitcher.UpdateState(AppData.BulbMode, false);
+        m_highlightCellsSwitcher.UpdateState(AppData.BulbMode, false);
         AudioManager.Instance.PlayClick();
     }
 
     public void LoupeClick()
     {
         AppData.LoupeEnabled = !AppData.LoupeEnabled;
-        this.m_loupeSwitcher.UpdateState(AppData.LoupeEnabled, false);
+        m_loupeSwitcher.UpdateState(AppData.LoupeEnabled, false);
         AudioManager.Instance.PlayClick();
     }
 
     public void TutorialButtonClick()
     {
-        TutorialWindow tutorialWindow = WindowManager.Instance.OpenTutorial();
+        var tutorialWindow = WindowManager.Instance.OpenTutorial();
         tutorialWindow.Init("settings", "2D");
         AudioManager.Instance.PlayClick();
     }
 
     public void Tutorial3DButtonClick()
     {
-        TutorialWindow tutorialWindow = WindowManager.Instance.OpenTutorial3D();
+        var tutorialWindow = WindowManager.Instance.OpenTutorial3D();
         tutorialWindow.Init("settings", "3D");
         AudioManager.Instance.PlayClick();
     }
@@ -158,7 +149,7 @@ public class SettingsWindow : BaseWindow
         //IAPWrapper.Instance.BuyProduct(SubscriptionType.remove_ads, "settings", null);
     }
 
-    private void OnPurchaseHandlerRemoveAds(bool res, SubscriptionType subscrType)
+    void OnPurchaseHandlerRemoveAds(bool res, SubscriptionType subscrType)
     {
         /*switch (INPluginWrapper.Instance.GetAbTestGroup())
         {
@@ -178,15 +169,15 @@ public class SettingsWindow : BaseWindow
     {
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
-        base.StartCoroutine(this.WaitForRestored());
+        base.StartCoroutine(WaitForRestored());
         //IAPWrapper.Instance.RestorePurchases(null);
         AnalyticsManager.Instance.RestoreButtonClicked();
         AudioManager.Instance.PlayClick();
     }
 
-    private void OnPurchaseHandler(bool res, SubscriptionType type)
+    void OnPurchaseHandler(bool res, SubscriptionType type)
     {
-        this.restoredAnything = true;
+        restoredAnything = true;
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
     }
@@ -199,11 +190,11 @@ public class SettingsWindow : BaseWindow
             abTestGroup = ABTestGroup.None;
         }
         INPluginWrapper.Instance.SetDefaultAbTestGroup(abTestGroup);*/
-        this.UpdateGroupText();
-        this.OnPurchaseHandlerRemoveAds(false, SubscriptionType.remove_ads);
+        UpdateGroupText();
+        OnPurchaseHandlerRemoveAds(false, SubscriptionType.remove_ads);
     }
 
-    private void UpdateGroupText()
+    void UpdateGroupText()
     {
         //this.m_groupText.text = INPluginWrapper.Instance.GetAbTestGroup().ToString();
     }
@@ -215,17 +206,17 @@ public class SettingsWindow : BaseWindow
         AudioManager.Instance.PlayClick();
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
-        this.UpdateGroupText();
+        UpdateGroupText();
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandlerRemoveAds));
     }
-    private IEnumerator WaitForRestored()
+    IEnumerator WaitForRestored()
     {
         var timer = 2f;
         while (true)

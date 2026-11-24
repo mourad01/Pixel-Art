@@ -2,7 +2,7 @@ using Assets.Scripts.Navigation.Scenes;
 
 public class GameNavigationArgs : NavigationArgs
 {
-    private const string MapSceneName = "3DScene";
+    const string MapSceneName = "3DScene";
 
     public CashImage3D Data { get; private set; }
 
@@ -20,10 +20,10 @@ public class GameNavigationArgs : NavigationArgs
     public GameNavigationArgs(ImageInfo imageinfo, CashImage3D data, SavedWorkData3D savedWorkData, ImageOpenType imageOpenType)
         : base(SceneType.Game, "3DScene")
     {
-        this.Data = data;
-        this.ImageInfo = imageinfo;
-        this.SavedWorkData = savedWorkData;
-        this.ImageOpenType = imageOpenType;
+        Data = data;
+        ImageInfo = imageinfo;
+        SavedWorkData = savedWorkData;
+        ImageOpenType = imageOpenType;
     }
 }
 

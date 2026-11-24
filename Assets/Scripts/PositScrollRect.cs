@@ -10,54 +10,34 @@ using UnityEngine.UI;
 public class PositScrollRect : ScrollRect
 {
     public float Speed = 5000f;
-
     public float DistForScale = 100f;
-
     public float Scale = 1f;
-
     public bool DynamicSize;
-
     public Action OnDragStart;
-
     public Action<int> OnSelectIndex;
-
     public Action<int> OnDragSelectIndex;
-
     public Action<int, float, float> OnScaleElement;
-
     public Action<int> OnSlideToIndex;
-
     public Action OnSwipe;
-
     public Action OnNavigationButtonClick;
 
-    private RectTransform m_rectTransform;
-
-    private List<RectTransform> m_list;
-
-    private int m_currentElement;
-
-    private HorizontalOrVerticalLayoutGroup m_contentGroup;
-
-    private bool m_drag;
-
-    private int m_pointerId = -1;
-
-    private Canvas m_canvas;
-
-    private float m_screenWidth;
-
-    private float m_rectWidth;
-
-    private float m_rectHeight;
-
-    private float m_startDragPos;
+    RectTransform m_rectTransform;
+    List<RectTransform> m_list;
+    int m_currentElement;
+    HorizontalOrVerticalLayoutGroup m_contentGroup;
+    bool m_drag;
+    int m_pointerId = -1;
+    Canvas m_canvas;
+    float m_screenWidth;
+    float m_rectWidth;
+    float m_rectHeight;
+    float m_startDragPos;
 
     public bool Moving
     {
         get
         {
-            return this.m_drag;
+            return m_drag;
         }
     }
 
@@ -67,7 +47,7 @@ public class PositScrollRect : ScrollRect
     {
         get
         {
-            return this.m_currentElement < this.m_list.Count - 1;
+            return m_currentElement < m_list.Count - 1;
         }
     }
 
@@ -75,243 +55,243 @@ public class PositScrollRect : ScrollRect
     {
         get
         {
-            return this.m_currentElement > 0;
+            return m_currentElement > 0;
         }
     }
 
     public void Reinit(float screenWidth, bool withoutPosCorrection = false)
     {
-        this.m_list = new List<RectTransform>();
-        this.m_drag = false;
-        int childCount = base.content.childCount;
+        m_list = new List<RectTransform>();
+        m_drag = false;
+        int childCount = content.childCount;
         for (int i = 0; i < childCount; i++)
         {
-            RectTransform rectTransform = base.content.GetChild(i) as RectTransform;
+            var rectTransform = content.GetChild(i) as RectTransform;
             if (rectTransform.gameObject.activeSelf)
             {
-                this.m_list.Add(rectTransform);
+                m_list.Add(rectTransform);
             }
         }
-        this.m_contentGroup = ((Component)base.content).GetComponent<HorizontalOrVerticalLayoutGroup>();
-        this.m_rectTransform = (base.transform as RectTransform);
-        this.m_canvas = this.FindParentCanvas();
-        if (base.horizontal)
+        m_contentGroup = ((Component)content).GetComponent<HorizontalOrVerticalLayoutGroup>();
+        m_rectTransform = (transform as RectTransform);
+        m_canvas = FindParentCanvas();
+        if (horizontal)
         {
-            this.m_screenWidth = (this.m_canvas.transform as RectTransform).rect.width;
+            m_screenWidth = (m_canvas.transform as RectTransform).rect.width;
         }
-        else if (base.vertical)
+        else if (vertical)
         {
-            this.m_screenWidth = (this.m_canvas.transform as RectTransform).rect.height;
+            m_screenWidth = (m_canvas.transform as RectTransform).rect.height;
         }
-        this.m_rectWidth = this.m_rectTransform.rect.width;
-        this.m_rectHeight = this.m_rectTransform.rect.height;
-        this.SetContentSize();
+        m_rectWidth = m_rectTransform.rect.width;
+        m_rectHeight = m_rectTransform.rect.height;
+        SetContentSize();
         if (!withoutPosCorrection)
         {
-            RectTransform content = base.content;
+            var content = base.content;
             Vector2 anchoredPosition = content.anchoredPosition;
             Vector2 anchoredPosition2 = base.content.anchoredPosition;
             content.anchoredPosition = anchoredPosition + new Vector2(0f - anchoredPosition2.x, 0f);
         }
-        this.UpdateImageIndex();
-        this.UpdateScale(true);
+        UpdateImageIndex();
+        UpdateScale(true);
     }
 
-    private Canvas FindParentCanvas()
+    Canvas FindParentCanvas()
     {
-        Transform transform = this.m_rectTransform;
+        Transform rectTransform = m_rectTransform;
         while (true)
         {
-            transform = transform.parent;
-            if (transform != null)
+            rectTransform = rectTransform.parent;
+            if (rectTransform != null)
             {
-                Canvas component = ((Component)transform).GetComponent<Canvas>();
-                if (!(component != null))
+                var canvas = ((Component)rectTransform).GetComponent<Canvas>();
+                if (!(canvas != null))
                 {
                     continue;
                 }
-                this.m_canvas = component;
+                m_canvas = canvas;
             }
             break;
         }
-        return this.m_canvas;
+        return m_canvas;
     }
 
     public void SetContentSize()
     {
-        if (base.horizontal)
+        if (horizontal)
         {
-            float num = 0f;
-            foreach (RectTransform item in this.m_list)
+            float totalWidth = 0f;
+            foreach (RectTransform rectTransform in m_list)
             {
-                num += item.rect.width;
+                totalWidth += rectTransform.rect.width;
             }
-            num += (float)(this.m_list.Count - 1) * this.m_contentGroup.spacing;
-            RectTransform content = base.content;
-            float x = num;
+            totalWidth += (float)(m_list.Count - 1) * m_contentGroup.spacing;
+            var content = base.content;
+            float x = totalWidth;
             Vector2 sizeDelta = base.content.sizeDelta;
             content.sizeDelta = new Vector2(x, sizeDelta.y);
         }
-        else if (base.vertical)
+        else if (vertical)
         {
             float value2 = 0f;
-            foreach (RectTransform item2 in this.m_list)
+            foreach (RectTransform item2 in m_list)
             {
                 value2 += item2.rect.height;
             }
-            value2 += (float)(this.m_list.Count - 1) * this.m_contentGroup.spacing;
-            RectTransform content2 = base.content;
-            Vector2 sizeDelta2 = base.content.sizeDelta;
+            value2 += (float)(m_list.Count - 1) * m_contentGroup.spacing;
+            var content2 = content;
+            Vector2 sizeDelta2 = content.sizeDelta;
             content2.sizeDelta = new Vector2(sizeDelta2.x, value2);
         }
-        if (base.horizontal)
+        if (horizontal)
         {
-            base.enabled = true;
+            enabled = true;
         }
-        else if (base.vertical)
+        else if (vertical)
         {
-            base.enabled = true;
+            enabled = true;
         }
     }
 
     public void PrevButtonClick(bool force = false)
     {
-        if (this.m_drag && !force)
+        if (m_drag && !force)
         {
             return;
         }
-        if (base.horizontal)
+        if (horizontal)
         {
-            if (this.m_currentElement > 0)
+            if (m_currentElement > 0)
             {
-                base.StartCoroutine(this.MoveCoroutine(this.m_list[this.m_currentElement - 1].rect.width + this.m_contentGroup.spacing));
-                this.OnDragStart.SafeInvoke();
+                base.StartCoroutine(MoveCoroutine(m_list[m_currentElement - 1].rect.width + m_contentGroup.spacing));
+                OnDragStart.SafeInvoke();
             }
         }
-        else if (base.vertical && this.m_currentElement > 0)
+        else if (vertical && m_currentElement > 0)
         {
-            base.StartCoroutine(this.MoveCoroutine(0f - (this.m_list[this.m_currentElement - 1].rect.height + this.m_contentGroup.spacing)));
-            this.OnDragStart.SafeInvoke();
+            base.StartCoroutine(MoveCoroutine(0f - (m_list[m_currentElement - 1].rect.height + m_contentGroup.spacing)));
+            OnDragStart.SafeInvoke();
         }
-        this.OnNavigationButtonClick.SafeInvoke();
+        OnNavigationButtonClick.SafeInvoke();
     }
 
     public void NextButtonClick(bool force = false)
     {
-        if (this.m_drag && !force)
+        if (m_drag && !force)
         {
             return;
         }
-        if (base.horizontal)
+        if (horizontal)
         {
-            Vector2 anchoredPosition = base.content.anchoredPosition;
-            if (anchoredPosition.x - this.m_rectTransform.rect.width - 5f > (0f - this.m_list[this.m_currentElement].rect.width) * (float)this.m_list.Count - this.m_contentGroup.spacing * (float)(this.m_list.Count - 1))
+            Vector2 anchoredPosition = content.anchoredPosition;
+            if (anchoredPosition.x - m_rectTransform.rect.width - 5f > (0f - m_list[m_currentElement].rect.width) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
             {
-                base.StartCoroutine(this.MoveCoroutine(0f - (this.m_list[this.m_currentElement].rect.width + this.m_contentGroup.spacing)));
-                this.OnDragStart.SafeInvoke();
+                base.StartCoroutine(MoveCoroutine(0f - (m_list[m_currentElement].rect.width + m_contentGroup.spacing)));
+                OnDragStart.SafeInvoke();
             }
         }
-        else if (base.vertical)
+        else if (vertical)
         {
-            Vector2 anchoredPosition2 = base.content.anchoredPosition;
-            if (0f - anchoredPosition2.y - this.m_rectHeight - 5f > (0f - this.m_list[this.m_currentElement].rect.height) * (float)this.m_list.Count - this.m_contentGroup.spacing * (float)(this.m_list.Count - 1))
+            Vector2 anchoredPosition2 = content.anchoredPosition;
+            if (0f - anchoredPosition2.y - m_rectHeight - 5f > (0f - m_list[m_currentElement].rect.height) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
             {
-                base.StartCoroutine(this.MoveCoroutine(this.m_list[this.m_currentElement].rect.height + this.m_contentGroup.spacing));
-                this.OnDragStart.SafeInvoke();
+                base.StartCoroutine(MoveCoroutine(m_list[m_currentElement].rect.height + m_contentGroup.spacing));
+                OnDragStart.SafeInvoke();
             }
         }
-        this.OnNavigationButtonClick.SafeInvoke();
+        OnNavigationButtonClick.SafeInvoke();
     }
 
     public override void OnBeginDrag(PointerEventData data)
     {
-        if (!this.m_drag)
+        if (!m_drag)
         {
-            if (base.horizontal)
+            if (horizontal)
             {
                 Vector3 localPosition = base.content.localPosition;
-                this.m_startDragPos = localPosition.x;
-                Vector2 vector = data.delta / (float)Camera.main.pixelWidth * this.m_screenWidth;
-                if (this.Inverted)
+                m_startDragPos = localPosition.x;
+                Vector2 move = data.delta / (float)Camera.main.pixelWidth * m_screenWidth;
+                if (Inverted)
                 {
-                    vector.x *= -1f;
+                    move.x *= -1f;
                 }
-                RectTransform content = base.content;
-                content.localPosition += new Vector3(vector.x, 0f, 0f);
-                this.m_drag = true;
+                var content = base.content;
+                content.localPosition += new Vector3(move.x, 0f, 0f);
+                m_drag = true;
             }
-            else if (base.vertical)
+            else if (vertical)
             {
-                Vector3 localPosition2 = base.content.localPosition;
-                this.m_startDragPos = localPosition2.y;
-                Vector2 scrollOffset = data.delta / (float)Camera.main.pixelWidth * this.m_screenWidth;
-                if (this.Inverted)
+                Vector3 pos = content.localPosition;
+                m_startDragPos = pos.y;
+                Vector2 scrollOffset = data.delta / (float)Camera.main.pixelWidth * m_screenWidth;
+                if (Inverted)
                 {
                     scrollOffset.y *= -1f;
                 }
-                RectTransform content2 = base.content;
+                var content2 = content;
                 content2.localPosition += new Vector3(0f, scrollOffset.y, 0f);
-                this.m_drag = true;
+                m_drag = true;
             }
-            this.m_pointerId = data.pointerId;
-            this.OnDragStart.SafeInvoke();
+            m_pointerId = data.pointerId;
+            OnDragStart.SafeInvoke();
         }
     }
 
     public override void OnDrag(PointerEventData data)
     {
-        if (data.pointerId == this.m_pointerId)
+        if (data.pointerId == m_pointerId)
         {
-            if (base.horizontal)
+            if (horizontal)
             {
-                Vector2 vector = data.delta / (float)Camera.main.pixelWidth * this.m_screenWidth;
-                if (this.Inverted)
+                Vector2 move = data.delta / (float)Camera.main.pixelWidth * m_screenWidth;
+                if (Inverted)
                 {
-                    vector.x *= -1f;
+                    move.x *= -1f;
                 }
-                RectTransform content = base.content;
-                content.localPosition += new Vector3(vector.x, 0f, 0f);
-                this.UpdateScale(false);
+                var content = base.content;
+                content.localPosition += new Vector3(move.x, 0f, 0f);
+                UpdateScale(false);
             }
-            else if (base.vertical)
+            else if (vertical)
             {
-                Vector2 scrollOffset = data.delta / (float)Camera.main.pixelWidth * this.m_screenWidth;
-                if (this.Inverted)
+                Vector2 scrollOffset = data.delta / (float)Camera.main.pixelWidth * m_screenWidth;
+                if (Inverted)
                 {
                     scrollOffset.y *= -1f;
                 }
-                RectTransform content2 = base.content;
+                var content2 = content;
                 content2.localPosition += new Vector3(0f, scrollOffset.y, 0f);
-                this.UpdateScale(false);
+                UpdateScale(false);
             }
         }
     }
 
     public override void OnEndDrag(PointerEventData data)
     {
-        if (data.pointerId == this.m_pointerId)
+        if (data.pointerId == m_pointerId)
         {
-            if (base.horizontal)
+            if (horizontal)
             {
-                if (this.DynamicSize)
+                if (DynamicSize)
                 {
-                    this.MoveToIndex(this.m_currentElement);
+                    MoveToIndex(m_currentElement);
                     return;
                 }
-                Vector2 vector = data.delta / (float)Camera.main.pixelWidth * this.m_screenWidth;
-                if (this.Inverted)
+                Vector2 move = data.delta / (float)Camera.main.pixelWidth * m_screenWidth;
+                if (Inverted)
                 {
-                    vector.x *= -1f;
+                    move.x *= -1f;
                 }
-                RectTransform content = base.content;
-                content.localPosition += new Vector3(vector.x, 0f, 0f);
+                var content = base.content;
+                content.localPosition += new Vector3(move.x, 0f, 0f);
                 Vector3 localPosition = base.content.localPosition;
-                float num = localPosition.x - this.m_startDragPos;
-                if (num > 0f)
+                float dragDistance = localPosition.x - m_startDragPos;
+                if (dragDistance > 0f)
                 {
-                    if (num < 100f)
+                    if (dragDistance < 100f)
                     {
-                        base.StartCoroutine(this.MoveCoroutine(0f - num));
+                        base.StartCoroutine(MoveCoroutine(0f - dragDistance));
                     }
                     else
                     {
@@ -319,207 +299,207 @@ public class PositScrollRect : ScrollRect
                         if (anchoredPosition.x > 0f)
                         {
                             Vector2 anchoredPosition2 = base.content.anchoredPosition;
-                            base.StartCoroutine(this.MoveCoroutine(0f - anchoredPosition2.x));
+                            base.StartCoroutine(MoveCoroutine(0f - anchoredPosition2.x));
                         }
                         else
                         {
-                            int b = Mathf.RoundToInt(num / (this.m_list[this.m_currentElement].rect.width + this.m_contentGroup.spacing));
-                            base.StartCoroutine(this.MoveCoroutine((this.m_list[0].rect.width + this.m_contentGroup.spacing) * (float)Mathf.Max(1, b) - num));
+                            int b = Mathf.RoundToInt(dragDistance / (m_list[m_currentElement].rect.width + m_contentGroup.spacing));
+                            base.StartCoroutine(MoveCoroutine((m_list[0].rect.width + m_contentGroup.spacing) * (float)Mathf.Max(1, b) - dragDistance));
                         }
                     }
                 }
-                else if (num > -100f)
+                else if (dragDistance > -100f)
                 {
-                    base.StartCoroutine(this.MoveCoroutine(0f - num));
+                    base.StartCoroutine(MoveCoroutine(0f - dragDistance));
                 }
                 else
                 {
                     Vector2 anchoredPosition3 = base.content.anchoredPosition;
-                    if (anchoredPosition3.x - this.m_rectTransform.rect.width < (0f - this.m_list[0].rect.width) * (float)this.m_list.Count - this.m_contentGroup.spacing * (float)(this.m_list.Count - 1))
+                    if (anchoredPosition3.x - m_rectTransform.rect.width < (0f - m_list[0].rect.width) * (float)m_list.Count - m_contentGroup.spacing * (float)(m_list.Count - 1))
                     {
-                        float value2 = (0f - (this.m_list[0].rect.width + this.m_contentGroup.spacing)) * (float)(this.m_list.Count - 1);
+                        float value2 = (0f - (m_list[0].rect.width + m_contentGroup.spacing)) * (float)(m_list.Count - 1);
                         Vector2 anchoredPosition4 = base.content.anchoredPosition;
-                        base.StartCoroutine(this.MoveCoroutine(value2 - anchoredPosition4.x));
+                        base.StartCoroutine(MoveCoroutine(value2 - anchoredPosition4.x));
                     }
                     else
                     {
-                        int b2 = Mathf.RoundToInt((0f - num) / (this.m_list[this.m_currentElement].rect.width + this.m_contentGroup.spacing));
-                        base.StartCoroutine(this.MoveCoroutine((0f - (this.m_list[this.m_currentElement].rect.width + this.m_contentGroup.spacing)) * (float)Mathf.Max(1, b2) - num));
+                        int b2 = Mathf.RoundToInt((0f - dragDistance) / (m_list[m_currentElement].rect.width + m_contentGroup.spacing));
+                        base.StartCoroutine(MoveCoroutine((0f - (m_list[m_currentElement].rect.width + m_contentGroup.spacing)) * (float)Mathf.Max(1, b2) - dragDistance));
                     }
                 }
             }
-            else if (base.vertical)
+            else if (vertical)
             {
-                Vector2 scrollOffset = data.delta / (float)Camera.main.pixelWidth * this.m_screenWidth;
-                RectTransform content2 = base.content;
+                Vector2 scrollOffset = data.delta / (float)Camera.main.pixelWidth * m_screenWidth;
+                var content2 = content;
                 content2.localPosition += new Vector3(0f, scrollOffset.y, 0f);
-                Vector3 localPosition2 = base.content.localPosition;
-                float value3 = localPosition2.y - this.m_startDragPos;
+                Vector3 pos = content.localPosition;
+                float value3 = pos.y - m_startDragPos;
                 if (value3 > 0f)
                 {
                     if (value3 < 100f)
                     {
-                        base.StartCoroutine(this.MoveCoroutine(0f - value3));
+                        base.StartCoroutine(MoveCoroutine(0f - value3));
                     }
                     else
                     {
-                        Vector2 anchoredPosition5 = base.content.anchoredPosition;
-                        if (anchoredPosition5.y + this.m_rectHeight > this.m_list[this.m_currentElement].rect.height * (float)this.m_list.Count + this.m_contentGroup.spacing * (float)(this.m_list.Count - 1))
+                        Vector2 anchoredPosition5 = content.anchoredPosition;
+                        if (anchoredPosition5.y + m_rectHeight > m_list[m_currentElement].rect.height * (float)m_list.Count + m_contentGroup.spacing * (float)(m_list.Count - 1))
                         {
-                            float value4 = base.content.rect.height - this.m_rectHeight;
-                            Vector2 anchoredPosition6 = base.content.anchoredPosition;
-                            base.StartCoroutine(this.MoveCoroutine(value4 - anchoredPosition6.y));
+                            float value4 = content.rect.height - m_rectHeight;
+                            Vector2 anchoredPosition6 = content.anchoredPosition;
+                            base.StartCoroutine(MoveCoroutine(value4 - anchoredPosition6.y));
                         }
                         else
                         {
-                            base.StartCoroutine(this.MoveCoroutine(this.m_list[this.m_currentElement].rect.height + this.m_contentGroup.spacing - value3));
+                            base.StartCoroutine(MoveCoroutine(m_list[m_currentElement].rect.height + m_contentGroup.spacing - value3));
                         }
                     }
                 }
                 else if (value3 > -100f)
                 {
-                    base.StartCoroutine(this.MoveCoroutine(0f - value3));
+                    base.StartCoroutine(MoveCoroutine(0f - value3));
                 }
                 else
                 {
-                    Vector2 anchoredPosition7 = base.content.anchoredPosition;
-                    if (anchoredPosition7.y - this.m_rectHeight < 0f)
+                    Vector2 anchoredPosition7 = content.anchoredPosition;
+                    if (anchoredPosition7.y - m_rectHeight < 0f)
                     {
-                        Vector2 anchoredPosition8 = base.content.anchoredPosition;
-                        base.StartCoroutine(this.MoveCoroutine(0f - anchoredPosition8.y));
+                        Vector2 anchoredPosition8 = content.anchoredPosition;
+                        base.StartCoroutine(MoveCoroutine(0f - anchoredPosition8.y));
                     }
                     else
                     {
-                        base.StartCoroutine(this.MoveCoroutine(0f - (this.m_list[this.m_currentElement].rect.height + this.m_contentGroup.spacing) - value3));
+                        base.StartCoroutine(MoveCoroutine(0f - (m_list[m_currentElement].rect.height + m_contentGroup.spacing) - value3));
                     }
                 }
             }
-            this.OnSwipe.SafeInvoke();
+            OnSwipe.SafeInvoke();
         }
     }
 
     public void SetIndex(int index)
     {
-        if (this.m_list.Count > index)
+        if (m_list.Count > index)
         {
-            if (this.DynamicSize)
+            if (DynamicSize)
             {
-                this.MoveToIndex(index);
+                MoveToIndex(index);
             }
             else
             {
-                if (base.horizontal)
+                if (horizontal)
                 {
-                    RectTransform content = base.content;
-                    float x = (0f - (this.m_list[0].rect.width + this.m_contentGroup.spacing)) * (float)index;
+                    var content = base.content;
+                    float x = (0f - (m_list[0].rect.width + m_contentGroup.spacing)) * (float)index;
                     Vector2 anchoredPosition = base.content.anchoredPosition;
                     content.anchoredPosition = new Vector2(x, anchoredPosition.y);
                 }
-                else if (base.vertical)
+                else if (vertical)
                 {
-                    RectTransform content2 = base.content;
-                    Vector2 anchoredPosition2 = base.content.anchoredPosition;
-                    content2.anchoredPosition = new Vector2(anchoredPosition2.x, (this.m_list[0].rect.height + this.m_contentGroup.spacing) * (float)index);
+                    var content2 = content;
+                    Vector2 anchoredPosition2 = content.anchoredPosition;
+                    content2.anchoredPosition = new Vector2(anchoredPosition2.x, (m_list[0].rect.height + m_contentGroup.spacing) * (float)index);
                 }
-                this.UpdateImageIndex();
-                this.UpdateScale(true);
+                UpdateImageIndex();
+                UpdateScale(true);
             }
         }
     }
 
     public void MoveToIndex(int index)
     {
-        if (this.m_list.Count > index)
+        if (m_list.Count > index)
         {
-            if (base.horizontal)
+            if (horizontal)
             {
-                base.StartCoroutine(this.MoveToIndexCoroutine(index));
+                base.StartCoroutine(MoveToIndexCoroutine(index));
             }
-            else if (!base.vertical)
+            else if (!vertical)
             {
             }
-            this.UpdateScale(true);
+            UpdateScale(true);
         }
         return;
     }
 
-    private void UpdateImageIndex()
+    void UpdateImageIndex()
     {
-        if (this.m_list.Count == 0)
+        if (m_list.Count == 0)
         {
-            this.m_currentElement = -1;
+            m_currentElement = -1;
         }
-        else if (base.horizontal)
+        else if (horizontal)
         {
-            if (!this.DynamicSize)
+            if (!DynamicSize)
             {
-                Vector2 anchoredPosition = base.content.anchoredPosition;
-                this.m_currentElement = Mathf.RoundToInt((0f - anchoredPosition.x) / (this.m_list[0].rect.width + this.m_contentGroup.spacing));
+                Vector2 anchoredPosition = content.anchoredPosition;
+                m_currentElement = Mathf.RoundToInt((0f - anchoredPosition.x) / (m_list[0].rect.width + m_contentGroup.spacing));
             }
             else
             {
-                float num = (0f - this.m_contentGroup.spacing) / 2f + (float)this.m_contentGroup.padding.left;
-                for (int i = 0; i < this.m_list.Count; i++)
+                float pos = (0f - m_contentGroup.spacing) / 2f + (float)m_contentGroup.padding.left;
+                for (int i = 0; i < m_list.Count; i++)
                 {
-                    num += this.m_list[i].rect.width + this.m_contentGroup.spacing;
-                    Vector2 anchoredPosition2 = base.content.anchoredPosition;
-                    if (anchoredPosition2.x > 0f - num)
+                    pos += m_list[i].rect.width + m_contentGroup.spacing;
+                    Vector2 anchoredPosition2 = content.anchoredPosition;
+                    if (anchoredPosition2.x > 0f - pos)
                     {
-                        this.m_currentElement = i;
+                        m_currentElement = i;
                         break;
                     }
                 }
-                this.m_currentElement = Mathf.Min(this.m_currentElement, this.m_list.Count - 1);
+                m_currentElement = Mathf.Min(m_currentElement, m_list.Count - 1);
             }
         }
-        else if (base.vertical)
+        else if (vertical)
         {
-            Vector2 anchoredPosition3 = base.content.anchoredPosition;
-            this.m_currentElement = Mathf.RoundToInt(anchoredPosition3.y / (this.m_list[0].rect.height + this.m_contentGroup.spacing));
+            Vector2 anchoredPosition3 = content.anchoredPosition;
+            m_currentElement = Mathf.RoundToInt(anchoredPosition3.y / (m_list[0].rect.height + m_contentGroup.spacing));
         }
-        if (!this.m_drag)
+        if (!m_drag)
         {
-            this.OnSelectIndex.SafeInvoke(this.m_currentElement);
+            OnSelectIndex.SafeInvoke(m_currentElement);
         }
         else
         {
-            this.OnDragSelectIndex.SafeInvoke(this.m_currentElement);
+            OnDragSelectIndex.SafeInvoke(m_currentElement);
         }
     }
 
-    private void UpdateScale(bool all)
+    void UpdateScale(bool all)
     {
-        if (this.m_list != null)
+        if (m_list != null)
         {
-            if (this.Scale > 1f)
+            if (Scale > 1f)
             {
-                float num = 0f;
-                for (int i = 0; i < this.m_list.Count; i++)
+                float pos = 0f;
+                for (int i = 0; i < m_list.Count; i++)
                 {
                     float value2 = 0f;
-                    if (base.horizontal)
+                    if (horizontal)
                     {
                         if (i > 0)
                         {
-                            num += this.m_list[i - 1].rect.width + this.m_contentGroup.spacing;
+                            pos += m_list[i - 1].rect.width + m_contentGroup.spacing;
                         }
-                        Vector2 anchoredPosition = base.content.anchoredPosition;
-                        value2 = Mathf.Abs(anchoredPosition.x + num);
+                        Vector2 anchoredPosition = content.anchoredPosition;
+                        value2 = Mathf.Abs(anchoredPosition.x + pos);
                     }
-                    else if (base.vertical)
+                    else if (vertical)
                     {
-                        num = this.m_list[i].rect.height * (float)i + this.m_contentGroup.spacing * (float)i;
-                        Vector2 anchoredPosition2 = base.content.anchoredPosition;
-                        value2 = Mathf.Abs(anchoredPosition2.y - num);
+                        pos = m_list[i].rect.height * (float)i + m_contentGroup.spacing * (float)i;
+                        Vector2 anchoredPosition2 = content.anchoredPosition;
+                        value2 = Mathf.Abs(anchoredPosition2.y - pos);
                     }
-                    if (all || value2 < this.DistForScale + this.m_list[i].rect.width + this.m_contentGroup.spacing)
+                    if (all || value2 < DistForScale + m_list[i].rect.width + m_contentGroup.spacing)
                     {
-                        float par = (!(value2 < this.DistForScale)) ? 1f : Mathf.Lerp(this.Scale, 1f, value2 / this.DistForScale);
-                        this.OnScaleElement.SafeInvoke(i, par, this.Scale);
+                        float par = (!(value2 < DistForScale)) ? 1f : Mathf.Lerp(Scale, 1f, value2 / DistForScale);
+                        OnScaleElement.SafeInvoke(i, par, Scale);
                     }
                 }
             }
-            this.UpdateImageIndex();
+            UpdateImageIndex();
         }
     }
 
@@ -530,80 +510,80 @@ public class PositScrollRect : ScrollRect
 
     protected override void OnEnable()
     {
-        this.UpdateScale(true);
+        UpdateScale(true);
         base.OnEnable();
     }
-    private IEnumerator MoveCoroutine(float delta)
+    IEnumerator MoveCoroutine(float delta)
     {
-        this.m_drag = true;
+        m_drag = true;
         var deltaMoreThan0 = delta >= 0f;
 
         while (true)
         {
-            var nextMove = Time.deltaTime * this.Speed;
+            var nextMove = Time.deltaTime * Speed;
             nextMove = Mathf.Min(nextMove, Mathf.Abs(delta));
             nextMove *= (float)((!(delta < 0f)) ? 1 : (-1));
-            if (this.horizontal)
+            if (horizontal)
             {
-                this.content.localPosition += new Vector3(nextMove, 0f, 0f);
+                content.localPosition += new Vector3(nextMove, 0f, 0f);
             }
-            else if (this.vertical)
+            else if (vertical)
             {
-                this.content.localPosition += new Vector3(0f, nextMove, 0f);
+                content.localPosition += new Vector3(0f, nextMove, 0f);
             }
             delta -= nextMove;
             if (deltaMoreThan0)
             {
                 if (!(delta <= 0f))
                 {
-                    this.UpdateScale(false);
+                    UpdateScale(false);
                     yield return null;
                     continue;
                 }
             }
             else if (!(delta >= 0f))
             {
-                this.UpdateScale(false);
+                UpdateScale(false);
                 yield return null;
                 continue;
             }
 
             yield return null;
 
-            this.m_drag = false;
-            this.UpdateImageIndex();
-            this.SetIndex(this.m_currentElement);
-            this.UpdateScale(false);
+            m_drag = false;
+            UpdateImageIndex();
+            SetIndex(m_currentElement);
+            UpdateScale(false);
 
             yield break;
         }
     }
 
-    private IEnumerator MoveToIndexCoroutine(int index)
+    IEnumerator MoveToIndexCoroutine(int index)
     {
-        this.m_drag = true;
+        m_drag = true;
         while(true)
         {
             var resPos = 0f;
             for (int i = 0; i < index; i++)
             {
-                resPos -= this.m_list[i].rect.width + this.m_contentGroup.spacing;
+                resPos -= m_list[i].rect.width + m_contentGroup.spacing;
             }
-            var delta = resPos - this.content.anchoredPosition.x;
+            var delta = resPos - content.anchoredPosition.x;
             var deltaTime = Mathf.Min(0.05f, Time.deltaTime);
-            var newDelta = Mathf.Min(Mathf.Abs(delta), Mathf.Abs(this.Speed * deltaTime));
+            var newDelta = Mathf.Min(Mathf.Abs(delta), Mathf.Abs(Speed * deltaTime));
             if (delta < 0f)
             {
                 newDelta = 0f - newDelta;
             }
-            this.content.localPosition += new Vector3(newDelta, 0f, 0f);
-            this.UpdateScale(false);
+            content.localPosition += new Vector3(newDelta, 0f, 0f);
+            UpdateScale(false);
             if (!(Mathf.Abs(newDelta) < 1f))
             {
                 yield return null;
                 continue;
             }
-            this.m_drag = false;
+            m_drag = false;
 
             yield break;
         }

@@ -4,11 +4,11 @@ using UnityEngine.EventSystems;
 [RequireComponent(typeof(EventSystem))]
 internal class DynamicDragThreshold : MonoBehaviour
 {
-    private void Awake()
+    void Awake()
     {
         float density = ScreenToolWrapper.Density;
-        EventSystem component = base.GetComponent<EventSystem>();
-        component.pixelDragThreshold = (int)((float)component.pixelDragThreshold * density);
+        var eventSystem = base.GetComponent<EventSystem>();
+        eventSystem.pixelDragThreshold = (int)((float)eventSystem.pixelDragThreshold * density);
     }
 }
 

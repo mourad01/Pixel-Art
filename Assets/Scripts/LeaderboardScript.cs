@@ -22,9 +22,9 @@ public class LeaderboardScript : MonoBehaviour
         THREESTAR_C3 = 0x20
     }
 
-    private void Start()
+    void Start()
     {   
-        this.InitLeaderboards(); 
+        InitLeaderboards(); 
     }
 
     //public void CheckForPastAchievements()
@@ -83,11 +83,11 @@ public class LeaderboardScript : MonoBehaviour
 
     public void InitLeaderboards()
     {
-        if (!this.IsAuthenticated())
+        if (!IsAuthenticated())
         {
             try
             {
-                Social.localUser.Authenticate(new Action<bool>(this.ProcessAuthentication));
+                Social.localUser.Authenticate(new Action<bool>(ProcessAuthentication));
             }
             catch (Exception ex)
             {
@@ -109,7 +109,7 @@ public class LeaderboardScript : MonoBehaviour
         return false;
     }
 
-    private void ProcessAuthentication(bool success)
+    void ProcessAuthentication(bool success)
     {
         if (success)
         {
@@ -124,7 +124,7 @@ public class LeaderboardScript : MonoBehaviour
 
     public void ShowAchievements()
     {
-        if (this.IsAuthenticated())
+        if (IsAuthenticated())
         {
             Social.ShowAchievementsUI();
         }
@@ -132,7 +132,7 @@ public class LeaderboardScript : MonoBehaviour
 
     public void ShowLeaderboards()
     {
-        if (this.IsAuthenticated())
+        if (IsAuthenticated())
         {
             Social.ShowLeaderboardUI();
         }
@@ -157,7 +157,7 @@ public class LeaderboardScript : MonoBehaviour
 
     public void ReportLeaderboardScore(long score, string leaderBoardID)
     {
-        if (this.IsAuthenticated())
+        if (IsAuthenticated())
         {
             Social.ReportScore(score, leaderBoardID, delegate(bool success)
             {

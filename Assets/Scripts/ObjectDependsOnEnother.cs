@@ -2,19 +2,18 @@ using UnityEngine;
 
 public class ObjectDependsOnEnother : MonoBehaviour
 {
-    private bool prevValue = true;
+    bool prevValue = true;
 
-    [SerializeField] private GameObject m_content;
+    [SerializeField] GameObject m_content;
+    [SerializeField] MonoBehaviour m_targetObject;
 
-    [SerializeField] private MonoBehaviour m_targetObject;
-
-    private void Update()
+    void Update()
     {
-        bool isActiveAndEnabled = this.m_targetObject.isActiveAndEnabled;
-        if (this.prevValue != isActiveAndEnabled)
+        bool isActiveAndEnabled = m_targetObject.isActiveAndEnabled;
+        if (prevValue != isActiveAndEnabled)
         {
-            this.prevValue = isActiveAndEnabled;
-            this.m_content.SetActive(isActiveAndEnabled);
+            prevValue = isActiveAndEnabled;
+            m_content.SetActive(isActiveAndEnabled);
         }
     }
 }

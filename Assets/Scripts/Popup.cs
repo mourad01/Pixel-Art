@@ -8,120 +8,112 @@ using UnityEngine.UI;
 
 public class Popup : MonoBehaviour
 {
-    private Action m_firstButtonClick;
+    Action m_firstButtonClick;
+    Action m_secondButtonClick;
 
-    private Action m_secondButtonClick;
-
-    [SerializeField] private RectTransform m_messagePanel;
-
-    [SerializeField] private Text m_message;
-
-    [SerializeField] private Text m_button1Text;
-
-    [SerializeField] private Text m_button2Text;
-
-    [SerializeField] private GameObject m_blockPlane;
-
-    [SerializeField] private Vector2 m_messageOpenedPos = Vector2.zero;
-
-    [SerializeField] private Vector2 m_messageClosedPos = Vector2.zero;
-
-    [SerializeField] private float m_showTime = 4f;
+    [SerializeField] RectTransform m_messagePanel;
+    [SerializeField] Text m_message;
+    [SerializeField] Text m_button1Text;
+    [SerializeField] Text m_button2Text;
+    [SerializeField] GameObject m_blockPlane;
+    [SerializeField] Vector2 m_messageOpenedPos = Vector2.zero;
+    [SerializeField] Vector2 m_messageClosedPos = Vector2.zero;
+    [SerializeField] float m_showTime = 4f;
 
     public void Init()
     {
-        this.m_messagePanel.anchoredPosition = this.m_messageClosedPos;
-        this.m_messagePanel.gameObject.SetActive(false);
+        m_messagePanel.anchoredPosition = m_messageClosedPos;
+        m_messagePanel.gameObject.SetActive(false);
     }
 
     public void Show(string text, int time = 4)
     {
-        if (base.gameObject != null && this.m_message != null && this.m_messagePanel != null && this.m_messagePanel.gameObject != null)
+        if (gameObject != null && m_message != null && m_messagePanel != null && m_messagePanel.gameObject != null)
         {
-            this.m_showTime = time;
-            this.m_message.text = text;
-            this.m_messagePanel.gameObject.SetActive(true);
-            base.StartCoroutine(this.ShowMessageCoroutine());
+            m_showTime = time;
+            m_message.text = text;
+            m_messagePanel.gameObject.SetActive(true);
+            base.StartCoroutine(ShowMessageCoroutine());
         }
     }
 
     public void Show(string text, Action firstButtonClick, Action secondButtonClick)
     {
-        if (base.gameObject != null)
+        if (gameObject != null)
         {
-            this.m_message.text = text;
-            this.m_firstButtonClick = firstButtonClick;
-            this.m_secondButtonClick = secondButtonClick;
-            this.m_messagePanel.gameObject.SetActive(true);
-            base.StartCoroutine(this.ShowMessageCoroutine());
+            m_message.text = text;
+            m_firstButtonClick = firstButtonClick;
+            m_secondButtonClick = secondButtonClick;
+            m_messagePanel.gameObject.SetActive(true);
+            base.StartCoroutine(ShowMessageCoroutine());
         }
     }
 
     public void FirstButtonClick()
     {
-        this.m_firstButtonClick.SafeInvoke();
-        this.Close();
+        m_firstButtonClick.SafeInvoke();
+        Close();
     }
 
     public void SecondButtonClick()
     {
-        this.m_secondButtonClick.SafeInvoke();
-        this.Close();
+        m_secondButtonClick.SafeInvoke();
+        Close();
     }
 
     public void Close()
     {
-        base.StartCoroutine(this.CloseCoroutine());
+        base.StartCoroutine(CloseCoroutine());
     }
-    private IEnumerator ShowMessageCoroutine()
+    IEnumerator ShowMessageCoroutine()
     {
         yield return null;
-        if (this.m_blockPlane != null)
+        if (m_blockPlane != null)
         {
-            this.m_blockPlane.SetActive(true);
+            m_blockPlane.SetActive(true);
         }
-        this.m_messagePanel.anchoredPosition = this.m_messageClosedPos;
+        m_messagePanel.anchoredPosition = m_messageClosedPos;
         var time = 0.3f;
-        var speed = (this.m_messageOpenedPos - this.m_messageClosedPos) / time;
+        var speed = (m_messageOpenedPos - m_messageClosedPos) / time;
 
         while (true)
         {
             var deltaTime = Time.deltaTime;
             if (time <= deltaTime)
             {
-                this.m_messagePanel.anchoredPosition = this.m_messageOpenedPos;
-                if (this.m_showTime > 0f)
+                m_messagePanel.anchoredPosition = m_messageOpenedPos;
+                if (m_showTime > 0f)
                 {
-                    yield return new WaitForSeconds(this.m_showTime);
-                    this.Close(); 
+                    yield return new WaitForSeconds(m_showTime);
+                    Close(); 
                 }
                 yield break;
             }
             time -= deltaTime; 
-            this.m_messagePanel.anchoredPosition += speed * deltaTime;
+            m_messagePanel.anchoredPosition += speed * deltaTime;
             yield return null;
         }
     }
-    private IEnumerator CloseCoroutine()
+    IEnumerator CloseCoroutine()
     {
-        if (this.m_blockPlane != null)
+        if (m_blockPlane != null)
         {
-            this.m_blockPlane.SetActive(false);
+            m_blockPlane.SetActive(false);
         }
         var time = 0.3f;
-        var speed = (this.m_messageClosedPos - this.m_messageOpenedPos) / time;
+        var speed = (m_messageClosedPos - m_messageOpenedPos) / time;
 
         while(true)
         {
             var deltaTime = Time.deltaTime;
             if (time <= deltaTime)
             {
-                this.m_messagePanel.anchoredPosition = this.m_messageClosedPos;
-                this.m_messagePanel.gameObject.SetActive(false);
+                m_messagePanel.anchoredPosition = m_messageClosedPos;
+                m_messagePanel.gameObject.SetActive(false);
                 yield break;
             }
             time -= deltaTime; 
-            this.m_messagePanel.anchoredPosition += speed * deltaTime;
+            m_messagePanel.anchoredPosition += speed * deltaTime;
             yield return null;
         }
     }

@@ -5,29 +5,26 @@ using System.Collections.Generic;
 
 public class OneSignalWrapper
 {
-    private static Dictionary<string, object> startParameters;
-
-    private static bool m_request;
-
-    private static string m_userId = string.Empty;
-
-    private static bool s_inited; 
+    static Dictionary<string, object> startParameters;
+    static bool m_request;
+    static string m_userId = string.Empty;
+    static bool s_inited; 
 
     public static string UserId
     {
         get
         {
-            if (OneSignalWrapper.m_userId != string.Empty)
+            if (m_userId != string.Empty)
             {
-                return OneSignalWrapper.m_userId;
+                return m_userId;
             }
-            if (OneSignalWrapper.s_inited && !OneSignalWrapper.m_request)
+            if (s_inited && !m_request)
             {
-                OneSignalWrapper.m_request = true;
+                m_request = true;
                 OneSignal.IdsAvailable(delegate (string userId, string pushToken)
                 {
-                    OneSignalWrapper.m_request = false;
-                    OneSignalWrapper.m_userId = userId;
+                    m_request = false;
+                    m_userId = userId;
                     //DataManager.Instance.SendPushToken(null);
                 });
             }
@@ -37,20 +34,20 @@ public class OneSignalWrapper
 
     public static void Init(string appId, string googleProjectId)
     {
-        if (!OneSignalWrapper.s_inited)
+        if (!s_inited)
         {
-            OneSignal.StartInit(appId, googleProjectId).HandleNotificationOpened(new OneSignal.NotificationOpened(OneSignalWrapper.NotificationHandler)).EndInit();
-            string userId = OneSignalWrapper.UserId;
+            OneSignal.StartInit(appId, googleProjectId).HandleNotificationOpened(new OneSignal.NotificationOpened(NotificationHandler)).EndInit();
+            string userId = UserId;
         }
     }
 
-    private static void NotificationHandler(OSNotificationOpenedResult res)
+    static void NotificationHandler(OSNotificationOpenedResult res)
     {
         try
         {
             if (!res.notification.isAppInFocus)
             {
-                OneSignalWrapper.startParameters = res.notification.payload.additionalData;
+                startParameters = res.notification.payload.additionalData;
                 string text = string.Empty;
                 foreach (KeyValuePair<string, object> additionalDatum in res.notification.payload.additionalData)
                 {

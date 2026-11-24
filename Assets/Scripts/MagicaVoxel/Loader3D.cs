@@ -8,15 +8,11 @@ namespace VoxDLL
     {
         public static int CurrentIndex;
 
-        private MVMainChunk v;
-
-        private float sizePerVox = 1f;
-
-        private Action<Color[]> ColorsPalleteLoadComplete;
-
-        private Action<List<VoxCubeItem>> CubesDataLoadComplete;
-
-        private bool isInit;
+        MVMainChunk v;
+        float sizePerVox = 1f;
+        Action<Color[]> ColorsPalleteLoadComplete;
+        Action<List<VoxCubeItem>> CubesDataLoadComplete;
+        bool isInit;
 
         public MVMainChunk MV
         {
@@ -33,15 +29,15 @@ namespace VoxDLL
 
         public void Init(Action<Color[]> actionColorsComplete, Action<List<VoxCubeItem>> actionCubesComplete)
         {
-            this.ColorsPalleteLoadComplete = actionColorsComplete;
-            this.CubesDataLoadComplete = actionCubesComplete;
+            ColorsPalleteLoadComplete = actionColorsComplete;
+            CubesDataLoadComplete = actionCubesComplete;
             MVImporter.Init(actionColorsComplete, actionCubesComplete);
-            this.isInit = true;
+            isInit = true;
         }
 
         public void Load(byte[] data)
         {
-            if (!this.isInit)
+            if (!isInit)
             {
                 Debug.LogError("[Loader3D] Module isn't initilized. Try call method Init() before");
                 return;
@@ -51,23 +47,23 @@ namespace VoxDLL
                 Debug.LogError("[Loader3D] Invalid file data");
                 return;
             }
-            this.v = MVImporter.LoadVOXFromData(data, false);
-            ColorSettings colorSetting = new ColorSettings(this.v.palatte);
-            if (this.v.palatte == null)
+            v = MVImporter.LoadVOXFromData(data, false);
+            var colorSetting = new ColorSettings(v.palatte);
+            if (v.palatte == null)
             {
                 Debug.LogError("[Loader3D] Invalid file pallete");
                 return;
             }
             MVImporter.AddColorSettings(colorSetting);
-            Material defaultMaterial = MVImporter.DefaultMaterial;
-            defaultMaterial.mainTexture = this.v.PaletteToTexture();
-            GameObject gameObject = GameObject.Find("3DVox");
+            var defaultMaterial = MVImporter.DefaultMaterial;
+            defaultMaterial.mainTexture = v.PaletteToTexture();
+            var gameObject = GameObject.Find("3DVox");
             if (gameObject == null)
             {
                 Debug.LogError("[Loader3D] Game object 3DVox not found. Create in scene this object!");
                 return;
             }
-            MVImporter.CreateIndividualVoxelGameObjects(this.v, gameObject.transform, defaultMaterial, this.sizePerVox);
+            MVImporter.CreateIndividualVoxelGameObjects(v, gameObject.transform, defaultMaterial, sizePerVox);
         }
     }
 }

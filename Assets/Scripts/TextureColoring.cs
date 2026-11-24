@@ -6,16 +6,15 @@ using UnityEngine;
 
 public class TextureColoring
 {
-    private static int MaxColorCount = 64;
-
-    private static IList<Color> simpleColorPallete;
+    static int MaxColorCount = 64;
+    static IList<Color> simpleColorPallete;
 
     public static bool CheckToNeedConverColor(Texture2D texture, int maxColorCount)
     {
-        TextureColoring.MaxColorCount = maxColorCount;
-        Color32[] pixels = texture.GetPixels32();
-        List<Color32> source = pixels.Distinct().ToList();
-        if (source.Count() > TextureColoring.MaxColorCount - 1)
+        MaxColorCount = maxColorCount;
+        var pixels = texture.GetPixels32();
+        var source = pixels.Distinct().ToList();
+        if (source.Count() > MaxColorCount - 1)
         {
             DebugLogger.Log("CheckToNeedConverColor = true " + source.Count());
             return true;

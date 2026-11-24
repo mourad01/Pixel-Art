@@ -10,7 +10,7 @@ using System;
 /// </summary>
 public class UnityMainThreadDispatcher : MonoBehaviour {
 
-    private static readonly Queue<Action> _executionQueue = new Queue<Action>();
+    static readonly Queue<Action> _executionQueue = new Queue<Action>();
 
     public void Update() {
         lock(_executionQueue) {
@@ -47,7 +47,7 @@ public class UnityMainThreadDispatcher : MonoBehaviour {
     }
 
 
-    private static UnityMainThreadDispatcher _instance = null;
+    static UnityMainThreadDispatcher _instance = null;
 
     public static bool Exists() {
         return _instance != null;
@@ -64,7 +64,7 @@ public class UnityMainThreadDispatcher : MonoBehaviour {
     void Awake() {
         if (_instance == null) {
             _instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
         }
     }
 

@@ -15,40 +15,25 @@ public class ShareWindow : BaseWindow
     //[SerializeField]
     //private GameObject m_watermark;
 
-    [SerializeField] private RawImage m_image;
-
-    [SerializeField] private Popup m_popup;
-
-    [SerializeField] private GameObject m_okButton;
-
+    [SerializeField] RawImage m_image;
+    [SerializeField] Popup m_popup;
+    [SerializeField] GameObject m_okButton;
     [SerializeField] protected RawImage m_filterImage;
+    [SerializeField] Button m_facebookButton;
+    [SerializeField] ButtonEffectComponent m_facebookButtonEventTrigger;
+    [SerializeField] List<Image> m_facebookButtonImages;
+    [SerializeField] Button m_instButton;
+    [SerializeField] ButtonEffectComponent m_instButtonEventTrigger;
+    [SerializeField] List<Image> m_instButtonImages;
+    [SerializeField] GameObject m_playButton;
+    [SerializeField] Text m_title;
 
-    [SerializeField] private Button m_facebookButton;
-
-    [SerializeField] private ButtonEffectComponent m_facebookButtonEventTrigger;
-
-    [SerializeField] private List<Image> m_facebookButtonImages;
-
-    [SerializeField] private Button m_instButton;
-
-    [SerializeField] private ButtonEffectComponent m_instButtonEventTrigger;
-
-    [SerializeField] private List<Image> m_instButtonImages;
-
-    [SerializeField] private GameObject m_playButton;
-
-    [SerializeField] private Text m_title;
-
-    private ISavedWorkData m_savedWorkData;
-
-    private bool m_waitTimeForRateUs;
-
-    private string m_videoPath;
-
-    private bool m_isColoring;
-
-    private bool m_completed;
-    private Vector2 _imageSize; 
+    ISavedWorkData m_savedWorkData;
+    bool m_waitTimeForRateUs;
+    string m_videoPath;
+    bool m_isColoring;
+    bool m_completed;
+    Vector2 _imageSize; 
 
     protected override string WindowName
     {
@@ -60,134 +45,132 @@ public class ShareWindow : BaseWindow
 
     protected void Awake()
     {
-        this.m_image.material = new Material(Shader.Find("Custom/GreyTextureShader"));
-        this.m_filterImage.material = new Material(Shader.Find("Custom/TilingShader"));
-        //IAPWrapper instance = IAPWrapper.Instance;
-        //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
-        base.OnOpen = (Action)Delegate.Combine(base.OnOpen, new Action(this.OnOpenHandler));
+        m_image.material = new Material(Shader.Find("Custom/GreyTextureShader"));
+        m_filterImage.material = new Material(Shader.Find("Custom/TilingShader"));
+        OnOpen += OnOpenHandler;
     }
 
     public void Init(ISavedWorkData savedWorkData)
     {
-        this.m_savedWorkData = savedWorkData;
-        this.m_waitTimeForRateUs = false;
-        this.ReinitImage(true);
-        this.UpdateSocialButtons(); 
-        this.m_title.text = LocalizationManager.Instance.GetString("share_picture");
+        m_savedWorkData = savedWorkData;
+        m_waitTimeForRateUs = false;
+        ReinitImage(true);
+        UpdateSocialButtons(); 
+        m_title.text = LocalizationManager.Instance.GetString("share_picture");
     }
 
     public void InitFromLibrary(string saveId)
     {
-        this.m_waitTimeForRateUs = false;
-        this.m_popup.Init();
-        this.m_savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
-        base.gameObject.SetActive(true);
-        this.ReinitImage(false);
-        this.UpdateSocialButtons(); 
-        this.m_okButton.SetActive(false);
-        this.m_title.text = LocalizationManager.Instance.GetString("share_picture");
+        m_waitTimeForRateUs = false;
+        m_popup.Init();
+        m_savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
+        gameObject.SetActive(true);
+        ReinitImage(false);
+        UpdateSocialButtons(); 
+        m_okButton.SetActive(false);
+        m_title.text = LocalizationManager.Instance.GetString("share_picture");
     }
 
-    private void OnOpenHandler()
+    void OnOpenHandler()
     {
-        this.m_isColoring = false;
-        this.m_completed = true; 
-        this.PlayButtonClick();
+        m_isColoring = false;
+        m_completed = true; 
+        PlayButtonClick();
     }
 
-    private void ReinitImage(bool withRect)
+    void ReinitImage(bool withRect)
     {
-        Texture2D resTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        var resTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
         resTex.filterMode = FilterMode.Point;
-        resTex.LoadImage(this.m_savedWorkData.Preview);
-        this.m_image.material.SetTexture("_ResTex", resTex);
-        this.m_image.enabled = true;
-        this.m_filterImage.enabled = false;
-        if (this.m_savedWorkData.ImageInfo.Url != null)
+        resTex.LoadImage(m_savedWorkData.Preview);
+        m_image.material.SetTexture("_ResTex", resTex);
+        m_image.enabled = true;
+        m_filterImage.enabled = false;
+        if (m_savedWorkData.ImageInfo.Url != null)
         {
-            DataManager.Instance.GetImageAsset(this.m_savedWorkData.ImageInfo, delegate (bool res, Texture2D tex)
+            DataManager.Instance.GetImageAsset(m_savedWorkData.ImageInfo, delegate (bool res, Texture2D tex)
             {
-                this.m_image.texture = tex;
-                if (this.m_savedWorkData.Completed)
+                m_image.texture = tex;
+                if (m_savedWorkData.Completed)
                 {
-                    this.m_image.material.SetInt("_HideMainTex", 1);
+                    m_image.material.SetInt("_HideMainTex", 1);
                 }
-                Texture2D filter2 = MainManager.Instance.FilterManager.GetFilter(this.m_savedWorkData.FilterId);
-                if (filter2 != null)
+                var filter = MainManager.Instance.FilterManager.GetFilter(m_savedWorkData.FilterId);
+                if (filter != null)
                 {
-                    this.m_filterImage.material.mainTextureScale = new Vector2((float)resTex.width, (float)resTex.height);
-                    this.m_filterImage.texture = filter2;
-                    this.m_filterImage.enabled = true;
+                    m_filterImage.material.mainTextureScale = new Vector2((float)resTex.width, (float)resTex.height);
+                    m_filterImage.texture = filter;
+                    m_filterImage.enabled = true;
 
-                    _imageSize = new Vector2(this.m_image.texture.width, this.m_image.texture.height);
-                    this.m_filterImage.material.SetFloat("RepeatX", _imageSize.x);
-                    this.m_filterImage.material.SetFloat("RepeatY", _imageSize.y);
+                    _imageSize = new Vector2(m_image.texture.width, m_image.texture.height);
+                    m_filterImage.material.SetFloat("RepeatX", _imageSize.x);
+                    m_filterImage.material.SetFloat("RepeatY", _imageSize.y);
                 }
                 else
                 {
-                    this.m_filterImage.enabled = false;
+                    m_filterImage.enabled = false;
                 }
                 if (withRect)
                 {
-                    this.m_image.uvRect = this.m_savedWorkData.UvRect1;
-                    this.m_filterImage.uvRect = this.m_image.uvRect;
+                    m_image.uvRect = m_savedWorkData.UvRect1;
+                    m_filterImage.uvRect = m_image.uvRect;
                 }
             });
         }
         else
         {
-            DataManager.Instance.GetPhotoAsset(this.m_savedWorkData.ImageInfo.Id, delegate (bool res, Texture2D tex)
+            DataManager.Instance.GetPhotoAsset(m_savedWorkData.ImageInfo.Id, delegate (bool res, Texture2D tex)
             {
-                this.m_image.texture = tex;
-                if (this.m_savedWorkData.Completed)
+                m_image.texture = tex;
+                if (m_savedWorkData.Completed)
                 {
-                    this.m_image.material.SetInt("_HideMainTex", 1);
+                    m_image.material.SetInt("_HideMainTex", 1);
                 }
-                Texture2D filter = MainManager.Instance.FilterManager.GetFilter(this.m_savedWorkData.FilterId);
+                var filter = MainManager.Instance.FilterManager.GetFilter(m_savedWorkData.FilterId);
                 if (filter != null)
                 {
-                    this.m_filterImage.material.mainTextureScale = new Vector2((float)resTex.width, (float)resTex.height);
-                    this.m_filterImage.texture = filter;
-                    this.m_filterImage.enabled = true;
+                    m_filterImage.material.mainTextureScale = new Vector2((float)resTex.width, (float)resTex.height);
+                    m_filterImage.texture = filter;
+                    m_filterImage.enabled = true;
 
-                    _imageSize = new Vector2(this.m_image.texture.width, this.m_image.texture.height);
-                    this.m_filterImage.material.SetFloat("RepeatX", _imageSize.x);
-                    this.m_filterImage.material.SetFloat("RepeatY", _imageSize.y);
+                    _imageSize = new Vector2(m_image.texture.width, m_image.texture.height);
+                    m_filterImage.material.SetFloat("RepeatX", _imageSize.x);
+                    m_filterImage.material.SetFloat("RepeatY", _imageSize.y);
                 }
                 else
                 {
-                    this.m_filterImage.enabled = false;
+                    m_filterImage.enabled = false;
                 }
                 if (withRect)
                 {
-                    this.m_image.uvRect = this.m_savedWorkData.UvRect1;
-                    this.m_filterImage.uvRect = this.m_image.uvRect;
+                    m_image.uvRect = m_savedWorkData.UvRect1;
+                    m_filterImage.uvRect = m_image.uvRect;
                 }
             });
         }
     }
 
-    private void UpdateSocialButtons()
+    void UpdateSocialButtons()
     {
-        bool flag = ShareWrapper.CanFbShare();
-        this.m_facebookButton.interactable = flag;
-        foreach (Image facebookButtonImage in this.m_facebookButtonImages)
+        bool canFbShare = ShareWrapper.CanFbShare();
+        m_facebookButton.interactable = canFbShare;
+        foreach (Image facebookButtonImage in m_facebookButtonImages)
         {
             if (facebookButtonImage != null)
             {
                 Color color = facebookButtonImage.color;
-                color.a = ((!flag) ? 0.5f : 1f);
+                color.a = ((!canFbShare) ? 0.5f : 1f);
                 facebookButtonImage.color = color;
             }
         }
-        flag = ShareWrapper.CanInstShare();
-        this.m_instButton.interactable = flag;
-        foreach (Image instButtonImage in this.m_instButtonImages)
+        canFbShare = ShareWrapper.CanInstShare();
+        m_instButton.interactable = canFbShare;
+        foreach (Image instButtonImage in m_instButtonImages)
         {
             if (instButtonImage != null)
             {
                 Color color2 = instButtonImage.color;
-                color2.a = ((!flag) ? 0.5f : 1f);
+                color2.a = ((!canFbShare) ? 0.5f : 1f);
                 instButtonImage.color = color2;
             }
         }
@@ -213,96 +196,96 @@ public class ShareWindow : BaseWindow
         }*/
     }
 
-    private void OnPurchaseHandler(bool res, SubscriptionType subscription)
+    void OnPurchaseHandler(bool res, SubscriptionType subscription)
     { 
     } 
 
     public void SaveButtonClick()
     {
-        if (!this.m_completed)
+        if (!m_completed)
         { 
-            this.ShowMessage("Please wait...");
+            ShowMessage("Please wait...");
         }
         else
         { 
-            string filePath = AppPathsConfig.SavedImagesPath + this.m_savedWorkData.Id + ".png";
-            MainManager.Instance.FreeImageSaver.GetFilteredImage(this.m_savedWorkData, delegate (byte[] bytes)
+            string filePath = AppPathsConfig.SavedImagesPath + m_savedWorkData.Id + ".png";
+            MainManager.Instance.FreeImageSaver.GetFilteredImage(m_savedWorkData, delegate (byte[] bytes)
             {
                 File.WriteAllBytes(filePath, bytes);
-                this.SaveIntoGallery(filePath);
-            }, this.m_savedWorkData.ImageInfo.Is3D); 
+                SaveIntoGallery(filePath);
+            }, m_savedWorkData.ImageInfo.Is3D); 
             AudioManager.Instance.PlayClick();
         }
     } 
 
-    private void SaveIntoGallery(string filePath)
+    void SaveIntoGallery(string filePath)
     {
         Debug.Log("Save into gallery: " + filePath);
-        ShareWrapper.SaveIntoGallery(filePath, this.m_savedWorkData.Id, string.Empty, delegate (bool res)
+        ShareWrapper.SaveIntoGallery(filePath, m_savedWorkData.Id, string.Empty, delegate (bool res)
         {
-            this.ShowMessage((!res) ? "error" : "saved");
+            ShowMessage((!res) ? "error" : "saved");
             if (res)
             {
                 AnalyticsManager.Instance.SaveSuccess();
-                base.StartCoroutine(this.ShowRateUsIfNeedCoroutine(RateUsReason.SaveInGallery));
+                base.StartCoroutine(ShowRateUsIfNeedCoroutine(RateUsReason.SaveInGallery));
             }
         });
     }
 
     public void ShareButtonClick()
     {
-        if (!this.m_completed)
+        if (!m_completed)
         { 
-            this.ShowMessage("Please wait...");
+            ShowMessage("Please wait...");
         }
         else
         {
             AnalyticsManager.Instance.ShareButtonClicked(); 
-            string filePath = AppPathsConfig.SavedImagesPath + this.m_savedWorkData.Id + ".png";
-            MainManager.Instance.FreeImageSaver.GetFilteredImage(this.m_savedWorkData, delegate (byte[] bytes)
+            string filePath = AppPathsConfig.SavedImagesPath + m_savedWorkData.Id + ".png";
+            MainManager.Instance.FreeImageSaver.GetFilteredImage(m_savedWorkData, delegate (byte[] bytes)
             {
                 File.WriteAllBytes(filePath, bytes);
                 ShareWrapper.ShareImage("Share image..", "Subject", LocalizationManager.Instance.GetString("share_image_text"), filePath);
-            }, this.m_savedWorkData.ImageInfo.Is3D); 
+            }, m_savedWorkData.ImageInfo.Is3D); 
             AudioManager.Instance.PlayClick();
         }
     }
 
     public void FacebookButtonClick()
     {
-        if (!this.m_completed)
+        if (!m_completed)
         { 
-            this.ShowMessage("Please wait...");
+            ShowMessage("Please wait...");
         }
         else
         {
             AnalyticsManager.Instance.ShareViaFbButtonClicked(); 
-            string filePath = AppPathsConfig.SavedImagesPath + this.m_savedWorkData.Id + ".png";
-            MainManager.Instance.FreeImageSaver.GetFilteredImage(this.m_savedWorkData, delegate (byte[] bytes)
+            string filePath = AppPathsConfig.SavedImagesPath + m_savedWorkData.Id + ".png";
+            MainManager.Instance.FreeImageSaver.GetFilteredImage(m_savedWorkData, delegate (byte[] bytes)
             {
                 File.WriteAllBytes(filePath, bytes);
                 ShareWrapper.ShareImageFb("Share image..", "Subject", LocalizationManager.Instance.GetString("share_image_text"), filePath);
-            }, this.m_savedWorkData.ImageInfo.Is3D); 
+            }, m_savedWorkData.ImageInfo.Is3D); 
             AudioManager.Instance.PlayClick();
         }
     }
 
     public void InstagramButtonClick()
     {
-        if (!this.m_completed)
+        if (!m_completed)
         { 
-            this.ShowMessage("Please wait...");
+            ShowMessage("Please wait...");
         }
         else
         {
             AnalyticsManager.Instance.ShareViaInstagramButtonClicked(); 
-            string filePath = AppPathsConfig.SavedImagesPath + this.m_savedWorkData.Id + ".png";
+            string filePath = AppPathsConfig.SavedImagesPath + m_savedWorkData.Id + ".png";
             Debug.Log(filePath);
-            MainManager.Instance.FreeImageSaver.GetFilteredImage(this.m_savedWorkData, delegate (byte[] bytes)
+            MainManager.Instance.FreeImageSaver.GetFilteredImage(m_savedWorkData, delegate (byte[] bytes)
             {
                 File.WriteAllBytes(filePath, bytes);
                 ShareWrapper.ShareImageInstagram("Share image..", "Subject", LocalizationManager.Instance.GetString("share_image_text"), filePath);
-            }, this.m_savedWorkData.ImageInfo.Is3D); 
+            }, m_savedWorkData.ImageInfo.Is3D); 
             AudioManager.Instance.PlayClick();
         }
     } 
@@ -312,10 +295,10 @@ public class ShareWindow : BaseWindow
     }
 
 
-    private void ShowMessage(string text)
+    void ShowMessage(string text)
     {
-        this.m_popup.gameObject.SetActive(true);
-        this.m_popup.Show(LocalizationManager.Instance.GetString(text));
+        m_popup.gameObject.SetActive(true);
+        m_popup.Show(LocalizationManager.Instance.GetString(text));
     }
 
     public void ReturnToMenu()
@@ -342,24 +325,24 @@ public class ShareWindow : BaseWindow
         AudioManager.Instance.PlayClick();
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
     } 
 
-    private IEnumerator ShowRateUsIfNeedCoroutine(RateUsReason reason)
+    IEnumerator ShowRateUsIfNeedCoroutine(RateUsReason reason)
     {
-        this.m_waitTimeForRateUs = true;
-        while (this.m_popup.isActiveAndEnabled)
+        m_waitTimeForRateUs = true;
+        while (m_popup.isActiveAndEnabled)
         {
             yield return null;
         }
         yield return new WaitForSeconds(1f);
 
-        if (this.m_waitTimeForRateUs)
+        if (m_waitTimeForRateUs)
         {
-            this.m_waitTimeForRateUs = false;
+            m_waitTimeForRateUs = false;
             if (RateUsWindow.NeedShow(reason))
             {
                 DialogToolWrapper.ShowRateUsDialog(null);

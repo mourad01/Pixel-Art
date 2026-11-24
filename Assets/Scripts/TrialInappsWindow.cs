@@ -14,51 +14,31 @@ public class TrialInappsWindow : BaseWindow
 {
     public Action OnPurchase;
 
-    private bool restoredAnything;
+    bool restoredAnything;
 
-    [SerializeField] private GameObject m_mainPart;
+    [SerializeField] GameObject m_mainPart;
+    [SerializeField] NewInappsWindowElement m_prefab;
+    [SerializeField] NewInappsWindowElement m_trialInappsElement;
+    [SerializeField] Transform m_elementsParent;
+    [SerializeField] List<NewInappsWindowElement> m_elements;
+    [SerializeField] GameObject m_resultPart;
+    [SerializeField] Text m_resultTitle;
+    [SerializeField] Text m_resultText;
+    [SerializeField] Image m_resultIcon;
+    [SerializeField] Sprite m_goodResultSprite;
+    [SerializeField] Sprite m_badResultSprite;
+    [SerializeField] GameObject m_closeButton;
+    [SerializeField] Popup m_popup;
+    [SerializeField] ScrollRect m_textScrollRect;
+    [SerializeField] Text m_detailsText;
+    [SerializeField] Text m_urlPrefab;
 
-    [SerializeField] private NewInappsWindowElement m_prefab;
-
-    [SerializeField] private NewInappsWindowElement m_trialInappsElement;
-
-    [SerializeField] private Transform m_elementsParent;
-
-    [SerializeField] private List<NewInappsWindowElement> m_elements;
-
-    [SerializeField] private GameObject m_resultPart;
-
-    [SerializeField] private Text m_resultTitle;
-
-    [SerializeField] private Text m_resultText;
-
-    [SerializeField] private Image m_resultIcon;
-
-    [SerializeField] private Sprite m_goodResultSprite;
-
-    [SerializeField] private Sprite m_badResultSprite;
-
-    [SerializeField] private GameObject m_closeButton;
-
-    [SerializeField] private Popup m_popup;
-
-    [SerializeField] private ScrollRect m_textScrollRect;
-
-    [SerializeField] private Text m_detailsText;
-
-    [SerializeField] private Text m_urlPrefab;
-
-    private bool m_textInited;
-
-    private bool m_waitPurchases;
-
-    private Action m_closeHandler;
-
-    private bool m_onStart;
-
-    private bool m_subCampaign;
-
-    private string m_place;
+    bool m_textInited;
+    bool m_waitPurchases;
+    Action m_closeHandler;
+    bool m_onStart;
+    bool m_subCampaign;
+    string m_place;
 
     protected override string WindowName
     {
@@ -70,13 +50,13 @@ public class TrialInappsWindow : BaseWindow
 
     public void Init(string place, Action closeHandler = null, bool onStart = false, bool subCampaign = false)
     {
-        this.m_place = place;
-        this.m_closeHandler = closeHandler;
-        this.m_onStart = onStart;
-        this.m_subCampaign = subCampaign;
-        this.m_mainPart.SetActive(true);
-        this.m_resultPart.SetActive(false);
-        this.Open();
+        m_place = place;
+        m_closeHandler = closeHandler;
+        m_onStart = onStart;
+        m_subCampaign = subCampaign;
+        m_mainPart.SetActive(true);
+        m_resultPart.SetActive(false);
+        Open();
         //this.InitTexts();
         //Product[] products = IAPWrapper.Instance.GetProducts();
         /*if (products != null)
@@ -88,10 +68,10 @@ public class TrialInappsWindow : BaseWindow
         {
             this.m_waitPurchases = true;
         }*/
-        AnalyticsManager.Instance.TrialInappsWindowOpened(onStart, place, this.m_subCampaign);
+        AnalyticsManager.Instance.TrialInappsWindowOpened(onStart, place, m_subCampaign);
     }
 
-    private void Update()
+    void Update()
     {/*
         if (this.m_waitPurchases && IAPWrapper.Instance.GetProducts() != null)
         {
@@ -197,7 +177,7 @@ public class TrialInappsWindow : BaseWindow
             }
         });*/
         AudioManager.Instance.PlayClick();
-        AnalyticsManager.Instance.TrialWindowAction("continue", this.m_place, this.m_onStart, this.m_subCampaign);
+        AnalyticsManager.Instance.TrialWindowAction("continue", m_place, m_onStart, m_subCampaign);
     }
 
     public void TermsButtonClick()
@@ -215,22 +195,22 @@ public class TrialInappsWindow : BaseWindow
         WindowManager.Instance.CloseMe(this);
         AnalyticsManager.Instance.BackButtonClicked();
         AudioManager.Instance.PlayClick();
-        AnalyticsManager.Instance.TrialWindowAction("close", this.m_place, this.m_onStart, this.m_subCampaign);
+        AnalyticsManager.Instance.TrialWindowAction("close", m_place, m_onStart, m_subCampaign);
     }
 
     public void DetailsButtonClick()
     {
-        DetailsWindow detailsWindow = WindowManager.Instance.OpenDetailsWindow();
+        var detailsWindow = WindowManager.Instance.OpenDetailsWindow();
         //detailsWindow.Init(IAPWrapper.Instance.GetProducts());
         AudioManager.Instance.PlayClick();
     }
 
     public override bool Close()
     {
-        if (this.m_closeButton.activeSelf)
+        if (m_closeButton.activeSelf)
         {
             AnalyticsManager.Instance.InappsWindowClosed();
-            this.m_closeHandler.SafeInvoke();
+            m_closeHandler.SafeInvoke();
             return base.Close();
         }
         return false;
@@ -240,27 +220,27 @@ public class TrialInappsWindow : BaseWindow
     {
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
-        base.StartCoroutine(this.WaitForRestored());
+        base.StartCoroutine(WaitForRestored());
         //IAPWrapper.Instance.RestorePurchases(null);
         AnalyticsManager.Instance.RestoreButtonClicked();
         AudioManager.Instance.PlayClick();
-        AnalyticsManager.Instance.TrialWindowAction("restore", this.m_place, this.m_onStart, this.m_subCampaign);
+        AnalyticsManager.Instance.TrialWindowAction("restore", m_place, m_onStart, m_subCampaign);
     }
 
-    private void OnPurchaseHandler(bool res, SubscriptionType type)
+    void OnPurchaseHandler(bool res, SubscriptionType type)
     {
-        this.restoredAnything = true;
+        restoredAnything = true;
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
     }
-    private IEnumerator SetContentSizeCoroutine()
+    IEnumerator SetContentSizeCoroutine()
     {
         yield return null;
-        this.m_textScrollRect.gameObject.SetActive(false);
-        this.m_textScrollRect.gameObject.SetActive(true);
-        this.m_textScrollRect.verticalNormalizedPosition = 1f;
+        m_textScrollRect.gameObject.SetActive(false);
+        m_textScrollRect.gameObject.SetActive(true);
+        m_textScrollRect.verticalNormalizedPosition = 1f;
     }
-    private IEnumerator WaitForRestored()
+    IEnumerator WaitForRestored()
     {
         var timer = 2f;
         while (timer > 0f)
@@ -270,7 +250,7 @@ public class TrialInappsWindow : BaseWindow
         }
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
-        if (this.restoredAnything)
+        if (restoredAnything)
         {
             /*if (IAPWrapper.Instance.Subscribed)
             {
@@ -284,7 +264,7 @@ public class TrialInappsWindow : BaseWindow
         }
         else
         {
-            this.m_popup.Show(LocalizationManager.Instance.GetString("restored0"));
+            m_popup.Show(LocalizationManager.Instance.GetString("restored0"));
         } 
     }
 }

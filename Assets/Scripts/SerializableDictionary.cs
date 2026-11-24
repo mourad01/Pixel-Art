@@ -17,27 +17,23 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
     /// <summary>
     /// The default XML tag name for an item.
     /// </summary>
-    private const string DefaultItemTag = "item";
-
+    const string DefaultItemTag = "item";
     /// <summary>
     /// The default XML tag name for a key.
     /// </summary>
-    private const string DefaultKeyTag = "key";
-
+    const string DefaultKeyTag = "key";
     /// <summary>
     /// The default XML tag name for a value.
     /// </summary>
-    private const string DefaultValueTag = "value";
-
+    const string DefaultValueTag = "value";
     /// <summary>
     /// The XML serializer for the key type.
     /// </summary>
-    private static readonly XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
-
+    static readonly XmlSerializer keySerializer = new XmlSerializer(typeof(TKey));
     /// <summary>
     /// The XML serializer for the value type.
     /// </summary>
-    private static readonly XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
+    static readonly XmlSerializer valueSerializer = new XmlSerializer(typeof(TValue));
 
     /// <summary>
     /// Initializes a new instance of the
@@ -126,7 +122,7 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
         {
             while (reader.NodeType != XmlNodeType.EndElement)
             {
-                this.ReadItem(reader);
+                ReadItem(reader);
                 reader.MoveToContent();
             }
         }
@@ -144,7 +140,7 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
     {
         foreach (var keyValuePair in this)
         {
-            this.WriteItem(writer, keyValuePair);
+            WriteItem(writer, keyValuePair);
         }
     }
 
@@ -152,12 +148,12 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
     /// Deserializes the dictionary item.
     /// </summary>
     /// <param name="reader">The XML representation of the object.</param>
-    private void ReadItem(XmlReader reader)
+    void ReadItem(XmlReader reader)
     {
-        reader.ReadStartElement(this.ItemTagName);
+        reader.ReadStartElement(ItemTagName);
         try
         {
-            this.Add(this.ReadKey(reader), this.ReadValue(reader));
+            Add(ReadKey(reader), ReadValue(reader));
         }
         finally
         {
@@ -170,9 +166,9 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
     /// </summary>
     /// <param name="reader">The XML representation of the object.</param>
     /// <returns>The dictionary item's key.</returns>
-    private TKey ReadKey(XmlReader reader)
+    TKey ReadKey(XmlReader reader)
     {
-        reader.ReadStartElement(this.KeyTagName);
+        reader.ReadStartElement(KeyTagName);
         try
         {
             return (TKey)keySerializer.Deserialize(reader);
@@ -188,9 +184,9 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
     /// </summary>
     /// <param name="reader">The XML representation of the object.</param>
     /// <returns>The dictionary item's value.</returns>
-    private TValue ReadValue(XmlReader reader)
+    TValue ReadValue(XmlReader reader)
     {
-        reader.ReadStartElement(this.ValueTagName);
+        reader.ReadStartElement(ValueTagName);
         try
         {
             return (TValue)valueSerializer.Deserialize(reader);
@@ -206,13 +202,13 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
     /// </summary>
     /// <param name="writer">The XML writer to serialize to.</param>
     /// <param name="keyValuePair">The key/value pair.</param>
-    private void WriteItem(XmlWriter writer, KeyValuePair<TKey, TValue> keyValuePair)
+    void WriteItem(XmlWriter writer, KeyValuePair<TKey, TValue> keyValuePair)
     {
-        writer.WriteStartElement(this.ItemTagName);
+        writer.WriteStartElement(ItemTagName);
         try
         {
-            this.WriteKey(writer, keyValuePair.Key);
-            this.WriteValue(writer, keyValuePair.Value);
+            WriteKey(writer, keyValuePair.Key);
+            WriteValue(writer, keyValuePair.Value);
         }
         finally
         {
@@ -225,9 +221,9 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
     /// </summary>
     /// <param name="writer">The XML writer to serialize to.</param>
     /// <param name="key">The dictionary item's key.</param>
-    private void WriteKey(XmlWriter writer, TKey key)
+    void WriteKey(XmlWriter writer, TKey key)
     {
-        writer.WriteStartElement(this.KeyTagName);
+        writer.WriteStartElement(KeyTagName);
         try
         {
             keySerializer.Serialize(writer, key);
@@ -243,9 +239,9 @@ public class SerializableDictionary<TKey, TValue> : Dictionary<TKey, TValue>, IX
     /// </summary>
     /// <param name="writer">The XML writer to serialize to.</param>
     /// <param name="value">The dictionary item's value.</param>
-    private void WriteValue(XmlWriter writer, TValue value)
+    void WriteValue(XmlWriter writer, TValue value)
     {
-        writer.WriteStartElement(this.ValueTagName);
+        writer.WriteStartElement(ValueTagName);
         try
         {
             valueSerializer.Serialize(writer, value);

@@ -5,34 +5,30 @@ using UnityEngine.EventSystems;
 public class FilterWIndowInputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler, IScrollHandler, IEventSystemHandler
 {
     public Action<float> OnScrolled;
-
     public Action<float> OnZoomed;
-
     public Action<Vector2> OnDragged;
 
-    private Vector2 m_pos = Vector2.zero;
+    Vector2 m_pos = Vector2.zero;
+    InputReceiver.TapState m_currentTapState;
+    float m_touchesDelta = -3.40282347E+38f;
 
-    private InputReceiver.TapState m_currentTapState;
-
-    private float m_touchesDelta = -3.40282347E+38f;
-
-    private void Update()
+    void Update()
     {
-        if (this.m_currentTapState != InputReceiver.TapState.Multitouch)
+        if (m_currentTapState != InputReceiver.TapState.Multitouch)
         {
-            this.CheckMultiTouch();
+            CheckMultiTouch();
         }
     }
 
-    private bool CheckMultiTouch()
+    bool CheckMultiTouch()
     {
         if (Input.touches.Length > 1)
         {
-            Touch[] touches = Input.touches;
-            Vector2 vector = touches[0].position - touches[1].position;
-            this.m_touchesDelta = Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y);
-            this.m_pos = Input.mousePosition;
-            this.m_currentTapState = InputReceiver.TapState.Multitouch;
+            var touches = Input.touches;
+            Vector2 dir = touches[0].position - touches[1].position;
+            m_touchesDelta = Mathf.Sqrt(dir.x * dir.x + dir.y * dir.y);
+            m_pos = Input.mousePosition;
+            m_currentTapState = InputReceiver.TapState.Multitouch;
             return true;
         }
         return false;
@@ -40,22 +36,22 @@ public class FilterWIndowInputReceiver : MonoBehaviour, IPointerDownHandler, IPo
 
     public void OnDrag(PointerEventData eventData)
     {
-        switch (this.m_currentTapState)
+        switch (m_currentTapState)
         {
             case InputReceiver.TapState.Drag:
-                this.OnDragged.SafeInvoke(eventData.position - this.m_pos);
-                this.m_pos = eventData.position;
+                OnDragged.SafeInvoke(eventData.position - m_pos);
+                m_pos = eventData.position;
                 break;
             case InputReceiver.TapState.Multitouch:
                 {
-                    Touch[] touches = Input.touches;
+                    var touches = Input.touches;
                     if (touches.Length >= 2)
                     {
-                        Vector2 vector = touches[0].position - touches[1].position;
-                        float num = Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y);
-                        float par = num / this.m_touchesDelta;
-                        this.OnZoomed.SafeInvoke(par);
-                        this.m_touchesDelta = num;
+                        Vector2 dir = touches[0].position - touches[1].position;
+                        float touchDistance = Mathf.Sqrt(dir.x * dir.x + dir.y * dir.y);
+                        float par = touchDistance / m_touchesDelta;
+                        OnZoomed.SafeInvoke(par);
+                        m_touchesDelta = touchDistance;
                     }
                     break;
                 }
@@ -64,18 +60,18 @@ public class FilterWIndowInputReceiver : MonoBehaviour, IPointerDownHandler, IPo
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        this.m_pos = eventData.position;
-        this.m_currentTapState = InputReceiver.TapState.Drag;
+        m_pos = eventData.position;
+        m_currentTapState = InputReceiver.TapState.Drag;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        this.m_currentTapState = InputReceiver.TapState.None;
+        m_currentTapState = InputReceiver.TapState.None;
     }
 
     public void OnScroll(PointerEventData data)
     {
-        Action<float> onScrolled = this.OnScrolled;
+        var onScrolled = OnScrolled;
         Vector2 scrollDelta = data.scrollDelta;
         onScrolled.SafeInvoke(scrollDelta.y);
     }

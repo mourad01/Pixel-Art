@@ -2,15 +2,14 @@ using UnityEngine;
 
 public class UIShaker : MonoBehaviour
 {
-    private bool running = true;
+    bool running = true;
+    Vector3 originPosition;
+    Quaternion originRotation;
 
-
-    private Vector3 originPosition;
-    private Quaternion originRotation;
     public float shake_decay = 0.002f;
     public float shake_intensity = .4f;
 
-    private float temp_shake_intensity = 0;
+    float temp_shake_intensity = 0;
     void Update()
     {
         if (running)
@@ -38,21 +37,21 @@ public class UIShaker : MonoBehaviour
         temp_shake_intensity = shake_intensity;
 
     }
-    private void Start()
+    void Start()
     {
         Shake();
     }
 
     public void Pause()
     {
-        this.running = false;
-        base.gameObject.transform.rotation = Quaternion.identity;
+        running = false;
+        gameObject.transform.rotation = Quaternion.identity;
         temp_shake_intensity = 0;
     }
 
     public void Resume()
     {
-        this.running = true;
-        this.Shake();
+        running = true;
+        Shake();
     }
 }

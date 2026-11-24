@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class CustomVerticalLayoutGroupElement : MonoBehaviour
 {
-    [SerializeField] private int m_siblingIndex;
+    [SerializeField] int m_siblingIndex;
 
     public int SiblingIndex
     {
         get
         {
-            return this.m_siblingIndex;
+            return m_siblingIndex;
         }
     }
 
-    private void Awake()
+    void Awake()
     {
-        base.transform.SetAsLastSibling();
+        transform.SetAsLastSibling();
     }
 }
 

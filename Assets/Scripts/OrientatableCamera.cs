@@ -2,46 +2,42 @@ using UnityEngine;
 
 public class OrientatableCamera : MonoBehaviour
 {
-    [SerializeField] private Canvas m_canvas;
+    [SerializeField] Canvas m_canvas;
+    [SerializeField] float m_uiSize;
+    [SerializeField] float m_topUiSize;
 
-    [SerializeField] private float m_uiSize;
-
-    [SerializeField] private float m_topUiSize;
-
-
-
-    private Camera m_mainCamera;
+    Camera m_mainCamera;
 
     public Rect CameraRect { get; private set; }
 
-    private void Awake()
+    void Awake()
     {
-        this.m_mainCamera = base.GetComponent<Camera>();
-        this.OnOrientationChangedHandler(ScreenOrientation.Portrait);
+        m_mainCamera = base.GetComponent<Camera>();
+        OnOrientationChangedHandler(ScreenOrientation.Portrait);
     }
 
-    private void OnOrientationChangedHandler(ScreenOrientation orientation)
+    void OnOrientationChangedHandler(ScreenOrientation orientation)
     {
-        Rect rect = (this.m_canvas.transform as RectTransform).rect;
-        float num = Mathf.Max(rect.width, rect.height);
+        Rect rect = (m_canvas.transform as RectTransform).rect;
+        float maxSide = Mathf.Max(rect.width, rect.height);
         switch (orientation)
         {
             case ScreenOrientation.LandscapeLeft:
             case ScreenOrientation.LandscapeRight:
                 {
-                    float b2 = this.m_uiSize / num + 0.005f;
+                    float b2 = m_uiSize / maxSide + 0.005f;
                     b2 = Mathf.Max(0.01f, b2);
-                    this.CameraRect = new Rect(0f, 0f, 1f - b2, 1f);
+                    CameraRect = new Rect(0f, 0f, 1f - b2, 1f);
                     break;
                 }
             case ScreenOrientation.Portrait:
             case ScreenOrientation.PortraitUpsideDown:
                 {
-                    float b = this.m_uiSize / num - 0.005f;
+                    float b = m_uiSize / maxSide - 0.005f;
                     b = Mathf.Max(0.01f, b);
                     float value2 = 0f;
-                    value2 = this.m_topUiSize / num;
-                    this.CameraRect = new Rect(0f, b, 1f, 1f - b - value2);
+                    value2 = m_topUiSize / maxSide;
+                    CameraRect = new Rect(0f, b, 1f, 1f - b - value2);
                     break;
                 }
         }

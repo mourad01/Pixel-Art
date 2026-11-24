@@ -15,32 +15,26 @@ public class DailyGame : MonoBehaviour
     }
 
     public GameObject[] emptyStarsArray;
-
     public GameObject[] fullStarsArray;
-
     public ParticleSystem particlesCascade;
 
     [HideInInspector]
     public LeaderboardScript leaderBoardScript;
 
     public Text guiTimerText;
-
     public Text movesText;
-
     public int starAwardIncrement = 5;
 
-    private PuzzleState puzzleState = PuzzleState.PUZZLE_PAUSED;
-
-    private float startTime;
-    private int numberOfCells;
-    private float timer;
-
-    private int errorsCount = 0;
-
-    private long previousSeconds = 0;
+    PuzzleState puzzleState = PuzzleState.PUZZLE_PAUSED;
+    float startTime;
+    int numberOfCells;
+    float timer;
+    int errorsCount = 0;
+    long previousSeconds = 0;
 
     public static DailyGame Instance;
-    private static bool isdaily = false;
+
+    static bool isdaily = false;
     void Awake()
     {
         Instance = this;
@@ -50,7 +44,7 @@ public class DailyGame : MonoBehaviour
 
             if (GetNameScript.Instance != null)
             {
-                this.leaderBoardScript = GetNameScript.Instance.leaderBoardScript;
+                leaderBoardScript = GetNameScript.Instance.leaderBoardScript;
             }
         
     }
@@ -95,16 +89,16 @@ public class DailyGame : MonoBehaviour
         return isdaily;
     }
 
-    private void Update()
+    void Update()
     {
-        if (this.puzzleState == PuzzleState.PUZZLE_PLAYING)
+        if (puzzleState == PuzzleState.PUZZLE_PLAYING)
         {
-            this.timer += Time.smoothDeltaTime;
-            TimeSpan timeSpan = TimeSpan.FromSeconds((double)this.timer);
+            timer += Time.smoothDeltaTime;
+            var timeSpan = TimeSpan.FromSeconds((double)timer);
             if (previousSeconds < (long)timeSpan.TotalSeconds)
             {
-                this.guiTimerText.text = string.Format("Time {0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
-                this.movesText.text = "Errors " + this.errorsCount.ToString();
+                guiTimerText.text = string.Format("Time {0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
+                movesText.text = "Errors " + errorsCount.ToString();
                 previousSeconds = (long)timeSpan.TotalSeconds;
             }
         }
@@ -112,14 +106,14 @@ public class DailyGame : MonoBehaviour
 
     public void StartGame(int numOfcells)
     {
-        this.previousSeconds = 0;
-        this.movesText.gameObject.SetActive(true);
-        this.guiTimerText.gameObject.SetActive(true);
-        this.puzzleState = PuzzleState.PUZZLE_PLAYING;
-        this.errorsCount = 0;
-        this.timer = 0;
-        this.startTime = Time.deltaTime;
-        this.numberOfCells = numOfcells;
+        previousSeconds = 0;
+        movesText.gameObject.SetActive(true);
+        guiTimerText.gameObject.SetActive(true);
+        puzzleState = PuzzleState.PUZZLE_PLAYING;
+        errorsCount = 0;
+        timer = 0;
+        startTime = Time.deltaTime;
+        numberOfCells = numOfcells;
     }
 
     public static void IncresetError()
@@ -133,17 +127,17 @@ public class DailyGame : MonoBehaviour
 
     public void Complete()
     {
-        if (this.puzzleState == PuzzleState.PUZZLE_PLAYING)
+        if (puzzleState == PuzzleState.PUZZLE_PLAYING)
         {
-            base.StartCoroutine(this.CompletionSchedule());
-            this.puzzleState = PuzzleState.PUZZLE_COMPLETE_SEQUENCE;
+            base.StartCoroutine(CompletionSchedule());
+            puzzleState = PuzzleState.PUZZLE_COMPLETE_SEQUENCE;
 
-            int starsCount = this.CalculateStarsWon();
+            int starsCount = CalculateStarsWon();
             int oldStarsCount = 0;
             switch (LevelProgressControl.control.dailyDayOffset)
             {
                 case -2:
-                    oldStarsCount = this.GetDailyStars("dailyereyesterdaydata");
+                    oldStarsCount = GetDailyStars("dailyereyesterdaydata");
                     PlayerPrefs.SetString("dailyereyesterdaydata", LevelProgressControl.control.puzzleBasename + "-" + starsCount);
                     if (Debug.isDebugBuild)
                     {
@@ -151,7 +145,7 @@ public class DailyGame : MonoBehaviour
                     }
                     break;
                 case -1:
-                    oldStarsCount = this.GetDailyStars("dailyyesterdaydata");
+                    oldStarsCount = GetDailyStars("dailyyesterdaydata");
                     PlayerPrefs.SetString("dailyyesterdaydata", LevelProgressControl.control.puzzleBasename + "-" + starsCount);
                     if (Debug.isDebugBuild)
                     {
@@ -160,26 +154,26 @@ public class DailyGame : MonoBehaviour
                     break;
                 case 0:
                     {
-                        oldStarsCount = this.GetDailyStars("dailytodaydata");
+                        oldStarsCount = GetDailyStars("dailytodaydata");
                         PlayerPrefs.SetString("dailytodaydata", LevelProgressControl.control.puzzleBasename + "-" + starsCount);
                         if (Debug.isDebugBuild)
                         {
                             Debug.Log("Today COMPLETED");
                         }
-                        if (this.timer < LevelProgressControl.control.dailyTodayPersonalBest)
+                        if (timer < LevelProgressControl.control.dailyTodayPersonalBest)
                         {
-                            LevelProgressControl.control.dailyTodayPersonalBest = this.timer;
+                            LevelProgressControl.control.dailyTodayPersonalBest = timer;
                             //LevelProgressControl.control.dailyTodayPersonalBestBeaten = true;
                             LevelProgressControl.control.SaveProgressData();
                         }
-                        long score = Convert.ToInt64(this.timer);
+                        long score = Convert.ToInt64(timer);
                         if (leaderBoardScript != null)
                         {
 #if UNITY_ANDROID
                             this.leaderBoardScript.ReportLeaderboardScore(score, GPGSIds.leaderboard_best_time);
 #else
                             //pixelart_dailybest
-                            this.leaderBoardScript.ReportLeaderboardScore(score, "pixelart_dailybest");
+                            leaderBoardScript.ReportLeaderboardScore(score, "pixelart_dailybest");
 #endif
                         }
                         break;
@@ -191,60 +185,60 @@ public class DailyGame : MonoBehaviour
         }
     }
 
-    private IEnumerator CompletionSchedule()
+    IEnumerator CompletionSchedule()
     { 
         yield return (object)new WaitForSeconds(1f);
-        this.particlesCascade.Play();
-        for (int i = 0; i < this.emptyStarsArray.Length; i++)
+        particlesCascade.Play();
+        for (int i = 0; i < emptyStarsArray.Length; i++)
         {
-            this.emptyStarsArray[i].GetComponent<Animation>().Play();
+            emptyStarsArray[i].GetComponent<Animation>().Play();
         }
-        this.movesText.CrossFadeAlpha(1f, 0.5f, false); 
-        this.guiTimerText.CrossFadeAlpha(1f, 0.5f, false); 
+        movesText.CrossFadeAlpha(1f, 0.5f, false); 
+        guiTimerText.CrossFadeAlpha(1f, 0.5f, false); 
         yield return (object)new WaitForSeconds(0.6f);
-        int starsWon = this.CalculateStarsWon();
+        int starsWon = CalculateStarsWon();
         if (starsWon >= 1)
         {
-            this.fullStarsArray[0].GetComponent<SpriteRenderer>().enabled = true;
-            this.fullStarsArray[0].GetComponent<RadialParticlesScript>().Reset(false);
+            fullStarsArray[0].GetComponent<SpriteRenderer>().enabled = true;
+            fullStarsArray[0].GetComponent<RadialParticlesScript>().Reset(false);
         }
         yield return (object)new WaitForSeconds(0.2f);
         if (starsWon >= 2)
         {
-            this.fullStarsArray[1].GetComponent<SpriteRenderer>().enabled = true;
-            this.fullStarsArray[1].GetComponent<RadialParticlesScript>().Reset(false);
+            fullStarsArray[1].GetComponent<SpriteRenderer>().enabled = true;
+            fullStarsArray[1].GetComponent<RadialParticlesScript>().Reset(false);
         }
         yield return (object)new WaitForSeconds(0.2f);
         if (starsWon == 3)
         {
-            this.fullStarsArray[2].GetComponent<SpriteRenderer>().enabled = true;
-            this.fullStarsArray[2].GetComponent<RadialParticlesScript>().Reset(false);
+            fullStarsArray[2].GetComponent<SpriteRenderer>().enabled = true;
+            fullStarsArray[2].GetComponent<RadialParticlesScript>().Reset(false);
         }
-        this.puzzleState = PuzzleState.PUZZLE_COMPLETE; 
+        puzzleState = PuzzleState.PUZZLE_COMPLETE; 
     }
-    private int CalculateStarsWon()
+    int CalculateStarsWon()
     {
-        float duration = Time.deltaTime - this.startTime;
-        if (duration <= numberOfCells + this.starAwardIncrement && errorsCount < 3)
+        float duration = Time.deltaTime - startTime;
+        if (duration <= numberOfCells + starAwardIncrement && errorsCount < 3)
         {
             return 3;
         }
-        if (duration <= numberOfCells + this.starAwardIncrement * 2 && errorsCount < 10)
+        if (duration <= numberOfCells + starAwardIncrement * 2 && errorsCount < 10)
         {
             return 2;
         }
-        if (duration <= numberOfCells + this.starAwardIncrement * 3)
+        if (duration <= numberOfCells + starAwardIncrement * 3)
         {
             return 1;
         }
         return 0;
     }
 
-    private int GetDailyStars(string prefname)
+    int GetDailyStars(string prefname)
     {
         string str = PlayerPrefs.GetString(prefname, "nodata");
-        string[] array = str.Split('-');
-        return Convert.ToInt32(array[2]);
+        var parts = str.Split('-');
+        return Convert.ToInt32(parts[2]);
     }
 
 }

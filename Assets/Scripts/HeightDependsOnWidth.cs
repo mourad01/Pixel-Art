@@ -7,57 +7,56 @@ using UnityEngine.UI;
 
 public class HeightDependsOnWidth : MonoBehaviour
 {
-    private enum DependType
+    enum DependType
     {
         WidthMinus20Div2,
         Equal
     }
 
-    [SerializeField] private DependType m_dependType = DependType.Equal;
+    [SerializeField] DependType m_dependType = DependType.Equal;
 
-    private RectTransform m_rectTransform;
+    RectTransform m_rectTransform;
+    float m_width = -1f;
 
-    private float m_width = -1f;
-
-    private void Start()
+    void Start()
     {
-        this.m_rectTransform = (RectTransform)base.transform;
-        this.UpdateHeight();
+        m_rectTransform = (RectTransform)transform;
+        UpdateHeight();
     }
 
-    private void Update()
+    void Update()
     {
-        base.StartCoroutine(this.UpdateHeightCoroutine());
-        base.enabled = false;
+        base.StartCoroutine(UpdateHeightCoroutine());
+        enabled = false;
     }
 
-    private void UpdateHeight()
+    void UpdateHeight()
     {
-        Vector2 sizeDelta = this.m_rectTransform.sizeDelta;
-        this.m_width = sizeDelta.x;
-        float num = 0f;
-        switch (this.m_dependType)
+        Vector2 sizeDelta = m_rectTransform.sizeDelta;
+        m_width = sizeDelta.x;
+        float height = 0f;
+        switch (m_dependType)
         {
             case DependType.Equal:
-                num = this.m_width;
+                height = m_width;
                 break;
             case DependType.WidthMinus20Div2:
-                num = (this.m_width - 20f) / 2f;
+                height = (m_width - 20f) / 2f;
                 break;
         }
-        Vector2 sizeDelta2 = this.m_rectTransform.sizeDelta;
-        sizeDelta2.y = num;
-        this.m_rectTransform.sizeDelta = sizeDelta2;
-        LayoutElement component = base.GetComponent<LayoutElement>();
+        Vector2 sizeDelta2 = m_rectTransform.sizeDelta;
+        sizeDelta2.y = height;
+        m_rectTransform.sizeDelta = sizeDelta2;
+        var component = base.GetComponent<LayoutElement>();
         if (component != null)
         {
-            LayoutElement layoutElement = component;
-            component.preferredHeight = num; float value4 = layoutElement.minHeight = (component.preferredHeight);
+            var layoutElement = component;
+            component.preferredHeight = height; float value4 = layoutElement.minHeight = (component.preferredHeight);
         }
     }
-    private IEnumerator UpdateHeightCoroutine()
+    IEnumerator UpdateHeightCoroutine()
     {
         yield return null;
-        this.UpdateHeight();
+        UpdateHeight();
     }
 }

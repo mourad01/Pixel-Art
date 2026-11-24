@@ -7,7 +7,7 @@ using UnityEngine;
 [Serializable]
 public class ImagesInfo
 {
-    private List<ImageInfo> m_images;
+    List<ImageInfo> m_images;
 
     public int Version { get; set; }
     public int Count { get;  set; }
@@ -16,19 +16,19 @@ public class ImagesInfo
     {
         get
         {
-            return this.m_images;
+            return m_images;
         }
     }
 
     public ImagesInfo()
     {
-        this.Version = -1;
-        this.m_images = new List<ImageInfo>();
+        Version = -1;
+        m_images = new List<ImageInfo>();
     }
 
     public void Add(ImageInfo imageInfo)
     {
-        this.m_images.Add(imageInfo);
+        m_images.Add(imageInfo);
         Count++;
     }
 #if UNITY_EDITOR
@@ -43,7 +43,7 @@ public class ImagesInfo
             }
 
             var list = new List<ImageInfo>();
-            foreach(var image in this.m_images)
+            foreach(var image in m_images)
             {
                 if (!dict.ContainsKey(image.Id))
                 {
@@ -55,14 +55,14 @@ public class ImagesInfo
             {
                 list.Add(image);
             }
-            this.m_images.Clear();
+            m_images.Clear();
 
             foreach(var image in list)
             {
                 string fileName = Path.Combine(onlineDatasetLocation, image.Url);
                 if (File.Exists(fileName) && (!image.Is3D || File.Exists(fileName + ".vox")))
                 {
-                    this.m_images.Add(image);
+                    m_images.Add(image);
                 }
                 else
                 {
@@ -70,7 +70,7 @@ public class ImagesInfo
                 }
             }
 
-            this.Count = this.m_images.Count;
+            Count = m_images.Count;
         }
     }
 #endif

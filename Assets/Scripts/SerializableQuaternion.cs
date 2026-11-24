@@ -14,23 +14,23 @@ public class SerializableQuaternion
 
     public SerializableQuaternion(Quaternion vec)
     {
-        this.X = vec.x;
-        this.Y = vec.y;
-        this.Z = vec.z;
-        this.W = vec.w;
+        X = vec.x;
+        Y = vec.y;
+        Z = vec.z;
+        W = vec.w;
     }
 
     public SerializableQuaternion(float x, float y, float z, float w)
     {
-        this.X = x;
-        this.Y = y;
-        this.Z = z;
-        this.W = w;
+        X = x;
+        Y = y;
+        Z = z;
+        W = w;
     }
 
     public Quaternion ToQuaternion()
     {
-        return new Quaternion(this.X, this.Y, this.Z, this.W);
+        return new Quaternion(X, Y, Z, W);
     }
 }
 

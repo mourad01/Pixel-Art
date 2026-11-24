@@ -12,15 +12,15 @@ public class WorkbookModel
 
     public WorkbookModel()
     {
-        this.ColorizationModeModel = new ColorizationModeModel();
-        this.CurrentColorModel = new CurrentColorModel();
-        this.TutorialModel = new TutorialModel();
-        this.SpecBoostersModel = new SpecBoostersModel();
+        ColorizationModeModel = new ColorizationModeModel();
+        CurrentColorModel = new CurrentColorModel();
+        TutorialModel = new TutorialModel();
+        SpecBoostersModel = new SpecBoostersModel();
     }
 
     public static void Init()
     {
-        WorkbookModel.Instance = new WorkbookModel();
+        Instance = new WorkbookModel();
     }
 }
 

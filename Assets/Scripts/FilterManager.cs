@@ -3,31 +3,31 @@ using UnityEngine;
 
 public class FilterManager : MonoBehaviour
 {
-    [SerializeField] private List<Texture2D> m_filters;
+    [SerializeField] List<Texture2D> m_filters;
 
     public Texture2D GetFilter(int filterId)
     {
-        List<Texture2D> list = new List<Texture2D>();
-        for (int i = 0; i < this.m_filters.Count; i++)
+        var list = new List<Texture2D>();
+        for (int i = 0; i < m_filters.Count; i++)
         {
-            list.Add(this.m_filters[i]);
+            list.Add(m_filters[i]);
         }
-        Texture2D item = list[1];
-        list.Remove(item);
-        list.Add(item);
+        var texture2D = list[1];
+        list.Remove(texture2D);
+        list.Add(texture2D);
         return list[filterId];
     }
 
     public List<FilterInfo> GetFilters()
     {
-        List<FilterInfo> list = new List<FilterInfo>();
-        for (int i = 0; i < this.m_filters.Count; i++)
+        var list = new List<FilterInfo>();
+        for (int i = 0; i < m_filters.Count; i++)
         {
-            list.Add(new FilterInfo(this.m_filters[i], i));
+            list.Add(new FilterInfo(m_filters[i], i));
         }
-        FilterInfo item = list[1];
-        list.Remove(item);
-        list.Add(item);
+        var filterInfo = list[1];
+        list.Remove(filterInfo);
+        list.Add(filterInfo);
         return list;
     }
 }

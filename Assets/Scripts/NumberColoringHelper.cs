@@ -6,27 +6,27 @@ public class NumberColoringHelper
 {
     public static void InitObject(GameObject gameObject, out MeshRenderer gridMr, out MeshRenderer grayMr, out Transform numbersContentParent, out Material resMaterial, out Camera mainCamera, out CameraManager cameraManager, out GameObject numberPrefab)
     {
-        GameObject loupeBackground = new GameObject("loupeBack");
+        var loupeBackground = new GameObject("loupeBack");
         loupeBackground.transform.SetParent(gameObject.transform);
         loupeBackground.transform.localScale = new Vector3(20f, 20f, 1f);
-        SpriteRenderer component = loupeBackground.GetComponent<SpriteRenderer>();
-        if (component == null)
+        var spriteRenderer = loupeBackground.GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
         {
-            component = loupeBackground.AddComponent<SpriteRenderer>();
+            spriteRenderer = loupeBackground.AddComponent<SpriteRenderer>();
         }
         loupeBackground.layer = LayerMask.NameToLayer("Loupe");
-        GameObject gridObject = default(GameObject);
-        MeshFilter meshFilter = default(MeshFilter);
-        NumberColoringHelper.CreateOrResetObject("grid", out gridObject, out gridMr, out meshFilter);
+        var gridObject = default(GameObject);
+        var meshFilter = default(MeshFilter);
+        CreateOrResetObject("grid", out gridObject, out gridMr, out meshFilter);
         gridObject.transform.SetParent(gameObject.transform);
-        Texture2D mainTexture = (Texture2D)Resources.Load("grid_cell");
+        var mainTexture = (Texture2D)Resources.Load("grid_cell");
         gridMr.sharedMaterial = new Material(Shader.Find("Custom/TilingShader"));
         gridMr.sharedMaterial.mainTexture = mainTexture;
-        GameObject grayscaleObject = default(GameObject);
-        MeshFilter meshFilter2 = default(MeshFilter);
-        NumberColoringHelper.CreateOrResetObject("gray_texture", out grayscaleObject, out grayMr, out meshFilter2);
+        var grayscaleObject = default(GameObject);
+        var meshFilter2 = default(MeshFilter);
+        CreateOrResetObject("gray_texture", out grayscaleObject, out grayMr, out meshFilter2);
         grayscaleObject.transform.SetParent(gameObject.transform);
-        BoxCollider grayscaleCollider = grayscaleObject.GetComponent<BoxCollider>();
+        var grayscaleCollider = grayscaleObject.GetComponent<BoxCollider>();
         if (grayscaleCollider == null)
         {
             grayscaleObject.AddComponent<BoxCollider>();
@@ -39,11 +39,11 @@ public class NumberColoringHelper
             numbersContentParent.SetParent(gameObject.transform);
         }
         numbersContentParent.transform.localPosition = new Vector3(0f, 0f, -0.5f);
-        NumberColoringHelper.CreateTextPrefab(gameObject.transform, out numberPrefab);
-        GameObject resultObject = default(GameObject);
-        MeshRenderer meshRenderer = default(MeshRenderer);
-        MeshFilter meshFilter3 = default(MeshFilter);
-        NumberColoringHelper.CreateOrResetObject("res_texture", out resultObject, out meshRenderer, out meshFilter3);
+        CreateTextPrefab(gameObject.transform, out numberPrefab);
+        var resultObject = default(GameObject);
+        var meshRenderer = default(MeshRenderer);
+        var meshFilter3 = default(MeshFilter);
+        CreateOrResetObject("res_texture", out resultObject, out meshRenderer, out meshFilter3);
         resultObject.transform.SetParent(gameObject.transform);
         resultObject.transform.localPosition = new Vector3(0f, 0f, -1f);
         meshRenderer.sharedMaterial = new Material(Shader.Find("tk2d/BlendVertexColor"));
@@ -55,16 +55,16 @@ public class NumberColoringHelper
 
     public static void CreateHighLightedGrid(GameObject gameObject, out MeshRenderer highlightedGridRenderer)
     {
-        GameObject highlightedGrid = default(GameObject);
-        MeshFilter meshFilter = default(MeshFilter);
-        NumberColoringHelper.CreateOrResetObject("highlighted_grid", out highlightedGrid, out highlightedGridRenderer, out meshFilter);
+        var highlightedGrid = default(GameObject);
+        var meshFilter = default(MeshFilter);
+        CreateOrResetObject("highlighted_grid", out highlightedGrid, out highlightedGridRenderer, out meshFilter);
         highlightedGrid.transform.SetParent(gameObject.transform);
-        Texture2D value = (Texture2D)Resources.Load("grid_cell");
+        var value = (Texture2D)Resources.Load("grid_cell");
         highlightedGridRenderer.sharedMaterial = new Material(Shader.Find("My/HighlightedGridShader2"));
         highlightedGridRenderer.sharedMaterial.SetTexture("_ResTex", value);
     }
 
-    private static void CreateOrResetObject(string goName, out GameObject go, out MeshRenderer mr, out MeshFilter mf)
+    static void CreateOrResetObject(string goName, out GameObject go, out MeshRenderer mr, out MeshFilter mf)
     {
         go = GameObject.Find(goName);
         if (go == null)
@@ -105,17 +105,17 @@ public class NumberColoringHelper
         };
     }
 
-    private static void CreateTextPrefab(Transform parent, out GameObject numberPrefab)
+    static void CreateTextPrefab(Transform parent, out GameObject numberPrefab)
     {
         string name = "number_prefab";
-        Transform transform = parent.Find(name);
+        var transform = parent.Find(name);
         if (transform == null)
         {
             transform = new GameObject(name).transform;
             transform.SetParent(parent);
             transform.position = Vector2.zero;
         }
-        TextMesh textMesh = ((Component)transform).GetComponent<TextMesh>();
+        var textMesh = ((Component)transform).GetComponent<TextMesh>();
         if (textMesh == null)
         {
             textMesh = transform.gameObject.AddComponent<TextMesh>();

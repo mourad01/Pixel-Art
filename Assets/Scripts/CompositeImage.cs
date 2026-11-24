@@ -2,21 +2,19 @@ using UnityEngine;
 
 public class CompositeImage : MonoBehaviour
 {
-    [SerializeField] private int m_width = 100;
-
-    [SerializeField] private int m_height = 100;
-
-    [SerializeField] private int m_pixelsPerUnit = 100;
+    [SerializeField] int m_width = 100;
+    [SerializeField] int m_height = 100;
+    [SerializeField] int m_pixelsPerUnit = 100;
 
     public int Width
     {
         get
         {
-            return this.m_width;
+            return m_width;
         }
         set
         {
-            this.m_width = value;
+            m_width = value;
         }
     }
 
@@ -24,11 +22,11 @@ public class CompositeImage : MonoBehaviour
     {
         get
         {
-            return this.m_height;
+            return m_height;
         }
         set
         {
-            this.m_height = value;
+            m_height = value;
         }
     }
 
@@ -36,11 +34,11 @@ public class CompositeImage : MonoBehaviour
     {
         get
         {
-            return this.m_pixelsPerUnit;
+            return m_pixelsPerUnit;
         }
         set
         {
-            this.m_pixelsPerUnit = value;
+            m_pixelsPerUnit = value;
         }
     }
 }

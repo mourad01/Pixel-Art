@@ -6,34 +6,31 @@ using UnityEngine;
 public class SimpleObjectPooler : ObjectPooler
 {
     public GameObject GameObjectToPool;
-
     public int PoolSize = 20;
-
     public bool PoolCanExpand = true;
 
     protected GameObject _waitingPool;
-
     protected List<GameObject> _pooledGameObjects;
 
     protected override void FillObjectPool()
     {
-        this._waitingPool = new GameObject("[SimpleObjectPooler] " + base.name);
-        this._pooledGameObjects = new List<GameObject>();
-        for (int i = 0; i < this.PoolSize; i++)
+        _waitingPool = new GameObject("[SimpleObjectPooler] " + name);
+        _pooledGameObjects = new List<GameObject>();
+        for (int i = 0; i < PoolSize; i++)
         {
-            this.AddOneObjectToThePool();
+            AddOneObjectToThePool();
         }
     }
 
     public void DisableAll()
     {
-        if (this._pooledGameObjects != null)
+        if (_pooledGameObjects != null)
         {
-            for (int i = 0; i < this._pooledGameObjects.Count; i++)
+            for (int i = 0; i < _pooledGameObjects.Count; i++)
             {
-                if (this._pooledGameObjects[i].gameObject != null && this._pooledGameObjects[i].gameObject.activeInHierarchy)
+                if (_pooledGameObjects[i].gameObject != null && _pooledGameObjects[i].gameObject.activeInHierarchy)
                 {
-                    this._pooledGameObjects[i].gameObject.SetActive(false);
+                    _pooledGameObjects[i].gameObject.SetActive(false);
                 }
             }
         }
@@ -41,33 +38,33 @@ public class SimpleObjectPooler : ObjectPooler
 
     public override GameObject GetPooledGameObject()
     {
-        for (int i = 0; i < this._pooledGameObjects.Count; i++)
+        for (int i = 0; i < _pooledGameObjects.Count; i++)
         {
-            if (!this._pooledGameObjects[i].gameObject.activeInHierarchy)
+            if (!_pooledGameObjects[i].gameObject.activeInHierarchy)
             {
-                return this._pooledGameObjects[i];
+                return _pooledGameObjects[i];
             }
         }
-        if (this.PoolCanExpand)
+        if (PoolCanExpand)
         {
-            return this.AddOneObjectToThePool();
+            return AddOneObjectToThePool();
         }
         return null;
     }
 
     protected virtual GameObject AddOneObjectToThePool()
     {
-        if (this.GameObjectToPool == null)
+        if (GameObjectToPool == null)
         {
             Debug.LogWarning("The " + base.gameObject.name + " ObjectPooler doesn't have any GameObjectToPool defined.", base.gameObject);
             return null;
         }
-        GameObject gameObject = Object.Instantiate(this.GameObjectToPool);
-        gameObject.gameObject.SetActive(false);
-        gameObject.transform.parent = this._waitingPool.transform;
-        gameObject.name = this.GameObjectToPool.name + "-" + this._pooledGameObjects.Count;
-        this._pooledGameObjects.Add(gameObject);
-        return gameObject;
+        var instance = Object.Instantiate(GameObjectToPool);
+        instance.gameObject.SetActive(false);
+        instance.transform.parent = _waitingPool.transform;
+        instance.name = GameObjectToPool.name + "-" + _pooledGameObjects.Count;
+        _pooledGameObjects.Add(instance);
+        return instance;
     }
 }
 

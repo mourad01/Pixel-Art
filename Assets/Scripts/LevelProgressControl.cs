@@ -16,19 +16,12 @@ public class LevelProgressControl : MonoBehaviour
     }
 
     public static LevelProgressControl control;
-
     public static int LevelsPerPack = 12;
-
     public static int NumberOfPacks = 60;
-
     public static int NumberOfActivePacks = 18;
-
     public static int LevelsToUnlock = 6;
-
     public static long CipherKey = 1273017494670060202L;
-
     public static int HintPotMax = 999;
-
     public static int adPeriodInSeconds = 300;
 
     [HideInInspector]
@@ -109,27 +102,27 @@ public class LevelProgressControl : MonoBehaviour
     //[HideInInspector]
     //public int androidSdkLevel;
 
-    private void Awake()
+    void Awake()
     {
         if (Debug.isDebugBuild)
         {
             Debug.Log("LevelProgressControl : Awake()");
         }
-        if ((UnityEngine.Object)LevelProgressControl.control == (UnityEngine.Object)null)
+        if ((UnityEngine.Object)control == (UnityEngine.Object)null)
         {
-            UnityObject.DontDestroyOnLoad(base.gameObject);
-            LevelProgressControl.control = this;
-            this.levelOffsetArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
-            this.completeArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
-            this.movesPerfectArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
-            this.movesTakenArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
-            this.starsArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
-            this.timeTakenArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
-            this.attemptsTakenArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
-            this.hintsRemainingArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
-            this.hintsLastTimeArray = new long[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
-            this.postcardCompleteStateArray = new int[LevelProgressControl.NumberOfPacks];
-            this.LoadProgressData();
+            UnityObject.DontDestroyOnLoad(gameObject);
+            control = this;
+            levelOffsetArray = new int[LevelsPerPack * NumberOfPacks];
+            completeArray = new int[LevelsPerPack * NumberOfPacks];
+            movesPerfectArray = new int[LevelsPerPack * NumberOfPacks];
+            movesTakenArray = new int[LevelsPerPack * NumberOfPacks];
+            starsArray = new int[LevelsPerPack * NumberOfPacks];
+            timeTakenArray = new int[LevelsPerPack * NumberOfPacks];
+            attemptsTakenArray = new int[LevelsPerPack * NumberOfPacks];
+            hintsRemainingArray = new int[LevelsPerPack * NumberOfPacks];
+            hintsLastTimeArray = new long[LevelsPerPack * NumberOfPacks];
+            postcardCompleteStateArray = new int[NumberOfPacks];
+            LoadProgressData();
 
 
             #if (UNITY_ANDROID || (UNITY_IPHONE && !NO_GPGS))
@@ -147,9 +140,9 @@ public class LevelProgressControl : MonoBehaviour
             #endif
             //this.androidSdkLevel = this.GetAndroidSDKLevel();
         }
-        else if ((UnityEngine.Object)LevelProgressControl.control != (UnityEngine.Object)this)
+        else if ((UnityEngine.Object)control != (UnityEngine.Object)this)
         {
-            UnityObject.Destroy(base.gameObject);
+            UnityObject.Destroy(gameObject);
         }
     }
 
@@ -162,33 +155,33 @@ public class LevelProgressControl : MonoBehaviour
 
     public void SaveProgressData()
     {
-        BinaryFormatter binaryFormatter = new BinaryFormatter();
-        FileStream fileStream = File.Create(Application.persistentDataPath + "/lpC10.dat");
-        PlayerData playerData = new PlayerData(LevelProgressControl.LevelsPerPack, LevelProgressControl.NumberOfPacks);
-        Array.Copy(this.levelOffsetArray, playerData.levelOffsetArray, this.levelOffsetArray.Length);
-        Array.Copy(this.completeArray, playerData.completeArray, this.completeArray.Length);
-        Array.Copy(this.movesPerfectArray, playerData.movesPerfectArray, this.movesPerfectArray.Length);
-        Array.Copy(this.movesTakenArray, playerData.movesTakenArray, this.movesTakenArray.Length);
-        Array.Copy(this.starsArray, playerData.starsArray, this.starsArray.Length);
-        Array.Copy(this.timeTakenArray, playerData.timeTakenArray, this.timeTakenArray.Length);
-        Array.Copy(this.attemptsTakenArray, playerData.attemptsTakenArray, this.attemptsTakenArray.Length);
-        Array.Copy(this.hintsRemainingArray, playerData.hintsRemainingArray, this.hintsRemainingArray.Length);
-        Array.Copy(this.hintsLastTimeArray, playerData.hintsLastTimeArray, this.hintsLastTimeArray.Length);
-        Array.Copy(this.postcardCompleteStateArray, playerData.postcardCompleteStateArray, this.postcardCompleteStateArray.Length);
+        var binaryFormatter = new BinaryFormatter();
+        var fileStream = File.Create(Application.persistentDataPath + "/lpC10.dat");
+        var playerData = new PlayerData(LevelsPerPack, NumberOfPacks);
+        Array.Copy(levelOffsetArray, playerData.levelOffsetArray, levelOffsetArray.Length);
+        Array.Copy(completeArray, playerData.completeArray, completeArray.Length);
+        Array.Copy(movesPerfectArray, playerData.movesPerfectArray, movesPerfectArray.Length);
+        Array.Copy(movesTakenArray, playerData.movesTakenArray, movesTakenArray.Length);
+        Array.Copy(starsArray, playerData.starsArray, starsArray.Length);
+        Array.Copy(timeTakenArray, playerData.timeTakenArray, timeTakenArray.Length);
+        Array.Copy(attemptsTakenArray, playerData.attemptsTakenArray, attemptsTakenArray.Length);
+        Array.Copy(hintsRemainingArray, playerData.hintsRemainingArray, hintsRemainingArray.Length);
+        Array.Copy(hintsLastTimeArray, playerData.hintsLastTimeArray, hintsLastTimeArray.Length);
+        Array.Copy(postcardCompleteStateArray, playerData.postcardCompleteStateArray, postcardCompleteStateArray.Length);
         binaryFormatter.Serialize(fileStream, playerData);
         fileStream.Close();
-        this.SaveProgressDataPrefsOnly();
+        SaveProgressDataPrefsOnly();
     }
 
     public void SaveProgressDataPrefsOnly()
     {
-        PlayerPrefs.SetString("PuzzleColorId", (this.hintPotLastPeriod ^ LevelProgressControl.CipherKey).ToString());
-        PlayerPrefs.SetString("PuzzleColorKey", (this.hintPotCount ^ LevelProgressControl.CipherKey).ToString());
-        PlayerPrefs.SetString("PuzzleShapeSeed", (Convert.ToInt64(this.iapUnlockLevels) + 2927 ^ LevelProgressControl.CipherKey).ToString());
-        PlayerPrefs.SetString("PuzzleDiffTrackSeed", (Convert.ToInt64(this.iapDisableAds) + 1066 ^ LevelProgressControl.CipherKey).ToString());
-        if (this.dailyTodayPersonalBestBeaten)
+        PlayerPrefs.SetString("PuzzleColorId", (hintPotLastPeriod ^ CipherKey).ToString());
+        PlayerPrefs.SetString("PuzzleColorKey", (hintPotCount ^ CipherKey).ToString());
+        PlayerPrefs.SetString("PuzzleShapeSeed", (Convert.ToInt64(iapUnlockLevels) + 2927 ^ CipherKey).ToString());
+        PlayerPrefs.SetString("PuzzleDiffTrackSeed", (Convert.ToInt64(iapDisableAds) + 1066 ^ CipherKey).ToString());
+        if (dailyTodayPersonalBestBeaten)
         {
-            PlayerPrefs.SetInt("DailyPersonalBest", (int)this.dailyTodayPersonalBest);
+            PlayerPrefs.SetInt("DailyPersonalBest", (int)dailyTodayPersonalBest);
         }
         PlayerPrefs.Save();
     }
@@ -201,74 +194,74 @@ public class LevelProgressControl : MonoBehaviour
             {
                 Debug.Log("LoadProgressData() : Data file found. Loading..." + Application.persistentDataPath + "/lp.dat");
             }
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            FileStream fileStream = File.Open(Application.persistentDataPath + "/lp.dat", FileMode.Open);
-            PlayerData playerData = (PlayerData)binaryFormatter.Deserialize(fileStream);
+            var binaryFormatter = new BinaryFormatter();
+            var fileStream = File.Open(Application.persistentDataPath + "/lp.dat", FileMode.Open);
+            var playerData = (PlayerData)binaryFormatter.Deserialize(fileStream);
             fileStream.Close();
-            Array.Copy(playerData.levelOffsetArray, this.levelOffsetArray, playerData.levelOffsetArray.Length);
-            Array.Copy(playerData.completeArray, this.completeArray, playerData.completeArray.Length);
-            Array.Copy(playerData.movesPerfectArray, this.movesPerfectArray, playerData.movesPerfectArray.Length);
-            Array.Copy(playerData.movesTakenArray, this.movesTakenArray, playerData.movesTakenArray.Length);
-            Array.Copy(playerData.starsArray, this.starsArray, playerData.starsArray.Length);
-            Array.Copy(playerData.timeTakenArray, this.timeTakenArray, playerData.timeTakenArray.Length);
-            Array.Copy(playerData.attemptsTakenArray, this.attemptsTakenArray, playerData.attemptsTakenArray.Length);
-            Array.Copy(playerData.hintsRemainingArray, this.hintsRemainingArray, playerData.hintsRemainingArray.Length);
-            Array.Copy(playerData.hintsLastTimeArray, this.hintsLastTimeArray, playerData.hintsLastTimeArray.Length);
-            Array.Copy(playerData.postcardCompleteStateArray, this.postcardCompleteStateArray, playerData.postcardCompleteStateArray.Length);
+            Array.Copy(playerData.levelOffsetArray, levelOffsetArray, playerData.levelOffsetArray.Length);
+            Array.Copy(playerData.completeArray, completeArray, playerData.completeArray.Length);
+            Array.Copy(playerData.movesPerfectArray, movesPerfectArray, playerData.movesPerfectArray.Length);
+            Array.Copy(playerData.movesTakenArray, movesTakenArray, playerData.movesTakenArray.Length);
+            Array.Copy(playerData.starsArray, starsArray, playerData.starsArray.Length);
+            Array.Copy(playerData.timeTakenArray, timeTakenArray, playerData.timeTakenArray.Length);
+            Array.Copy(playerData.attemptsTakenArray, attemptsTakenArray, playerData.attemptsTakenArray.Length);
+            Array.Copy(playerData.hintsRemainingArray, hintsRemainingArray, playerData.hintsRemainingArray.Length);
+            Array.Copy(playerData.hintsLastTimeArray, hintsLastTimeArray, playerData.hintsLastTimeArray.Length);
+            Array.Copy(playerData.postcardCompleteStateArray, postcardCompleteStateArray, playerData.postcardCompleteStateArray.Length);
         }
         else if (Debug.isDebugBuild)
         {
             Debug.Log("LoadProgressData() : No data file, so assuming a fresh start");
         }
-        this.LoadPlayerPrefs();
+        LoadPlayerPrefs();
     }
 
-    private void LoadProgressDataLegacy()
+    void LoadProgressDataLegacy()
     {
         if (Debug.isDebugBuild)
         {
             Debug.Log("LoadProgressDataLegacy()");
         }
-        BinaryFormatter binaryFormatter = new BinaryFormatter();
-        FileStream fileStream = File.Open(Application.persistentDataPath + "/lp.dat", FileMode.Open);
-        PlayerData playerData = (PlayerData)binaryFormatter.Deserialize(fileStream);
+        var binaryFormatter = new BinaryFormatter();
+        var fileStream = File.Open(Application.persistentDataPath + "/lp.dat", FileMode.Open);
+        var playerData = (PlayerData)binaryFormatter.Deserialize(fileStream);
         fileStream.Close();
-        Array.Copy(playerData.levelOffsetArray, this.levelOffsetArray, playerData.levelOffsetArray.Length);
-        Array.Copy(playerData.completeArray, this.completeArray, playerData.completeArray.Length);
-        Array.Copy(playerData.movesPerfectArray, this.movesPerfectArray, playerData.movesPerfectArray.Length);
-        Array.Copy(playerData.movesTakenArray, this.movesTakenArray, playerData.movesTakenArray.Length);
-        Array.Copy(playerData.starsArray, this.starsArray, playerData.starsArray.Length);
-        Array.Copy(playerData.timeTakenArray, this.timeTakenArray, playerData.timeTakenArray.Length);
-        Array.Copy(playerData.attemptsTakenArray, this.attemptsTakenArray, playerData.attemptsTakenArray.Length);
-        Array.Copy(playerData.hintsRemainingArray, this.hintsRemainingArray, playerData.hintsRemainingArray.Length);
-        Array.Copy(playerData.hintsLastTimeArray, this.hintsLastTimeArray, playerData.hintsLastTimeArray.Length);
-        Array.Copy(playerData.postcardCompleteStateArray, this.postcardCompleteStateArray, playerData.postcardCompleteStateArray.Length);
+        Array.Copy(playerData.levelOffsetArray, levelOffsetArray, playerData.levelOffsetArray.Length);
+        Array.Copy(playerData.completeArray, completeArray, playerData.completeArray.Length);
+        Array.Copy(playerData.movesPerfectArray, movesPerfectArray, playerData.movesPerfectArray.Length);
+        Array.Copy(playerData.movesTakenArray, movesTakenArray, playerData.movesTakenArray.Length);
+        Array.Copy(playerData.starsArray, starsArray, playerData.starsArray.Length);
+        Array.Copy(playerData.timeTakenArray, timeTakenArray, playerData.timeTakenArray.Length);
+        Array.Copy(playerData.attemptsTakenArray, attemptsTakenArray, playerData.attemptsTakenArray.Length);
+        Array.Copy(playerData.hintsRemainingArray, hintsRemainingArray, playerData.hintsRemainingArray.Length);
+        Array.Copy(playerData.hintsLastTimeArray, hintsLastTimeArray, playerData.hintsLastTimeArray.Length);
+        Array.Copy(playerData.postcardCompleteStateArray, postcardCompleteStateArray, playerData.postcardCompleteStateArray.Length);
         if (Debug.isDebugBuild)
         {
             Debug.Log("Legacy array length : " + playerData.completeArray.Length);
-            Debug.Log("C10 array length : " + this.completeArray.Length);
+            Debug.Log("C10 array length : " + completeArray.Length);
         }
     }
 
     public void LoadProgressData()
     {
-        this.LoadPlayerPrefs();
+        LoadPlayerPrefs();
         if (File.Exists(Application.persistentDataPath + "/lpC10.dat"))
         {
             Debug.Log("10-CHAPTER FILE EXISTS");
-            this.LoadDataStandardStart();
+            LoadDataStandardStart();
         }
         else if (File.Exists(Application.persistentDataPath + "/lp.dat"))
         {
             Debug.Log("LEGACY DATA EXISTS");
             PlayerPrefs.SetInt("SuggestHint", 0);
             PlayerPrefs.Save();
-            this.LoadDataUpdateStart();
+            LoadDataUpdateStart();
         }
         else
         {
             Debug.Log("LEGACY DATA DOES NOT EXIST");
-            this.LoadDataFreshStart();
+            LoadDataFreshStart();
         }
     }
 
@@ -278,20 +271,20 @@ public class LevelProgressControl : MonoBehaviour
         {
             Debug.Log("LoadDataStandardStart()");
         }
-        BinaryFormatter binaryFormatter = new BinaryFormatter();
-        FileStream fileStream = File.Open(Application.persistentDataPath + "/lpC10.dat", FileMode.Open);
-        PlayerData playerData = (PlayerData)binaryFormatter.Deserialize(fileStream);
+        var binaryFormatter = new BinaryFormatter();
+        var fileStream = File.Open(Application.persistentDataPath + "/lpC10.dat", FileMode.Open);
+        var playerData = (PlayerData)binaryFormatter.Deserialize(fileStream);
         fileStream.Close();
-        Array.Copy(playerData.levelOffsetArray, this.levelOffsetArray, playerData.levelOffsetArray.Length);
-        Array.Copy(playerData.completeArray, this.completeArray, playerData.completeArray.Length);
-        Array.Copy(playerData.movesPerfectArray, this.movesPerfectArray, playerData.movesPerfectArray.Length);
-        Array.Copy(playerData.movesTakenArray, this.movesTakenArray, playerData.movesTakenArray.Length);
-        Array.Copy(playerData.starsArray, this.starsArray, playerData.starsArray.Length);
-        Array.Copy(playerData.timeTakenArray, this.timeTakenArray, playerData.timeTakenArray.Length);
-        Array.Copy(playerData.attemptsTakenArray, this.attemptsTakenArray, playerData.attemptsTakenArray.Length);
-        Array.Copy(playerData.hintsRemainingArray, this.hintsRemainingArray, playerData.hintsRemainingArray.Length);
-        Array.Copy(playerData.hintsLastTimeArray, this.hintsLastTimeArray, playerData.hintsLastTimeArray.Length);
-        Array.Copy(playerData.postcardCompleteStateArray, this.postcardCompleteStateArray, playerData.postcardCompleteStateArray.Length);
+        Array.Copy(playerData.levelOffsetArray, levelOffsetArray, playerData.levelOffsetArray.Length);
+        Array.Copy(playerData.completeArray, completeArray, playerData.completeArray.Length);
+        Array.Copy(playerData.movesPerfectArray, movesPerfectArray, playerData.movesPerfectArray.Length);
+        Array.Copy(playerData.movesTakenArray, movesTakenArray, playerData.movesTakenArray.Length);
+        Array.Copy(playerData.starsArray, starsArray, playerData.starsArray.Length);
+        Array.Copy(playerData.timeTakenArray, timeTakenArray, playerData.timeTakenArray.Length);
+        Array.Copy(playerData.attemptsTakenArray, attemptsTakenArray, playerData.attemptsTakenArray.Length);
+        Array.Copy(playerData.hintsRemainingArray, hintsRemainingArray, playerData.hintsRemainingArray.Length);
+        Array.Copy(playerData.hintsLastTimeArray, hintsLastTimeArray, playerData.hintsLastTimeArray.Length);
+        Array.Copy(playerData.postcardCompleteStateArray, postcardCompleteStateArray, playerData.postcardCompleteStateArray.Length);
     }
 
     public void LoadDataUpdateStart()
@@ -300,20 +293,20 @@ public class LevelProgressControl : MonoBehaviour
         {
             Debug.Log("LoadDataUpdateStart()");
         }
-        BinaryFormatter binaryFormatter = new BinaryFormatter();
-        FileStream fileStream = File.Open(Application.persistentDataPath + "/lp.dat", FileMode.Open);
-        PlayerData playerData = (PlayerData)binaryFormatter.Deserialize(fileStream);
+        var binaryFormatter = new BinaryFormatter();
+        var fileStream = File.Open(Application.persistentDataPath + "/lp.dat", FileMode.Open);
+        var playerData = (PlayerData)binaryFormatter.Deserialize(fileStream);
         fileStream.Close();
-        Array.Copy(playerData.levelOffsetArray, this.levelOffsetArray, playerData.levelOffsetArray.Length);
-        Array.Copy(playerData.completeArray, this.completeArray, playerData.completeArray.Length);
-        Array.Copy(playerData.movesPerfectArray, this.movesPerfectArray, playerData.movesPerfectArray.Length);
-        Array.Copy(playerData.movesTakenArray, this.movesTakenArray, playerData.movesTakenArray.Length);
-        Array.Copy(playerData.starsArray, this.starsArray, playerData.starsArray.Length);
-        Array.Copy(playerData.timeTakenArray, this.timeTakenArray, playerData.timeTakenArray.Length);
-        Array.Copy(playerData.attemptsTakenArray, this.attemptsTakenArray, playerData.attemptsTakenArray.Length);
-        Array.Copy(playerData.hintsRemainingArray, this.hintsRemainingArray, playerData.hintsRemainingArray.Length);
-        Array.Copy(playerData.hintsLastTimeArray, this.hintsLastTimeArray, playerData.hintsLastTimeArray.Length);
-        Array.Copy(playerData.postcardCompleteStateArray, this.postcardCompleteStateArray, playerData.postcardCompleteStateArray.Length);
+        Array.Copy(playerData.levelOffsetArray, levelOffsetArray, playerData.levelOffsetArray.Length);
+        Array.Copy(playerData.completeArray, completeArray, playerData.completeArray.Length);
+        Array.Copy(playerData.movesPerfectArray, movesPerfectArray, playerData.movesPerfectArray.Length);
+        Array.Copy(playerData.movesTakenArray, movesTakenArray, playerData.movesTakenArray.Length);
+        Array.Copy(playerData.starsArray, starsArray, playerData.starsArray.Length);
+        Array.Copy(playerData.timeTakenArray, timeTakenArray, playerData.timeTakenArray.Length);
+        Array.Copy(playerData.attemptsTakenArray, attemptsTakenArray, playerData.attemptsTakenArray.Length);
+        Array.Copy(playerData.hintsRemainingArray, hintsRemainingArray, playerData.hintsRemainingArray.Length);
+        Array.Copy(playerData.hintsLastTimeArray, hintsLastTimeArray, playerData.hintsLastTimeArray.Length);
+        Array.Copy(playerData.postcardCompleteStateArray, postcardCompleteStateArray, playerData.postcardCompleteStateArray.Length);
     }
 
     public void LoadDataFreshStart()
@@ -326,38 +319,38 @@ public class LevelProgressControl : MonoBehaviour
 
     public void ResetProgressData()
     {
-        Array.Clear(this.levelOffsetArray, 0, this.levelOffsetArray.Length);
-        Array.Clear(this.completeArray, 0, this.completeArray.Length);
-        Array.Clear(this.movesPerfectArray, 0, this.movesPerfectArray.Length);
-        Array.Clear(this.movesTakenArray, 0, this.movesTakenArray.Length);
-        Array.Clear(this.starsArray, 0, this.starsArray.Length);
-        Array.Clear(this.timeTakenArray, 0, this.timeTakenArray.Length);
-        Array.Clear(this.hintsRemainingArray, 0, this.hintsRemainingArray.Length);
-        Array.Clear(this.hintsLastTimeArray, 0, this.hintsLastTimeArray.Length);
-        Array.Clear(this.postcardCompleteStateArray, 0, this.postcardCompleteStateArray.Length);
-        this.SaveProgressData();
+        Array.Clear(levelOffsetArray, 0, levelOffsetArray.Length);
+        Array.Clear(completeArray, 0, completeArray.Length);
+        Array.Clear(movesPerfectArray, 0, movesPerfectArray.Length);
+        Array.Clear(movesTakenArray, 0, movesTakenArray.Length);
+        Array.Clear(starsArray, 0, starsArray.Length);
+        Array.Clear(timeTakenArray, 0, timeTakenArray.Length);
+        Array.Clear(hintsRemainingArray, 0, hintsRemainingArray.Length);
+        Array.Clear(hintsLastTimeArray, 0, hintsLastTimeArray.Length);
+        Array.Clear(postcardCompleteStateArray, 0, postcardCompleteStateArray.Length);
+        SaveProgressData();
     }
 
     public void LoadPlayerPrefs()
     {
         string str = PlayerPrefs.GetString("PuzzleColorId", "no");
-        long num = default(long);
+        long savedPeriod = default(long);
         if (str.Equals("no"))
         {
             long ticks = DateTime.Now.Ticks;
-            PlayerPrefs.SetString("PuzzleColorId", (ticks ^ LevelProgressControl.CipherKey).ToString());
-            this.hintPotLastPeriod = ticks;
+            PlayerPrefs.SetString("PuzzleColorId", (ticks ^ CipherKey).ToString());
+            hintPotLastPeriod = ticks;
         }
-        else if (long.TryParse(str, out num))
+        else if (long.TryParse(str, out savedPeriod))
         {
-            long value2 = this.hintPotLastPeriod = (num ^ LevelProgressControl.CipherKey);
+            long value2 = hintPotLastPeriod = (savedPeriod ^ CipherKey);
         }
         string string2 = PlayerPrefs.GetString("PuzzleColorKey", "no");
         long value3 = default(long);
         if (string2.Equals("no"))
         {
-            PlayerPrefs.SetString("PuzzleColorKey", (3 ^ LevelProgressControl.CipherKey).ToString());
-            this.hintPotCount = 3;
+            PlayerPrefs.SetString("PuzzleColorKey", (3 ^ CipherKey).ToString());
+            hintPotCount = 3;
         }
         else if (long.TryParse(string2, out value3))
         {
@@ -365,12 +358,12 @@ public class LevelProgressControl : MonoBehaviour
             {
                 Debug.Log("PuzzleColorKey : " + value3.ToString());
             }
-            long value4 = value3 ^ LevelProgressControl.CipherKey;
+            long value4 = value3 ^ CipherKey;
             if (Debug.isDebugBuild)
             {
                 Debug.Log("decode : " + value4);
             }
-            this.hintPotCount = Convert.ToInt32(value4);
+            hintPotCount = Convert.ToInt32(value4);
         }
         string string3 = PlayerPrefs.GetString("PuzzleShapeSeed", "no");
         long value5 = default(long);
@@ -380,8 +373,8 @@ public class LevelProgressControl : MonoBehaviour
             {
                 Debug.Log("PuzzleShapeSeed NOT SET");
             }
-            PlayerPrefs.SetString("PuzzleShapeSeed", (Convert.ToInt64(false) + 2927 ^ LevelProgressControl.CipherKey).ToString());
-            this.iapUnlockLevels = false;
+            PlayerPrefs.SetString("PuzzleShapeSeed", (Convert.ToInt64(false) + 2927 ^ CipherKey).ToString());
+            iapUnlockLevels = false;
         }
         else if (long.TryParse(string3, out value5))
         {
@@ -389,12 +382,12 @@ public class LevelProgressControl : MonoBehaviour
             {
                 Debug.Log("PuzzleShapeSeed : " + value5.ToString());
             }
-            long value6 = (value5 ^ LevelProgressControl.CipherKey) - 2927;
+            long value6 = (value5 ^ CipherKey) - 2927;
             if (Debug.isDebugBuild)
             {
                 Debug.Log("decode : " + value6);
             }
-            this.iapUnlockLevels = Convert.ToBoolean(value6);
+            iapUnlockLevels = Convert.ToBoolean(value6);
         }
         string string4 = PlayerPrefs.GetString("PuzzleDiffTrackSeed", "no");
         long value7 = default(long);
@@ -404,8 +397,8 @@ public class LevelProgressControl : MonoBehaviour
             {
                 Debug.Log("PuzzleDiffTrackSeed NOT SET");
             }
-            PlayerPrefs.SetString("PuzzleDiffTrackSeed", (Convert.ToInt64(false) + 1066 ^ LevelProgressControl.CipherKey).ToString());
-            this.iapDisableAds = false;
+            PlayerPrefs.SetString("PuzzleDiffTrackSeed", (Convert.ToInt64(false) + 1066 ^ CipherKey).ToString());
+            iapDisableAds = false;
         }
         else if (long.TryParse(string4, out value7))
         {
@@ -413,37 +406,37 @@ public class LevelProgressControl : MonoBehaviour
             {
                 Debug.Log("PuzzleDiffTrackSeed : " + value7.ToString());
             }
-            long value8 = (value7 ^ LevelProgressControl.CipherKey) - 1066;
+            long value8 = (value7 ^ CipherKey) - 1066;
             if (Debug.isDebugBuild)
             {
                 Debug.Log("decode : " + value8);
             }
-            this.iapDisableAds = Convert.ToBoolean(value8);
+            iapDisableAds = Convert.ToBoolean(value8);
         }
         int number = PlayerPrefs.GetInt("DailyPersonalBest", 0);
         if (number == 0)
         {
-            LevelProgressControl.control.dailyTodayPersonalBest = 600f;
+            control.dailyTodayPersonalBest = 600f;
         }
         else
         {
-            LevelProgressControl.control.dailyTodayPersonalBest = (float)number;
+            control.dailyTodayPersonalBest = (float)number;
         }
         PlayerPrefs.Save();
     }
 
     public bool CheckHintPot()
     {
-        DateTime dateTime = new DateTime(this.hintPotLastPeriod);
+        DateTime dateTime = new DateTime(hintPotLastPeriod);
         DateTime now = DateTime.Now;
-        int num = dateTime.CompareTo(DateTime.Now);
-        if (num < 0)
+        int compare = dateTime.CompareTo(DateTime.Now);
+        if (compare < 0)
         {
             if (Debug.isDebugBuild)
             {
                 Debug.Log("CheckHintPot : earlier");
             }
-            TimeSpan timeSpan = now - dateTime;
+            var timeSpan = now - dateTime;
             if (Debug.isDebugBuild)
             {
                 Debug.Log(now);
@@ -457,7 +450,7 @@ public class LevelProgressControl : MonoBehaviour
                 return true;
             }
         }
-        else if (num == 0)
+        else if (compare == 0)
         {
             if (Debug.isDebugBuild)
             {
@@ -473,37 +466,37 @@ public class LevelProgressControl : MonoBehaviour
 
     public void IncrementHintPot()
     {
-        if (this.hintPotCount < LevelProgressControl.HintPotMax)
+        if (hintPotCount < HintPotMax)
         {
-            this.hintPotCount++;
-            this.hintPotLastPeriod = DateTime.Now.Ticks;
-            long num = this.hintPotLastPeriod;
-            PlayerPrefs.SetString("PuzzleColorId", (num ^ LevelProgressControl.CipherKey).ToString());
-            PlayerPrefs.SetString("PuzzleColorKey", (this.hintPotCount ^ LevelProgressControl.CipherKey).ToString());
+            hintPotCount++;
+            hintPotLastPeriod = DateTime.Now.Ticks;
+            long period = hintPotLastPeriod;
+            PlayerPrefs.SetString("PuzzleColorId", (period ^ CipherKey).ToString());
+            PlayerPrefs.SetString("PuzzleColorKey", (hintPotCount ^ CipherKey).ToString());
         }
     }
 
     public void RewardHintPot(int rewards)
     {
-        if (this.hintPotCount < LevelProgressControl.HintPotMax)
+        if (hintPotCount < HintPotMax)
         {
-            this.hintPotCount += rewards;
-            this.hintPotCount = Mathf.Clamp(this.hintPotCount, 0, LevelProgressControl.HintPotMax);
-            PlayerPrefs.SetString("PuzzleColorKey", (this.hintPotCount ^ LevelProgressControl.CipherKey).ToString());
+            hintPotCount += rewards;
+            hintPotCount = Mathf.Clamp(hintPotCount, 0, HintPotMax);
+            PlayerPrefs.SetString("PuzzleColorKey", (hintPotCount ^ CipherKey).ToString());
         }
     }
 
     public int NumberOfPostcardsUnlocked()
     {
-        int num = 0;
-        for (int i = 0; i < LevelProgressControl.NumberOfPacks; i++)
+        int count = 0;
+        for (int i = 0; i < NumberOfPacks; i++)
         {
-            if (this.postcardCompleteStateArray[i] > 0)
+            if (postcardCompleteStateArray[i] > 0)
             {
-                num++;
+                count++;
             }
         }
-        return num;
+        return count;
     }
 }
 

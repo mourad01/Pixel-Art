@@ -2,51 +2,46 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    [SerializeField] private AudioClip m_clickClip;
-
-    [SerializeField] private AudioClip m_bombClip;
-
-    [SerializeField] private AudioClip m_wandClip;
-
-    [SerializeField] private AudioClip m_completeClip;
-
-    [SerializeField] private AudioClip m_victoryClip;
-
-    [SerializeField] private AudioClip m_colorClip;
+    [SerializeField] AudioClip m_clickClip;
+    [SerializeField] AudioClip m_bombClip;
+    [SerializeField] AudioClip m_wandClip;
+    [SerializeField] AudioClip m_completeClip;
+    [SerializeField] AudioClip m_victoryClip;
+    [SerializeField] AudioClip m_colorClip;
 
     public AudioSource m_audioTrackSrc;
     public bool isMuted;
 
     public static AudioManager Instance { get; private set; }
 
-    private void Awake()
+    void Awake()
     {
-        if (AudioManager.Instance == null)
+        if (Instance == null)
         {
-            AudioManager.Instance = this;
-            Object.DontDestroyOnLoad(base.gameObject);
-            this.m_audioTrackSrc = base.GetComponent<AudioSource>();
+            Instance = this;
+            Object.DontDestroyOnLoad(gameObject);
+            m_audioTrackSrc = base.GetComponent<AudioSource>();
 
             isMuted = !AppData.SoundsEnabled;
-            this.m_audioTrackSrc.mute = isMuted;
+            m_audioTrackSrc.mute = isMuted;
         }
-        else if (this != AudioManager.Instance)
+        else if (this != Instance)
         {
-            Object.Destroy(base.gameObject);
+            Object.Destroy(gameObject);
         }
     }
 
     public void RefreshSettings()
     {
         isMuted = !AppData.SoundsEnabled;
-        this.m_audioTrackSrc.mute = isMuted;
+        m_audioTrackSrc.mute = isMuted;
     }
 
     public void PlayClick()
     {
         if (!isMuted)
         {
-            PlayClip(this.m_clickClip);
+            PlayClip(m_clickClip);
         }
     }
 
@@ -90,7 +85,7 @@ public class AudioManager : MonoBehaviour
     }
     public void PlayClip(AudioClip clip)
     {
-        this.m_audioTrackSrc.PlayOneShot(clip);
+        m_audioTrackSrc.PlayOneShot(clip);
     }
 }
 

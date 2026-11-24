@@ -5,7 +5,7 @@ using UnityEngine;
 public class ConsoleLog : MonoBehaviour
 {
     [StructLayout(LayoutKind.Sequential, Size = 1)]
-    private struct Log
+    struct Log
     {
         public string Message
         {
@@ -26,19 +26,14 @@ public class ConsoleLog : MonoBehaviour
         }
     }
 
-    private List<Log> m_logs = new List<Log>();
+    List<Log> m_logs = new List<Log>();
+    Vector2 m_scrollPosition;
+    bool m_show;
+    bool m_collapse;
+    bool m_showStack;
+    bool m_showErrors;
 
-    private Vector2 m_scrollPosition;
-
-    private bool m_show;
-
-    private bool m_collapse;
-
-    private bool m_showStack;
-
-    private bool m_showErrors;
-
-    private static Dictionary<LogType, Color> s_logTypeColors = new Dictionary<LogType, Color> {
+    static Dictionary<LogType, Color> s_logTypeColors = new Dictionary<LogType, Color> {
         {
             LogType.Assert,
             Color.white
@@ -61,19 +56,14 @@ public class ConsoleLog : MonoBehaviour
         }
     };
 
-    private const int Margin = 20;
+    const int Margin = 20;
 
-    private Rect m_windowRect = new Rect(20f, 20f, (float)(Screen.width - 40), (float)(Screen.height - 40));
-
-    private Rect m_titleBarRect = new Rect(0f, 0f, 10000f, 20f);
-
-    private GUIContent m_clearLabel = new GUIContent("Clear", "Clear the contents of the console.");
-
-    private GUIContent m_collapseLabel = new GUIContent("Collapse", "Hide repeated messages.");
-
-    private GUIContent m_showStackLabel = new GUIContent("Show Stack", "Hide/Show Stack Tree.");
-
-    private GUIContent m_showErrorsLabel = new GUIContent("Only Errors", "Hide/Show Only Errors.");
+    Rect m_windowRect = new Rect(20f, 20f, (float)(Screen.width - 40), (float)(Screen.height - 40));
+    Rect m_titleBarRect = new Rect(0f, 0f, 10000f, 20f);
+    GUIContent m_clearLabel = new GUIContent("Clear", "Clear the contents of the console.");
+    GUIContent m_collapseLabel = new GUIContent("Collapse", "Hide repeated messages.");
+    GUIContent m_showStackLabel = new GUIContent("Show Stack", "Hide/Show Stack Tree.");
+    GUIContent m_showErrorsLabel = new GUIContent("Only Errors", "Hide/Show Only Errors.");
 
     public static ConsoleLog Inst { get; private set; }
 
@@ -81,35 +71,35 @@ public class ConsoleLog : MonoBehaviour
     {
         get
         {
-            return this.m_show;
+            return m_show;
         }
         set
         {
-            this.m_show = value;
+            m_show = value;
         }
     }
 
-    private void Awake()
+    void Awake()
     {
-        ConsoleLog.Inst = this;
-        Object.DontDestroyOnLoad(base.gameObject);
+        Inst = this;
+        Object.DontDestroyOnLoad(gameObject);
     }
 
-    private void OnEnable()
+    void OnEnable()
     {
-        Application.logMessageReceived += new Application.LogCallback(this.HandleLog);
+        Application.logMessageReceived += new Application.LogCallback(HandleLog);
     }
 
-    private void OnDisable()
+    void OnDisable()
     {
-        Application.logMessageReceived -= new Application.LogCallback(this.HandleLog);
+        Application.logMessageReceived -= new Application.LogCallback(HandleLog);
     }
 
-    private void Update()
+    void Update()
     {
     }
 
-    private void OnGUI()
+    void OnGUI()
     {
         //if (DebugController.Instance.EnableDebugTexts)
         //{
@@ -129,18 +119,18 @@ public class ConsoleLog : MonoBehaviour
         //}
     }
 
-    private void ConsoleWindow(int windowId)
+    void ConsoleWindow(int windowId)
     {
-        this.m_scrollPosition = GUILayout.BeginScrollView(this.m_scrollPosition);
-        for (int i = 0; i < this.m_logs.Count; i++)
+        m_scrollPosition = GUILayout.BeginScrollView(m_scrollPosition);
+        for (int i = 0; i < m_logs.Count; i++)
         {
-            Log log = this.m_logs[i];
-            if ((!this.m_collapse || i <= 0 || !(log.Message == this.m_logs[i - 1].Message)) && (!this.m_showErrors || this.IsError(log.Type)))
+            var log = m_logs[i];
+            if ((!m_collapse || i <= 0 || !(log.Message == m_logs[i - 1].Message)) && (!m_showErrors || IsError(log.Type)))
             {
-                GUI.contentColor = ConsoleLog.s_logTypeColors[log.Type];
+                GUI.contentColor = s_logTypeColors[log.Type];
                 GUILayout.Label(log.Message);
                 GUI.color = Color.grey;
-                if (this.m_showStack)
+                if (m_showStack)
                 {
                     GUILayout.Label(log.StackTrace);
                 }
@@ -150,24 +140,24 @@ public class ConsoleLog : MonoBehaviour
         GUILayout.EndScrollView();
         GUI.contentColor = Color.white;
         GUILayout.BeginHorizontal();
-        if (GUILayout.Button(this.m_clearLabel))
+        if (GUILayout.Button(m_clearLabel))
         {
-            this.m_logs.Clear();
+            m_logs.Clear();
         }
-        this.m_showStack = GUILayout.Toggle(this.m_showStack, this.m_showStackLabel, GUILayout.ExpandWidth(false));
-        this.m_collapse = GUILayout.Toggle(this.m_collapse, this.m_collapseLabel, GUILayout.ExpandWidth(false));
-        this.m_showErrors = GUILayout.Toggle(this.m_showErrors, this.m_showErrorsLabel, GUILayout.ExpandWidth(false));
+        m_showStack = GUILayout.Toggle(m_showStack, m_showStackLabel, GUILayout.ExpandWidth(false));
+        m_collapse = GUILayout.Toggle(m_collapse, m_collapseLabel, GUILayout.ExpandWidth(false));
+        m_showErrors = GUILayout.Toggle(m_showErrors, m_showErrorsLabel, GUILayout.ExpandWidth(false));
         GUILayout.EndHorizontal();
-        GUI.DragWindow(this.m_titleBarRect);
+        GUI.DragWindow(m_titleBarRect);
     }
 
-    private void HandleLog(string message, string stackTrace, LogType type)
+    void HandleLog(string message, string stackTrace, LogType type)
     {
         if (message.Length > 1000)
         {
             message = message.Substring(0, 5000) + "...";
         }
-        this.m_logs.Add(new Log
+        m_logs.Add(new Log
         {
             Message = message,
             StackTrace = stackTrace,
@@ -175,7 +165,7 @@ public class ConsoleLog : MonoBehaviour
         });
     }
 
-    private bool IsError(LogType logType)
+    bool IsError(LogType logType)
     {
         return logType == LogType.Error || logType == LogType.Exception || logType == LogType.Assert || logType == LogType.Warning;
     }

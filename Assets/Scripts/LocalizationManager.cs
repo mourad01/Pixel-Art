@@ -2,23 +2,21 @@ using UnityEngine;
 
 public class LocalizationManager
 {
-    private static LocalizationManager s_instance;
+    static LocalizationManager s_instance;
 
-    private LockitInfo m_lockitInfo;
-
-    private NewLockitInfo m_newLockitInfo;
-
-    private string m_fileName = string.Empty;
+    LockitInfo m_lockitInfo;
+    NewLockitInfo m_newLockitInfo;
+    string m_fileName = string.Empty;
 
     public static LocalizationManager Instance
     {
         get
         {
-            if (LocalizationManager.s_instance == null)
+            if (s_instance == null)
             {
-                LocalizationManager.s_instance = new LocalizationManager();
+                s_instance = new LocalizationManager();
             }
-            return LocalizationManager.s_instance;
+            return s_instance;
         }
     }
 
@@ -44,9 +42,9 @@ public class LocalizationManager
 
     public void Init(string text)
     {
-        this.CurrentLanguage = Application.systemLanguage;
-        this.CurrentLocale = SystemToolsWrapper.GetLocale();
-        this.m_newLockitInfo = new NewLockitInfo(text);
+        CurrentLanguage = Application.systemLanguage;
+        CurrentLocale = SystemToolsWrapper.GetLocale();
+        m_newLockitInfo = new NewLockitInfo(text);
 
 
         //DataManager.Instance.GetNewLockit(delegate (NewLockitInfo lockitInfo)
@@ -82,7 +80,7 @@ public class LocalizationManager
         try
         {
             key = key.Trim('\r', '\n');
-            return this.m_newLockitInfo[key].Trim('\r', '\n');
+            return m_newLockitInfo[key].Trim('\r', '\n');
         }
         catch
         {

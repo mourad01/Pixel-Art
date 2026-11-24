@@ -2,27 +2,26 @@ using UnityEngine;
 
 internal class ScreenFormatScaler : MonoBehaviour
 {
-    [SerializeField] private float m_forceScaleX = 1f;
+    [SerializeField] float m_forceScaleX = 1f;
+    [SerializeField] float m_forceScaleY = 1f;
 
-    [SerializeField] private float m_forceScaleY = 1f;
-
-    private void Awake()
+    void Awake()
     {
-        bool flag = false;
+        bool found = false;
         if (Screen.width > Screen.height)
         {
             if ((float)Screen.width / (float)Screen.height < 1.45f)
             {
-                flag = true;
+                found = true;
             }
         }
         else if ((float)Screen.height / (float)Screen.width < 1.45f)
         {
-            flag = true;
+            found = true;
         }
-        if (flag)
+        if (found)
         {
-            base.transform.localScale = new Vector3(this.m_forceScaleX, this.m_forceScaleY, 1f);
+            transform.localScale = new Vector3(m_forceScaleX, m_forceScaleY, 1f);
         }
     }
 }

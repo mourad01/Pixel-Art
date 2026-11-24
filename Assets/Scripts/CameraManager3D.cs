@@ -5,21 +5,19 @@ using UnityEngine;
 
 public class CameraManager3D : MonoBehaviour
 {
-    [SerializeField] private RectTransform m_canvasRectTransform;
-
-    [SerializeField] private Camera m_camera;
-
-    [SerializeField] private RectTransform m_cameraSpace;
+    [SerializeField] RectTransform m_canvasRectTransform;
+    [SerializeField] Camera m_camera;
+    [SerializeField] RectTransform m_cameraSpace;
 
     public void Init()
     {
-        base.StartCoroutine(this.DefferedUpdate());
+        base.StartCoroutine(DefferedUpdate());
     }
 
-    private IEnumerator DefferedUpdate()
+    IEnumerator DefferedUpdate()
     {
-        float num = 0f;
-        RectTransform rectTransform = this.m_cameraSpace;
+        float topOffset = 0f;
+        var rectTransform = m_cameraSpace;
         while (true)
         {
             if (!(rectTransform != null))
@@ -30,17 +28,17 @@ public class CameraManager3D : MonoBehaviour
             {
                 break;
             }
-            float value2 = num;
+            float value2 = topOffset;
             Vector2 anchoredPosition = rectTransform.anchoredPosition;
-            num = value2 + anchoredPosition.y;
+            topOffset = value2 + anchoredPosition.y;
             rectTransform = (RectTransform)rectTransform.parent;
         }
-        float value3 = 0f - num;
-        Vector2 sizeDelta = this.m_cameraSpace.sizeDelta;
-        float y = 1f - (value3 + sizeDelta.y) / this.m_canvasRectTransform.rect.height;
-        Vector2 sizeDelta2 = this.m_cameraSpace.sizeDelta;
-        float height = sizeDelta2.y / this.m_canvasRectTransform.rect.height;
-        this.m_camera.rect = new Rect(0f, y, 1f, height);
+        float value3 = 0f - topOffset;
+        Vector2 sizeDelta = m_cameraSpace.sizeDelta;
+        float y = 1f - (value3 + sizeDelta.y) / m_canvasRectTransform.rect.height;
+        Vector2 sizeDelta2 = m_cameraSpace.sizeDelta;
+        float height = sizeDelta2.y / m_canvasRectTransform.rect.height;
+        m_camera.rect = new Rect(0f, y, 1f, height);
         yield break;
     }
 }

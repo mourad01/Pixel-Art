@@ -8,7 +8,7 @@ using UnityEngine;
 public class SavedWorkData : ISavedWorkData
 {
     [NonSerialized]
-    private History m_history;
+    History m_history;
 
     public string Id { get; private set; }
 
@@ -26,9 +26,9 @@ public class SavedWorkData : ISavedWorkData
     {
         get
         {
-            if (this.UvRect != null)
+            if (UvRect != null)
             {
-                return this.UvRect.ToRect();
+                return UvRect.ToRect();
             }
             return new Rect(0f, 0f, 1f, 1f);
         }
@@ -43,11 +43,11 @@ public class SavedWorkData : ISavedWorkData
     {
         get
         {
-            return this.m_history;
+            return m_history;
         }
         private set
         {
-            this.m_history = value;
+            m_history = value;
         }
     }
 
@@ -55,7 +55,7 @@ public class SavedWorkData : ISavedWorkData
     {
         get
         {
-            return this.ImageInfo.Is3D;
+            return ImageInfo.Is3D;
         }
     }
 
@@ -63,21 +63,21 @@ public class SavedWorkData : ISavedWorkData
     {
         get
         {
-            return SavedWorksList.GetPathToSave(this.Id);
+            return SavedWorksList.GetPathToSave(Id);
         }
     }
 
     public SavedWorkData()
     {
-        this.Id = Guid.NewGuid().ToString();
-        this.UvRect = new SerializableRect(new Rect(0f, 0f, 1f, 1f));
+        Id = Guid.NewGuid().ToString();
+        UvRect = new SerializableRect(new Rect(0f, 0f, 1f, 1f));
     }
 
     public void Init(ImageInfo imageInfo, byte[] preview, bool completed, List<HistoryStep> history)
     {
-        this.ImageInfo = imageInfo;
-        this.Preview = preview;
-        this.Completed = completed;
+        ImageInfo = imageInfo;
+        Preview = preview;
+        Completed = completed;
     }
 
     public static bool IsNeedToSave(NumberColoring go)
@@ -91,69 +91,69 @@ public class SavedWorkData : ISavedWorkData
 
     public void SetFile(string file)
     {
-        this.FileName = file;
+        FileName = file;
     }
 
     public void Apply(NumberColoring nc)
     {
-        Transform transform = nc.transform;
-        Texture2D texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        var transform = nc.transform;
+        var texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
         texture2D.filterMode = FilterMode.Point;
-        texture2D.LoadImage(this.Preview);
-        this.History2 = new History();
-        this.History2.Init(this.FullFileName + ".his");
-        if (this.History != null && this.History.Count > 0)
+        texture2D.LoadImage(Preview);
+        History2 = new History();
+        History2.Init(FullFileName + ".his");
+        if (History != null && History.Count > 0)
         {
-            foreach (HistoryStep item in this.History)
+            foreach (HistoryStep historyStep in History)
             {
-                this.History2.AddStep(item);
+                History2.AddStep(historyStep);
             }
-            this.History = null;
+            History = null;
         }
-        else if (this.History2.Steps.Count == 0)
+        else if (History2.Steps.Count == 0)
         {
-            this.GenerateHistoryForOldSave();
+            GenerateHistoryForOldSave();
         }
-        nc.ApplyResTexture(texture2D, this.Completed, this.History2);
+        nc.ApplyResTexture(texture2D, Completed, History2);
     }
 
-    private void GenerateHistoryForOldSave()
+    void GenerateHistoryForOldSave()
     {
-        Texture2D texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-        texture2D.LoadImage(this.Preview);
-        Color[] pixels = texture2D.GetPixels();
+        var texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        texture2D.LoadImage(Preview);
+        var pixels = texture2D.GetPixels();
         int width = texture2D.width;
         for (int i = 0; i < pixels.Length; i++)
         {
             if (pixels[i].a > 0.5f && pixels[i] != Color.white)
             {
-                HistoryStep historyStep = new HistoryStep();
+                var historyStep = new HistoryStep();
                 int x = i % width;
                 int y = i / width;
                 historyStep.Add(new ShortVector2(x, y));
-                this.History2.AddStep(historyStep);
+                History2.AddStep(historyStep);
             }
         }
-        this.History2.Shuffle();
+        History2.Shuffle();
     }
 
     public void SetImageInfo(ImageInfo ii)
     {
-        this.ImageInfo = ii;
+        ImageInfo = ii;
     }
 
     public void InitHistory()
     {
-        if (this.History2 == null)
+        if (History2 == null)
         {
-            this.History2 = new History();
-            this.History2.Init(this.FullFileName + ".his");
+            History2 = new History();
+            History2.Init(FullFileName + ".his");
         }
     }
 
     public override string ToString()
     {
-        return "SavedWorkData " + this.Id;
+        return "SavedWorkData " + Id;
     }
 }
 

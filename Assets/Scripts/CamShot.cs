@@ -4,22 +4,19 @@ using UnityEngine;
 public class CamShot : MonoBehaviour
 {
     public int resWidth = 1000;
-
     public int resHeight = 1000;
-
     public Camera cam;
 
-    private bool takeHiResShot;
-
-    private Texture2D m_Texture;
+    bool takeHiResShot;
+    Texture2D m_Texture;
 
     public event Action<byte[]> ColorPalleteComplete;
 
     public GameObject lights;
 
-    private void Start()
+    void Start()
     {
-        this.m_Texture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, true);
+        m_Texture = new Texture2D(Screen.width, Screen.height, TextureFormat.RGB24, true);
     }
 
     public static string ScreenShotName(int width, int height)
@@ -30,15 +27,15 @@ public class CamShot : MonoBehaviour
     public void TakeHiResShot()
     {
         //lights.SetActive(true);
-        this.takeHiResShot = true;
-        byte[] shot = FreeImageSaver.MakePngFromOurVirtualThingy(400, 400, 400, 0, this.cam, true);
-        this.OnColorPalleteComplete(shot);
+        takeHiResShot = true;
+        var shot = FreeImageSaver.MakePngFromOurVirtualThingy(400, 400, 400, 0, cam, true);
+        OnColorPalleteComplete(shot);
         //lights.SetActive(false);
     }
 
-    private void OnColorPalleteComplete(byte[] shot)
+    void OnColorPalleteComplete(byte[] shot)
     {
-        Action<byte[]> colorPalleteComplete = this.ColorPalleteComplete;
+        var colorPalleteComplete = ColorPalleteComplete;
         if (colorPalleteComplete != null)
         {
             colorPalleteComplete(shot);

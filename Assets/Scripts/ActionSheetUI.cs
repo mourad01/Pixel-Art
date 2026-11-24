@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class ActionSheetUI : MonoBehaviour
 {
     public Button[] buttons;
-
     public GameObject questionPanel;
     public Text questionMessage;
     public Text questionTitle;
@@ -13,10 +12,10 @@ public class ActionSheetUI : MonoBehaviour
     public Button buttonYes;
     public Button buttonYes2;
 
-    private Action<int> _callback;
-    private Action<int> _questionCallback;
+    Action<int> _callback;
+    Action<int> _questionCallback;
 
-    private void Awake()
+    void Awake()
     {
         ActionSheetWrapper.actionSheet = this;
         gameObject.SetActive(false);

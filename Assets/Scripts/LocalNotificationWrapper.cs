@@ -9,40 +9,39 @@ using UnityEngine;
 
 internal class LocalNotificationWrapper : MonoBehaviour
 {
-    private static LocalNotificationWrapper s_instance;
+    static LocalNotificationWrapper s_instance;
 
-    private bool notificationsCreated;
-
-    private List<int> m_currentNotificationsIds = new List<int>();
+    bool notificationsCreated;
+    List<int> m_currentNotificationsIds = new List<int>();
 
     public static LocalNotificationWrapper Instance
     {
         get
         {
-            if (LocalNotificationWrapper.s_instance == null)
+            if (s_instance == null)
             {
-                GameObject gameObject = new GameObject("LocalNotificationWrapper");
-                LocalNotificationWrapper.s_instance = gameObject.AddComponent<LocalNotificationWrapper>();
+                var gameObject = new GameObject("LocalNotificationWrapper");
+                s_instance = gameObject.AddComponent<LocalNotificationWrapper>();
                 UnityObject.DontDestroyOnLoad(gameObject);
             }
-            return LocalNotificationWrapper.s_instance;
+            return s_instance;
         }
     }
 
     public void Init()
     {
-        this.CancelAll();
+        CancelAll();
     }
 
     public void Create(int id, DateTime dt, string title, string message, bool repeat = false, IDictionary dict = null)
     {
-        this.Create(id, dt, (dt - DateTime.Now).TotalSeconds, title, message, repeat, dict);
+        Create(id, dt, (dt - DateTime.Now).TotalSeconds, title, message, repeat, dict);
     }
 
     public void Create(int id, double seconds, string title, string message, bool repeat = false, IDictionary dict = null)
     {
         DateTime dt = DateTime.Now + new TimeSpan((long)seconds * 10000000);
-        this.Create(id, dt, seconds, title, message, repeat, dict);
+        Create(id, dt, seconds, title, message, repeat, dict);
     }
 
     public void Create(int id, DateTime dt, double seconds, string title, string message, bool repeat = false, IDictionary dict = null)
@@ -59,55 +58,55 @@ internal class LocalNotificationWrapper : MonoBehaviour
 
     public void CancelAll()
     {
-        if (this.m_currentNotificationsIds.Count == 0)
+        if (m_currentNotificationsIds.Count == 0)
         {
-            List<int> localNotifications = AppData.LocalNotifications;
+            var localNotifications = AppData.LocalNotifications;
             if (localNotifications != null)
             {
-                this.m_currentNotificationsIds = localNotifications;
+                m_currentNotificationsIds = localNotifications;
             }
             AppData.LocalNotifications = null;
         }
-        foreach (int currentNotificationsId in this.m_currentNotificationsIds)
+        foreach (int currentNotificationsId in m_currentNotificationsIds)
         {
             LocalNotification.CancelNotification(currentNotificationsId); 
         }
-        this.m_currentNotificationsIds.Clear();
+        m_currentNotificationsIds.Clear();
     }
 
     public void OnApplicationPause(bool val)
     {
         if (!val)
         {
-            this.CancelAll();
-            this.notificationsCreated = false;
+            CancelAll();
+            notificationsCreated = false;
         }
         else
         {
-            this.ApplicationQuitHandler();
-            this.notificationsCreated = true;
+            ApplicationQuitHandler();
+            notificationsCreated = true;
         }
     }
 
-    private void ApplicationQuitHandler()
+    void ApplicationQuitHandler()
     {
-        if (!this.notificationsCreated)
+        if (!notificationsCreated)
         {
             try
             {
-                System.Random random = new System.Random();
-                int num = 0;
+                var random = new System.Random();
+                int notificationId = 0;
 
                     DateTime dateTime = DateTime.Now;
                     dateTime += new TimeSpan(3, 0, 0);
                     if (dateTime.Hour >= 9 && dateTime.Hour < 21)
                     {
-                        num = random.Next(0, 2147483647);
-                        this.m_currentNotificationsIds.Add(num);
-                        this.Create(num, dateTime, "Pixel Art", LocalizationManager.Instance.GetString("ntfy_title") + '\n' + LocalizationManager.Instance.GetString("ntfy_body"), false, null);
+                        notificationId = random.Next(0, 2147483647);
+                        m_currentNotificationsIds.Add(notificationId);
+                        Create(notificationId, dateTime, "Pixel Art", LocalizationManager.Instance.GetString("ntfy_title") + '\n' + LocalizationManager.Instance.GetString("ntfy_body"), false, null);
                     }
 
-                AppData.LocalNotifications = this.m_currentNotificationsIds;
+                AppData.LocalNotifications = m_currentNotificationsIds;
             }
             catch (Exception ex)
             {

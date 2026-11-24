@@ -8,8 +8,8 @@ public class FilterInfo
 
     public FilterInfo(Texture2D tex, int index)
     {
-        this.Texture = tex;
-        this.FilterIndex = index;
+        Texture = tex;
+        FilterIndex = index;
     }
 }
 

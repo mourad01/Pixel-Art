@@ -5,17 +5,11 @@ using UnityEngine.UI;
 public class BombButton : MonoBehaviour
 {
     [SerializeField] Image m_image;
-
     [SerializeField] GameObject m_activePointer;
-
     [SerializeField] Text m_bombsCountField;
-
     [SerializeField] Text m_bombsCountFieldCopy;
-
     [SerializeField] GameObject m_plus;
-
     [SerializeField] Image m_plusBack;
-
     [SerializeField] GameObject m_adText;
 
     //private bool m_needUpdatePlusState;

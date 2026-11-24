@@ -2,37 +2,35 @@ using UnityEngine;
 
 public class ImageWaiter : MonoBehaviour
 {
-    [SerializeField] private float m_timer;
+    [SerializeField] float m_timer;
+    [SerializeField] float m_time = 1f;
+    [SerializeField] Transform[] m_indicators;
 
-    [SerializeField] private float m_time = 1f;
-
-    [SerializeField] private Transform[] m_indicators;
-
-    private void Update()
+    void Update()
     {
-        this.m_timer += Time.deltaTime;
-        if (this.m_timer > 2f * this.m_time)
+        m_timer += Time.deltaTime;
+        if (m_timer > 2f * m_time)
         {
-            this.m_timer = 0f;
+            m_timer = 0f;
         }
-        for (int i = 0; i < this.m_indicators.Length; i++)
+        for (int i = 0; i < m_indicators.Length; i++)
         {
-            float num = (this.m_timer - (float)i * this.m_time / 6f) / this.m_time;
-            if (num < 0f)
+            float t = (m_timer - (float)i * m_time / 6f) / m_time;
+            if (t < 0f)
             {
-                num += 2f;
+                t += 2f;
             }
             float value2;
-            if (num < 1f)
+            if (t < 1f)
             {
-                value2 = Mathf.Lerp(0.3f, 1f, num);
+                value2 = Mathf.Lerp(0.3f, 1f, t);
             }
             else
             {
-                num -= 1f;
-                value2 = Mathf.Lerp(1f, 0.3f, num);
+                t -= 1f;
+                value2 = Mathf.Lerp(1f, 0.3f, t);
             }
-            this.m_indicators[i].localScale = new Vector3(value2, value2, 1f);
+            m_indicators[i].localScale = new Vector3(value2, value2, 1f);
         }
     }
 }

@@ -4,16 +4,15 @@ using UnityEngine;
 internal class GooglePurchaseData
 {
     [Serializable]
-    private struct GooglePurchaseReceipt
+    struct GooglePurchaseReceipt
     {
         public string Payload;
     }
 
     [Serializable]
-    private struct GooglePurchasePayload
+    struct GooglePurchasePayload
     {
         public string json;
-
         public string signature;
     }
 
@@ -21,44 +20,35 @@ internal class GooglePurchaseData
     public struct GooglePurchaseJson
     {
         public string autoRenewing;
-
         public string orderId;
-
         public string packageName;
-
         public string productId;
-
         public string purchaseTime;
-
         public string purchaseState;
-
         public string developerPayload;
-
         public string purchaseToken;
     }
 
     public string inAppPurchaseData;
-
     public string inAppDataSignature;
-
     public GooglePurchaseJson json;
 
     public GooglePurchaseData(string receipt)
     {
         try
         {
-            GooglePurchaseReceipt googlePurchaseReceipt = JsonUtility.FromJson<GooglePurchaseReceipt>(receipt);
-            GooglePurchasePayload googlePurchasePayload = JsonUtility.FromJson<GooglePurchasePayload>(googlePurchaseReceipt.Payload);
-            GooglePurchaseJson googlePurchaseJson = JsonUtility.FromJson<GooglePurchaseJson>(googlePurchasePayload.json);
-            this.inAppPurchaseData = googlePurchasePayload.json;
-            this.inAppDataSignature = googlePurchasePayload.signature;
-            this.json = googlePurchaseJson;
+            var googlePurchaseReceipt = JsonUtility.FromJson<GooglePurchaseReceipt>(receipt);
+            var googlePurchasePayload = JsonUtility.FromJson<GooglePurchasePayload>(googlePurchaseReceipt.Payload);
+            var googlePurchaseJson = JsonUtility.FromJson<GooglePurchaseJson>(googlePurchasePayload.json);
+            inAppPurchaseData = googlePurchasePayload.json;
+            inAppDataSignature = googlePurchasePayload.signature;
+            json = googlePurchaseJson;
         }
         catch
         {
             Debug.Log("Could not parse receipt: " + receipt);
-            this.inAppPurchaseData = string.Empty;
-            this.inAppDataSignature = string.Empty;
+            inAppPurchaseData = string.Empty;
+            inAppDataSignature = string.Empty;
         }
     }
 }

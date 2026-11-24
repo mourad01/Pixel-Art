@@ -4,41 +4,40 @@ using UnityEngine;
 
 public class CustomVerticalLayoutGroup : MonoBehaviour
 {
-    private List<RectTransform> m_childs;
-
-    private float m_rectHeight;
+    List<RectTransform> m_childs;
+    float m_rectHeight;
 
     [ContextMenu("ForceUpdate")]
-    private void ContextMenuForceUpdate()
+    void ContextMenuForceUpdate()
     {
-        this.ForceUpdate();
+        ForceUpdate();
     }
 
-    private void Start()
+    void Start()
     {
-        this.m_childs = new List<RectTransform>();
-        this.m_rectHeight = (base.transform as RectTransform).rect.height;
-        this.Process();
+        m_childs = new List<RectTransform>();
+        m_rectHeight = (transform as RectTransform).rect.height;
+        Process();
     }
 
-    private void Update()
+    void Update()
     {
-        if ((base.transform as RectTransform).rect.height != this.m_rectHeight)
+        if ((transform as RectTransform).rect.height != m_rectHeight)
         {
-            this.m_rectHeight = (base.transform as RectTransform).rect.height;
-            this.Process();
+            m_rectHeight = (transform as RectTransform).rect.height;
+            Process();
         }
     }
 
     public void ForceUpdate()
     {
-        this.Process();
+        Process();
     }
 
-    private void Process()
+    void Process()
     {
-        this.m_childs.Clear();
-        CustomVerticalLayoutGroupElement[] componentsInChildren = ((Component)base.transform).GetComponentsInChildren<CustomVerticalLayoutGroupElement>();
+        m_childs.Clear();
+        var componentsInChildren = ((Component)transform).GetComponentsInChildren<CustomVerticalLayoutGroupElement>();
         if (componentsInChildren.Length > 0)
         {
             componentsInChildren = (from a in componentsInChildren
@@ -46,32 +45,32 @@ public class CustomVerticalLayoutGroup : MonoBehaviour
                                     select a).ToArray();
             for (int i = 0; i < componentsInChildren.Length; i++)
             {
-                RectTransform rectTransform = componentsInChildren[i].transform as RectTransform;
+                var rectTransform = componentsInChildren[i].transform as RectTransform;
                 if (rectTransform.gameObject.activeSelf)
                 {
-                    this.m_childs.Add(rectTransform);
+                    m_childs.Add(rectTransform);
                 }
             }
         }
         else
         {
-            for (int j = 0; j < base.transform.childCount; j++)
+            for (int j = 0; j < transform.childCount; j++)
             {
-                RectTransform rectTransform2 = base.transform.GetChild(j) as RectTransform;
-                if (rectTransform2.gameObject.activeSelf)
+                var rectTransform = transform.GetChild(j) as RectTransform;
+                if (rectTransform.gameObject.activeSelf)
                 {
-                    this.m_childs.Add(rectTransform2);
+                    m_childs.Add(rectTransform);
                 }
             }
         }
-        float num = this.m_childs.Sum((RectTransform a) => a.rect.height);
-        float value2 = this.m_rectHeight - num;
-        float value3 = value2 / (float)this.m_childs.Count;
+        float childsHeight = m_childs.Sum((RectTransform a) => a.rect.height);
+        float value2 = m_rectHeight - childsHeight;
+        float value3 = value2 / (float)m_childs.Count;
         float value4 = 0f;
-        for (int k = 0; k < this.m_childs.Count; k++)
+        for (int k = 0; k < m_childs.Count; k++)
         {
-            this.m_childs[k].anchoredPosition = new Vector2(0f, (0f - value3) * ((float)k + 0.5f) - value4 - this.m_childs[k].rect.height / 2f);
-            value4 += this.m_childs[k].rect.height;
+            m_childs[k].anchoredPosition = new Vector2(0f, (0f - value3) * ((float)k + 0.5f) - value4 - m_childs[k].rect.height / 2f);
+            value4 += m_childs[k].rect.height;
         }
     }
 }

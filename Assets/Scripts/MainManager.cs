@@ -12,17 +12,13 @@ public class MainManager : MonoBehaviour
 {
 
 
-    private bool first;
+    bool first;
+    float m_secondsInGame;
+    EventSystem m_currentEventSystemInternal;
+    SavedWorksList m_savedWorksList;
 
-    private float m_secondsInGame;
-
-    private EventSystem m_currentEventSystemInternal;
-
-    private SavedWorksList m_savedWorksList;
-
-    [SerializeField] private FreeImageSaver m_freeImageSaver;
-
-    [SerializeField] private FilterManager m_filterManager;
+    [SerializeField] FreeImageSaver m_freeImageSaver;
+    [SerializeField] FilterManager m_filterManager;
 
     public TextAsset localization;
 
@@ -32,7 +28,7 @@ public class MainManager : MonoBehaviour
     {
         get
         {
-            return this.m_savedWorksList;
+            return m_savedWorksList;
         }
     }
 
@@ -40,7 +36,7 @@ public class MainManager : MonoBehaviour
     {
         get
         {
-            return this.m_freeImageSaver;
+            return m_freeImageSaver;
         }
     }
 
@@ -48,33 +44,33 @@ public class MainManager : MonoBehaviour
     {
         get
         {
-            return this.m_filterManager;
+            return m_filterManager;
         }
     }
 
-    private EventSystem m_currentEventSystem
+    EventSystem m_currentEventSystem
     {
         get
         {
-            if ((UnityEngine.Object)this.m_currentEventSystemInternal == (UnityEngine.Object)null)
+            if ((UnityEngine.Object)m_currentEventSystemInternal == (UnityEngine.Object)null)
             {
-                this.m_currentEventSystemInternal = EventSystem.current;
+                m_currentEventSystemInternal = EventSystem.current;
             }
-            return this.m_currentEventSystemInternal;
+            return m_currentEventSystemInternal;
         }
     }
 
-    private void Awake()
+    void Awake()
     {
-        MainManager.Instance = this;
-        UnityObject.DontDestroyOnLoad(base.gameObject);
-        base.StartCoroutine(this.InitializeCoroutine());
-        this.m_secondsInGame = (float)AppData.SecondsInGame;
+        Instance = this;
+        UnityObject.DontDestroyOnLoad(gameObject);
+        base.StartCoroutine(InitializeCoroutine());
+        m_secondsInGame = (float)AppData.SecondsInGame;
     }
 
     public void StartLibrary(MainMenuPage page = MainMenuPage.Library)
     {
-        base.StartCoroutine(this.StartLibraryCoroutine(page));
+        base.StartCoroutine(StartLibraryCoroutine(page));
     }
 
     public void StartWorkbook(ImageInfo imageInfo, ImageOpenType imageOpenType, MainMenuPage page, Action badHandler = null)
@@ -82,22 +78,22 @@ public class MainManager : MonoBehaviour
         MainMenu.LastPage = page;
         MainMenu.ImageId = imageInfo.Id;
         MainMenu.WorkId = null;
-        base.StartCoroutine(this.StartWorkbookCoroutine(imageInfo, imageOpenType, null, badHandler));
+        base.StartCoroutine(StartWorkbookCoroutine(imageInfo, imageOpenType, null, badHandler));
     }
 
     public void StartWorkbook(ISavedWorkData savedWorkData, ImageOpenType imageOpenType, Action badHandler = null)
     {
-        base.StartCoroutine(this.StartWorkbookCoroutine(savedWorkData.ImageInfo, imageOpenType, savedWorkData, badHandler));
+        base.StartCoroutine(StartWorkbookCoroutine(savedWorkData.ImageInfo, imageOpenType, savedWorkData, badHandler));
     }
 
     public void EnableEventSystem()
     {
-        this.m_currentEventSystem.enabled = true;
+        m_currentEventSystem.enabled = true;
     }
 
     public void DisableEventSystem()
     {
-        this.m_currentEventSystem.enabled = false;
+        m_currentEventSystem.enabled = false;
     }
 
     public void OnLowMemoryMessage(string message)
@@ -134,39 +130,39 @@ public class MainManager : MonoBehaviour
         }*/
     }
 
-    private void Update()
+    void Update()
     {
-        this.m_secondsInGame += Time.deltaTime;
-        int num = 9768;
-        if (this.m_secondsInGame >= (float)num && (DateTime.UtcNow - AppData.FirstLaunch).TotalDays <= 7.0 && !AppData.WeekSecondsTracked)
+        m_secondsInGame += Time.deltaTime;
+        int rateDelay = 9768;
+        if (m_secondsInGame >= (float)rateDelay && (DateTime.UtcNow - AppData.FirstLaunch).TotalDays <= 7.0 && !AppData.WeekSecondsTracked)
         {
             AnalyticsManager.Instance.TrackFirstWeekSecondsLimit();
             AppData.WeekSecondsTracked = true;
         }
     }
 
-    private void OnApplicationPause(bool pauseStatus)
+    void OnApplicationPause(bool pauseStatus)
     {
         try
         {
             if (pauseStatus)
             {
-                if (this.m_secondsInGame > (float)AppData.SecondsInGame)
+                if (m_secondsInGame > (float)AppData.SecondsInGame)
                 {
-                    AppData.SecondsInGame = (int)this.m_secondsInGame;
+                    AppData.SecondsInGame = (int)m_secondsInGame;
                 }
                 Debug.Log("pause_AppData.SecondsInGame: " + AppData.SecondsInGame);
                 AppData.EndSessionTime = DateTime.Now;
                 if (SceneManager.GetActiveScene().name != "2DScene")
                 {
-                    this.SavedWorksList.Save();
+                    SavedWorksList.Save();
                 }
-                this.DisableEventSystem();
+                DisableEventSystem();
             }
             else
             {
                 Debug.Log("unpause_AppData.SecondsInGame: " + AppData.SecondsInGame);
-                this.m_secondsInGame = (float)AppData.SecondsInGame;
+                m_secondsInGame = (float)AppData.SecondsInGame;
                 if ((DateTime.Now - AppData.EndSessionTime).TotalSeconds > 10.0)
                 {
                     AppData.CheckSessionEvents();
@@ -176,7 +172,7 @@ public class MainManager : MonoBehaviour
                         if (WindowManager.Instance != null)
                         {
 
-                            MainMenu mainMenu = WindowManager.Instance.GetMainMenu();
+                            var mainMenu = WindowManager.Instance.GetMainMenu();
                             if ((UnityEngine.Object)mainMenu != (UnityEngine.Object)null)
                             {
                                 mainMenu.UpdateLibrary(imagesInfo);
@@ -185,7 +181,7 @@ public class MainManager : MonoBehaviour
                         }
                     });
                 }
-                this.EnableEventSystem();
+                EnableEventSystem();
             }
         }
         catch (Exception ex)
@@ -193,7 +189,7 @@ public class MainManager : MonoBehaviour
             Debug.Log(ex.Message);
         }
     }
-    private IEnumerator InitializeCoroutine()
+    IEnumerator InitializeCoroutine()
     {
         DeepLinkWrapper.Init();
         AppPathsConfig.Init();
@@ -209,9 +205,9 @@ public class MainManager : MonoBehaviour
         yield return null;
 
         DataManager.Instance.Init();
-        this.m_savedWorksList = new SavedWorksList();
-        this.m_savedWorksList.Init();
-        LocalizationManager.Instance.Init(this.localization.text);
+        m_savedWorksList = new SavedWorksList();
+        m_savedWorksList.Init();
+        LocalizationManager.Instance.Init(localization.text);
         //AdsWrapper.Instance.Init();
         float timer = 3f;
 
@@ -231,20 +227,20 @@ public class MainManager : MonoBehaviour
             INPluginWrapper.Instance.SetDefaultBannerStrategy();
         }*/
         AppData.CheckSessionEvents();
-        this.first = true;
-        this.StartLibrary(MainMenuPage.Library);
+        first = true;
+        StartLibrary(MainMenuPage.Library);
     } 
 
-    private IEnumerator LoadMenuSceneCoroutine()
+    IEnumerator LoadMenuSceneCoroutine()
     {
         yield return SceneManager.LoadSceneAsync("LibraryScene");
     } 
 
-    private IEnumerator StartLibraryCoroutine(MainMenuPage page)
+    IEnumerator StartLibraryCoroutine(MainMenuPage page)
     {
         if (!SceneManager.GetActiveScene().name.Contains("LibraryScene"))
         {
-            yield return this.StartCoroutine(this.LoadMenuSceneCoroutine()); 
+            yield return StartCoroutine(LoadMenuSceneCoroutine()); 
         }
 
         yield return null; 
@@ -290,7 +286,7 @@ public class MainManager : MonoBehaviour
         }*/
     }
 
-    private IEnumerator StartWorkbookCoroutine(ImageInfo imageInfo, ImageOpenType imageOpenType, ISavedWorkData savedWorkData = null, Action badHandler = null)
+    IEnumerator StartWorkbookCoroutine(ImageInfo imageInfo, ImageOpenType imageOpenType, ISavedWorkData savedWorkData = null, Action badHandler = null)
     {
 
 

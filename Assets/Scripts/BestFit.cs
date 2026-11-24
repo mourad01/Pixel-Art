@@ -5,37 +5,29 @@ using UnityEngine.UI;
 
 public class BestFit : MonoBehaviour
 {
-    private float timer = 1f;
+    float timer = 1f;
 
-    [SerializeField] private int m_minSize = 16;
+    [SerializeField] int m_minSize = 16;
+    [SerializeField] int m_maxSize = 16;
+    [SerializeField] bool m_enableAfterRefit;
 
-    [SerializeField] private int m_maxSize = 16;
-
-    [SerializeField] private bool m_enableAfterRefit;
-
-    private RectTransform m_transform;
-
-    private Text m_text;
-
-    private string m_textText;
-
-    private bool m_textEnabled = true;
-
-    private Rect m_rect = default(Rect);
-
-    private Canvas m_parentCanvas;
-
-    private bool m_waitAndRefit;
+    RectTransform m_transform;
+    Text m_text;
+    string m_textText;
+    bool m_textEnabled = true;
+    Rect m_rect = default(Rect);
+    Canvas m_parentCanvas;
+    bool m_waitAndRefit;
 
     public int MinSize
     {
         get
         {
-            return this.m_minSize;
+            return m_minSize;
         }
         set
         {
-            this.m_minSize = value;
+            m_minSize = value;
         }
     }
 
@@ -43,29 +35,29 @@ public class BestFit : MonoBehaviour
     {
         get
         {
-            return this.m_maxSize;
+            return m_maxSize;
         }
         set
         {
-            this.m_maxSize = value;
+            m_maxSize = value;
         }
     }
 
-    private void Start()
+    void Start()
     {
-        if (this.m_text == null)
+        if (m_text == null)
         {
-            this.m_text = base.GetComponent<Text>();
-            this.m_transform = (base.transform as RectTransform);
-            base.StartCoroutine(this.WaitCanvasCoroutine());
+            m_text = base.GetComponent<Text>();
+            m_transform = (transform as RectTransform);
+            base.StartCoroutine(WaitCanvasCoroutine());
         }
     }
 
-    private IEnumerator WaitCanvasCoroutine()
+    IEnumerator WaitCanvasCoroutine()
     {
-        if (this.m_parentCanvas == null)
+        if (m_parentCanvas == null)
         {
-            Transform tr = this.m_transform;
+            Transform tr = m_transform;
             while (((Component)tr).GetComponent<Canvas>() == null)
             {
                 tr = tr.parent;
@@ -76,189 +68,189 @@ public class BestFit : MonoBehaviour
             }
             if (tr != null)
             {
-                this.m_parentCanvas = ((Component)tr).GetComponent<Canvas>();
+                m_parentCanvas = ((Component)tr).GetComponent<Canvas>();
             }
             yield return null;
         }
     }
 
-    private void Update()
+    void Update()
     {
-        if (this.m_parentCanvas != null && !this.m_parentCanvas.enabled)
+        if (m_parentCanvas != null && !m_parentCanvas.enabled)
         {
             return;
         }
-        this.timer -= Time.deltaTime;
-        if (this.timer < 0f)
+        timer -= Time.deltaTime;
+        if (timer < 0f)
         {
-            base.enabled = false;
+            enabled = false;
         }
-        if (this.m_textText != this.m_text.text || this.m_waitAndRefit)
+        if (m_textText != m_text.text || m_waitAndRefit)
         {
-            this.m_textEnabled = this.m_text.enabled;
-            this.m_text.enabled = false;
-            this.Refit();
+            m_textEnabled = m_text.enabled;
+            m_text.enabled = false;
+            Refit();
         }
-        if (!(this.m_transform.rect != this.m_rect))
+        if (!(m_transform.rect != m_rect))
         {
             return;
         }
-        Vector2 size = this.m_rect.size;
+        Vector2 size = m_rect.size;
         float x = size.x;
-        Vector2 size2 = this.m_transform.rect.size;
+        Vector2 size2 = m_transform.rect.size;
         if (!(x > size2.x))
         {
-            Vector2 size3 = this.m_rect.size;
+            Vector2 size3 = m_rect.size;
             float y = size3.y;
-            Vector2 size4 = this.m_transform.rect.size;
+            Vector2 size4 = m_transform.rect.size;
             if (y > size4.y)
             {
-                this.m_rect = this.m_transform.rect;
+                m_rect = m_transform.rect;
                 return;
             }
-            this.m_textEnabled = this.m_text.enabled;
-            this.m_text.enabled = false;
-            this.Refit();
+            m_textEnabled = m_text.enabled;
+            m_text.enabled = false;
+            Refit();
             return;
         } 
-        this.m_rect = this.m_transform.rect;
+        m_rect = m_transform.rect;
     }
 
     public void Refit()
     {
-        if (this.m_text == null)
+        if (m_text == null)
         {
-            this.Start();
+            Start();
         }
-        this.m_textText = this.m_text.text;
-        if (this.m_text.font.dynamic)
+        m_textText = m_text.text;
+        if (m_text.font.dynamic)
         {
-            this.m_text.resizeTextForBestFit = true;
-            this.m_text.resizeTextMinSize = this.m_minSize;
-            this.m_text.resizeTextMaxSize = this.m_maxSize;
-            this.m_text.enabled = this.m_textEnabled;
+            m_text.resizeTextForBestFit = true;
+            m_text.resizeTextMinSize = m_minSize;
+            m_text.resizeTextMaxSize = m_maxSize;
+            m_text.enabled = m_textEnabled;
         }
         else
         {
-            this.m_text.fontSize = this.MinSize;
-            this.m_rect = this.m_transform.rect;
-            if (this.m_parentCanvas != null && !this.m_parentCanvas.enabled)
+            m_text.fontSize = MinSize;
+            m_rect = m_transform.rect;
+            if (m_parentCanvas != null && !m_parentCanvas.enabled)
             {
-                this.m_waitAndRefit = true;
+                m_waitAndRefit = true;
             }
             else
             {
-                this.UpdateThis();
+                UpdateThis();
             }
         }
     }
 
-    private void UpdateThis()
+    void UpdateThis()
     {
-        if (this.m_textText.Length == 0)
+        if (m_textText.Length == 0)
         {
-            this.m_text.enabled = this.m_textEnabled;
+            m_text.enabled = m_textEnabled;
         }
         else
         {
-            TextGenerator textGenerator = new TextGenerator();
-            TextGenerationSettings generationSettings = this.m_text.GetGenerationSettings(this.m_transform.rect.size);
-            textGenerator.Populate(this.m_textText, generationSettings);
-            IList<UICharInfo> characters = textGenerator.characters;
-            string[] array = this.m_textText.Split(' ');
+            var textGenerator = new TextGenerator();
+            var generationSettings = m_text.GetGenerationSettings(m_transform.rect.size);
+            textGenerator.Populate(m_textText, generationSettings);
+            var characters = textGenerator.characters;
+            var parts = m_textText.Split(' ');
             float baseSpaceLength = 0f;
-            if (array.Length > 1 && characters.Count > 0)
+            if (parts.Length > 1 && characters.Count > 0)
             {
-                UICharInfo uICharInfo = characters[array[0].Length];
+                var uICharInfo = characters[parts[0].Length];
                 baseSpaceLength = uICharInfo.charWidth;
             }
-            float[] array2 = new float[array.Length];
-            int num = 0;
-            for (int i = 0; i < array.Length; i++)
+            var lineWidths = new float[parts.Length];
+            int charIndex = 0;
+            for (int i = 0; i < parts.Length; i++)
             {
-                array2[i] = 0f;
-                for (int j = 0; j < array[i].Length; j++)
+                lineWidths[i] = 0f;
+                for (int j = 0; j < parts[i].Length; j++)
                 {
                     try
                     {
-                        UICharInfo uICharInfo2 = characters[num++];
-                        float charWidth = uICharInfo2.charWidth;
-                        array2[i] += charWidth;
+                        var character = characters[charIndex++];
+                        float charWidth = character.charWidth;
+                        lineWidths[i] += charWidth;
                     }
                     catch
                     {
                     }
                 }
-                num++;
+                charIndex++;
             }
-            if (this.CheckSize(array2, this.m_maxSize, baseSpaceLength))
+            if (CheckSize(lineWidths, m_maxSize, baseSpaceLength))
             {
-                this.SetSize(this.m_maxSize);
+                SetSize(m_maxSize);
             }
             else
             {
-                this.CheckRange(array2, this.m_minSize, this.m_maxSize, baseSpaceLength);
+                CheckRange(lineWidths, m_minSize, m_maxSize, baseSpaceLength);
             }
         }
     }
 
-    private void CheckRange(float[] wordLengths, int minSize, int maxSize, float baseSpaceLength)
+    void CheckRange(float[] wordLengths, int minSize, int maxSize, float baseSpaceLength)
     {
-        int num = (minSize + maxSize) / 2;
-        if (!this.CheckSize(wordLengths, num, baseSpaceLength))
+        int middle = (minSize + maxSize) / 2;
+        if (!CheckSize(wordLengths, middle, baseSpaceLength))
         {
-            if (minSize == num)
+            if (minSize == middle)
             {
-                this.SetSize(num);
+                SetSize(middle);
             }
             else
             {
-                this.CheckRange(wordLengths, minSize, num, baseSpaceLength);
+                CheckRange(wordLengths, minSize, middle, baseSpaceLength);
             }
         }
         else
         {
-            float value2 = (float)((num + maxSize) / 2);
-            if (maxSize == num || value2 == (float)num)
+            float value2 = (float)((middle + maxSize) / 2);
+            if (maxSize == middle || value2 == (float)middle)
             {
-                this.SetSize(num);
+                SetSize(middle);
             }
             else
             {
-                this.CheckRange(wordLengths, num, maxSize, baseSpaceLength);
+                CheckRange(wordLengths, middle, maxSize, baseSpaceLength);
             }
         }
     }
 
-    private bool CheckSize(float[] wordLengths, int targetSize, float baseSpaceLength)
+    bool CheckSize(float[] wordLengths, int targetSize, float baseSpaceLength)
     {
-        float num = (float)targetSize / (float)this.m_text.font.fontSize;
-        float[] array = new float[wordLengths.Length];
+        float scale = (float)targetSize / (float)m_text.font.fontSize;
+        var scaledLengths = new float[wordLengths.Length];
         for (int i = 0; i < wordLengths.Length; i++)
         {
-            array[i] = wordLengths[i] * num;
+            scaledLengths[i] = wordLengths[i] * scale;
         }
-        float value2 = baseSpaceLength * num;
-        int value3 = Mathf.CeilToInt((float)this.m_text.font.lineHeight * num);
-        if ((float)value3 >= this.m_transform.rect.height)
+        float value2 = baseSpaceLength * scale;
+        int value3 = Mathf.CeilToInt((float)m_text.font.lineHeight * scale);
+        if ((float)value3 >= m_transform.rect.height)
         {
             return false;
         }
-        List<float> list = new List<float>();
+        var list = new List<float>();
         list.Add(0f);
         int value4 = 0;
         int value5 = 0;
-        while (value5 < array.Length)
+        while (value5 < scaledLengths.Length)
         {
-            if (list[value4] + value2 + array[value5] < this.m_transform.rect.width)
+            if (list[value4] + value2 + scaledLengths[value5] < m_transform.rect.width)
             {
                 List<float> list2;
                 int index;
-                list2 = list; index = value4; (list2)[index] = list2[index] + (value2 + array[value5]);
+                list2 = list; index = value4; (list2)[index] = list2[index] + (value2 + scaledLengths[value5]);
                 value5++;
                 continue;
             }
-            if (!((float)((list.Count + 1) * value3) < this.m_transform.rect.height))
+            if (!((float)((list.Count + 1) * value3) < m_transform.rect.height))
             {
                 return false;
             }
@@ -268,16 +260,16 @@ public class BestFit : MonoBehaviour
         return true;
     }
 
-    private void SetSize(int targetSize)
+    void SetSize(int targetSize)
     {
-        this.m_text.fontSize = targetSize;
-        if (this.m_enableAfterRefit)
+        m_text.fontSize = targetSize;
+        if (m_enableAfterRefit)
         {
-            this.m_text.enabled = true;
+            m_text.enabled = true;
         }
         else
         {
-            this.m_text.enabled = this.m_textEnabled;
+            m_text.enabled = m_textEnabled;
         }
     }
 }

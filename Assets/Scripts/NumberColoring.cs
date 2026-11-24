@@ -12,11 +12,10 @@ using UnityEngine;
 public class NumberColoring : MonoBehaviour
 {
     public static int CELL_SIZE = 50;
+
     public Color borderColor = Color.green;
     public int borderWidth = 1;
-
     public Action OnComplete;
-
     public Action<Color> OnColorComplete;
     public Action<Color, int> OnCountLeft;
     public Action<Color> OnPaintedPixel;
@@ -86,25 +85,18 @@ public class NumberColoring : MonoBehaviour
         }
     };
 
-    [SerializeField] private Camera m_mainCamera;
-
-    [SerializeField] private Camera m_loupeCamera;
-
-    [SerializeField] private CameraManager m_cameraManager;
-
-    [SerializeField] private MeshRenderer m_grayRenderer;
-
-    [SerializeField] private MeshRenderer m_gridRenderer;
-
-    [SerializeField] private MeshRenderer m_highlightedGridRenderer;
+    [SerializeField] Camera m_mainCamera;
+    [SerializeField] Camera m_loupeCamera;
+    [SerializeField] CameraManager m_cameraManager;
+    [SerializeField] MeshRenderer m_grayRenderer;
+    [SerializeField] MeshRenderer m_gridRenderer;
+    [SerializeField] MeshRenderer m_highlightedGridRenderer;
 
     [SerializeField] public Transform m_numbersContent;
 
-    [SerializeField] private Material m_resMaterial;
-
-    [SerializeField] private GameObject m_content;
-
-    [SerializeField] private TextMesh m_numbersText;
+    [SerializeField] Material m_resMaterial;
+    [SerializeField] GameObject m_content;
+    [SerializeField] TextMesh m_numbersText;
 
     [SerializeField] public List<Color> m_colors;
 
@@ -134,74 +126,74 @@ public class NumberColoring : MonoBehaviour
 
     public bool Completed { get;  set; }
 
-    private Color transparent = new Color(1, 1, 1, 0);
-    private int m_totalNumbers = 0;
-    private Dictionary<Color, int> m_colorsCount = new Dictionary<Color, int>();
+    Color transparent = new Color(1, 1, 1, 0);
+    int m_totalNumbers = 0;
+    Dictionary<Color, int> m_colorsCount = new Dictionary<Color, int>();
 
     [ContextMenu("InitObject")]
     public void InitObject()
     {
-        GameObject gameObject = default(GameObject);
-        NumberColoringHelper.InitObject(base.gameObject, out this.m_gridRenderer, out this.m_grayRenderer, out this.m_numbersContent, out this.m_resMaterial, out this.m_mainCamera, out this.m_cameraManager, out gameObject);
+        var gameObject = default(GameObject);
+        NumberColoringHelper.InitObject(base.gameObject, out m_gridRenderer, out m_grayRenderer, out m_numbersContent, out m_resMaterial, out m_mainCamera, out m_cameraManager, out gameObject);
     }
 
     [ContextMenu("CreateHighLightedGrid")]
     public void CreateHighLightedGrid()
     {
-        NumberColoringHelper.CreateHighLightedGrid(base.gameObject, out this.m_highlightedGridRenderer);
+        NumberColoringHelper.CreateHighLightedGrid(gameObject, out m_highlightedGridRenderer);
     }
 
     [ContextMenu("SaveImages")]
     public void SaveImages()
     {
-        File.WriteAllBytes("1.png", ((Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture).EncodeToPNG());
-        File.WriteAllBytes("2.png", ((Texture2D)this.m_resMaterial.mainTexture).EncodeToPNG());
+        File.WriteAllBytes("1.png", ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).EncodeToPNG());
+        File.WriteAllBytes("2.png", ((Texture2D)m_resMaterial.mainTexture).EncodeToPNG());
     }
 
     public void Init(ImageInfo imageInfo, ImageOpenType imageOpenType, Texture2D tex)
     {
-        this.m_imageInfo = imageInfo;
-        this.m_grayRenderer.sharedMaterial.mainTexture = tex;
-        this.m_gridRenderer.sharedMaterial.mainTextureScale = new Vector2((float)tex.width, (float)tex.height);
-        this.m_highlightedGridRenderer.sharedMaterial.SetTexture("_ImageTex", tex);
-        this.m_highlightedGridRenderer.sharedMaterial.mainTextureScale = new Vector2((float)tex.width, (float)tex.height);
-        this.m_width = tex.width;
-        this.m_height = tex.height;
-        this.m_pixels = tex.GetPixels();
-        this.m_colors = this.m_pixels.Distinct().ToList();//Where(c => c.r != 1 && c.g != 1 && c.b != 1).ToList();
+        m_imageInfo = imageInfo;
+        m_grayRenderer.sharedMaterial.mainTexture = tex;
+        m_gridRenderer.sharedMaterial.mainTextureScale = new Vector2((float)tex.width, (float)tex.height);
+        m_highlightedGridRenderer.sharedMaterial.SetTexture("_ImageTex", tex);
+        m_highlightedGridRenderer.sharedMaterial.mainTextureScale = new Vector2((float)tex.width, (float)tex.height);
+        m_width = tex.width;
+        m_height = tex.height;
+        m_pixels = tex.GetPixels();
+        m_colors = m_pixels.Distinct().ToList();//Where(c => c.r != 1 && c.g != 1 && c.b != 1).ToList();
 
-        this.m_colors.Remove(Color.white);
-        this.m_colors.Remove(transparent);
+        m_colors.Remove(Color.white);
+        m_colors.Remove(transparent);
 
-        Texture2D texture2D = new Texture2D(tex.width, tex.height, TextureFormat.RGBA32, false);
+        var texture2D = new Texture2D(tex.width, tex.height, TextureFormat.RGBA32, false);
         texture2D.filterMode = FilterMode.Point;
-        Color[] array = new Color[this.m_pixels.Length];
+        var startColors = new Color[m_pixels.Length];
         Color color = new Color(1f, 1f, 1f, 0f);
         Color white = Color.white;
-        this.m_colorsToColor = 0;
-        for (int i = 0; i < array.Length; i++)
+        m_colorsToColor = 0;
+        for (int i = 0; i < startColors.Length; i++)
         {
-            if (this.m_pixels[i] == white)
+            if (m_pixels[i] == white)
             {
-                array[i] = white;
+                startColors[i] = white;
             }
             else
             {
-                array[i] = color;
-                this.m_colorsToColor++;
+                startColors[i] = color;
+                m_colorsToColor++;
             }
         }
-        texture2D.SetPixels(array);
+        texture2D.SetPixels(startColors);
         texture2D.Apply();
-        this.m_resMaterial.mainTexture = texture2D;
-        this.m_inited = true;
+        m_resMaterial.mainTexture = texture2D;
+        m_inited = true;
         m_colorsCount.Clear();
 
-        Color[] resPixels = ((Texture2D)this.m_resMaterial.mainTexture).GetPixels();
-        Color[] rightPixels = ((Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
+        var resPixels = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
+        var rightPixels = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
 
         m_totalNumbers = 0;
-        foreach (var c in this.m_colors)
+        foreach (var c in m_colors)
         {
             int count = 0;
             for (int i = 0; i < rightPixels.Length; i++)
@@ -215,44 +207,44 @@ public class NumberColoring : MonoBehaviour
             m_colorsCount[c] = count;
         }
 
-        base.StartCoroutine(this.GenerateNumbersCoroutine_new(delegate
+        base.StartCoroutine(GenerateNumbersCoroutine_new(delegate
         {
-            if (this.m_width > this.m_height)
+            if (m_width > m_height)
             {
-                base.transform.localScale = new Vector3(1f, (float)this.m_height / (float)this.m_width, 1f);
+                transform.localScale = new Vector3(1f, (float)m_height / (float)m_width, 1f);
             }
-            else if (this.m_width < this.m_height)
+            else if (m_width < m_height)
             {
-                base.transform.localScale = new Vector3((float)this.m_width / (float)this.m_height, 1f, 1f);
+                transform.localScale = new Vector3((float)m_width / (float)m_height, 1f, 1f);
             }
         }));
-        base.StartCoroutine(this.DefferedEnableCoroutine());
-        this.m_highlightedGridRenderer.gameObject.SetActive(AppData.BulbMode);
-        AnalyticsManager.Instance.ImageOpened(this.m_imageInfo, this.m_colorsToColor, this.m_colors.Count, imageOpenType);
+        base.StartCoroutine(DefferedEnableCoroutine());
+        m_highlightedGridRenderer.gameObject.SetActive(AppData.BulbMode);
+        AnalyticsManager.Instance.ImageOpened(m_imageInfo, m_colorsToColor, m_colors.Count, imageOpenType);
     }
 
-    private void Update()
+    void Update()
     {
-        if (this.m_inited)
+        if (m_inited)
         {
-            float value = Mathf.Lerp(1f, 0f, (this.m_cameraManager.Zoom - (this.m_cameraManager.MaxZoom - 1f) * 0.1f - 1f) / (this.m_cameraManager.MaxZoom * 0.4f));
-            this.m_grayRenderer.sharedMaterial.SetFloat("_Alpha", value);
+            float value = Mathf.Lerp(1f, 0f, (m_cameraManager.Zoom - (m_cameraManager.MaxZoom - 1f) * 0.1f - 1f) / (m_cameraManager.MaxZoom * 0.4f));
+            m_grayRenderer.sharedMaterial.SetFloat("_Alpha", value);
         }
     }
     public List<Color> GetColors()
     {
-        return this.m_colors;
+        return m_colors;
     }
 
     public bool IsEmpty()
     {
         try
         {
-            if (this.m_isEmpty)
+            if (m_isEmpty)
             {
-                this.m_isEmpty = (this.m_history == null || this.m_history.Steps.Count == 0);
+                m_isEmpty = (m_history == null || m_history.Steps.Count == 0);
             }
-            return this.m_isEmpty;
+            return m_isEmpty;
         }
         catch
         {
@@ -263,32 +255,32 @@ public class NumberColoring : MonoBehaviour
     public void SetColor(Color color)
     {
         Debug.Log("set highlight color: " + color);
-        this.m_highlightedGridRenderer.sharedMaterial.SetColor("_CurrentColor", color);
+        m_highlightedGridRenderer.sharedMaterial.SetColor("_CurrentColor", color);
 
     }
 
     public void TryClickPixel(Vector2 mousePosition)
     {
-        Ray ray = this.m_mainCamera.ScreenPointToRay(mousePosition);
-        RaycastHit[] array = Physics.RaycastAll(ray);
-        if (array != null && array.Length > 0)
+        var ray = m_mainCamera.ScreenPointToRay(mousePosition);
+        var raycastHits = Physics.RaycastAll(ray);
+        if (raycastHits != null && raycastHits.Length > 0)
         {
 
-            MeshRenderer component = array[0].collider.gameObject.GetComponent<MeshRenderer>();
+            var meshRenderer = raycastHits[0].collider.gameObject.GetComponent<MeshRenderer>();
 
-            if (component != null)
+            if (meshRenderer != null)
             {
-                Debug.Log(array.Count());
-                Texture mainTexture = component.sharedMaterial.mainTexture;
-                Vector2 point = array[0].point;
+                Debug.Log(raycastHits.Count());
+                var mainTexture = meshRenderer.sharedMaterial.mainTexture;
+                Vector2 point = raycastHits[0].point;
 
                 float x = point.x;
-                Vector2 lossyScale = array[0].collider.transform.lossyScale;
+                Vector2 lossyScale = raycastHits[0].collider.transform.lossyScale;
 
                 point.x = x / lossyScale.x;
                 float y = point.y;
 
-                Vector2 lossyScale2 = array[0].collider.transform.lossyScale;
+                Vector2 lossyScale2 = raycastHits[0].collider.transform.lossyScale;
 
                 point.y = y / lossyScale2.y;
                 Debug.Log(mainTexture.width);
@@ -297,7 +289,7 @@ public class NumberColoring : MonoBehaviour
 
                 point.y = (point.y + 1f) / 2f*(float)mainTexture.height;
 
-                this.SetPixelColor(point, WorkbookModel.Instance.CurrentColorModel.Color);
+                SetPixelColor(point, WorkbookModel.Instance.CurrentColorModel.Color);
 
             }
 
@@ -306,26 +298,26 @@ public class NumberColoring : MonoBehaviour
 
     public bool CheckClickPixel(Vector2 mousePosition)
     {
-        Ray ray = this.m_mainCamera.ScreenPointToRay(mousePosition);
-        RaycastHit[] array = Physics.RaycastAll(ray);
-        if (array != null && array.Length > 0)
+        var ray = m_mainCamera.ScreenPointToRay(mousePosition);
+        var raycastHits = Physics.RaycastAll(ray);
+        if (raycastHits != null && raycastHits.Length > 0)
         {
-            MeshRenderer component = array[0].collider.gameObject.GetComponent<MeshRenderer>();
-            if (component != null)
+            var meshRenderer = raycastHits[0].collider.gameObject.GetComponent<MeshRenderer>();
+            if (meshRenderer != null)
             {
-                Texture mainTexture = component.sharedMaterial.mainTexture;
-                Vector3 point = array[0].point;
+                var mainTexture = meshRenderer.sharedMaterial.mainTexture;
+                Vector3 point = raycastHits[0].point;
                 float x = point.x;
-                Vector3 lossyScale = array[0].collider.transform.lossyScale;
+                Vector3 lossyScale = raycastHits[0].collider.transform.lossyScale;
                 point.x = x / lossyScale.x;
                 float y = point.y;
-                Vector3 lossyScale2 = array[0].collider.transform.lossyScale;
+                Vector3 lossyScale2 = raycastHits[0].collider.transform.lossyScale;
                 point.y = y / lossyScale2.y;
                 point.x = (point.x + 1f) / 2f * (float)mainTexture.width;
                 point.y = (point.y + 1f) / 2f * (float)mainTexture.height;
                 Color color = WorkbookModel.Instance.CurrentColorModel.Color;
-                Color pixel = ((Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture).GetPixel((int)point.x, (int)point.y);
-                Color pixel2 = ((Texture2D)this.m_resMaterial.mainTexture).GetPixel((int)point.x, (int)point.y);
+                Color pixel = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixel((int)point.x, (int)point.y);
+                Color pixel2 = ((Texture2D)m_resMaterial.mainTexture).GetPixel((int)point.x, (int)point.y);
                 if (pixel != pixel2 && pixel == color)
                 {
                     return true;
@@ -338,21 +330,21 @@ public class NumberColoring : MonoBehaviour
     public void SetPixelColor(Vector2 pixelPos, Color color)
     {
 
-        Color pixel = ((Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture).GetPixel((int)pixelPos.x, (int)pixelPos.y);
+        Color pixel = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixel((int)pixelPos.x, (int)pixelPos.y);
         if (WorkbookModel.Instance.SpecBoostersModel.LassoMode || WorkbookModel.Instance.SpecBoostersModel.BombMode)
         {
             color = pixel;
             Debug.Log(pixel);
         }
-        Color pixel2 = ((Texture2D)this.m_resMaterial.mainTexture).GetPixel((int)pixelPos.x, (int)pixelPos.y);
+        Color pixel2 = ((Texture2D)m_resMaterial.mainTexture).GetPixel((int)pixelPos.x, (int)pixelPos.y);
         bool pixelEqual = false;
         if (!(pixel == Color.white) && !(pixel == pixel2))
         {
             if (pixel == color)
             {
-                HistoryStep historyStep = new HistoryStep();
+                var historyStep = new HistoryStep();
                 historyStep.Add(new ShortVector2((int)pixelPos.x, (int)pixelPos.y));
-                this.AddHistoryStep(historyStep);
+                AddHistoryStep(historyStep);
 
                 pixelEqual = true;
             }
@@ -360,9 +352,9 @@ public class NumberColoring : MonoBehaviour
             {
                 if (WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType == ColorizationModeModel.BrushType.Plural)
                 {
-                    int num = (int)pixelPos.x;
+                    int pixelX = (int)pixelPos.x;
                     int value2 = (int)pixelPos.y;
-                    float value3 = pixelPos.x - (float)num;
+                    float value3 = pixelPos.x - (float)pixelX;
                     float value4 = pixelPos.y - (float)value2;
                     if (value3 < 0.25f)
                     {
@@ -394,46 +386,46 @@ public class NumberColoring : MonoBehaviour
         if (!pixelEqual)
             return;
         
-        ((Texture2D)this.m_resMaterial.mainTexture).SetPixel((int)pixelPos.x, (int)pixelPos.y, color);
-        ((Texture2D)this.m_resMaterial.mainTexture).Apply();
+        ((Texture2D)m_resMaterial.mainTexture).SetPixel((int)pixelPos.x, (int)pixelPos.y, color);
+        ((Texture2D)m_resMaterial.mainTexture).Apply();
         if (color.a > 0.9f)
         {
             VibroWrapper.PlayVibroRight();
             AnalyticsManager.Instance.ElementColored(WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType, true);
-            Color[] pixels = ((Texture2D)this.m_resMaterial.mainTexture).GetPixels();
-            Color[] pixels2 = ((Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
+            var pixels = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
+            var pixels2 = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
             if (WorkbookModel.Instance.SpecBoostersModel.LassoMode)
             {
-                this.CheckLassoNeighbours(pixels2, pixels, (int)pixelPos.x, (int)pixelPos.y, color);
-                ((Texture2D)this.m_resMaterial.mainTexture).SetPixels(pixels);
-                ((Texture2D)this.m_resMaterial.mainTexture).Apply();
+                CheckLassoNeighbours(pixels2, pixels, (int)pixelPos.x, (int)pixelPos.y, color);
+                ((Texture2D)m_resMaterial.mainTexture).SetPixels(pixels);
+                ((Texture2D)m_resMaterial.mainTexture).Apply();
                 WorkbookModel.Instance.SpecBoostersModel.SpendLasso();
                 AudioManager.Instance.PlayWand();
                 AnalyticsManager.Instance.LassoUsed(WorkbookModel.Instance.SpecBoostersModel.LassoCount + 1);
             }
             if (WorkbookModel.Instance.SpecBoostersModel.BombMode)
             {
-                this.CheckBombNeighbours(pixels2, pixels, (int)pixelPos.x, (int)pixelPos.y, color);
-                ((Texture2D)this.m_resMaterial.mainTexture).SetPixels(pixels);
-                ((Texture2D)this.m_resMaterial.mainTexture).Apply();
+                CheckBombNeighbours(pixels2, pixels, (int)pixelPos.x, (int)pixelPos.y, color);
+                ((Texture2D)m_resMaterial.mainTexture).SetPixels(pixels);
+                ((Texture2D)m_resMaterial.mainTexture).Apply();
                 WorkbookModel.Instance.SpecBoostersModel.SpendBomb();
                 AudioManager.Instance.PlayBomb();
                 AnalyticsManager.Instance.BombUsed(WorkbookModel.Instance.SpecBoostersModel.BombCount + 1);
-                foreach (Color color2 in this.m_colors)
+                foreach (Color color2 in m_colors)
                 {
-                    this.CheckColor(color2, pixels, pixels2);
+                    CheckColor(color2, pixels, pixels2);
                 }
             }
             m_colorsCount[color]--;
             m_totalNumbers--;
-            this.CheckColor(color, pixels, pixels2);
+            CheckColor(color, pixels, pixels2);
             OnPaintedPixel(color);
 
             if (m_totalNumbers == 0)
             {
-                this.Completed = true;
-                AnalyticsManager.Instance.ImageDone(this.m_imageInfo, this.m_colorsToColor, this.m_colors.Count);
-                this.OnComplete.SafeInvoke();
+                Completed = true;
+                AnalyticsManager.Instance.ImageDone(m_imageInfo, m_colorsToColor, m_colors.Count);
+                OnComplete.SafeInvoke();
                 AudioManager.Instance.PlayVictory();
             }
         }
@@ -446,11 +438,11 @@ public class NumberColoring : MonoBehaviour
 
     public bool CheckColorLeft(Color color, bool soundEnabled = true)
     {
-        if (this.m_grayRenderer.sharedMaterial.mainTexture != null && this.m_resMaterial.mainTexture != null)
+        if (m_grayRenderer.sharedMaterial.mainTexture != null && m_resMaterial.mainTexture != null)
         {
-            Color[] pixels = ((Texture2D)this.m_resMaterial.mainTexture).GetPixels();
-            Color[] pixels2 = ((Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
-            return this.CheckColor(color, pixels, pixels2, soundEnabled) > 0;
+            var pixels = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
+            var pixels2 = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
+            return CheckColor(color, pixels, pixels2, soundEnabled) > 0;
         }
 
         return false;
@@ -458,10 +450,10 @@ public class NumberColoring : MonoBehaviour
 
     public int GetColorsNumber()
     {
-        if (this.m_grayRenderer.sharedMaterial.mainTexture != null && this.m_resMaterial.mainTexture != null)
+        if (m_grayRenderer.sharedMaterial.mainTexture != null && m_resMaterial.mainTexture != null)
         {
-            Color[] resPixels = ((Texture2D)this.m_resMaterial.mainTexture).GetPixels();
-            Color[] rightPixels = ((Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
+            var resPixels = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
+            var rightPixels = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
 
             int count = 0;
             for (int i = 0; i < rightPixels.Length; i++)
@@ -476,7 +468,7 @@ public class NumberColoring : MonoBehaviour
         return 0;
     }
 
-    private int CheckColor(Color color, Color[] resPixels, Color[] rightPixels, bool soundEnabled = true)
+    int CheckColor(Color color, Color[] resPixels, Color[] rightPixels, bool soundEnabled = true)
     {
         int count = 0;
         if (!soundEnabled)
@@ -502,7 +494,7 @@ public class NumberColoring : MonoBehaviour
         }
         if (count > 0)
             return count;
-        this.OnColorComplete.SafeInvoke(color);
+        OnColorComplete.SafeInvoke(color);
         if (soundEnabled)
         {
             AudioManager.Instance.PlayCompleteColor();
@@ -510,44 +502,44 @@ public class NumberColoring : MonoBehaviour
         return 0;
     }
 
-    private void CheckLassoNeighbours1(Color[] rightPixels, Color[] coloredPixels, int x, int y, Color color)
+    void CheckLassoNeighbours1(Color[] rightPixels, Color[] coloredPixels, int x, int y, Color color)
     {
         try
         {
-            Vector2[] array = new Vector2[4] {
+            var offsets = new Vector2[4] {
                 Vector2.up,
                 Vector2.down,
                 Vector2.left,
                 Vector2.right
             };
-            Stack<Vector2> stack = new Stack<Vector2>();
-            Stack<Vector2> stack2 = new Stack<Vector2>();
-            bool flag = true;
+            var stack = new Stack<Vector2>();
+            var stack2 = new Stack<Vector2>();
+            bool first = true;
             stack.Push(new Vector2((float)x, (float)y));
-            int num = Mathf.RoundToInt(color.grayscale * 1000f);
+            int startGray = Mathf.RoundToInt(color.grayscale * 1000f);
             while (stack.Count > 0)
             {
 
-                    Vector2 vector = stack.Pop();
-                    int value2 = (int)vector.x + (int)vector.y * this.m_width;
+                    Vector2 current = stack.Pop();
+                    int value2 = (int)current.x + (int)current.y * m_width;
                     int value3 = Mathf.RoundToInt(coloredPixels[value2].grayscale * 1000f);
-                    if (value3 != num || flag)
+                    if (value3 != startGray || first)
                     {
-                        flag = false;
+                        first = false;
                         coloredPixels[value2] = color;
-                        Vector2[] array2 = array;
-                        for (int i = 0; i < array2.Length; i++)
+                        var neighbours = offsets;
+                        for (int i = 0; i < neighbours.Length; i++)
                         {
-                            Vector2 neighborOffset = array2[i];
-                            int value4 = (int)vector.x + (int)neighborOffset.x;
-                            int value5 = (int)vector.y + (int)neighborOffset.y;
+                            Vector2 neighborOffset = neighbours[i];
+                            int value4 = (int)current.x + (int)neighborOffset.x;
+                            int value5 = (int)current.y + (int)neighborOffset.y;
                             Vector2 neighborPosition = new Vector2((float)value4, (float)value5);
-                            value2 = value4 + value5 * this.m_width;
-                            if (value4 >= 0 && value4 < this.m_width && value5 >= 0 && value5 < this.m_height)
+                            value2 = value4 + value5 * m_width;
+                            if (value4 >= 0 && value4 < m_width && value5 >= 0 && value5 < m_height)
                             {
                                 int value6 = Mathf.RoundToInt(coloredPixels[value2].grayscale * 1000f);
                                 int value7 = Mathf.RoundToInt(rightPixels[value2].grayscale * 1000f);
-                                if (value6 != num && value7 == num)
+                                if (value6 != startGray && value7 == startGray)
                                 {
                                     stack2.Push(new Vector2((float)value4, (float)value5));
                                 }
@@ -566,45 +558,45 @@ public class NumberColoring : MonoBehaviour
         }
     }
 
-    private void CheckLassoNeighbours(Color[] rightPixels, Color[] coloredPixels, int x, int y, Color color)
+    void CheckLassoNeighbours(Color[] rightPixels, Color[] coloredPixels, int x, int y, Color color)
     {
-        Vector2[] array = new Vector2[4] {
+        var offsets = new Vector2[4] {
             Vector2.up,
             Vector2.down,
             Vector2.left,
             Vector2.right
         };
-        Stack<Vector2> stack = new Stack<Vector2>();
-        Stack<Vector2> stack2 = new Stack<Vector2>();
-        bool flag = true;
+        var stack = new Stack<Vector2>();
+        var stack2 = new Stack<Vector2>();
+        bool first = true;
         stack.Push(new Vector2((float)x, (float)y));
-        int num = (int)((color.r + color.g * 256f + color.b * 65536f) * 1000f);
-        HistoryStep historyStep = new HistoryStep();
+        int startColor = (int)((color.r + color.g * 256f + color.b * 65536f) * 1000f);
+        var historyStep = new HistoryStep();
         while (stack.Count > 0)
         {
             while (stack.Count > 0)
             {
-                Vector2 vector = stack.Pop();
-                int value2 = (int)vector.x + (int)vector.y * this.m_width;
+                Vector2 current = stack.Pop();
+                int value2 = (int)current.x + (int)current.y * m_width;
                 int value3 = (int)((coloredPixels[value2].r + coloredPixels[value2].g * 256f + coloredPixels[value2].b * 65536f) * 1000f);
-                if (value3 != num || flag)
+                if (value3 != startColor || first)
                 {
-                    flag = false;
+                    first = false;
                     coloredPixels[value2] = color;
-                    historyStep.Add(new ShortVector2((int)vector.x, (int)vector.y));
-                    Vector2[] array2 = array;
-                    for (int i = 0; i < array2.Length; i++)
+                    historyStep.Add(new ShortVector2((int)current.x, (int)current.y));
+                    var neighbours = offsets;
+                    for (int i = 0; i < neighbours.Length; i++)
                     {
-                        Vector2 neighborOffset = array2[i];
-                        int value4 = (int)vector.x + (int)neighborOffset.x;
-                        int value5 = (int)vector.y + (int)neighborOffset.y;
+                        Vector2 neighborOffset = neighbours[i];
+                        int value4 = (int)current.x + (int)neighborOffset.x;
+                        int value5 = (int)current.y + (int)neighborOffset.y;
                         Vector2 neighborPosition = new Vector2((float)value4, (float)value5);
-                        value2 = value4 + value5 * this.m_width;
-                        if (value4 >= 0 && value4 < this.m_width && value5 >= 0 && value5 < this.m_height)
+                        value2 = value4 + value5 * m_width;
+                        if (value4 >= 0 && value4 < m_width && value5 >= 0 && value5 < m_height)
                         {
                             int value6 = (int)((coloredPixels[value2].r + coloredPixels[value2].g * 256f + coloredPixels[value2].b * 65536f) * 1000f);
                             int value7 = (int)((rightPixels[value2].r + rightPixels[value2].g * 256f + rightPixels[value2].b * 65536f) * 1000f);
-                            if (value6 != num && value7 == num)
+                            if (value6 != startColor && value7 == startColor)
                             {
                                 stack2.Push(new Vector2((float)value4, (float)value5));
                             }
@@ -615,38 +607,38 @@ public class NumberColoring : MonoBehaviour
             stack = stack2;
             stack2 = new Stack<Vector2>();
         }
-        this.AddHistoryStep(historyStep);
+        AddHistoryStep(historyStep);
     }
 
-    private void CheckBombNeighbours(Color[] rightPixels, Color[] coloredPixels, int x, int y, Color color)
+    void CheckBombNeighbours(Color[] rightPixels, Color[] coloredPixels, int x, int y, Color color)
     {
-        HistoryStep historyStep = new HistoryStep();
-        int num = this.m_bombMatrix.GetLength(0) / 2;
-        for (int i = -num; i <= num; i++)
+        var historyStep = new HistoryStep();
+        int radius = m_bombMatrix.GetLength(0) / 2;
+        for (int i = -radius; i <= radius; i++)
         {
-            for (int j = -num; j <= num; j++)
+            for (int j = -radius; j <= radius; j++)
             {
                 int value2 = x + i;
                 int value3 = y + j;
-                if (value2 >= 0 && value2 < this.m_width && value3 >= 0 && value3 < this.m_height && this.m_bombMatrix[num + i, num + j] > 0)
+                if (value2 >= 0 && value2 < m_width && value3 >= 0 && value3 < m_height && m_bombMatrix[radius + i, radius + j] > 0)
                 {
-                    int value4 = value2 + value3 * this.m_width;
+                    int value4 = value2 + value3 * m_width;
                     coloredPixels[value4] = rightPixels[value4];
                     historyStep.Add(new ShortVector2(value2, value3));
                 }
             }
         }
-        this.AddHistoryStep(historyStep);
+        AddHistoryStep(historyStep);
     }
 
     public byte[] GetRes()
     {
-        if (!(this.m_resMaterial == null) && !(this.m_resMaterial.mainTexture == null))
+        if (!(m_resMaterial == null) && !(m_resMaterial.mainTexture == null))
         {
-            Texture2D texture2D = new Texture2D(this.m_width, this.m_height, TextureFormat.RGBA32, false);
+            var texture2D = new Texture2D(m_width, m_height, TextureFormat.RGBA32, false);
             texture2D.filterMode = FilterMode.Point;
-            Texture2D texture2D2 = texture2D;
-            Color[] pixels = ((Texture2D)this.m_resMaterial.mainTexture).GetPixels();
+            var texture2D2 = texture2D;
+            var pixels = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
             for (int i = 0; i < pixels.Length; i++)
             {
                 if (pixels[i].a < 1f)
@@ -663,63 +655,63 @@ public class NumberColoring : MonoBehaviour
 
     public Texture2D GetFullTexture()
     {
-        return (Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture;
+        return (Texture2D)m_grayRenderer.sharedMaterial.mainTexture;
     }
 
     public History GetHistory()
     {
-        return this.m_history;
+        return m_history;
     }
 
-    private void AddHistoryStep(HistoryStep historyStep)
+    void AddHistoryStep(HistoryStep historyStep)
     {
-        if (this.m_history == null)
+        if (m_history == null)
         {
-            ISavedWorkData savedWorkData = NewWorkbookManager.Instance.SaveWork(true);
+            var savedWorkData = NewWorkbookManager.Instance.SaveWork(true);
             savedWorkData.InitHistory();
-            this.m_history = savedWorkData.History2;
+            m_history = savedWorkData.History2;
         }
-        this.m_history.AddStep(historyStep);
+        m_history.AddStep(historyStep);
     }
 
     public void ApplyResTexture(Texture2D tex, bool completed, History history)
     {
-        this.m_resMaterial.mainTexture = tex;
-        this.Completed = completed;
+        m_resMaterial.mainTexture = tex;
+        Completed = completed;
         if (history != null)
         {
-            this.m_history = history;
+            m_history = history;
         }
     }
 
     public void CheatComplete()
     {
-        this.m_resMaterial.mainTexture = this.m_grayRenderer.sharedMaterial.mainTexture;
-        this.Completed = true;
-        this.OnComplete.SafeInvoke();
+        m_resMaterial.mainTexture = m_grayRenderer.sharedMaterial.mainTexture;
+        Completed = true;
+        OnComplete.SafeInvoke();
     }
-    private IEnumerator DefferedEnableCoroutine()
+    IEnumerator DefferedEnableCoroutine()
     {
         yield return null;
-        this.m_content.SetActive(true);
+        m_content.SetActive(true);
         yield return null;
-        var allPix = ((Texture2D)this.m_resMaterial.mainTexture).GetPixels();
-        var rightPix = ((Texture2D)this.m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
+        var allPix = ((Texture2D)m_resMaterial.mainTexture).GetPixels();
+        var rightPix = ((Texture2D)m_grayRenderer.sharedMaterial.mainTexture).GetPixels();
         foreach(var c in m_colors)
         {
             CheckColor(c, allPix, rightPix, false);
         }
 
-        CheckColorLeft(this.m_colors.FirstOrDefault(), false);
+        CheckColorLeft(m_colors.FirstOrDefault(), false);
 
         if (DailyGame.IsDailyArt())
         {
-            DailyGame.UpdateGUI(this.GetColorsNumber());
+            DailyGame.UpdateGUI(GetColorsNumber());
         }
     }
 
 
-    private IEnumerator GenerateNumbersCoroutine_new(Action endAction)
+    IEnumerator GenerateNumbersCoroutine_new(Action endAction)
     {
         float defaultAlpha = 1;
         float defRed = 0f;
@@ -737,19 +729,19 @@ public class NumberColoring : MonoBehaviour
         numberPixels[8] = ((Texture2D)Resources.Load("number_eight")).GetPixels();
         numberPixels[9] = ((Texture2D)Resources.Load("number_nine")).GetPixels();
         var sizeKoef = CELL_SIZE;
-        var newWidth = this.m_width * sizeKoef;
-        var newHeight = this.m_height * sizeKoef;
+        var newWidth = m_width * sizeKoef;
+        var newHeight = m_height * sizeKoef;
         var maxSize = 3600;
         var colors = new Color[(sizeKoef) * (sizeKoef)];
-        var borderColors = new Color[sizeKoef * this.borderWidth];
+        var borderColors = new Color[sizeKoef * borderWidth];
         for (int i = 0; i < borderColors.Length; i++)
         {
-            borderColors[i] = this.borderColor;
+            borderColors[i] = borderColor;
         }
         var colorsDict = new Dictionary<Color, int>();
-        for (int i = 0; i < this.m_colors.Count; i++)
+        for (int i = 0; i < m_colors.Count; i++)
         {
-            colorsDict.Add(this.m_colors[i], i + 1);
+            colorsDict.Add(m_colors[i], i + 1);
         }
         int mainI = 0;
         while (mainI * maxSize < newWidth)
@@ -778,13 +770,13 @@ public class NumberColoring : MonoBehaviour
                     for (int j = 0; j < curHeight / sizeKoef; j++)
                     {
                         int offset = j + mainJ * maxSize / sizeKoef;
-                        if (colorsDict.ContainsKey(this.m_pixels[curI + offset * this.m_width]))
+                        if (colorsDict.ContainsKey(m_pixels[curI + offset * m_width]))
                         {
                             //if (firstColumnCell < 0)
                             //{
                             //	firstColumnCell = j;
                             //}
-                            int pixelNumber = colorsDict[this.m_pixels[curI + offset * this.m_width]];
+                            int pixelNumber = colorsDict[m_pixels[curI + offset * m_width]];
                             bigTex.SetPixels(i * sizeKoef, j * sizeKoef, sizeKoef, sizeKoef, colors);
                             if (pixelNumber < 10)
                             {
@@ -809,16 +801,16 @@ public class NumberColoring : MonoBehaviour
                             }
 
                             //top border
-                            bigTex.SetPixels(i * sizeKoef, j * sizeKoef, sizeKoef, this.borderWidth, borderColors);
+                            bigTex.SetPixels(i * sizeKoef, j * sizeKoef, sizeKoef, borderWidth, borderColors);
 
                             //left border
-                            bigTex.SetPixels(i * sizeKoef, j * sizeKoef, this.borderWidth, sizeKoef, borderColors);
+                            bigTex.SetPixels(i * sizeKoef, j * sizeKoef, borderWidth, sizeKoef, borderColors);
 
                             //bottom border
-                            bigTex.SetPixels(i * sizeKoef, j * sizeKoef + sizeKoef - 1, sizeKoef, this.borderWidth, borderColors);
+                            bigTex.SetPixels(i * sizeKoef, j * sizeKoef + sizeKoef - 1, sizeKoef, borderWidth, borderColors);
 
                             //right border
-                            bigTex.SetPixels(i * sizeKoef + sizeKoef - 1, j * sizeKoef, this.borderWidth, sizeKoef, borderColors);
+                            bigTex.SetPixels(i * sizeKoef + sizeKoef - 1, j * sizeKoef, borderWidth, sizeKoef, borderColors);
 
                             //lastColumnCell = j;
                         }
@@ -831,8 +823,8 @@ public class NumberColoring : MonoBehaviour
                     //}
                 }
                 bigTex.Apply();
-                var curNumbersContent = UnityObject.Instantiate(this.m_numbersContent);
-                curNumbersContent.SetParent(this.m_numbersContent.parent);
+                var curNumbersContent = UnityObject.Instantiate(m_numbersContent);
+                curNumbersContent.SetParent(m_numbersContent.parent);
                 var mf = curNumbersContent.gameObject.AddComponent<MeshFilter>();
                 mf.sharedMesh = new Mesh();
                 float offsetxy = -1f;

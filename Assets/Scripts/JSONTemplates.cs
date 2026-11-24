@@ -4,21 +4,21 @@ using UnityEngine;
 
 public static class JSONTemplates
 {
-    private static readonly HashSet<object> touched = new HashSet<object>();
+    static readonly HashSet<object> touched = new HashSet<object>();
 
     public static JSONObject TOJSON(object obj)
     {
-        if (JSONTemplates.touched.Add(obj))
+        if (touched.Add(obj))
         {
-            JSONObject serializedObject = JSONObject.obj;
-            FieldInfo[] fields = obj.GetType().GetFields();
-            FieldInfo[] array = fields;
+            var serializedObject = JSONObject.obj;
+            var fields = obj.GetType().GetFields();
+            var array = fields;
             foreach (FieldInfo fieldInfo in array)
             {
-                JSONObject jSONObject = JSONObject.nullJO;
+                var jSONObject = JSONObject.nullJO;
                 if (!fieldInfo.GetValue(obj).Equals(null))
                 {
-                    MethodInfo method = typeof(JSONTemplates).GetMethod("From" + fieldInfo.FieldType.Name);
+                    var method = typeof(JSONTemplates).GetMethod("From" + fieldInfo.FieldType.Name);
                     jSONObject = ((method == null) ? ((fieldInfo.FieldType != typeof(string)) ? JSONObject.Create(fieldInfo.GetValue(obj).ToString(), -2, false, false) : JSONObject.CreateStringObject(fieldInfo.GetValue(obj).ToString())) : ((JSONObject)method.Invoke(null, new object[1] {
                         fieldInfo.GetValue(obj)
                     })));
@@ -35,14 +35,14 @@ public static class JSONTemplates
                     }
                 }
             }
-            PropertyInfo[] properties = obj.GetType().GetProperties();
-            PropertyInfo[] array2 = properties;
+            var properties = obj.GetType().GetProperties();
+            var array2 = properties;
             foreach (PropertyInfo propertyInfo in array2)
             {
-                JSONObject jSONObject2 = JSONObject.nullJO;
+                var jSONObject2 = JSONObject.nullJO;
                 if (!propertyInfo.GetValue(obj, null).Equals(null))
                 {
-                    MethodInfo method2 = typeof(JSONTemplates).GetMethod("From" + propertyInfo.PropertyType.Name);
+                    var method2 = typeof(JSONTemplates).GetMethod("From" + propertyInfo.PropertyType.Name);
                     jSONObject2 = ((method2 == null) ? ((propertyInfo.PropertyType != typeof(string)) ? JSONObject.Create(propertyInfo.GetValue(obj, null).ToString(), -2, false, false) : JSONObject.CreateStringObject(propertyInfo.GetValue(obj, null).ToString())) : ((JSONObject)method2.Invoke(null, new object[1] {
                         propertyInfo.GetValue(obj, null)
                     })));
@@ -74,7 +74,7 @@ public static class JSONTemplates
 
     public static JSONObject FromVector2(Vector2 v)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         if (v.x != 0f)
         {
             obj.AddField("x", v.x);
@@ -88,7 +88,7 @@ public static class JSONTemplates
 
     public static JSONObject FromVector3(Vector3 v)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         if (v.x != 0f)
         {
             obj.AddField("x", v.x);
@@ -114,7 +114,7 @@ public static class JSONTemplates
 
     public static JSONObject FromVector4(Vector4 v)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         if (v.x != 0f)
         {
             obj.AddField("x", v.x);
@@ -145,7 +145,7 @@ public static class JSONTemplates
 
     public static JSONObject FromMatrix4x4(Matrix4x4 m)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         if (m.m00 != 0f)
         {
             obj.AddField("m00", m.m00);
@@ -215,7 +215,7 @@ public static class JSONTemplates
 
     public static Matrix4x4 ToMatrix4x4(JSONObject obj)
     {
-        Matrix4x4 result = default(Matrix4x4);
+        var result = default(Matrix4x4);
         if ((bool)obj["m00"])
         {
             result.m00 = obj["m00"].f;
@@ -285,7 +285,7 @@ public static class JSONTemplates
 
     public static JSONObject FromQuaternion(Quaternion q)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         if (q.w != 0f)
         {
             obj.AddField("w", q.w);
@@ -316,7 +316,7 @@ public static class JSONTemplates
 
     public static JSONObject FromColor(Color c)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         if (c.r != 0f)
         {
             obj.AddField("r", c.r);
@@ -362,21 +362,21 @@ public static class JSONTemplates
 
     public static JSONObject FromLayerMask(LayerMask l)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         obj.AddField("value", l.value);
         return obj;
     }
 
     public static LayerMask ToLayerMask(JSONObject obj)
     {
-        LayerMask result = default(LayerMask);
+        var result = default(LayerMask);
         result.value = (int)obj["value"].n;
         return result;
     }
 
     public static JSONObject FromRect(Rect r)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         if (r.x != 0f)
         {
             obj.AddField("x", r.x);
@@ -422,7 +422,7 @@ public static class JSONTemplates
 
     public static JSONObject FromRectOffset(RectOffset r)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         if (r.bottom != 0)
         {
             obj.AddField("bottom", r.bottom);
@@ -444,7 +444,7 @@ public static class JSONTemplates
 
     public static RectOffset ToRectOffset(JSONObject obj)
     {
-        RectOffset rectOffset = new RectOffset();
+        var rectOffset = new RectOffset();
         for (int i = 0; i < obj.Count; i++)
         {
             switch (obj.keys[i])
@@ -468,13 +468,13 @@ public static class JSONTemplates
 
     public static AnimationCurve ToAnimationCurve(JSONObject obj)
     {
-        AnimationCurve animationCurve = new AnimationCurve();
+        var animationCurve = new AnimationCurve();
         if (obj.HasField("keys"))
         {
-            JSONObject field = obj.GetField("keys");
+            var field = obj.GetField("keys");
             for (int i = 0; i < field.list.Count; i++)
             {
-                animationCurve.AddKey(JSONTemplates.ToKeyframe(field[i]));
+                animationCurve.AddKey(ToKeyframe(field[i]));
             }
         }
         if (obj.HasField("preWrapMode"))
@@ -490,15 +490,15 @@ public static class JSONTemplates
 
     public static JSONObject FromAnimationCurve(AnimationCurve a)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         obj.AddField("preWrapMode", a.preWrapMode.ToString());
         obj.AddField("postWrapMode", a.postWrapMode.ToString());
         if (a.keys.Length > 0)
         {
-            JSONObject jSONObject = JSONObject.Create();
+            var jSONObject = JSONObject.Create();
             for (int i = 0; i < a.keys.Length; i++)
             {
-                jSONObject.Add(JSONTemplates.FromKeyframe(a.keys[i]));
+                jSONObject.Add(FromKeyframe(a.keys[i]));
             }
             obj.AddField("keys", jSONObject);
         }
@@ -507,7 +507,7 @@ public static class JSONTemplates
 
     public static Keyframe ToKeyframe(JSONObject obj)
     {
-        Keyframe result = new Keyframe((!obj.HasField("time")) ? 0f : obj.GetField("time").n, (!obj.HasField("value")) ? 0f : obj.GetField("value").n);
+        var result = new Keyframe((!obj.HasField("time")) ? 0f : obj.GetField("time").n, (!obj.HasField("value")) ? 0f : obj.GetField("value").n);
         if (obj.HasField("inTangent"))
         {
             result.inTangent = obj.GetField("inTangent").n;
@@ -525,7 +525,7 @@ public static class JSONTemplates
 
     public static JSONObject FromKeyframe(Keyframe k)
     {
-        JSONObject obj = JSONObject.obj;
+        var obj = JSONObject.obj;
         if (k.inTangent != 0f)
         {
             obj.AddField("inTangent", k.inTangent);

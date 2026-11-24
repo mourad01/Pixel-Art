@@ -18,7 +18,7 @@ public class HistoryStep
 
     public override string ToString()
     {
-        StringBuilder stringBuilder = new StringBuilder();
+        var stringBuilder = new StringBuilder();
         for (int i = 0; i < Vectors.Count; i++)
         {
             stringBuilder.Append(Vectors[i]).Append(";");

@@ -10,13 +10,10 @@ namespace Assets.Scripts.Navigation
 {
     internal static class NavigationService
     {
-        private const float AsyncLoadingAccuracy = 0.9f;
-
-        private static BaseScene _currentScene;
-
-        private static NavigationArgs _navigationArgs;
-
-        private static AsyncOperation _asyncOperation;
+        const float AsyncLoadingAccuracy = 0.9f;
+        static BaseScene _currentScene;
+        static NavigationArgs _navigationArgs;
+        static AsyncOperation _asyncOperation;
 
         public static Action AsyncLoadingComplete;
 
@@ -24,24 +21,24 @@ namespace Assets.Scripts.Navigation
         {
             get
             {
-                if (NavigationService._currentScene == null)
+                if (_currentScene == null)
                 {
                     return SceneType.Undefined;
                 }
-                return NavigationService._currentScene.SceneType;
+                return _currentScene.SceneType;
             }
         }
 
         public static void Navigate(NavigationArgs navigator, bool allowSceneActivation = true)
         {
-            if (NavigationService._currentScene != null)
+            if (_currentScene != null)
             {
-                NavigationService._currentScene.OnNavigatedFrom();
+                _currentScene.OnNavigatedFrom();
             }
-            NavigationService._navigationArgs = navigator;
-            if (NavigationService._currentScene != null)
+            _navigationArgs = navigator;
+            if (_currentScene != null)
             {
-                NavigationService.LoadLevelAsynchronously(navigator.SceneName, allowSceneActivation);
+                LoadLevelAsynchronously(navigator.SceneName, allowSceneActivation);
             }
             else
             {
@@ -51,37 +48,37 @@ namespace Assets.Scripts.Navigation
 
         public static void LoadLevelAsynchronously(string name, bool allowSceneActivation)
         {
-            UnitySingleton<MonoHelper>.Instance.StartCoroutine(NavigationService.LoadLevelAsync(name, allowSceneActivation));
+            UnitySingleton<MonoHelper>.Instance.StartCoroutine(LoadLevelAsync(name, allowSceneActivation));
         }
 
-        private static void OnAsyncLoadingComplete()
+        static void OnAsyncLoadingComplete()
         {
-            if (NavigationService.AsyncLoadingComplete != null)
+            if (AsyncLoadingComplete != null)
             {
-                NavigationService._currentScene.OnNavigatedTo(NavigationService._navigationArgs);
-                NavigationService.AsyncLoadingComplete();
+                _currentScene.OnNavigatedTo(_navigationArgs);
+                AsyncLoadingComplete();
             }
         }
 
-        private static IEnumerator LoadLevelAsync(string name, bool allowSceneActivation)
+        static IEnumerator LoadLevelAsync(string name, bool allowSceneActivation)
         {
-            NavigationService._asyncOperation = SceneManager.LoadSceneAsync(name);
-            NavigationService._asyncOperation.allowSceneActivation = allowSceneActivation;
-            if (!NavigationService._asyncOperation.isDone)
+            _asyncOperation = SceneManager.LoadSceneAsync(name);
+            _asyncOperation.allowSceneActivation = allowSceneActivation;
+            if (!_asyncOperation.isDone)
             {
-                if (NavigationService._asyncOperation.progress >= 0.9f)
+                if (_asyncOperation.progress >= 0.9f)
                 {
-                    NavigationService.OnAsyncLoadingComplete();
+                    OnAsyncLoadingComplete();
                 }
                 yield return null;
             }
-            yield return NavigationService._asyncOperation;
+            yield return _asyncOperation;
         }
 
         public static void SetCurrentScene(BaseScene scene)
         {
-            NavigationService._currentScene = scene;
-            NavigationService._currentScene.OnNavigatedTo(NavigationService._navigationArgs);
+            _currentScene = scene;
+            _currentScene.OnNavigatedTo(_navigationArgs);
         }
     }
 }

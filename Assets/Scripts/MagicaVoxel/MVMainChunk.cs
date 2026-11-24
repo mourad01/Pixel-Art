@@ -5,15 +5,10 @@ using UnityEngine;
 public class MVMainChunk
 {
     public MVVoxelChunk voxelChunk;
-
     public Color[] palatte;
-
     public int sizeX;
-
     public int sizeY;
-
     public int sizeZ;
-
     public byte[] version;
 
     #region default_palatte
@@ -284,12 +279,12 @@ public class MVMainChunk
 
     public Texture2D PaletteToTexture()
     {
-        if (this.palatte == null)
+        if (palatte == null)
         {
             return null;
         }
-        Texture2D texture2D = new Texture2D((int)this.palatte.Length, 1, TextureFormat.RGBA32, false);
-        texture2D.SetPixels(this.palatte);
+        var texture2D = new Texture2D((int)palatte.Length, 1, TextureFormat.RGBA32, false);
+        texture2D.SetPixels(palatte);
         texture2D.Apply(false);
         texture2D.filterMode = FilterMode.Point;
         texture2D.wrapMode = TextureWrapMode.Clamp;

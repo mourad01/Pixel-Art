@@ -9,43 +9,29 @@ using UnityEngine.UI;
 
 public class NewMyWorksWindow : BaseWindow
 {
-    private List<string> m_saveIds;
+    List<string> m_saveIds;
+    List<GroupOfMyWorks> m_imageGroups;
+    int m_currentGroupIndex = -1;
+    bool m_inited;
+    bool m_lock;
+    bool m_needReinit;
+    int m_needSelectIndex = -1;
+    float m_delta = -1f;
+    float m_previewSize = -1f;
+    int m_pairsCount = -1;
 
-    private List<GroupOfMyWorks> m_imageGroups;
-
-    private int m_currentGroupIndex = -1;
-
-    private bool m_inited;
-
-    private bool m_lock;
-
-    private bool m_needReinit;
-
-    private int m_needSelectIndex = -1;
-
-    private float m_delta = -1f;
-
-    private float m_previewSize = -1f;
-
-    private int m_pairsCount = -1;
-
-    [SerializeField] private ScrollRect m_scrollRect;
-
-    [SerializeField] private GroupOfMyWorks m_groupOfMyWorksPrefab;
-
-    [SerializeField] private RectTransform m_groupOfPreviewsParent;
-
-    [SerializeField] private GameObject m_noWorksBlock;
-
-    [SerializeField] private BigPreview m_bigPreview;
-
-    [SerializeField] private GameObject m_blockPlane;
+    [SerializeField] ScrollRect m_scrollRect;
+    [SerializeField] GroupOfMyWorks m_groupOfMyWorksPrefab;
+    [SerializeField] RectTransform m_groupOfPreviewsParent;
+    [SerializeField] GameObject m_noWorksBlock;
+    [SerializeField] BigPreview m_bigPreview;
+    [SerializeField] GameObject m_blockPlane;
 
     public bool Inited
     {
         get
         {
-            return this.m_imageGroups[0].Loaded;
+            return m_imageGroups[0].Loaded;
         }
     }
 
@@ -57,74 +43,73 @@ public class NewMyWorksWindow : BaseWindow
         }
     }
 
-    private NewMyWorksWindow()
+    NewMyWorksWindow()
     {
-        this.m_imageGroups = new List<GroupOfMyWorks>();
+        m_imageGroups = new List<GroupOfMyWorks>();
     }
 
     public void Init()
     {
-        this.m_currentGroupIndex = -1;
-        if (!this.m_inited)
+        m_currentGroupIndex = -1;
+        if (!m_inited)
         {
-            this.m_needReinit = true;
-            this.m_inited = true;
+            m_needReinit = true;
+            m_inited = true;
         }
-        else if (this.m_saveIds.Count > 0)
+        else if (m_saveIds.Count > 0)
         {
-            this.m_needSelectIndex = 0;
+            m_needSelectIndex = 0;
         }
     }
 
-    private void Reinit()
+    void Reinit()
     {
-        List<string> saves = MainManager.Instance.SavedWorksList.GetSaves();
-        this.m_saveIds = new List<string>();
-        this.m_saveIds.AddRange(saves.Distinct());
-        this.m_pairsCount = (this.m_saveIds.Count + 1) / 2;
-        this.m_delta = 20f;
-        float num = ((RectTransform)base.transform).rect.width - this.m_delta * 2f;
-        this.m_previewSize = (num - this.m_delta) / 2f;
-        this.m_scrollRect.content.sizeDelta = new Vector2(num, (float)this.m_pairsCount * (this.m_previewSize + this.m_delta) + this.m_delta);
-        if (this.m_imageGroups.Count == 0)
+        var saves = MainManager.Instance.SavedWorksList.GetSaves();
+        m_saveIds = new List<string>();
+        m_saveIds.AddRange(saves.Distinct());
+        m_pairsCount = (m_saveIds.Count + 1) / 2;
+        m_delta = 20f;
+        float contentWidth = ((RectTransform)transform).rect.width - m_delta * 2f;
+        m_previewSize = (contentWidth - m_delta) / 2f;
+        m_scrollRect.content.sizeDelta = new Vector2(contentWidth, (float)m_pairsCount * (m_previewSize + m_delta) + m_delta);
+        if (m_imageGroups.Count == 0)
         {
             for (int i = 0; i < 10; i++)
             {
-                GroupOfMyWorks groupOfMyWorks = UnityObject.Instantiate(this.m_groupOfMyWorksPrefab);
-                groupOfMyWorks.transform.SetParent(this.m_groupOfPreviewsParent);
+                var groupOfMyWorks = UnityObject.Instantiate(m_groupOfMyWorksPrefab);
+                groupOfMyWorks.transform.SetParent(m_groupOfPreviewsParent);
                 groupOfMyWorks.transform.localPosition = Vector3.zero;
                 groupOfMyWorks.transform.localScale = Vector3.one;
-                ((RectTransform)groupOfMyWorks.transform).sizeDelta = new Vector2(num, this.m_previewSize);
+                ((RectTransform)groupOfMyWorks.transform).sizeDelta = new Vector2(contentWidth, m_previewSize);
                 groupOfMyWorks.gameObject.SetActive(false);
-                GroupOfMyWorks groupOfMyWorks2 = groupOfMyWorks;
-                groupOfMyWorks2.OnImageClick = (Action<string, MyWorkPreview, GroupOfMyWorks>)Delegate.Combine(groupOfMyWorks2.OnImageClick, new Action<string, MyWorkPreview, GroupOfMyWorks>(this.OnImageClickHandler));
+                groupOfMyWorks.OnImageClick += OnImageClickHandler;
                 groupOfMyWorks.Index = -1;
-                this.m_imageGroups.Add(groupOfMyWorks);
+                m_imageGroups.Add(groupOfMyWorks);
             }
         }
-        this.OnSelectIndexHandler(0, true);
-        this.m_scrollRect.normalizedPosition = new Vector2(0f, 1f);
-        this.m_noWorksBlock.SetActive(this.m_saveIds.Count == 0);
+        OnSelectIndexHandler(0, true);
+        m_scrollRect.normalizedPosition = new Vector2(0f, 1f);
+        m_noWorksBlock.SetActive(m_saveIds.Count == 0);
     }
 
-    private void Update()
+    void Update()
     {
-        if (this.m_needReinit)
+        if (m_needReinit)
         {
-            this.Reinit();
-            this.m_needReinit = false;
+            Reinit();
+            m_needReinit = false;
         }
-        if (this.m_needSelectIndex >= 0)
+        if (m_needSelectIndex >= 0)
         {
-            this.OnSelectIndexHandler(this.m_needSelectIndex, true);
-            this.m_needSelectIndex = -1;
+            OnSelectIndexHandler(m_needSelectIndex, true);
+            m_needSelectIndex = -1;
         }
-        GameObject blockPlane = this.m_blockPlane;
-        Vector2 velocity = this.m_scrollRect.velocity;
+        var blockPlane = m_blockPlane;
+        Vector2 velocity = m_scrollRect.velocity;
         int active;
         if (!(velocity.y > 500f))
         {
-            Vector2 velocity2 = this.m_scrollRect.velocity;
+            Vector2 velocity2 = m_scrollRect.velocity;
             active = ((velocity2.y < -500f) ? 1 : 0);
         }
         else
@@ -136,61 +121,61 @@ public class NewMyWorksWindow : BaseWindow
 
     public void OnScrollRectScrolled(Vector2 pos)
     {
-        if (!this.m_lock && this.m_imageGroups.Count > 0)
+        if (!m_lock && m_imageGroups.Count > 0)
         {
-            Vector2 sizeDelta = this.m_scrollRect.content.sizeDelta;
-            float num = sizeDelta.y * (1f - pos.y);
-            int value2 = Mathf.RoundToInt((num - this.m_delta) / (this.m_previewSize + this.m_delta));
-            if (value2 < this.m_pairsCount)
+            Vector2 sizeDelta = m_scrollRect.content.sizeDelta;
+            float scrolled = sizeDelta.y * (1f - pos.y);
+            int value2 = Mathf.RoundToInt((scrolled - m_delta) / (m_previewSize + m_delta));
+            if (value2 < m_pairsCount)
             {
-                this.OnSelectIndexHandler(value2, false);
+                OnSelectIndexHandler(value2, false);
             }
             else
             {
-                this.OnSelectIndexHandler(this.m_pairsCount - 1, false);
+                OnSelectIndexHandler(m_pairsCount - 1, false);
             }
         }
     }
 
-    private void OnSelectIndexHandler(int index, bool force = false)
+    void OnSelectIndexHandler(int index, bool force = false)
     {
-        if (index >= 0 && index < this.m_pairsCount && !this.m_lock)
+        if (index >= 0 && index < m_pairsCount && !m_lock)
         {
-            if (index != this.m_currentGroupIndex)
+            if (index != m_currentGroupIndex)
             {
-                bool flag = index > this.m_currentGroupIndex;
-                List<GroupOfMyWorks> list = (from a in this.m_imageGroups
+                bool forward = index > m_currentGroupIndex;
+                var list = (from a in m_imageGroups
                                              orderby a.Index
                                              select a).ToList();
-                this.m_currentGroupIndex = index;
+                m_currentGroupIndex = index;
                 for (int i = -4; i < 6; i++)
                 {
-                    int localIndex = this.m_currentGroupIndex + i;
-                    if (localIndex >= 0 && localIndex < this.m_pairsCount)
+                    int localIndex = m_currentGroupIndex + i;
+                    if (localIndex >= 0 && localIndex < m_pairsCount)
                     {
-                        GroupOfMyWorks groupOfMyWorks = this.m_imageGroups.FirstOrDefault((GroupOfMyWorks a) => a.Index == localIndex);
+                        var groupOfMyWorks = m_imageGroups.FirstOrDefault((GroupOfMyWorks a) => a.Index == localIndex);
                         if (groupOfMyWorks == null)
                         {
-                            groupOfMyWorks = ((!flag) ? list[list.Count - 1] : list[0]);
+                            groupOfMyWorks = ((!forward) ? list[list.Count - 1] : list[0]);
                             groupOfMyWorks.Clear();
                             groupOfMyWorks.Index = localIndex;
-                            groupOfMyWorks.AddPreview(this.m_saveIds[localIndex * 2]);
-                            if (localIndex * 2 + 1 < this.m_saveIds.Count)
+                            groupOfMyWorks.AddPreview(m_saveIds[localIndex * 2]);
+                            if (localIndex * 2 + 1 < m_saveIds.Count)
                             {
-                                groupOfMyWorks.AddPreview(this.m_saveIds[localIndex * 2 + 1]);
+                                groupOfMyWorks.AddPreview(m_saveIds[localIndex * 2 + 1]);
                             }
                             groupOfMyWorks.LoadIcons();
-                            ((RectTransform)groupOfMyWorks.transform).anchoredPosition = new Vector2(0f, 0f - ((float)localIndex * (this.m_previewSize + this.m_delta) + this.m_delta));
+                            ((RectTransform)groupOfMyWorks.transform).anchoredPosition = new Vector2(0f, 0f - ((float)localIndex * (m_previewSize + m_delta) + m_delta));
                             list.Remove(groupOfMyWorks);
                         }
                         else
                         {
                             if (force)
                             {
-                                groupOfMyWorks.CheckPreview(0, this.m_saveIds[localIndex * 2]);
-                                if (localIndex * 2 + 1 < this.m_saveIds.Count)
+                                groupOfMyWorks.CheckPreview(0, m_saveIds[localIndex * 2]);
+                                if (localIndex * 2 + 1 < m_saveIds.Count)
                                 {
-                                    groupOfMyWorks.CheckPreview(1, this.m_saveIds[localIndex * 2 + 1]);
+                                    groupOfMyWorks.CheckPreview(1, m_saveIds[localIndex * 2 + 1]);
                                 }
                                 else
                                 {
@@ -201,20 +186,20 @@ public class NewMyWorksWindow : BaseWindow
                             list.Remove(groupOfMyWorks);
                         }
                     }
-                    else if (localIndex == this.m_pairsCount)
+                    else if (localIndex == m_pairsCount)
                     {
-                        GroupOfMyWorks groupOfMyWorks2 = this.m_imageGroups.FirstOrDefault((GroupOfMyWorks a) => a.Index == localIndex);
-                        if (groupOfMyWorks2 != null)
+                        var groupOfMyWorks = m_imageGroups.FirstOrDefault((GroupOfMyWorks a) => a.Index == localIndex);
+                        if (groupOfMyWorks != null)
                         {
-                            groupOfMyWorks2.Clear();
+                            groupOfMyWorks.Clear();
                         }
                     }
                 }
             }
         }
-        else if (this.m_pairsCount == 0)
+        else if (m_pairsCount == 0)
         {
-            foreach (GroupOfMyWorks imageGroup in this.m_imageGroups)
+            foreach (GroupOfMyWorks imageGroup in m_imageGroups)
             {
                 imageGroup.Clear();
             }
@@ -224,81 +209,81 @@ public class NewMyWorksWindow : BaseWindow
     public void OnImageClickHandler(string saveId, MyWorkPreview preview, GroupOfMyWorks groupOfMyWorks)
     {
         DailyGame.ResetState(false);
-        this.m_currentGroupIndex = this.m_imageGroups.IndexOf(groupOfMyWorks);
-        this.SelectPreview(saveId, preview);
-        this.DrawButtonClick(saveId);
+        m_currentGroupIndex = m_imageGroups.IndexOf(groupOfMyWorks);
+        SelectPreview(saveId, preview);
+        DrawButtonClick(saveId);
     }
 
-    private void SelectPreview(string saveId, MyWorkPreview preview)
+    void SelectPreview(string saveId, MyWorkPreview preview)
     {
-        ISavedWorkData savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
-        ImageInfo imageInfo = savedWorkData.ImageInfo;
+        var savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
+        var imageInfo = savedWorkData.ImageInfo;
         AnalyticsManager.Instance.ImageSelected(imageInfo);
-        this.m_bigPreview.Init((RectTransform)preview.transform, preview.Texture, false, savedWorkData);
+        m_bigPreview.Init((RectTransform)preview.transform, preview.Texture, false, savedWorkData);
     }
 
     public void DrawButtonClick(string saveId)
     {
-        if (!this.m_lock && this.m_currentGroupIndex >= 0)
+        if (!m_lock && m_currentGroupIndex >= 0)
         {
-            this.m_lock = true;
+            m_lock = true;
             ActionSheetWrapper.ShowSavedWorkActionSheet(delegate (ActionSheetResult a)
             {
                 switch (a)
                 {
                     case ActionSheetResult.Continue:
-                        this.LoadButtonClick(saveId);
+                        LoadButtonClick(saveId);
                         break;
                     case ActionSheetResult.New:
-                        this.NewImageButtonClick(saveId);
+                        NewImageButtonClick(saveId);
                         break;
                     case ActionSheetResult.Delete:
-                        this.DeleteButtonClick(saveId);
+                        DeleteButtonClick(saveId);
                         break;
                     case ActionSheetResult.Cancel:
-                        this.m_bigPreview.Close();
+                        m_bigPreview.Close();
                         break;
                 }
-                this.m_lock = false;
+                m_lock = false;
             });
         }
     }
 
-    private void LoadButtonClick(string saveId)
+    void LoadButtonClick(string saveId)
     {
-        this.m_lock = true;
-        ISavedWorkData savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
+        m_lock = true;
+        var savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
         MainMenu.LastPage = MainMenuPage.MyWorks;
         MainMenu.ImageId = savedWorkData.ImageInfo.Id;
         MainMenu.WorkId = savedWorkData.Id;
         MainManager.Instance.StartWorkbook(savedWorkData, ImageOpenType.Continued, null);
     }
 
-    private void NewImageButtonClick(string saveId)
+    void NewImageButtonClick(string saveId)
     {
-        ISavedWorkData savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
-        ImageInfo imageInfo = DataManager.Instance.GetImageInfo(savedWorkData.ImageInfo.Id);
+        var savedWorkData = MainManager.Instance.SavedWorksList.LoadById(saveId);
+        var imageInfo = DataManager.Instance.GetImageInfo(savedWorkData.ImageInfo.Id);
         if (imageInfo == null)
         {
             imageInfo = savedWorkData.ImageInfo;
         }
         if (imageInfo.CustomAccessStatus == AccessStatus.Free)
         {
-            this.m_lock = true;
-            ISavedWorkData savedWorkData2 = MainManager.Instance.SavedWorksList.LoadById(saveId);
+            m_lock = true;
+            var savedWorkData2 = MainManager.Instance.SavedWorksList.LoadById(saveId);
             MainManager.Instance.StartWorkbook(savedWorkData2.ImageInfo, ImageOpenType.Reopened, MainMenuPage.MyWorks, null);
         }
         else
         {
-            this.m_lock = true;
-            ISavedWorkData savedWorkData3 = MainManager.Instance.SavedWorksList.LoadById(saveId);
+            m_lock = true;
+            var savedWorkData3 = MainManager.Instance.SavedWorksList.LoadById(saveId);
             MainManager.Instance.StartWorkbook(savedWorkData3.ImageInfo, ImageOpenType.Reopened, MainMenuPage.MyWorks, null);
         }
     }
 
     public void DeleteButtonClick(string saveId)
     {
-        this.m_bigPreview.Close();
+        m_bigPreview.Close();
         AnalyticsManager.Instance.DeleteButtonClick();
         DialogToolWrapper.ShowDeleteDialog(delegate (bool res)
         {
@@ -306,23 +291,23 @@ public class NewMyWorksWindow : BaseWindow
             {
                 AnalyticsManager.Instance.DeleteSuccess();
                 MainManager.Instance.SavedWorksList.Delete(saveId);
-                this.m_currentGroupIndex = -1;
-                this.m_lock = false;
-                this.Reinit();
+                m_currentGroupIndex = -1;
+                m_lock = false;
+                Reinit();
             }
         });
     }
 
     public void ShareButtonClick(string saveId)
     {
-        this.m_bigPreview.Close();
-        ShareWindow shareWindow = WindowManager.Instance.OpenShareWindow();
+        m_bigPreview.Close();
+        var shareWindow = WindowManager.Instance.OpenShareWindow();
         shareWindow.InitFromLibrary(saveId);
     }
 
     public bool GetStateBigmPreview()
     {
-        return this.m_bigPreview.isActiveAndEnabled;
+        return m_bigPreview.isActiveAndEnabled;
     }
 }
 

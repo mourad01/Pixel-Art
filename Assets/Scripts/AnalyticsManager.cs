@@ -6,20 +6,19 @@ using UnityEngine;
 
 public class AnalyticsManager : MonoBehaviour
 {
-    private DateTime m_startTime = DateTime.Now;
-
-    private List<AnalyticsPlatform> m_platforms;
+    DateTime m_startTime = DateTime.Now;
+    List<AnalyticsPlatform> m_platforms;
 
     public static AnalyticsManager Instance { get; set; }
 
     public void Awake()
     {
-        if (AnalyticsManager.Instance == null)
+        if (Instance == null)
         {
-            AnalyticsManager.Instance = this;
+            Instance = this;
         }
-        this.m_startTime = DateTime.Now;
-        this.m_platforms = new List<AnalyticsPlatform>();
+        m_startTime = DateTime.Now;
+        m_platforms = new List<AnalyticsPlatform>();
     }
 
     public void Test()
@@ -28,7 +27,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void LibraryOpened()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.MainScr_opened);
         }
@@ -36,7 +35,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void MyWorksOpened()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.MyWorksScr_opened);
         }
@@ -44,7 +43,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void PhotosOpened()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.PhotosScr_opened);
         }
@@ -52,13 +51,13 @@ public class AnalyticsManager : MonoBehaviour
 
     public void InappsWindowOpened(string placement)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.IapScr_opened);
         }
-        foreach (AnalyticsPlatform platform2 in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
-            platform2.SendEvent(AnalyticsEvents.sub_3options_displayed, new Dictionary<string, object> {
+            platform.SendEvent(AnalyticsEvents.sub_3options_displayed, new Dictionary<string, object> {
                 {
                     "placement",
                     placement
@@ -69,7 +68,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void InappsWindowClosed()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.IapScr_closed);
         }
@@ -77,7 +76,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SubscriptionClick(SubscriptionType subscriptionType)
     {
-        AnalyticsEvents eventType = AnalyticsEvents.WeekSubscrBtn_tapped;
+        var eventType = AnalyticsEvents.WeekSubscrBtn_tapped;
         switch (subscriptionType)
         {
             case SubscriptionType.one_month_subscription:
@@ -87,7 +86,7 @@ public class AnalyticsManager : MonoBehaviour
                 eventType = AnalyticsEvents.YearSubscrBtn_tapped;
                 break;
         }
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(eventType);
         }
@@ -95,7 +94,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ABTestWindowOpened(string placement)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.sub_promo_displayed, new Dictionary<string, object> {
                 {
@@ -108,7 +107,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ABTestWindowAction(string action, string placement)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.sub_promo_action, new Dictionary<string, object> {
                 {
@@ -127,7 +126,7 @@ public class AnalyticsManager : MonoBehaviour
     {
         if (subCampaign)
         {
-            foreach (AnalyticsPlatform platform in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
                 platform.SendEvent(AnalyticsEvents.sub_campaign_1option_action, new Dictionary<string, object> {
                     {
@@ -139,9 +138,9 @@ public class AnalyticsManager : MonoBehaviour
         }
         else if (onStart)
         {
-            foreach (AnalyticsPlatform platform2 in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
-                platform2.SendEvent(AnalyticsEvents.sub_launch_1option_action, new Dictionary<string, object> {
+                platform.SendEvent(AnalyticsEvents.sub_launch_1option_action, new Dictionary<string, object> {
                     {
                         "action",
                         action
@@ -151,7 +150,7 @@ public class AnalyticsManager : MonoBehaviour
         }
         else
         {
-            foreach (AnalyticsPlatform platform3 in this.m_platforms)
+            foreach (AnalyticsPlatform platform3 in m_platforms)
             {
                 platform3.SendEvent(AnalyticsEvents.sub_1option_action, new Dictionary<string, object> {
                     {
@@ -171,7 +170,7 @@ public class AnalyticsManager : MonoBehaviour
     {
         if (onStart)
         {
-            foreach (AnalyticsPlatform platform in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
                 platform.SendEvent(AnalyticsEvents.sub_launch_week_trial);
             }
@@ -180,7 +179,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void InappsWindowAction(string action, string placement)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.sub_3options_action, new Dictionary<string, object> {
                 {
@@ -197,7 +196,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void DeleteButtonClick()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.DeleteBtn_tapped);
         }
@@ -205,7 +204,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void DeleteSuccess()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.Delete_success);
         }
@@ -213,7 +212,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void InterstitialShowed()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.Interstitial_showed);
         }
@@ -221,7 +220,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SettingsWindowOpened()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.InfoScr_opened);
         }
@@ -229,7 +228,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void RestoreButtonClicked()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.RestoreBtn_tapped);
         }
@@ -237,7 +236,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void PurchasesRestored()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.Purchases_restored);
         }
@@ -245,7 +244,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void RateUsClicked()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.RateUs_tapped);
         }
@@ -253,7 +252,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void MoreAppsClicked()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.MoreAppsBtn_tapped);
         }
@@ -261,7 +260,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void HelpWindowOpened()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.HelpScr_opened);
         }
@@ -269,7 +268,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SupportWindowOpened()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.SupportScr_opened);
         }
@@ -277,7 +276,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void TutorOpened(string placement, string type)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.tutorial_opened, new Dictionary<string, object> {
                 {
@@ -294,7 +293,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void TutorClosed(string placement, string type, int step)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.tutorial_closed, new Dictionary<string, object> {
                 {
@@ -315,7 +314,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void FilterWindowOpened()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.FiltersScr_opened);
         }
@@ -323,7 +322,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void FilterWindowClosed(string filterName)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.FiltersScr_closed, new Dictionary<string, object> {
                 {
@@ -336,7 +335,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void LongTapActivated()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.LongTap_activated);
         }
@@ -344,7 +343,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ShareWindowOpened()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.ShareScr_opened);
         }
@@ -352,7 +351,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void DeleteWatermarkAttempt()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.DeleteWatermarkBtn_tapped);
         }
@@ -360,7 +359,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SaveButtonClicked()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.SaveBtn_tapped);
         }
@@ -368,7 +367,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SaveSuccess()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.Save_success);
         }
@@ -376,7 +375,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ShareButtonClicked()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.ShareBtn_tapped);
         }
@@ -384,7 +383,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ShareViaFbButtonClicked()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.ShareViaFbBtn_tapped);
         }
@@ -392,7 +391,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ShareViaInstagramButtonClicked()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.ShareViaInstagramBtn_tapped);
         }
@@ -400,7 +399,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ElementColored(ColorizationModeModel.BrushType brushType, bool isRightColor)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.Element_colored, new Dictionary<string, object> {
                 {
@@ -417,7 +416,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void PurchaseFromAd(string inapp, string adid)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.purchase_from_ad);
         }
@@ -431,7 +430,7 @@ public class AnalyticsManager : MonoBehaviour
     {
         try
         {
-            foreach (AnalyticsPlatform platform in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
                 platform.SendEvent(AnalyticsEvents.coloring_session, new Dictionary<string, object> {
                     {
@@ -454,7 +453,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void BackButtonClicked()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.BackBtn_Tapped);
         }
@@ -462,7 +461,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ZoomDone()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.Zoom_done);
         }
@@ -470,27 +469,27 @@ public class AnalyticsManager : MonoBehaviour
 
     public void TrialInappsWindowOpened(bool onStart, string placement, bool subCampaign = false)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.IapScr_7d_opened);
         }
         if (subCampaign)
         {
-            foreach (AnalyticsPlatform platform2 in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
-                platform2.SendEvent(AnalyticsEvents.sub_campaign_1option_displayed);
+                platform.SendEvent(AnalyticsEvents.sub_campaign_1option_displayed);
             }
         }
         else if (onStart)
         {
-            foreach (AnalyticsPlatform platform3 in this.m_platforms)
+            foreach (AnalyticsPlatform platform3 in m_platforms)
             {
                 platform3.SendEvent(AnalyticsEvents.sub_launch_1option_displayed);
             }
         }
         else
         {
-            foreach (AnalyticsPlatform platform4 in this.m_platforms)
+            foreach (AnalyticsPlatform platform4 in m_platforms)
             {
                 platform4.SendEvent(AnalyticsEvents.sub_1option_displayed, new Dictionary<string, object> {
                     {
@@ -504,7 +503,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void TrialInappsWindowClosed()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.IapScr_7d_closed);
         }
@@ -577,16 +576,16 @@ public class AnalyticsManager : MonoBehaviour
     {
         if (reason == "UserCancelled")
         {
-            foreach (AnalyticsPlatform platform in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
                 platform.SendEvent(AnalyticsEvents.Subscr_cancel);
             }
         }
         else
         {
-            foreach (AnalyticsPlatform platform2 in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
-                platform2.SendEvent(AnalyticsEvents.Subscr_fail, new Dictionary<string, object> {
+                platform.SendEvent(AnalyticsEvents.Subscr_fail, new Dictionary<string, object> {
                     {
                         "reason",
                         reason.ToString()
@@ -607,7 +606,7 @@ public class AnalyticsManager : MonoBehaviour
                 value = "year";
                 break;
         }
-        foreach (AnalyticsPlatform platform3 in this.m_platforms)
+        foreach (AnalyticsPlatform platform3 in m_platforms)
         {
             platform3.SendEvent(AnalyticsEvents.sub_result, new Dictionary<string, object> {
                 {
@@ -634,7 +633,7 @@ public class AnalyticsManager : MonoBehaviour
     {
         if (AnalyticsHelper.IsTestDevice())
         {
-            foreach (AnalyticsPlatform platform in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
                 platform.SendEvent(AnalyticsEvents.TrialSubscr_success_sandbox, new Dictionary<string, object> {
                     {
@@ -654,9 +653,9 @@ public class AnalyticsManager : MonoBehaviour
         }
         else
         {
-            foreach (AnalyticsPlatform platform2 in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
-                platform2.SendEvent(AnalyticsEvents.TrialSubscr_success, new Dictionary<string, object> {
+                platform.SendEvent(AnalyticsEvents.TrialSubscr_success, new Dictionary<string, object> {
                     {
                         "product",
                         productId
@@ -678,7 +677,7 @@ public class AnalyticsManager : MonoBehaviour
     {
         if (AnalyticsHelper.IsTestDevice())
         {
-            foreach (AnalyticsPlatform platform in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
                 platform.SendEvent(AnalyticsEvents.NotTrialSubscr_success_sandbox, new Dictionary<string, object> {
                     {
@@ -698,9 +697,9 @@ public class AnalyticsManager : MonoBehaviour
         }
         else
         {
-            foreach (AnalyticsPlatform platform2 in this.m_platforms)
+            foreach (AnalyticsPlatform platform in m_platforms)
             {
-                platform2.SendEvent(AnalyticsEvents.NotTrialSubscr_success, new Dictionary<string, object> {
+                platform.SendEvent(AnalyticsEvents.NotTrialSubscr_success, new Dictionary<string, object> {
                     {
                         "product",
                         productId
@@ -724,7 +723,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ImageSelected(ImageInfo info)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.picture_selected, new Dictionary<string, object> {
                 {
@@ -745,7 +744,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ImageOpened(ImageInfo info, int count, int colorsCount, ImageOpenType imageOpenType)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.picture_opened, new Dictionary<string, object> {
                 {
@@ -778,7 +777,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ImageDone(ImageInfo info, int count, int colorsCount)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.Image_done);
             platform.SendEvent(AnalyticsEvents.picture_completed, new Dictionary<string, object> {
@@ -811,7 +810,7 @@ public class AnalyticsManager : MonoBehaviour
         }
         if (AppData.PictureCompletedCount <= 5)
         {
-            AnalyticsEvents analyticsEvents = AnalyticsEvents.Undefined;
+            var analyticsEvents = AnalyticsEvents.Undefined;
             switch (AppData.PictureCompletedCount)
             {
                 case 1:
@@ -829,9 +828,9 @@ public class AnalyticsManager : MonoBehaviour
             }
             if (analyticsEvents != 0)
             {
-                foreach (AnalyticsPlatform platform2 in this.m_platforms)
+                foreach (AnalyticsPlatform platform in m_platforms)
                 {
-                    platform2.SendEvent(analyticsEvents);
+                    platform.SendEvent(analyticsEvents);
                 }
             }
         }
@@ -839,7 +838,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void BombClicked(int count)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.gamescreen_booster_grenade, new Dictionary<string, object> {
                 {
@@ -852,7 +851,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void BombUsed(int count)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.gamescreen_booster_grenade_used, new Dictionary<string, object> {
                 {
@@ -865,7 +864,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void BombAddClick(int count)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.gamescreen_booster_grenade_add, new Dictionary<string, object> {
                 {
@@ -878,7 +877,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void LassoClicked(int count)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.gamescreen_booster_magicwand, new Dictionary<string, object> {
                 {
@@ -891,7 +890,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void LassoUsed(int count)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.gamescreen_booster_magicwand_used, new Dictionary<string, object> {
                 {
@@ -904,7 +903,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void LassoAddClick(int count)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.gamescreen_booster_magicwand_add, new Dictionary<string, object> {
                 {
@@ -915,9 +914,9 @@ public class AnalyticsManager : MonoBehaviour
         }
     }
 
-    private void SendSessionTime(int seconds)
+    void SendSessionTime(int seconds)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.time_total, new Dictionary<string, object> {
                 {
@@ -930,7 +929,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SendOldUser()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.previous_users);
         }
@@ -938,7 +937,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void LaunchNextDay()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.session_2ndDay);
         }
@@ -946,7 +945,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void LaunchNext2Days()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.session_nearest2days);
         }
@@ -954,7 +953,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void TrackFirstSessionOfTheDay()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {/*
             platform.SendEvent(AnalyticsEvents.session_1day, new Dictionary<string, object> {
                 {
@@ -971,7 +970,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void ShareEvent(string artType, string via, bool watermark)
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.share_art, new Dictionary<string, object> {
                 {
@@ -992,7 +991,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void TrackFirstWeekIntersLimit()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.fire_avg_impression_7d);
         }
@@ -1000,14 +999,14 @@ public class AnalyticsManager : MonoBehaviour
 
     public void TrackFirstWeekSecondsLimit()
     {
-        foreach (AnalyticsPlatform platform in this.m_platforms)
+        foreach (AnalyticsPlatform platform in m_platforms)
         {
             platform.SendEvent(AnalyticsEvents.fire_avg_time_7d);
         }
     }
 
-    private void OnApplicationQuit()
+    void OnApplicationQuit()
     {
-        this.SendSessionTime((int)(DateTime.Now - this.m_startTime).TotalSeconds);
+        SendSessionTime((int)(DateTime.Now - m_startTime).TotalSeconds);
     }
 }

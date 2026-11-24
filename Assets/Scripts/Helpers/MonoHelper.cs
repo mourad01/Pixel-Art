@@ -10,10 +10,10 @@ public class MonoHelper : UnitySingleton<MonoHelper>
 
     public T FindOrCreate<T>() where T : Component
     {
-        T val = (T)Object.FindObjectOfType(typeof(T));
+        var val = (T)Object.FindObjectOfType(typeof(T));
         if (val == null)
         {
-            GameObject gameObject = new GameObject();
+            var gameObject = new GameObject();
             val = gameObject.AddComponent<T>();
             val.name = typeof(T).ToString();
         }
@@ -22,10 +22,10 @@ public class MonoHelper : UnitySingleton<MonoHelper>
 
     public T FindOrCreate<T>(string nameObject) where T : Component
     {
-        T val = (T)Object.FindObjectOfType(typeof(T));
+        var val = (T)Object.FindObjectOfType(typeof(T));
         if (val == null)
         {
-            GameObject gameObject = new GameObject();
+            var gameObject = new GameObject();
             val = gameObject.AddComponent<T>();
             gameObject.name = nameObject;
         }
@@ -34,10 +34,10 @@ public class MonoHelper : UnitySingleton<MonoHelper>
 
     public T GetOrCreateComponent<T>() where T : Component
     {
-        T val = base.GetComponent<T>();
+        var val = base.GetComponent<T>();
         if (val == null)
         {
-            val = base.gameObject.AddComponent<T>();
+            val = gameObject.AddComponent<T>();
         }
         return val;
     }

@@ -14,31 +14,31 @@ public class SerializableColor
 
     static SerializableColor()
     {
-        SerializableColor.white = new SerializableColor(1f, 1f, 1f);
+        white = new SerializableColor(1f, 1f, 1f);
     }
 
     public SerializableColor(Color color)
     {
-        this.R = Convert.ToByte(color.r * 255f);
-        this.G = Convert.ToByte(color.g * 255f);
-        this.B = Convert.ToByte(color.b * 255f);
+        R = Convert.ToByte(color.r * 255f);
+        G = Convert.ToByte(color.g * 255f);
+        B = Convert.ToByte(color.b * 255f);
     }
 
     public SerializableColor(float r, float g, float b)
     {
-        this.R = Convert.ToByte(r * 255f);
-        this.G = Convert.ToByte(g * 255f);
-        this.B = Convert.ToByte(b * 255f);
+        R = Convert.ToByte(r * 255f);
+        G = Convert.ToByte(g * 255f);
+        B = Convert.ToByte(b * 255f);
     }
 
     public Color ToUnityEngineColor()
     {
-        return new Color((float)(int)this.R / 255f, (float)(int)this.G / 255f, (float)(int)this.B / 255f, 1f);
+        return new Color((float)(int)R / 255f, (float)(int)G / 255f, (float)(int)B / 255f, 1f);
     }
 
     public override bool Equals(object obj)
     {
-        SerializableColor serializableColor = obj as SerializableColor;
+        var serializableColor = obj as SerializableColor;
         if (serializableColor == (SerializableColor)null)
         {
             return false;

@@ -14,42 +14,40 @@ public class BackgroundMusic : MonoBehaviour
     public static BackgroundMusic musicMgr;
 
     public AudioSource m_audioTrackSrc;
-
     public AudioClip[] m_audioTracks;
 
     [HideInInspector]
     public MusicTrackId currentTrack = MusicTrackId.NONE;
 
-    private MusicTrackId pendingTrack = MusicTrackId.NONE;
-
-    private bool pendingTrackLoop;
+    MusicTrackId pendingTrack = MusicTrackId.NONE;
+    bool pendingTrackLoop;
 
     public bool isMuted;
-    private void Awake()
+    void Awake()
     {
-        if (BackgroundMusic.musicMgr == null)
+        if (musicMgr == null)
         {
             if (!PlayerPrefsWrapper.Exists(AppData.s_soundsKey))
             {
                 AppData.SoundsEnabled = true;
             }
 
-            BackgroundMusic.musicMgr = this;
-            Object.DontDestroyOnLoad(base.gameObject);
-            this.m_audioTrackSrc = base.GetComponent<AudioSource>();
+            musicMgr = this;
+            Object.DontDestroyOnLoad(gameObject);
+            m_audioTrackSrc = base.GetComponent<AudioSource>();
             isMuted = !AppData.SoundsEnabled;
-            this.m_audioTrackSrc.mute = isMuted;
+            m_audioTrackSrc.mute = isMuted;
         }
-        else if (this != BackgroundMusic.musicMgr)
+        else if (this != musicMgr)
         {
-            Object.Destroy(base.gameObject);
+            Object.Destroy(gameObject);
         }
     }
 
     public void RefreshSettings()
     {
         isMuted = !AppData.SoundsEnabled;
-        this.m_audioTrackSrc.mute = isMuted;
+        m_audioTrackSrc.mute = isMuted;
         if (!isMuted)
         {
             currentTrack = MusicTrackId.NONE;
@@ -57,7 +55,7 @@ public class BackgroundMusic : MonoBehaviour
         }
     }
 
-    private void Start()
+    void Start()
     {
         if (AppData.SoundsEnabled)
         {
@@ -65,7 +63,7 @@ public class BackgroundMusic : MonoBehaviour
         }
     }
 
-    private static bool musicPlayFirstTime = true;
+    static bool musicPlayFirstTime = true;
     public static void PlayMainBackground()
     {
         if (musicMgr != null)
@@ -82,7 +80,7 @@ public class BackgroundMusic : MonoBehaviour
         }
     }
 
-    private static BackgroundMusic.MusicTrackId randomMusicTrack = BackgroundMusic.MusicTrackId.TRACK3;
+    static BackgroundMusic.MusicTrackId randomMusicTrack = BackgroundMusic.MusicTrackId.TRACK3;
     public static void PlayInGameBackground()
     {
         if (musicMgr != null)
@@ -101,32 +99,32 @@ public class BackgroundMusic : MonoBehaviour
 
     public void PlayTrack(MusicTrackId trackID, bool loop)
     {
-        if (!this.m_audioTrackSrc.mute)
+        if (!m_audioTrackSrc.mute)
         {
-            if (currentTrack != trackID && this.pendingTrack == MusicTrackId.NONE)
+            if (currentTrack != trackID && pendingTrack == MusicTrackId.NONE)
             {
-                this.m_audioTrackSrc.volume = 1f;
-                this.m_audioTrackSrc.loop = loop;
-                this.m_audioTrackSrc.clip = this.m_audioTracks[(int)trackID];
-                this.m_audioTrackSrc.Play();
-                this.currentTrack = trackID;
+                m_audioTrackSrc.volume = 1f;
+                m_audioTrackSrc.loop = loop;
+                m_audioTrackSrc.clip = m_audioTracks[(int)trackID];
+                m_audioTrackSrc.Play();
+                currentTrack = trackID;
             }
         }
     }
 
     public void StopTrack()
     {
-        if (this.m_audioTrackSrc.isPlaying)
+        if (m_audioTrackSrc.isPlaying)
         {
-            this.m_audioTrackSrc.Stop();
+            m_audioTrackSrc.Stop();
         }
-        this.currentTrack = MusicTrackId.NONE;
+        currentTrack = MusicTrackId.NONE;
     }
 
     public void PreparePendingTrack(MusicTrackId id, bool bLoop)
     {
-        this.pendingTrack = id;
-        this.pendingTrackLoop = bLoop;
+        pendingTrack = id;
+        pendingTrackLoop = bLoop;
     }
 
     public void FadeOutTrack()
@@ -140,27 +138,27 @@ public class BackgroundMusic : MonoBehaviour
         FadeOutTrack();
     }
 
-    private IEnumerator ProcessFadeOutTrack()
+    IEnumerator ProcessFadeOutTrack()
     {
-        if (this.m_audioTrackSrc.mute)
+        if (m_audioTrackSrc.mute)
         {
             yield return null;
         }
         float t2 = 1f;
         while (t2 > 0f)
         {
-            this.m_audioTrackSrc.volume = t2;
+            m_audioTrackSrc.volume = t2;
             t2 -= 0.1f;
             yield return new WaitForSeconds(0.1f);
         }
         t2 = 0f;
-        this.m_audioTrackSrc.volume = t2;
-        if (this.pendingTrack != MusicTrackId.NONE)
+        m_audioTrackSrc.volume = t2;
+        if (pendingTrack != MusicTrackId.NONE)
         {
-            MusicTrackId id = this.pendingTrack;
-            this.pendingTrack = MusicTrackId.NONE;
-            this.PlayTrack(id, this.pendingTrackLoop);
-            this.pendingTrackLoop = false;
+            var id = pendingTrack;
+            pendingTrack = MusicTrackId.NONE;
+            PlayTrack(id, pendingTrackLoop);
+            pendingTrackLoop = false;
         }
     }
 }

@@ -22,33 +22,33 @@ public abstract class AbstractPickerController : MonoBehaviour
 
     public virtual void OnGetImagePathComplete(string path)
     { 
-        if (this.GetImagePathComplete != null)
+        if (GetImagePathComplete != null)
         {
-            this.GetImagePathComplete(path);
+            GetImagePathComplete(path);
         }
     }
 
     public virtual void OnGetImageListPathComplete(IList<string> paths)
     { 
-        if (this.GetImageListPathComplete != null)
+        if (GetImageListPathComplete != null)
         {
-            this.GetImageListPathComplete(paths);
+            GetImageListPathComplete(paths);
         }
     }
 
     public virtual void OnGetImagePathError(string path)
     { 
-        if (this.GetImagePathError != null)
+        if (GetImagePathError != null)
         {
-            this.GetImagePathError(path);
+            GetImagePathError(path);
         }
     }
 
     public virtual void OnGetImageListPathError()
     { 
-        if (this.GetImageListPathError != null)
+        if (GetImageListPathError != null)
         {
-            this.GetImageListPathError();
+            GetImageListPathError();
         }
     }
 }

@@ -51,63 +51,63 @@ public class ImageInfo : IAccessStatusInfo
 
     public ImageInfo()
     {
-        this.Id = null;
-        this.AccessStatus = AccessStatus.Free;
-        this.Url = null;
+        Id = null;
+        AccessStatus = AccessStatus.Free;
+        Url = null;
     }
 
     public ImageInfo(string id)
     {
-        this.Id = id;
-        this.AccessStatus = AccessStatus.Free;
-        this.Url = null;
+        Id = id;
+        AccessStatus = AccessStatus.Free;
+        Url = null;
     }
 
     public ImageInfo(string id, string source)
     {
-        this.Id = id;
-        this.AccessStatus = AccessStatus.Free;
-        this.Url = null;
-        this.Source = source;
+        Id = id;
+        AccessStatus = AccessStatus.Free;
+        Url = null;
+        Source = source;
     }
 
     public ImageInfo(Dictionary<string, object> dict)
     {
-        this.Name = ((long)dict["Name"]).ToString();
-        this.Id = (string)dict["ID"];
-        this.AccessStatus = (AccessStatus)((!((string)dict["Premium"] == "0")) ? 1 : 0);
-        this.Url = (string)dict["ImageUrl"];
-        this.Is3D = (dict.ContainsKey("3d") && (string)dict["3d"] == "true");
-        this.Source = "gallery_" + ((!this.Is3D) ? "2D" : "3D");
+        Name = ((long)dict["Name"]).ToString();
+        Id = (string)dict["ID"];
+        AccessStatus = (AccessStatus)((!((string)dict["Premium"] == "0")) ? 1 : 0);
+        Url = (string)dict["ImageUrl"];
+        Is3D = (dict.ContainsKey("3d") && (string)dict["3d"] == "true");
+        Source = "gallery_" + ((!Is3D) ? "2D" : "3D");
     }
 
     public string GetRightSource()
     {
-        if (string.IsNullOrEmpty(this.Source))
+        if (string.IsNullOrEmpty(Source))
         {
-            this.Source = "gallery_" + ((!this.Is3D) ? "2D" : "3D");
+            Source = "gallery_" + ((!Is3D) ? "2D" : "3D");
         }
-        return this.Source;
+        return Source;
     }
 
     public override bool Equals(object obj)
     {
-        ImageInfo imageInfo = obj as ImageInfo;
+        var imageInfo = obj as ImageInfo;
         if (imageInfo == null)
         {
             return false;
         }
-        return this.Id.Equals(imageInfo.Id);
+        return Id.Equals(imageInfo.Id);
     }
 
     public override int GetHashCode()
     {
-        return this.Id.GetHashCode();
+        return Id.GetHashCode();
     }
 
     public override string ToString()
     {
-        return string.Format("[ImageInfo: Id={0}, AccessStatus={1}, Url={2}, Is3D={3}]", this.Id, this.AccessStatus, this.Url, this.Is3D);
+        return string.Format("[ImageInfo: Id={0}, AccessStatus={1}, Url={2}, Is3D={3}]", Id, AccessStatus, Url, Is3D);
     }
 }
 

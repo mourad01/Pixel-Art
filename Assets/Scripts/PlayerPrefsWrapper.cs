@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class PlayerPrefsWrapper
 {
-    private static string s_listSeparator = "\n";
+    static string s_listSeparator = "\n";
 
     public static bool Exists(string key)
     {
@@ -45,13 +45,13 @@ public class PlayerPrefsWrapper
 
     public static List<string> GetStringList(string key)
     {
-        string @string = PlayerPrefsWrapper.GetString(key);
+        string @string = GetString(key);
         if (string.IsNullOrEmpty(@string))
         {
             return new List<string>();
         }
         return @string.Split(new string[1] {
-            PlayerPrefsWrapper.s_listSeparator
+            s_listSeparator
         }, StringSplitOptions.RemoveEmptyEntries).ToList();
     }
 
@@ -59,12 +59,12 @@ public class PlayerPrefsWrapper
     {
         if (list != null)
         {
-            StringBuilder stringBuilder = new StringBuilder();
+            var stringBuilder = new StringBuilder();
             foreach (string item in list)
             {
-                stringBuilder.Append(item).Append(PlayerPrefsWrapper.s_listSeparator);
+                stringBuilder.Append(item).Append(s_listSeparator);
             }
-            PlayerPrefsWrapper.SetString(key, stringBuilder.ToString());
+            SetString(key, stringBuilder.ToString());
         }
     }
 

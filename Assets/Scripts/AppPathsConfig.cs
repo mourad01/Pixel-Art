@@ -6,7 +6,6 @@ using UnityEngine;
 public static class AppPathsConfig
 {
     public static string TermsUrl = "http://inotechvn.com/pixelart/terms.html";
-
     public static string PrivacyUrl = "http://inotechvn.com/pixelart/policy.html";
 
     public static string SavesPath { get; private set; }
@@ -27,46 +26,46 @@ public static class AppPathsConfig
 
     public static void Init()
     {
-        AppPathsConfig.Host = "https://inotechvn.com/pixelart/";
-        AppPathsConfig.SavesPath = Application.persistentDataPath + "/Worked/";
-        AppPathsConfig.PhotosPath = Application.persistentDataPath + "/MyArt/";
-        AppPathsConfig.SavedImagesPath = Application.persistentDataPath + "/Images/";
-        AppPathsConfig.DownloadsPath = Application.persistentDataPath + "/Downloaded/";
-        AppPathsConfig.StreamingAssetsPath = Application.streamingAssetsPath + "/";
-        AppPathsConfig.ImagesFile = "images.xml"; 
-        AppPathsConfig.PhotoFileList = "myphotos.bin";
-        if (!Directory.Exists(AppPathsConfig.SavesPath))
+        Host = "https://inotechvn.com/pixelart/";
+        SavesPath = Application.persistentDataPath + "/Worked/";
+        PhotosPath = Application.persistentDataPath + "/MyArt/";
+        SavedImagesPath = Application.persistentDataPath + "/Images/";
+        DownloadsPath = Application.persistentDataPath + "/Downloaded/";
+        StreamingAssetsPath = Application.streamingAssetsPath + "/";
+        ImagesFile = "images.xml"; 
+        PhotoFileList = "myphotos.bin";
+        if (!Directory.Exists(SavesPath))
         {
-            Directory.CreateDirectory(AppPathsConfig.SavesPath);
+            Directory.CreateDirectory(SavesPath);
         }
-        if (!Directory.Exists(AppPathsConfig.PhotosPath))
+        if (!Directory.Exists(PhotosPath))
         {
-            Directory.CreateDirectory(AppPathsConfig.PhotosPath);
+            Directory.CreateDirectory(PhotosPath);
         }
-        if (!Directory.Exists(AppPathsConfig.SavedImagesPath))
+        if (!Directory.Exists(SavedImagesPath))
         {
-            Directory.CreateDirectory(AppPathsConfig.SavedImagesPath);
+            Directory.CreateDirectory(SavedImagesPath);
         }
-        if (!Directory.Exists(AppPathsConfig.DownloadsPath))
+        if (!Directory.Exists(DownloadsPath))
         {
-            Directory.CreateDirectory(AppPathsConfig.DownloadsPath);
+            Directory.CreateDirectory(DownloadsPath);
         }
-        AppPathsConfig.ClearCache();
+        ClearCache();
     }
 
     public static void SetHost(string host)
     {
-        AppPathsConfig.Host = host; 
+        Host = host; 
     }
 
-    private static void ClearCache()
+    static void ClearCache()
     {
         try
         {
             var stringBuilder = new StringBuilder();
-            string[] files = Directory.GetFiles(Application.temporaryCachePath);
-            string[] array = files;
-            foreach (string text in array)
+            var files = Directory.GetFiles(Application.temporaryCachePath);
+            var cacheFiles = files;
+            foreach (string text in cacheFiles)
             {
                 stringBuilder.Append(text).Append("\n");
                 File.Delete(text);

@@ -15,18 +15,18 @@ public class DeepLinkWrapper
         UnityDebug.Log(par);
         if (!string.IsNullOrEmpty(par))
         {
-            Uri uri = new Uri(par);
+            var uri = new Uri(par);
             if (uri.Host == "main")
             {
                 string text = uri.Query.Replace("?", string.Empty);
-                string[] array = text.Split('&');
-                Dictionary<string, string> dictionary = new Dictionary<string, string>();
+                var parts = text.Split('&');
+                var dictionary = new Dictionary<string, string>();
                 dictionary.Add("host", uri.Host);
-                string[] array2 = array;
-                foreach (string text2 in array2)
+                var pairs = parts;
+                foreach (string pair in pairs)
                 {
-                    string[] array3 = text2.Split('=');
-                    dictionary.Add(array3[0], array3[1]);
+                    var keyValue = pair.Split('=');
+                    dictionary.Add(keyValue[0], keyValue[1]);
                 }
                 return dictionary;
             }

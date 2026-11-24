@@ -2,23 +2,23 @@ using UnityEngine;
 
 public class MySystemInfo
 {
-    private static bool? s_IsTablet;
+    static bool? s_IsTablet;
 
     public static bool IsTablet
     {
         get
         {
-            bool? nullable = MySystemInfo.s_IsTablet;
+            var nullable = s_IsTablet;
             if (!nullable.HasValue)
             {
-                MySystemInfo.s_IsTablet = (MySystemInfo.DeviceDiagonalSizeInInches() > 6.5f);
+                s_IsTablet = (DeviceDiagonalSizeInInches() > 6.5f);
             }
-            bool? nullable2 = MySystemInfo.s_IsTablet;
-            return nullable2.Value;
+            var isTablet = s_IsTablet;
+            return isTablet.Value;
         }
     }
 
-    private static float DeviceDiagonalSizeInInches()
+    static float DeviceDiagonalSizeInInches()
     {
         float f = (float)Screen.width / Screen.dpi;
         float f2 = (float)Screen.height / Screen.dpi;

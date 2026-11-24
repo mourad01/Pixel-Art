@@ -5,22 +5,16 @@ using UnityEngine.UI;
 public class LassoButton : MonoBehaviour
 {
     [SerializeField] Image m_image;
-
     [SerializeField] GameObject m_activePointer;
-
     [SerializeField] Text m_lassosCountField;
-
     [SerializeField] Text m_lassosCountFieldCopy;
-
     [SerializeField] GameObject m_plus;
-
     [SerializeField] Image m_plusBack;
-
     [SerializeField] GameObject m_adText;
 
-    private bool m_needUpdatePlusState;
+    bool m_needUpdatePlusState;
 
-    private void Start()
+    void Start()
     {
         /*IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
@@ -36,9 +30,9 @@ public class LassoButton : MonoBehaviour
         this.UpdateAdTextState();*/
     }
 
-    private void Update()
+    void Update()
     {
-        if (this.m_needUpdatePlusState)
+        if (m_needUpdatePlusState)
         {/*
             if (IAPWrapper.Instance.Subscribed || IAPWrapper.Instance.NoAds)
             {
@@ -61,12 +55,12 @@ public class LassoButton : MonoBehaviour
         }
     }
 
-    private void OnLassoModeChangedHandler(SpecBoostersModel model)
+    void OnLassoModeChangedHandler(SpecBoostersModel model)
     {
-        this.m_activePointer.SetActive(model.LassoMode);
+        m_activePointer.SetActive(model.LassoMode);
     }
 
-    private void OnLassoCountChangedHandler(SpecBoostersModel model)
+    void OnLassoCountChangedHandler(SpecBoostersModel model)
     {
         /*if (IAPWrapper.Instance.NoAds)
         {
@@ -80,7 +74,7 @@ public class LassoButton : MonoBehaviour
         }*/
     }
 
-    private void OnVideoAvailabilityChangedHandler()
+    void OnVideoAvailabilityChangedHandler()
     {
         /*if (IAPWrapper.Instance.NoAds)
         {
@@ -92,18 +86,18 @@ public class LassoButton : MonoBehaviour
         }*/
     }
 
-    private void UpdateAdTextState()
+    void UpdateAdTextState()
     {
 
-                this.m_adText.SetActive(false);
+                m_adText.SetActive(false);
 
 
     }
 
-    private void OnPurchaseHandler(bool res, SubscriptionType subscrType)
+    void OnPurchaseHandler(bool res, SubscriptionType subscrType)
     {
-        this.OnVideoAvailabilityChangedHandler();
-        this.OnLassoCountChangedHandler(WorkbookModel.Instance.SpecBoostersModel);
+        OnVideoAvailabilityChangedHandler();
+        OnLassoCountChangedHandler(WorkbookModel.Instance.SpecBoostersModel);
     }
 
     public void Click()
@@ -190,7 +184,7 @@ public class LassoButton : MonoBehaviour
         WorkbookModel.Instance.SpecBoostersModel.AddLasso();
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         /*AdsWrapper instance = AdsWrapper.Instance;
         instance.OnVideoAvailabilityChanged = (Action)Delegate.Remove(instance.OnVideoAvailabilityChanged, new Action(this.OnVideoAvailabilityChangedHandler));

@@ -11,18 +11,17 @@ public class ServerConnector : MonoBehaviour
 {
     public Action OnInternetAppeared;
 
-    private bool m_internetAvailable;
-
-    private bool m_createUserRequest;
+    bool m_internetAvailable;
+    bool m_createUserRequest;
 
     public void Init()
     {
-        base.StartCoroutine(this.CheckInternetCoroutine());
+        base.StartCoroutine(CheckInternetCoroutine());
     }
 
-    private void AppearInternet()
+    void AppearInternet()
     {
-        this.OnInternetAppeared.SafeInvoke();
+        OnInternetAppeared.SafeInvoke();
     }
 
     public void CreateUser(string uid, Action<string> handler)
@@ -40,7 +39,7 @@ public class ServerConnector : MonoBehaviour
         }
 #endif
         Debug.Log("load streaming asset");
-        WWW www = new WWW(url);
+        var www = new WWW(url);
         yield return www;
 
         if (!string.IsNullOrEmpty(www.error))
@@ -135,7 +134,7 @@ public class ServerConnector : MonoBehaviour
         }
     }
 
-    private IEnumerator GetLocalStreamData(string path, Action<bool, byte[]> handler, Action notFoundHandler)
+    IEnumerator GetLocalStreamData(string path, Action<bool, byte[]> handler, Action notFoundHandler)
     {
         var localFile = System.IO.Path.Combine(Application.streamingAssetsPath, path);
         Debug.Log("Local stream asset: " + localFile);
@@ -234,30 +233,30 @@ public class ServerConnector : MonoBehaviour
         //	handler.SafeInvoke(bytes != null && bytes.Length > 0, bytes);
         //}));
     }
-    private IEnumerator CheckInternetCoroutine()
+    IEnumerator CheckInternetCoroutine()
     {
         while (true)
         {
             var internetAvailable = InternetConnection.IsAvailable;
-            if (this.m_internetAvailable != internetAvailable)
+            if (m_internetAvailable != internetAvailable)
             {
-                this.m_internetAvailable = internetAvailable;
-                if (this.m_internetAvailable)
+                m_internetAvailable = internetAvailable;
+                if (m_internetAvailable)
                 {
-                    this.AppearInternet();
+                    AppearInternet();
                 }
             }
             yield return new WaitForSeconds(5f);
         }
     } 
 
-    private IEnumerator SendServerRequestForTextResponse(WWWForm wwwForm, Action<bool, string> handler)
+    IEnumerator SendServerRequestForTextResponse(WWWForm wwwForm, Action<bool, string> handler)
     {
-        yield return this.StartCoroutine(this.SendServerRequestForTextResponse(AppPathsConfig.Host, wwwForm, handler));
+        yield return StartCoroutine(SendServerRequestForTextResponse(AppPathsConfig.Host, wwwForm, handler));
     }
 
 
-    private IEnumerator SendServerRequestForTextResponse(string host, WWWForm wwwForm, Action<bool, string> handler)
+    IEnumerator SendServerRequestForTextResponse(string host, WWWForm wwwForm, Action<bool, string> handler)
     {
         var www = new WWW(host, wwwForm);
         yield return www;
@@ -281,7 +280,7 @@ public class ServerConnector : MonoBehaviour
     }
 
 
-    private IEnumerator SendDirectServerRequestForTextResponse(string url, Action<bool, string, Dictionary<string, string>> handler)
+    IEnumerator SendDirectServerRequestForTextResponse(string url, Action<bool, string, Dictionary<string, string>> handler)
     {
         var www = new WWW(url);
         yield return www;
@@ -308,7 +307,7 @@ public class ServerConnector : MonoBehaviour
     }
 
 
-    private IEnumerator SendDirectServerRequestForBinaryResponse(string url, Action<bool, byte[]> handler, float timeout = -1f)
+    IEnumerator SendDirectServerRequestForBinaryResponse(string url, Action<bool, byte[]> handler, float timeout = -1f)
     {
         var www = new WWW(url);
         if (timeout > 0f)

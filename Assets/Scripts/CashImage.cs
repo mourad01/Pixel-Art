@@ -7,7 +7,7 @@ public class CashImage
 
     public CashImage(byte[] bytes)
     {
-        this.Bytes = bytes;
+        Bytes = bytes;
     }
 }
 

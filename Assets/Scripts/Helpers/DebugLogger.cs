@@ -6,7 +6,7 @@ public class DebugLogger
 
     public static void Log(object message)
     {
-        if (DebugLogger.IsDevelopmentBuild)
+        if (IsDevelopmentBuild)
         {
             UnityDebug.Log(message);
         }
@@ -14,7 +14,7 @@ public class DebugLogger
 
     public static void Log(object message, UnityEngine.Object obj)
     {
-        if (DebugLogger.IsDevelopmentBuild)
+        if (IsDevelopmentBuild)
         {
             UnityDebug.Log(message, obj);
         }
@@ -22,7 +22,7 @@ public class DebugLogger
 
     public static void LogWarning(object message)
     {
-        if (DebugLogger.IsDevelopmentBuild)
+        if (IsDevelopmentBuild)
         {
             UnityDebug.LogWarning(message);
         }
@@ -30,7 +30,7 @@ public class DebugLogger
 
     public static void LogWarning(object message, UnityEngine.Object obj)
     {
-        if (DebugLogger.IsDevelopmentBuild)
+        if (IsDevelopmentBuild)
         {
             UnityDebug.LogWarning(message, obj);
         }
@@ -38,7 +38,7 @@ public class DebugLogger
 
     public static void LogError(object message)
     {
-        if (DebugLogger.IsDevelopmentBuild)
+        if (IsDevelopmentBuild)
         {
             UnityDebug.LogError(message);
         }
@@ -46,7 +46,7 @@ public class DebugLogger
 
     public static void LogError(object message, UnityEngine.Object obj)
     {
-        if (DebugLogger.IsDevelopmentBuild)
+        if (IsDevelopmentBuild)
         {
             UnityDebug.LogError(message, obj);
         }
@@ -54,7 +54,7 @@ public class DebugLogger
 
     public static void LogException(Exception exception)
     {
-        if (DebugLogger.IsDevelopmentBuild)
+        if (IsDevelopmentBuild)
         {
             UnityDebug.LogException(exception);
         }
@@ -62,7 +62,7 @@ public class DebugLogger
 
     public static void LogException(Exception exception, UnityEngine.Object obj)
     {
-        if (DebugLogger.IsDevelopmentBuild)
+        if (IsDevelopmentBuild)
         {
             UnityDebug.LogException(exception, obj);
         }

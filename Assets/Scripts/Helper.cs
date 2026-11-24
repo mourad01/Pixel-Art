@@ -16,7 +16,7 @@ public static class Helper
 
     public static short[] Double(this short[] array, int width, int height)
     {
-        short[] array2 = new short[array.Length * 4];
+        var array2 = new short[array.Length * 4];
         int num = width * 2;
         int value2 = height * 2;
         for (int i = 0; i < width; i++)
@@ -31,7 +31,7 @@ public static class Helper
 
     public static short[] Around(this short[] array, int width, int height)
     {
-        short[] array2 = new short[(width + 2) * (height + 2)];
+        var array2 = new short[(width + 2) * (height + 2)];
         for (int i = 0; i < width; i++)
         {
             for (int j = 0; j < height; j++)

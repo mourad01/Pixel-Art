@@ -5,15 +5,12 @@ using UnityEngine;
 
 public class DialogToolWrapper : MonoBehaviour
 {
-    private delegate void DialogCallbackDelegate(int buttonIndex);
+    delegate void DialogCallbackDelegate(int buttonIndex);
 
-    private static DialogToolWrapper s_instance;
-
-    private static Action OnFacebookLogin;
-
-    private static Action RateUsDialogCloseHandler;
-
-    private static Action<bool> DeleteDialogCloseHandler;
+    static DialogToolWrapper s_instance;
+    static Action OnFacebookLogin;
+    static Action RateUsDialogCloseHandler;
+    static Action<bool> DeleteDialogCloseHandler;
 
     public static void ShowUpgradeDialog()
     {
@@ -22,14 +19,14 @@ public class DialogToolWrapper : MonoBehaviour
 
     public static void ShowLoginToFbDialog(Action onFacebookLogin)
     {
-        DialogToolWrapper.OnFacebookLogin = onFacebookLogin;
+        OnFacebookLogin = onFacebookLogin;
         ActionSheetWrapper.actionSheet.Show2ButtonsDialog(LocalizationManager.Instance.GetString(string.Empty), LocalizationManager.Instance.GetString("login_to_fb_text"), LocalizationManager.Instance.GetString("cancel"), LocalizationManager.Instance.GetString("ok"), (buttonIndex) => { LoginToFbDialogCallbackHandler(buttonIndex); });
     }
 
     public static void ShowRateUsDialog(Action closeHandler)
     {
         AppData.AddNewRateUsView();
-        DialogToolWrapper.RateUsDialogCloseHandler = closeHandler;
+        RateUsDialogCloseHandler = closeHandler;
         ActionSheetWrapper.actionSheet.Show2ButtonsDialog(LocalizationManager.Instance.GetString("MyColorful"), LocalizationManager.Instance.GetString("applike") + "\r\n" + LocalizationManager.Instance.GetString("rateus"), LocalizationManager.Instance.GetString("no"), LocalizationManager.Instance.GetString("yes"), (buttonIndex) => { RateUsDialogCallbackHandler(buttonIndex); });
     }
 
@@ -49,7 +46,7 @@ public class DialogToolWrapper : MonoBehaviour
 
     public static void ShowDeleteDialog(Action<bool> callback)
     {
-        DialogToolWrapper.DeleteDialogCloseHandler = callback;
+        DeleteDialogCloseHandler = callback;
         ActionSheetWrapper.actionSheet.Show2ButtonsDialog(LocalizationManager.Instance.GetString("delete_title"), LocalizationManager.Instance.GetString("delete_body"), LocalizationManager.Instance.GetString("cancel"), LocalizationManager.Instance.GetString("delete"), (buttonIndex) =>
         {
             DeleteDialogCallbackHandler(buttonIndex);
@@ -77,7 +74,7 @@ public class DialogToolWrapper : MonoBehaviour
     {
         if (buttonIndexS == 1)
         {
-            NewInappsWindow newInappsWindow = WindowManager.Instance.OpenInappsWindow();
+            var newInappsWindow = WindowManager.Instance.OpenInappsWindow();
             newInappsWindow.Init(string.Empty, null);
         }
     }
@@ -97,12 +94,12 @@ public class DialogToolWrapper : MonoBehaviour
             AppData.AppRated = true;
             RateUsTool.OpenRateUs();
         }
-        DialogToolWrapper.RateUsDialogCloseHandler.SafeInvoke();
+        RateUsDialogCloseHandler.SafeInvoke();
     }
 
     public static void DeleteDialogCallbackHandler(int buttonIndexS)
     {
-        DialogToolWrapper.DeleteDialogCloseHandler.SafeInvoke(buttonIndexS == 1);
+        DeleteDialogCloseHandler.SafeInvoke(buttonIndexS == 1);
     }
 }
 

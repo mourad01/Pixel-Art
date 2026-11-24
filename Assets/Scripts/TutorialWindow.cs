@@ -5,17 +5,13 @@ using UnityEngine.UI;
 
 public class TutorialWindow : BaseWindow
 {
-    private int m_currentIndex;
+    int m_currentIndex;
+    string m_placement = string.Empty;
+    string m_type = string.Empty;
 
-    private string m_placement = string.Empty;
-
-    private string m_type = string.Empty;
-
-    [SerializeField] private PositScrollRect m_positScrollRect;
-
-    [SerializeField] private List<TutorialPage> m_pages;
-
-    [SerializeField] private List<Image> m_points;
+    [SerializeField] PositScrollRect m_positScrollRect;
+    [SerializeField] List<TutorialPage> m_pages;
+    [SerializeField] List<Image> m_points;
 
     protected override string WindowName
     {
@@ -25,58 +21,57 @@ public class TutorialWindow : BaseWindow
         }
     }
 
-    private void Awake()
+    void Awake()
     {
-        PositScrollRect positScrollRect = this.m_positScrollRect;
-        positScrollRect.OnSelectIndex = (Action<int>)Delegate.Combine(positScrollRect.OnSelectIndex, new Action<int>(this.OnSelectIndexHandler));
+        m_positScrollRect.OnSelectIndex += OnSelectIndexHandler;
     }
 
     public void Init(string placement, string type)
     {
-        this.m_currentIndex = 0;
-        this.m_placement = placement;
-        this.m_type = type;
-        foreach (TutorialPage page in this.m_pages)
+        m_currentIndex = 0;
+        m_placement = placement;
+        m_type = type;
+        foreach (TutorialPage page in m_pages)
         {
-            ((RectTransform)page.transform).sizeDelta = new Vector2(((RectTransform)base.transform).rect.width, ((RectTransform)base.transform).rect.height);
+            ((RectTransform)page.transform).sizeDelta = new Vector2(((RectTransform)transform).rect.width, ((RectTransform)transform).rect.height);
         }
-        this.m_positScrollRect.Reinit(0f, false);
+        m_positScrollRect.Reinit(0f, false);
         AnalyticsManager.Instance.TutorOpened(placement, type);
-        this.UpdatePoint();
+        UpdatePoint();
 
         AppData.TutorialCompleted = true; 
     }
 
-    private void OnSelectIndexHandler(int index)
+    void OnSelectIndexHandler(int index)
     {
-        if (this.m_currentIndex != index)
+        if (m_currentIndex != index)
         {
-            if (this.m_currentIndex < this.m_pages.Count && this.m_currentIndex >= 0)
+            if (m_currentIndex < m_pages.Count && m_currentIndex >= 0)
             {
-                this.m_pages[this.m_currentIndex].Stop();
+                m_pages[m_currentIndex].Stop();
             }
-            this.m_currentIndex = index;
-            if (this.m_currentIndex < this.m_pages.Count && this.m_currentIndex >= 0)
+            m_currentIndex = index;
+            if (m_currentIndex < m_pages.Count && m_currentIndex >= 0)
             {
-                this.m_pages[this.m_currentIndex].Play();
+                m_pages[m_currentIndex].Play();
             }
-            this.UpdatePoint();
+            UpdatePoint();
         }
     }
 
-    private void UpdatePoint()
+    void UpdatePoint()
     {
-        if (this.m_currentIndex < this.m_pages.Count && this.m_currentIndex >= 0)
+        if (m_currentIndex < m_pages.Count && m_currentIndex >= 0)
         {
-            for (int i = 0; i < this.m_pages.Count; i++)
+            for (int i = 0; i < m_pages.Count; i++)
             {
-                if (i == this.m_currentIndex)
+                if (i == m_currentIndex)
                 {
-                    this.m_points[i].SetAlpha(1f);
+                    m_points[i].SetAlpha(1f);
                 }
                 else
                 {
-                    this.m_points[i].SetAlpha(0.3f);
+                    m_points[i].SetAlpha(0.3f);
                 }
             }
         }
@@ -84,22 +79,21 @@ public class TutorialWindow : BaseWindow
 
     public void CloseButtonClick()
     {
-        AnalyticsManager.Instance.TutorClosed(this.m_placement, this.m_type, this.m_currentIndex + 1);
+        AnalyticsManager.Instance.TutorClosed(m_placement, m_type, m_currentIndex + 1);
         WindowManager.Instance.CloseMe(this);
         AudioManager.Instance.PlayClick();
     }
 
     public void StartButtonClick()
     {
-        AnalyticsManager.Instance.TutorClosed(this.m_placement, this.m_type, this.m_currentIndex + 1);
+        AnalyticsManager.Instance.TutorClosed(m_placement, m_type, m_currentIndex + 1);
         WindowManager.Instance.CloseMe(this);
         AudioManager.Instance.PlayClick();
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
-        PositScrollRect positScrollRect = this.m_positScrollRect;
-        positScrollRect.OnSelectIndex = (Action<int>)Delegate.Remove(positScrollRect.OnSelectIndex, new Action<int>(this.OnSelectIndexHandler));
+        m_positScrollRect.OnSelectIndex -= OnSelectIndexHandler;
     }
 }
 

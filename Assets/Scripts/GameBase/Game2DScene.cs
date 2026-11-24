@@ -17,13 +17,12 @@ namespace Assets.Scripts.Navigation.Scenes.Game
         public override void Start()
         {
             NavigationService.SetCurrentScene(this);
-            BackButtonManager instance = UnitySingleton<BackButtonManager>.Instance;
-            instance.BackButtonAction = (Action)Delegate.Combine(instance.BackButtonAction, new Action(((BaseScene)this).BackButtonActions));
+            UnitySingleton<BackButtonManager>.Instance.BackButtonAction += ((BaseScene)this).BackButtonActions;
         }
 
         public override void OnNavigatedTo(NavigationArgs args)
         {
-            WorkbookNavigationArgs workbookNavigationArgs = args as WorkbookNavigationArgs;
+            var workbookNavigationArgs = args as WorkbookNavigationArgs;
             if (workbookNavigationArgs.SavedWorkData == null)
             {
                 MainMenu.LastPage = workbookNavigationArgs.Page;
@@ -40,8 +39,7 @@ namespace Assets.Scripts.Navigation.Scenes.Game
         public override void OnNavigatedFrom()
         {
             NewWorkbookManager.Instance.SaveWork(false);
-            BackButtonManager instance = UnitySingleton<BackButtonManager>.Instance;
-            instance.BackButtonAction = (Action)Delegate.Remove(instance.BackButtonAction, new Action(((BaseScene)this).BackButtonActions));
+            UnitySingleton<BackButtonManager>.Instance.BackButtonAction -= ((BaseScene)this).BackButtonActions;
         }
 
         public override void BackButtonActions()

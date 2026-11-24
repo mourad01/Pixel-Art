@@ -3,16 +3,16 @@ using UnityEngine.UI;
 
 public class SetPrefferedHeightByChild : MonoBehaviour
 {
-    private float m_size;
+    float m_size;
 
-    [SerializeField] private RectTransform m_childRectTransform;
+    [SerializeField] RectTransform m_childRectTransform;
 
-    private void Update()
+    void Update()
     {
-        if (this.m_childRectTransform.rect.height != this.m_size)
+        if (m_childRectTransform.rect.height != m_size)
         {
-            this.m_size = this.m_childRectTransform.rect.height;
-            base.GetComponent<LayoutElement>().preferredHeight = this.m_size;
+            m_size = m_childRectTransform.rect.height;
+            base.GetComponent<LayoutElement>().preferredHeight = m_size;
         }
     }
 }

@@ -13,65 +13,59 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         BrushMode
     }
 
-    [SerializeField] private Canvas m_canvas;
+    [SerializeField] Canvas m_canvas;
 
-    private DateTime m_downTime = DateTime.MinValue;
-
-    private float m_longTapTime = 0.15f;
-
-    private Vector3 m_tapPosition = Vector3.zero;
-
-    private Vector2 m_mousePrev = Vector2.zero;
-
-    private float m_touchesDelta = -3.40282347E+38f;
-
-    private bool m_currentZoomLogged;
-
-    private bool m_loupeEnabled;
+    DateTime m_downTime = DateTime.MinValue;
+    float m_longTapTime = 0.15f;
+    Vector3 m_tapPosition = Vector3.zero;
+    Vector2 m_mousePrev = Vector2.zero;
+    float m_touchesDelta = -3.40282347E+38f;
+    bool m_currentZoomLogged;
+    bool m_loupeEnabled;
     public TapState CurrentTapState { get; private set; }
 
-    private void Start()
+    void Start()
     {
         m_loupeEnabled = AppData.LoupeEnabled;
     }
 
-    private void Update()
+    void Update()
     {
-        switch (this.CurrentTapState)
+        switch (CurrentTapState)
         {
             case TapState.Down:
-                if (!this.CheckMultiTouch())
+                if (!CheckMultiTouch())
                 {
-                    this.CheckLongTap();
+                    CheckLongTap();
                 }
                 break;
             case TapState.Drag:
-                this.CheckMultiTouch();
+                CheckMultiTouch();
                 break;
             case TapState.Multitouch:
                 if (Input.touches.Length == 0)
                 {
-                    this.CurrentTapState = TapState.None;
+                    CurrentTapState = TapState.None;
                 }
                 break;
             case TapState.BrushMode:
-                if (!this.CheckMultiTouch())
+                if (!CheckMultiTouch())
                 {
                     Vector3 mousePosition = Input.mousePosition;
                     int height = Screen.height;
                     int width = Screen.width;
-                    Rect rect = ((RectTransform)this.m_canvas.transform).rect;
-                    float num = rect.width / (float)width;
-                    Vector2 vector = new Vector2(mousePosition.x / (float)width * rect.width, mousePosition.y / (float)height * rect.height);
-                    RectTransform workspaceRect = NewWorkbookManager.Instance.CameraManager.WorkspaceRect;
-                    float x = vector.x;
+                    Rect rect = ((RectTransform)m_canvas.transform).rect;
+                    float scale = rect.width / (float)width;
+                    Vector2 pos = new Vector2(mousePosition.x / (float)width * rect.width, mousePosition.y / (float)height * rect.height);
+                    var workspaceRect = NewWorkbookManager.Instance.CameraManager.WorkspaceRect;
+                    float x = pos.x;
                     Vector2 size = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
                     float value2 = x + size.x / 4f;
                     Vector2 offsetMax = workspaceRect.offsetMax;
                     if (value2 > offsetMax.x)
                     {
                         Vector2 offsetMax2 = workspaceRect.offsetMax;
-                        float value3 = offsetMax2.x - vector.x;
+                        float value3 = offsetMax2.x - pos.x;
                         Vector2 size2 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
                         float a = value3 - size2.x / 4f;
                         a = Mathf.Max(a, (0f - workspaceRect.rect.width) / 10f);
@@ -81,14 +75,14 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                     }
                     else
                     {
-                        float x2 = vector.x;
+                        float x2 = pos.x;
                         Vector2 size3 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
                         float value4 = x2 - size3.x / 4f;
                         Vector2 offsetMin = workspaceRect.offsetMin;
                         if (value4 < offsetMin.x)
                         {
                             Vector2 offsetMin2 = workspaceRect.offsetMin;
-                            float value5 = offsetMin2.x - vector.x;
+                            float value5 = offsetMin2.x - pos.x;
                             Vector2 size4 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
                             float a2 = value5 + size4.x / 4f;
                             a2 = Mathf.Min(a2, workspaceRect.rect.width / 10f);
@@ -103,7 +97,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                             
                         }
                     }
-                    float y = vector.y;
+                    float y = pos.y;
                     Vector2 size5 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
                     float value6 = y + size5.y * 0.75f;
                     float height2 = rect.height;
@@ -112,7 +106,7 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                     {
                         float height3 = rect.height;
                         Vector2 offsetMax4 = workspaceRect.offsetMax;
-                        float value7 = height3 + offsetMax4.y - vector.y;
+                        float value7 = height3 + offsetMax4.y - pos.y;
                         Vector2 size6 = NewWorkbookManager.Instance.CameraManager.Loupe.Size;
                         float a3 = value7 - size6.y * 0.75f;
                         a3 = Mathf.Max(a3, (0f - workspaceRect.rect.height) / 10f);
@@ -122,14 +116,14 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                     }
                     else if (!m_loupeEnabled)
                     {
-                        float y2 = vector.y;
+                        float y2 = pos.y;
                         float height4 = rect.height;
                         Vector2 offsetMin3 = workspaceRect.offsetMin;
                         if (y2 < height4 + offsetMin3.y + workspaceRect.rect.height / 10f)
                         {
                             float height5 = rect.height;
                             Vector2 offsetMin4 = workspaceRect.offsetMin;
-                            float a4 = height5 + offsetMin4.y + workspaceRect.rect.height / 10f - vector.y;
+                            float a4 = height5 + offsetMin4.y + workspaceRect.rect.height / 10f - pos.y;
                             a4 = Mathf.Min(a4, workspaceRect.rect.height / 10f);
                             //NewWorkbookManager.Instance.CameraManager.Move(new Vector2(0f, a4 / num * 0.05f));
                             NewWorkbookManager.Instance.CameraManager.UpdateLoupe(Input.mousePosition);
@@ -139,37 +133,37 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                 }
                 break;
             case TapState.None:
-                this.CheckMultiTouch();
+                CheckMultiTouch();
                 break;
         }
     }
 
-    private bool CheckMultiTouch()
+    bool CheckMultiTouch()
     {
         if (Input.touches.Length > 1)
         {
-            Touch[] touches = Input.touches;
-            Vector2 vector = touches[0].position - touches[1].position;
-            this.m_touchesDelta = Mathf.Sqrt(vector.x * vector.x + vector.y * vector.y);
-            this.m_mousePrev = Input.mousePosition;
-            if (this.CurrentTapState == TapState.BrushMode)
+            var touches = Input.touches;
+            Vector2 dir = touches[0].position - touches[1].position;
+            m_touchesDelta = Mathf.Sqrt(dir.x * dir.x + dir.y * dir.y);
+            m_mousePrev = Input.mousePosition;
+            if (CurrentTapState == TapState.BrushMode)
             {
                 NewWorkbookManager.Instance.CameraManager.SwitchLoupeOnOff(false);
                 WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType = ColorizationModeModel.BrushType.Singular;
             }
-            this.CurrentTapState = TapState.Multitouch;
-            this.m_currentZoomLogged = false;
+            CurrentTapState = TapState.Multitouch;
+            m_currentZoomLogged = false;
             return true;
         }
         return false;
     }
 
-    private void CheckLongTap()
+    void CheckLongTap()
     {
-        if (this.m_downTime > DateTime.MinValue && (DateTime.Now - this.m_downTime).TotalSeconds > (double)this.m_longTapTime)
+        if (m_downTime > DateTime.MinValue && (DateTime.Now - m_downTime).TotalSeconds > (double)m_longTapTime)
         {
             WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType = ColorizationModeModel.BrushType.Plural;
-            this.CurrentTapState = TapState.BrushMode;
+            CurrentTapState = TapState.BrushMode;
             NewWorkbookManager.Instance.CameraManager.CheckMinZoom(Input.mousePosition);
             NewWorkbookManager.Instance.CameraManager.SwitchLoupeOnOff(true);
             NewWorkbookManager.Instance.CameraManager.UpdateLoupe(Input.mousePosition);
@@ -179,23 +173,23 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
     public void OnPointerDown(PointerEventData data)
     {
-        if (!this.CheckMultiTouch())
+        if (!CheckMultiTouch())
         {
-            if (this.CurrentTapState == TapState.BrushMode)
+            if (CurrentTapState == TapState.BrushMode)
             {
                 NewWorkbookManager.Instance.CameraManager.SwitchLoupeOnOff(false);
                 WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType = ColorizationModeModel.BrushType.Singular;
             }
-            this.CurrentTapState = TapState.Down;
-            this.m_downTime = DateTime.Now;
-            this.m_tapPosition = Input.mousePosition;
-            this.m_mousePrev = Input.mousePosition;
+            CurrentTapState = TapState.Down;
+            m_downTime = DateTime.Now;
+            m_tapPosition = Input.mousePosition;
+            m_mousePrev = Input.mousePosition;
         }
     }
 
     public void OnPointerUp(PointerEventData data)
     {
-        switch (this.CurrentTapState)
+        switch (CurrentTapState)
         {
             case TapState.Down:
                 if (!NewWorkbookManager.Instance.CameraManager.CheckMinZoom(Input.mousePosition))
@@ -212,58 +206,58 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
                 NewWorkbookManager.Instance.CameraManager.SwitchLoupeOnOff(false);
                 break;
         }
-        this.CurrentTapState = TapState.None;
+        CurrentTapState = TapState.None;
     }
 
     public void OnDrag(PointerEventData data)
     {
-        switch (this.CurrentTapState)
+        switch (CurrentTapState)
         {
             case TapState.None:
                 break;
             case TapState.Down:
-                this.CurrentTapState = TapState.Drag;
+                CurrentTapState = TapState.Drag;
                 break;
             case TapState.Drag:
-                NewWorkbookManager.Instance.CameraManager.Move((Vector2)Input.mousePosition - this.m_mousePrev);
-                this.m_mousePrev = Input.mousePosition;
+                NewWorkbookManager.Instance.CameraManager.Move((Vector2)Input.mousePosition - m_mousePrev);
+                m_mousePrev = Input.mousePosition;
                 break;
             case TapState.Multitouch:
                 {
-                    Touch[] touches = Input.touches;
+                    var touches = Input.touches;
                     if (touches.Length >= 2)
                     {
                         Vector2 pinchOffset = touches[0].position - touches[1].position;
                         float value2 = Mathf.Sqrt(pinchOffset.x * pinchOffset.x + pinchOffset.y * pinchOffset.y);
-                        float koef = value2 / this.m_touchesDelta;
+                        float koef = value2 / m_touchesDelta;
                         NewWorkbookManager.Instance.CameraManager.ChangeZoom(koef);
-                        if (!this.m_currentZoomLogged)
+                        if (!m_currentZoomLogged)
                         {
-                            this.m_currentZoomLogged = true;
+                            m_currentZoomLogged = true;
                             AnalyticsManager.Instance.ZoomDone();
                         }
-                        this.m_touchesDelta = value2;
-                        NewWorkbookManager.Instance.CameraManager.Move((Vector2)Input.mousePosition - this.m_mousePrev);
-                        this.m_mousePrev = Input.mousePosition;
+                        m_touchesDelta = value2;
+                        NewWorkbookManager.Instance.CameraManager.Move((Vector2)Input.mousePosition - m_mousePrev);
+                        m_mousePrev = Input.mousePosition;
                     }
                     break;
                 }
             case TapState.BrushMode:
                 {
-                    Vector2 vector = data.position - data.delta;
-                    float[] obj = new float[3] {
+                    Vector2 dir = data.position - data.delta;
+                    var deltas = new float[3] {
                     1f,
                     0f,
                     0f
                 };
                     Vector2 delta = data.delta;
-                    obj[1] = Mathf.Abs(delta.x);
+                    deltas[1] = Mathf.Abs(delta.x);
                     Vector2 delta2 = data.delta;
-                    obj[2] = Mathf.Abs(delta2.y);
-                    float num = Mathf.Max(obj);
-                    Vector2 a = data.delta / num;
-                    Vector2 a2 = vector;
-                    for (int i = 1; (float)i < num; i++)
+                    deltas[2] = Mathf.Abs(delta2.y);
+                    float steps = Mathf.Max(deltas);
+                    Vector2 a = data.delta / steps;
+                    Vector2 a2 = dir;
+                    for (int i = 1; (float)i < steps; i++)
                     {
                         NewWorkbookManager.Instance.NumberColoring.TryClickPixel(a2 + (float)i * a);
                     }
@@ -279,22 +273,22 @@ public class InputReceiver : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
     public void OnScroll(PointerEventData data)
     {
-        CameraManager cameraManager = NewWorkbookManager.Instance.CameraManager;
+        var cameraManager = NewWorkbookManager.Instance.CameraManager;
         Vector2 scrollDelta = data.scrollDelta;
         cameraManager.Scroll(scrollDelta.y);
     }
 
-    private void OnApplicationPause(bool pause)
+    void OnApplicationPause(bool pause)
     {
         if (pause)
         {
-            if (this.CurrentTapState == TapState.BrushMode)
+            if (CurrentTapState == TapState.BrushMode)
             {
-                this.CurrentTapState = TapState.None;
+                CurrentTapState = TapState.None;
                 NewWorkbookManager.Instance.CameraManager.SwitchLoupeOnOff(false);
                 WorkbookModel.Instance.ColorizationModeModel.CurrentSpaceType = ColorizationModeModel.BrushType.Singular;
             }
-            this.m_downTime = DateTime.MinValue;
+            m_downTime = DateTime.MinValue;
         }
     }
 }

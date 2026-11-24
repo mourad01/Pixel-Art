@@ -6,148 +6,140 @@ public class TextureScale
     public class ThreadData
     {
         public int start;
-
         public int end;
 
         public ThreadData(int s, int e)
         {
-            this.start = s;
-            this.end = e;
+            start = s;
+            end = e;
         }
     }
 
-    private static Color[] texColors;
-
-    private static Color[] newColors;
-
-    private static int w;
-
-    private static float ratioX;
-
-    private static float ratioY;
-
-    private static int w2;
-
-    private static int finishCount;
-
-    private static Mutex mutex;
+    static Color[] texColors;
+    static Color[] newColors;
+    static int w;
+    static float ratioX;
+    static float ratioY;
+    static int w2;
+    static int finishCount;
+    static Mutex mutex;
 
     public static void Point(Texture2D tex, int newWidth, int newHeight)
     {
-        TextureScale.ThreadedScale(tex, newWidth, newHeight, false);
+        ThreadedScale(tex, newWidth, newHeight, false);
     }
 
     public static void Bilinear(Texture2D tex, int newWidth, int newHeight)
     {
-        TextureScale.ThreadedScale(tex, newWidth, newHeight, true);
+        ThreadedScale(tex, newWidth, newHeight, true);
     }
 
-    private static void ThreadedScale(Texture2D tex, int newWidth, int newHeight, bool useBilinear)
+    static void ThreadedScale(Texture2D tex, int newWidth, int newHeight, bool useBilinear)
     {
-        TextureScale.texColors = tex.GetPixels();
-        TextureScale.newColors = new Color[newWidth * newHeight];
+        texColors = tex.GetPixels();
+        newColors = new Color[newWidth * newHeight];
         if (useBilinear)
         {
-            TextureScale.ratioX = 1f / ((float)newWidth / (float)(tex.width - 1));
-            TextureScale.ratioY = 1f / ((float)newHeight / (float)(tex.height - 1));
+            ratioX = 1f / ((float)newWidth / (float)(tex.width - 1));
+            ratioY = 1f / ((float)newHeight / (float)(tex.height - 1));
         }
         else
         {
-            TextureScale.ratioX = (float)tex.width / (float)newWidth;
-            TextureScale.ratioY = (float)tex.height / (float)newHeight;
+            ratioX = (float)tex.width / (float)newWidth;
+            ratioY = (float)tex.height / (float)newHeight;
         }
-        TextureScale.w = tex.width;
-        TextureScale.w2 = newWidth;
-        int num = Mathf.Min(SystemInfo.processorCount, newHeight);
-        int value2 = newHeight / num;
-        TextureScale.finishCount = 0;
-        if (TextureScale.mutex == null)
+        w = tex.width;
+        w2 = newWidth;
+        int cores = Mathf.Min(SystemInfo.processorCount, newHeight);
+        int value2 = newHeight / cores;
+        finishCount = 0;
+        if (mutex == null)
         {
-            TextureScale.mutex = new Mutex(false);
+            mutex = new Mutex(false);
         }
-        if (num > 1)
+        if (cores > 1)
         {
             int value3 = 0;
             ThreadData parameter;
-            for (value3 = 0; value3 < num - 1; value3++)
+            for (value3 = 0; value3 < cores - 1; value3++)
             {
                 parameter = new ThreadData(value2 * value3, value2 * (value3 + 1));
-                ParameterizedThreadStart start = (!useBilinear) ? new ParameterizedThreadStart(TextureScale.PointScale) : new ParameterizedThreadStart(TextureScale.BilinearScale);
-                Thread thread = new Thread(start);
+                var start = (!useBilinear) ? new ParameterizedThreadStart(PointScale) : new ParameterizedThreadStart(BilinearScale);
+                var thread = new Thread(start);
                 thread.Start(parameter);
             }
             parameter = new ThreadData(value2 * value3, newHeight);
             if (useBilinear)
             {
-                TextureScale.BilinearScale(parameter);
+                BilinearScale(parameter);
             }
             else
             {
-                TextureScale.PointScale(parameter);
+                PointScale(parameter);
             }
-            while (TextureScale.finishCount < num)
+            while (finishCount < cores)
             {
                 Thread.Sleep(1);
             }
         }
         else
         {
-            ThreadData obj = new ThreadData(0, newHeight);
+            var threadData = new ThreadData(0, newHeight);
             if (useBilinear)
             {
-                TextureScale.BilinearScale(obj);
+                BilinearScale(threadData);
             }
             else
             {
-                TextureScale.PointScale(obj);
+                PointScale(threadData);
             }
         }
         tex.Resize(newWidth, newHeight);
-        tex.SetPixels(TextureScale.newColors);
+        tex.SetPixels(newColors);
         tex.Apply();
-        TextureScale.texColors = null;
-        TextureScale.newColors = null;
+        texColors = null;
+        newColors = null;
     }
 
     public static void BilinearScale(object obj)
     {
-        ThreadData threadData = (ThreadData)obj;
+        var threadData = (ThreadData)obj;
         for (int i = threadData.start; i < threadData.end; i++)
         {
-            int num = (int)Mathf.Floor((float)i * TextureScale.ratioY);
-            int value2 = num * TextureScale.w;
-            int value3 = (num + 1) * TextureScale.w;
-            int value4 = i * TextureScale.w2;
-            for (int j = 0; j < TextureScale.w2; j++)
+            int yFloor = (int)Mathf.Floor((float)i * ratioY);
+            int value2 = yFloor * w;
+            int value3 = (yFloor + 1) * w;
+            int value4 = i * w2;
+            for (int j = 0; j < w2; j++)
             {
-                int value5 = (int)Mathf.Floor((float)j * TextureScale.ratioX);
-                float value = (float)j * TextureScale.ratioX - (float)value5;
-                TextureScale.newColors[value4 + j] = TextureScale.ColorLerpUnclamped(TextureScale.ColorLerpUnclamped(TextureScale.texColors[value2 + value5], TextureScale.texColors[value2 + value5 + 1], value), TextureScale.ColorLerpUnclamped(TextureScale.texColors[value3 + value5], TextureScale.texColors[value3 + value5 + 1], value), (float)i * TextureScale.ratioY - (float)num);
+                int value5 = (int)Mathf.Floor((float)j * ratioX);
+                float value = (float)j * ratioX - (float)value5;
+                newColors[value4 + j] = ColorLerpUnclamped(ColorLerpUnclamped(texColors[value2 + value5], texColors[value2 + value5 + 1], value), ColorLerpUnclamped(texColors[value3 + value5], texColors[value3 + value5 + 1], value), (float)i * ratioY - (float)yFloor);
             }
         }
-        TextureScale.mutex.WaitOne();
-        TextureScale.finishCount++;
-        TextureScale.mutex.ReleaseMutex();
+        mutex.WaitOne();
+        finishCount++;
+        mutex.ReleaseMutex();
     }
 
     public static void PointScale(object obj)
     {
-        ThreadData threadData = (ThreadData)obj;
+        var threadData = (ThreadData)obj;
         for (int i = threadData.start; i < threadData.end; i++)
         {
-            int num = (int)(TextureScale.ratioY * (float)i) * TextureScale.w;
-            int value2 = i * TextureScale.w2;
-            for (int j = 0; j < TextureScale.w2; j++)
+            int rowStart = (int)(ratioY * (float)i) * w;
+            int value2 = i * w2;
+            for (int j = 0; j < w2; j++)
             {
-                TextureScale.newColors[value2 + j] = TextureScale.texColors[(int)((float)num + TextureScale.ratioX * (float)j)];
+                newColors[value2 + j] = texColors[(int)((float)rowStart + ratioX * (float)j)];
             }
         }
-        TextureScale.mutex.WaitOne();
-        TextureScale.finishCount++;
-        TextureScale.mutex.ReleaseMutex();
+        mutex.WaitOne();
+        finishCount++;
+        mutex.ReleaseMutex();
     }
 
-    private static Color ColorLerpUnclamped(Color c1, Color c2, float value)
+    static Color ColorLerpUnclamped(Color c1, Color c2, float value)
     {
         return new Color(c1.r + (c2.r - c1.r) * value, c1.g + (c2.g - c1.g) * value, c1.b + (c2.b - c1.b) * value, c1.a + (c2.a - c1.a) * value);
     }

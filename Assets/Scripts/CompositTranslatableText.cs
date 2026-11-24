@@ -8,43 +8,39 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Text))]
 public class CompositTranslatableText : MonoBehaviour
 {
-    [SerializeField] private bool m_autoTranslate = true;
+    [SerializeField] bool m_autoTranslate = true;
+    [SerializeField] List<string> m_list;
+    [SerializeField] string m_format;
+    [SerializeField] bool forceUpper;
 
-    [SerializeField] private List<string> m_list;
+    Text m_text;
+    BestFit m_bestFit;
 
-    [SerializeField] private string m_format;
-
-    [SerializeField] private bool forceUpper;
-
-    private Text m_text;
-
-    private BestFit m_bestFit;
-
-    private void Start()
+    void Start()
     {
-        if (this.m_autoTranslate)
+        if (m_autoTranslate)
         {
-            this.Translate();
+            Translate();
         }
     }
 
     public void Translate()
     {
-        this.m_text = base.GetComponent<Text>();
-        this.m_bestFit = base.GetComponent<BestFit>();
-        this.m_text.enabled = false;
-        if (this.m_text.text != string.Empty)
+        m_text = base.GetComponent<Text>();
+        m_bestFit = base.GetComponent<BestFit>();
+        m_text.enabled = false;
+        if (m_text.text != string.Empty)
         {
-            string[] args = (from a in this.m_list
+            var args = (from a in m_list
                              select LocalizationManager.Instance.GetString(a)).ToArray();
-            string text = string.Format(this.m_format, args);
-            this.m_text.text = ((!this.forceUpper) ? text : text.ToUpper());
+            string text = string.Format(m_format, args);
+            m_text.text = ((!forceUpper) ? text : text.ToUpper());
         }
-        if (this.m_bestFit != null)
+        if (m_bestFit != null)
         {
-            this.m_bestFit.Refit();
+            m_bestFit.Refit();
         }
-        this.m_text.enabled = true;
+        m_text.enabled = true;
     }
 }
 

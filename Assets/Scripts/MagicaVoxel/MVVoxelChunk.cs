@@ -4,20 +4,16 @@ using System;
 public class MVVoxelChunk
 {
     public byte[,,] voxels;
-
     public MVFaceCollection[] faces;
-
     public int x;
-
     public int y;
-
     public int z;
 
     public int sizeX
     {
         get
         {
-            return this.voxels.GetLength(0);
+            return voxels.GetLength(0);
         }
     }
 
@@ -25,7 +21,7 @@ public class MVVoxelChunk
     {
         get
         {
-            return this.voxels.GetLength(1);
+            return voxels.GetLength(1);
         }
     }
 
@@ -33,7 +29,7 @@ public class MVVoxelChunk
     {
         get
         {
-            return this.voxels.GetLength(2);
+            return voxels.GetLength(2);
         }
     }
 

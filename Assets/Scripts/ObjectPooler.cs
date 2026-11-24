@@ -6,12 +6,12 @@ public class ObjectPooler : MonoBehaviour
 
     protected virtual void Awake()
     {
-        ObjectPooler.Instance = this;
+        Instance = this;
     }
 
     protected virtual void Start()
     {
-        this.FillObjectPool();
+        FillObjectPool();
     }
 
     protected virtual void FillObjectPool()

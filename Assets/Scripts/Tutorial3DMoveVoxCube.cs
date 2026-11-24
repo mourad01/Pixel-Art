@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Tutorial3DMoveVoxCube : MonoBehaviour
 {
-    private static List<Color32> colorsList = new List<Color32> {
+    static List<Color32> colorsList = new List<Color32> {
         new Color32(240, 116, 28, 1),
         new Color32(236, 144, 24, 1),
         new Color32(240, 240, 240, 1),
@@ -12,23 +12,23 @@ public class Tutorial3DMoveVoxCube : MonoBehaviour
         new Color32(220, 77, 110, 1)
     };
 
-    private static Dictionary<int, Material> s_materials = new Dictionary<int, Material>();
+    static Dictionary<int, Material> s_materials = new Dictionary<int, Material>();
 
-    private void Start()
+    void Start()
     {
-        MeshRenderer componentInChildren = base.GetComponentInChildren<MeshRenderer>();
+        var componentInChildren = base.GetComponentInChildren<MeshRenderer>();
         int colorIndex = base.GetComponent<VoxCubeItem>().ColorIndex;
-        if (!Tutorial3DMoveVoxCube.s_materials.ContainsKey(colorIndex))
+        if (!s_materials.ContainsKey(colorIndex))
         {
-            Color32 c = Tutorial3DMoveVoxCube.colorsList[colorIndex - 1];
+            var c = colorsList[colorIndex - 1];
             Color color = c;
             Color value = new Color(color.grayscale + 0.2f, color.grayscale + 0.2f, color.grayscale + 0.2f);
-            Shader shader = Shader.Find("Custom/StandardVertex");
-            Material material = new Material(shader);
+            var shader = Shader.Find("Custom/StandardVertex");
+            var material = new Material(shader);
             material.SetColor("_Color", value);
-            Tutorial3DMoveVoxCube.s_materials.Add(colorIndex, material);
+            s_materials.Add(colorIndex, material);
         }
-        componentInChildren.sharedMaterial = Tutorial3DMoveVoxCube.s_materials[colorIndex];
+        componentInChildren.sharedMaterial = s_materials[colorIndex];
     }
 }
 

@@ -39,7 +39,7 @@ namespace AU
     {
         public static List<T> ResizeList<T>(List<T> list, int newSize) where T : new()
         {
-            List<T> newList = new List<T>();
+            var newList = new List<T>();
             int maxLen = Mathf.Min(newSize, list.Count);
             for (int i = 0; i < maxLen; ++i)
             {
@@ -52,7 +52,7 @@ namespace AU
 
         public static void DestroyAllChild(GameObject go)
         {
-            Transform t = go.transform;
+            var t = go.transform;
             while (t.childCount > 0)
             {
                 GameObject.DestroyImmediate(t.GetChild(0).gameObject);
@@ -61,7 +61,7 @@ namespace AU
 
         public static Mesh CreatePlaneMesh(float width, float height, int widthSegments, int heightSegments)
         {
-            Mesh m = new Mesh();
+            var m = new Mesh();
             m.name = string.Format("PLANE_{0}x{1}", (int)width, (int)height);
 
             int hCount2 = widthSegments + 1;
@@ -69,9 +69,9 @@ namespace AU
             int numTriangles = widthSegments * heightSegments * 6;
             int numVertices = hCount2 * vCount2;
 
-            Vector3[] vertices = new Vector3[numVertices];
-            Vector2[] uvs = new Vector2[numVertices];
-            int[] triangles = new int[numTriangles];
+            var vertices = new Vector3[numVertices];
+            var uvs = new Vector2[numVertices];
+            var triangles = new int[numTriangles];
 
             int index = 0;
             float uvFactorX = 1.0f / widthSegments;
@@ -178,7 +178,7 @@ namespace AU
         {
             Color o = GUI.color;
             GUI.color = c;
-            TextAnchor prevAnchor = GUI.skin.label.alignment;
+            var prevAnchor = GUI.skin.label.alignment;
             EditorStyles.label.alignment = anchor;
             EditorGUILayout.LabelField(t);
             EditorStyles.label.alignment = prevAnchor;
@@ -189,7 +189,7 @@ namespace AU
         {
             Color o = GUI.color;
             GUI.color = c;
-            TextAnchor prevAnchor = GUI.skin.label.alignment;
+            var prevAnchor = GUI.skin.label.alignment;
             EditorStyles.label.alignment = anchor;
             EditorGUILayout.LabelField(t, options);
             EditorStyles.label.alignment = prevAnchor;
@@ -316,7 +316,7 @@ namespace AU
                                    GUIContent label)
         {
             EditorGUI.BeginChangeCheck();
-            EditorGUI.ObjectField(position, property.name, o, (this.attribute as AssetStringField).typeOfObject, false);
+            EditorGUI.ObjectField(position, property.name, o, (attribute as AssetStringField).typeOfObject, false);
             if (EditorGUI.EndChangeCheck())
             {
                 property.stringValue = AssetUtility.GetAssetPath(o);
@@ -349,7 +349,7 @@ namespace AU
                 {
                     if (cacheObject.GetType() == typeof(MonoScript))
                     {
-                        MonoScript script = cacheObject as MonoScript;
+                        var script = cacheObject as MonoScript;
                         property.stringValue = script.GetClass().FullName;
                     }
                     else

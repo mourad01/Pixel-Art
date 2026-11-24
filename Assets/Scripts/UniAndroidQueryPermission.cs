@@ -7,31 +7,30 @@ using UnityEngine;
 public class UniAndroidQueryPermission : MonoBehaviour
 {
     public static Queue<AndroidPermission> permissionQueue = new Queue<AndroidPermission>();
-
     public static Action allPermissionRequested; 
 
     public static void RequestPermissions(List<AndroidPermission> listPermission)
     {
-        foreach (AndroidPermission item in listPermission)
+        foreach (AndroidPermission androidPermission in listPermission)
         {
-            UniAndroidQueryPermission.permissionQueue.Enqueue(item);
+            permissionQueue.Enqueue(androidPermission);
         }
-        UniAndroidQueryPermission.allPermissionRequested = delegate
+        allPermissionRequested = delegate
         {
         };
-        UniAndroidQueryPermission.RequestPermission();
+        RequestPermission();
     }
 
-    private static void RequestPermission()
+    static void RequestPermission()
     {
-        if (UniAndroidQueryPermission.permissionQueue.Count > 0)
+        if (permissionQueue.Count > 0)
         {
-            AndroidPermission permission = UniAndroidQueryPermission.permissionQueue.Dequeue();
-            UniAndroidPermission.RequestPermission(permission, new Action(UniAndroidQueryPermission.RequestPermission), new Action(UniAndroidQueryPermission.RequestPermission));
+            var permission = permissionQueue.Dequeue();
+            UniAndroidPermission.RequestPermission(permission, new Action(RequestPermission), new Action(RequestPermission));
         }
         else
         {
-            UniAndroidQueryPermission.allPermissionRequested();
+            allPermissionRequested();
         }
     }
 }

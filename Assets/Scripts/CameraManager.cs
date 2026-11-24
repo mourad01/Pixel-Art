@@ -7,31 +7,22 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
-    [SerializeField] private Rect m_bounds = default(Rect);
-
-    [SerializeField] private Rect m_zeroBounds = default(Rect);
-
-    [SerializeField] private float m_zoom = 1f;
-
-    [SerializeField] private float m_maxZoom = 1f;
-
-    [SerializeField] private RectTransform m_canvasRectTransform;
-
-    [SerializeField] private Camera m_camera;
-
-    [SerializeField] private Camera m_backCamera;
-
-    [SerializeField] private RectTransform m_cameraSpace;
-
-    [SerializeField] private Canvas m_canvas;
-
-    [SerializeField] private Loupe m_loupe;
+    [SerializeField] Rect m_bounds = default(Rect);
+    [SerializeField] Rect m_zeroBounds = default(Rect);
+    [SerializeField] float m_zoom = 1f;
+    [SerializeField] float m_maxZoom = 1f;
+    [SerializeField] RectTransform m_canvasRectTransform;
+    [SerializeField] Camera m_camera;
+    [SerializeField] Camera m_backCamera;
+    [SerializeField] RectTransform m_cameraSpace;
+    [SerializeField] Canvas m_canvas;
+    [SerializeField] Loupe m_loupe;
 
     public float Zoom
     {
         get
         {
-            return this.m_zoom;
+            return m_zoom;
         }
     }
 
@@ -39,7 +30,7 @@ public class CameraManager : MonoBehaviour
     {
         get
         {
-            return this.m_maxZoom;
+            return m_maxZoom;
         }
     }
 
@@ -47,7 +38,7 @@ public class CameraManager : MonoBehaviour
     {
         get
         {
-            return this.m_maxZoom + 0.5f;
+            return m_maxZoom + 0.5f;
         }
     }
 
@@ -55,7 +46,7 @@ public class CameraManager : MonoBehaviour
     {
         get
         {
-            return this.m_camera.transform.position;
+            return m_camera.transform.position;
         }
     }
 
@@ -63,7 +54,7 @@ public class CameraManager : MonoBehaviour
     {
         get
         {
-            return this.m_cameraSpace;
+            return m_cameraSpace;
         }
     }
 
@@ -71,7 +62,7 @@ public class CameraManager : MonoBehaviour
     {
         get
         {
-            return this.m_loupe;
+            return m_loupe;
         }
     }
 
@@ -84,28 +75,28 @@ public class CameraManager : MonoBehaviour
         float offset = 0.9f;
 
         float halfSize = Mathf.Max(width, height) / 2f;
-        this.m_bounds = new Rect(-width / halfSize / 2f - offset, -height / halfSize / 2f - 2 * offset, width / halfSize + 2 * offset, height / halfSize + 2 * offset);
+        m_bounds = new Rect(-width / halfSize / 2f - offset, -height / halfSize / 2f - 2 * offset, width / halfSize + 2 * offset, height / halfSize + 2 * offset);
 
-        this.m_zeroBounds = new Rect(-width / halfSize / 2f, -height / halfSize / 2f, width / halfSize, height / halfSize);
-        Rect zeroBounds = this.m_zeroBounds;
+        m_zeroBounds = new Rect(-width / halfSize / 2f, -height / halfSize / 2f, width / halfSize, height / halfSize);
+        Rect zeroBounds = m_zeroBounds;
         zeroBounds.center += new Vector2(0f, 0.2f);
-        this.m_bounds.center = new Vector2(0f, 0.2f);
+        m_bounds.center = new Vector2(0f, 0.2f);
         if (!MySystemInfo.IsTablet)
         {
-            this.m_loupe.SetLoupePrecision(1.92f / halfSize);
+            m_loupe.SetLoupePrecision(1.92f / halfSize);
         }
         else
         {
-            this.m_loupe.SetLoupePrecision(2f / halfSize);
+            m_loupe.SetLoupePrecision(2f / halfSize);
         }
-        this.InternalUpdate(Vector2.zero);
-        base.StartCoroutine(this.DefferedUpdate());
+        InternalUpdate(Vector2.zero);
+        base.StartCoroutine(DefferedUpdate());
     }
 
-    private void InternalUpdate(Vector2 cameraDeltaPos)
+    void InternalUpdate(Vector2 cameraDeltaPos)
     {
-        float num = 0f;
-        RectTransform rectTransform = this.m_cameraSpace;
+        float topOffset = 0f;
+        var rectTransform = m_cameraSpace;
 
         while (true)
         {
@@ -117,65 +108,65 @@ public class CameraManager : MonoBehaviour
             {
                 break;
             }
-            float value2 = num;
+            float value2 = topOffset;
             Vector2 anchoredPosition = rectTransform.anchoredPosition;
-            num = value2 + anchoredPosition.y;
+            topOffset = value2 + anchoredPosition.y;
             rectTransform = (RectTransform)rectTransform.parent;
         }
-        float value3 = 0f - num;
-        Vector2 sizeDelta = this.m_cameraSpace.sizeDelta;
-        float y = 1f - (value3 + sizeDelta.y) / this.m_canvasRectTransform.rect.height;
-        Vector2 sizeDelta2 = this.m_cameraSpace.sizeDelta;
-        float value4 = (sizeDelta2.y + 150f) / this.m_canvasRectTransform.rect.height;
-        this.m_camera.rect = new Rect(0f, y, 1f, value4);
-        this.DefaultRect = this.m_camera.rect;
-        float a = value4 * (float)Screen.height / (this.m_camera.rect.width * (float)Screen.width);
-        a = (this.DefaultOrtoSize = Mathf.Max(a, 1.2f));
-        this.m_camera.orthographicSize = a / this.m_zoom;
-        float value6 = MySystemInfo.IsTablet ? (this.m_loupe.Precision / (400f / (this.m_canvasRectTransform.rect.height * this.m_camera.rect.height))) : (this.m_loupe.Precision / (500f / (this.m_canvasRectTransform.rect.height * this.m_camera.rect.height)));
-        this.m_maxZoom = (a / value6);
+        float value3 = 0f - topOffset;
+        Vector2 sizeDelta = m_cameraSpace.sizeDelta;
+        float y = 1f - (value3 + sizeDelta.y) / m_canvasRectTransform.rect.height;
+        Vector2 sizeDelta2 = m_cameraSpace.sizeDelta;
+        float value4 = (sizeDelta2.y + 150f) / m_canvasRectTransform.rect.height;
+        m_camera.rect = new Rect(0f, y, 1f, value4);
+        DefaultRect = m_camera.rect;
+        float a = value4 * (float)Screen.height / (m_camera.rect.width * (float)Screen.width);
+        a = (DefaultOrtoSize = Mathf.Max(a, 1.2f));
+        m_camera.orthographicSize = a / m_zoom;
+        float value6 = MySystemInfo.IsTablet ? (m_loupe.Precision / (400f / (m_canvasRectTransform.rect.height * m_camera.rect.height))) : (m_loupe.Precision / (500f / (m_canvasRectTransform.rect.height * m_camera.rect.height)));
+        m_maxZoom = (a / value6);
         Rect rect = default(Rect);
-        rect.height = this.m_camera.orthographicSize * 2f;
-        rect.width = (float)Screen.width * this.m_camera.rect.width * rect.height / ((float)Screen.height * this.m_camera.rect.height);
-        rect.center = (Vector2)this.m_camera.transform.position + cameraDeltaPos;
-        Rect rect2 = (!(this.m_zoom > 1f)) ? this.m_zeroBounds : this.m_bounds;
-        if (rect.width > rect2.width)
+        rect.height = m_camera.orthographicSize * 2f;
+        rect.width = (float)Screen.width * m_camera.rect.width * rect.height / ((float)Screen.height * m_camera.rect.height);
+        rect.center = (Vector2)m_camera.transform.position + cameraDeltaPos;
+        Rect zeroBounds = (!(m_zoom > 1f)) ? m_zeroBounds : m_bounds;
+        if (rect.width > zeroBounds.width)
         {
-            Vector2 center = rect2.center;
+            Vector2 center = zeroBounds.center;
             float x = center.x;
             Vector2 center2 = rect.center;
             rect.center = new Vector2(x, center2.y);
         }
         else
         {
-            if (rect.xMin < rect2.xMin)
+            if (rect.xMin < zeroBounds.xMin)
             {
-                rect.center += new Vector2(rect2.xMin - rect.xMin, 0f);
+                rect.center += new Vector2(zeroBounds.xMin - rect.xMin, 0f);
             }
-            if (rect.xMax > rect2.xMax)
+            if (rect.xMax > zeroBounds.xMax)
             {
-                rect.center += new Vector2(rect2.xMax - rect.xMax, 0f);
+                rect.center += new Vector2(zeroBounds.xMax - rect.xMax, 0f);
             }
         }
-        if (rect.height > rect2.height)
+        if (rect.height > zeroBounds.height)
         {
             Vector2 center3 = rect.center;
             float x2 = center3.x;
-            Vector2 center4 = rect2.center;
+            Vector2 center4 = zeroBounds.center;
             rect.center = new Vector2(x2, center4.y);
         }
         else
         {
-            if (rect.yMin < rect2.yMin)
+            if (rect.yMin < zeroBounds.yMin)
             {
-                rect.center += new Vector2(0f, rect2.yMin - rect.yMin);
+                rect.center += new Vector2(0f, zeroBounds.yMin - rect.yMin);
             }
-            if (rect.yMax > rect2.yMax)
+            if (rect.yMax > zeroBounds.yMax)
             {
-                rect.center += new Vector2(0f, rect2.yMax - rect.yMax);
+                rect.center += new Vector2(0f, zeroBounds.yMax - rect.yMax);
             }
         }
-        Transform transform = this.m_camera.transform;
+        var transform = m_camera.transform;
         Vector2 center5 = rect.center;
         float x3 = center5.x;
         Vector2 center6 = rect.center;
@@ -184,8 +175,8 @@ public class CameraManager : MonoBehaviour
 
     public void Move(Vector2 deltaPos)
     {
-        float d = this.m_camera.orthographicSize / this.m_camera.rect.height / (float)Screen.height * 2f;
-        this.InternalUpdate(-deltaPos * d);
+        float d = m_camera.orthographicSize / m_camera.rect.height / (float)Screen.height * 2f;
+        InternalUpdate(-deltaPos * d);
     }
 
     public bool CheckMinZoom(Vector3 mousePos)
@@ -195,41 +186,41 @@ public class CameraManager : MonoBehaviour
 
     public void ChangeZoom(float koef)
     {
-        this.m_zoom *= koef;
-        this.m_zoom = Mathf.Max(1f, this.m_zoom);
-        this.m_zoom = Mathf.Min(this.m_zoom, this.m_maxZoom);
-        this.InternalUpdate(Vector2.zero);
+        m_zoom *= koef;
+        m_zoom = Mathf.Max(1f, m_zoom);
+        m_zoom = Mathf.Min(m_zoom, m_maxZoom);
+        InternalUpdate(Vector2.zero);
     }
 
     public void EndZoom()
     {
-        if (this.m_zoom > this.RecommendMaxZoom)
+        if (m_zoom > RecommendMaxZoom)
         {
-            base.StartCoroutine(this.ToRecommendMaxZoomCoroutine());
+            base.StartCoroutine(ToRecommendMaxZoomCoroutine());
         }
     }
 
     public void SwitchLoupeOnOff(bool value)
     {
-        this.m_loupe.SwitchOnOff(value);
+        m_loupe.SwitchOnOff(value);
     }
 
     public void UpdateLoupe(Vector2 screenPos)
     {
-        Ray ray = this.m_camera.ScreenPointToRay(screenPos);
+        var ray = m_camera.ScreenPointToRay(screenPos);
         Vector2 zero = Vector2.zero;
-        if (this.GetWorldPos(ray, out zero))
+        if (GetWorldPos(ray, out zero))
         {
-            this.m_loupe.UpdatePosition(screenPos, zero);
+            m_loupe.UpdatePosition(screenPos, zero);
         }
     }
 
-    private bool GetWorldPos(Ray ray, out Vector2 worldPos)
+    bool GetWorldPos(Ray ray, out Vector2 worldPos)
     {
-        RaycastHit[] array = Physics.RaycastAll(ray);
-        if (array != null && array.Length > 0)
+        var raycastHits = Physics.RaycastAll(ray);
+        if (raycastHits != null && raycastHits.Length > 0)
         {
-            worldPos = array[0].point;
+            worldPos = raycastHits[0].point;
             return true;
         }
         worldPos = Vector2.zero;
@@ -238,43 +229,43 @@ public class CameraManager : MonoBehaviour
 
     public void Scroll(float delta)
     {
-        this.m_zoom *= Mathf.Pow(1.1f, delta);
-        this.m_zoom = Mathf.Max(1f, this.m_zoom);
-        this.m_zoom = Mathf.Min(this.m_zoom, this.m_maxZoom);
-        this.InternalUpdate(Vector2.zero);
+        m_zoom *= Mathf.Pow(1.1f, delta);
+        m_zoom = Mathf.Max(1f, m_zoom);
+        m_zoom = Mathf.Min(m_zoom, m_maxZoom);
+        InternalUpdate(Vector2.zero);
     }
 
     public void EnableBackCamera()
     {
-        this.m_backCamera.gameObject.SetActive(true);
+        m_backCamera.gameObject.SetActive(true);
     }
 
-    private IEnumerator DefferedUpdate()
+    IEnumerator DefferedUpdate()
     {
         yield return null;
-        this.InternalUpdate(Vector2.zero);
+        InternalUpdate(Vector2.zero);
     }
 
 
-    private IEnumerator MoveZoomCoroutine(Vector2 worldPos)
+    IEnumerator MoveZoomCoroutine(Vector2 worldPos)
     {
-        var startPos = this.m_camera.transform.position;
+        var startPos = m_camera.transform.position;
         var startZoom = 1;
         var time = 0.3f;
         var timer = time; 
         Vector3 worldPos3D = worldPos;
-        worldPos3D.z = this.m_camera.transform.position.z;
+        worldPos3D.z = m_camera.transform.position.z;
         while (true)
         {
             var deltaTime = Time.deltaTime;
             timer -= deltaTime;
             if (timer > 0)
             {
-                this.m_zoom += (this.m_maxZoom - (float)startZoom) * deltaTime / time;
-                this.InternalUpdate(Vector2.zero);
-                worldPos3D.x = worldPos.x - worldPos.x / this.m_zoom * (float)startZoom;
-                worldPos3D.y = worldPos.y - worldPos.y / this.m_zoom * (float)startZoom;
-                this.m_camera.transform.position = worldPos3D;
+                m_zoom += (m_maxZoom - (float)startZoom) * deltaTime / time;
+                InternalUpdate(Vector2.zero);
+                worldPos3D.x = worldPos.x - worldPos.x / m_zoom * (float)startZoom;
+                worldPos3D.y = worldPos.y - worldPos.y / m_zoom * (float)startZoom;
+                m_camera.transform.position = worldPos3D;
                 yield return null;
             }
             else
@@ -282,22 +273,22 @@ public class CameraManager : MonoBehaviour
                 break;
             }
         }
-        worldPos3D.x = worldPos.x - worldPos.x / this.m_maxZoom * (float)startZoom;
-        worldPos3D.y = worldPos.y - worldPos.y / this.m_maxZoom * (float)startZoom;
-        this.m_camera.transform.position = worldPos3D;
-        this.m_zoom = this.m_maxZoom;
-        this.InternalUpdate(Vector2.zero);
+        worldPos3D.x = worldPos.x - worldPos.x / m_maxZoom * (float)startZoom;
+        worldPos3D.y = worldPos.y - worldPos.y / m_maxZoom * (float)startZoom;
+        m_camera.transform.position = worldPos3D;
+        m_zoom = m_maxZoom;
+        InternalUpdate(Vector2.zero);
 
         yield break;
     }
 
-    private IEnumerator ToRecommendMaxZoomCoroutine()
+    IEnumerator ToRecommendMaxZoomCoroutine()
     {
-        var step = (this.RecommendMaxZoom - this.m_zoom) / 3f;
+        var step = (RecommendMaxZoom - m_zoom) / 3f;
         for(int i = 0; i < 3; i++)
         {
-            this.m_zoom += step;
-            this.InternalUpdate(Vector2.zero);
+            m_zoom += step;
+            InternalUpdate(Vector2.zero);
             yield return null;
         } 
     }

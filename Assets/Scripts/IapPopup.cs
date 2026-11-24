@@ -5,36 +5,24 @@ using UnityEngine.UI;
 
 public class IapPopup : BaseWindow
 {
-    private Action<bool> FinishHandler;
+    Action<bool> FinishHandler;
+    ImageInfo m_imageInfo;
 
-    private ImageInfo m_imageInfo;
+    [SerializeField] GameObject m_subscrPart;
+    [SerializeField] GameObject m_subscrVideoPart;
+    [SerializeField] GameObject mozaic;
+    [SerializeField] GameObject mozaic2;
+    [SerializeField] RawImage m_image1;
+    [SerializeField] RawImage m_image2;
+    [SerializeField] Image m_picImage1;
+    [SerializeField] Image m_picImage2;
+    [SerializeField] Sprite m_defaultTex;
+    [SerializeField] Sprite m_bombTex;
+    [SerializeField] Sprite m_lassoTex;
+    [SerializeField] Text m_changableText;
 
-    [SerializeField] private GameObject m_subscrPart;
-
-    [SerializeField] private GameObject m_subscrVideoPart;
-
-    [SerializeField] private GameObject mozaic;
-
-    [SerializeField] private GameObject mozaic2;
-
-    [SerializeField] private RawImage m_image1;
-
-    [SerializeField] private RawImage m_image2;
-
-    [SerializeField] private Image m_picImage1;
-
-    [SerializeField] private Image m_picImage2;
-
-    [SerializeField] private Sprite m_defaultTex;
-
-    [SerializeField] private Sprite m_bombTex;
-
-    [SerializeField] private Sprite m_lassoTex;
-
-    [SerializeField] private Text m_changableText;
-
-    private ImagePreview m_imagePreview;
-    private string m_place = string.Empty;
+    ImagePreview m_imagePreview;
+    string m_place = string.Empty;
 
     protected override string WindowName
     {
@@ -44,11 +32,11 @@ public class IapPopup : BaseWindow
         }
     }
 
-    private void Awake()
+    void Awake()
     {
-        RawImage image = this.m_image1;
-        Material material = new Material(Shader.Find("Custom/GreyTextureShader"));
-        this.m_image2.material = material;
+        var image = m_image1;
+        var material = new Material(Shader.Find("Custom/GreyTextureShader"));
+        m_image2.material = material;
         image.material = material;
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
@@ -56,65 +44,65 @@ public class IapPopup : BaseWindow
 
     public void Init(ImageInfo imageInfo, ImagePreview imagePreview)
     {
-        this.m_place = "image";
-        this.m_imagePreview = imagePreview;
+        m_place = "image";
+        m_imagePreview = imagePreview;
 
-        AnalyticsManager.Instance.ABTestWindowOpened(this.m_place);
-        this.m_picImage1.gameObject.SetActive(false);
-        this.m_picImage2.gameObject.SetActive(false);
-        this.m_image1.gameObject.SetActive(true);
-        this.m_image2.gameObject.SetActive(true);
-        this.m_image1.texture = null;
-        this.m_image2.texture = null;
+        AnalyticsManager.Instance.ABTestWindowOpened(m_place);
+        m_picImage1.gameObject.SetActive(false);
+        m_picImage2.gameObject.SetActive(false);
+        m_image1.gameObject.SetActive(true);
+        m_image2.gameObject.SetActive(true);
+        m_image1.texture = null;
+        m_image2.texture = null;
         DataManager.Instance.GetImageAsset(imageInfo, delegate (bool res, Texture2D tex)
         {
-            this.m_image1.texture = tex;
-            this.m_image2.texture = tex;
+            m_image1.texture = tex;
+            m_image2.texture = tex;
         });
-        this.m_imageInfo = imageInfo;
+        m_imageInfo = imageInfo;
         //this.SwitchAbTestGroup(INPluginWrapper.Instance.GetAbTestGroup());
-        this.FinishHandler = null;
-        this.m_changableText.text = LocalizationManager.Instance.GetString("get_this_image");
-        this.CheckVisibleImage();
+        FinishHandler = null;
+        m_changableText.text = LocalizationManager.Instance.GetString("get_this_image");
+        CheckVisibleImage();
     }
 
     public void Init(Action<bool> handler, ABTestGroup abTestGroup, AbTestWindowMode mode)
     {
-        this.CheckVisibleImage();
-        this.m_imageInfo = null;
-        this.FinishHandler = handler;
-        this.SwitchAbTestGroup(abTestGroup);
-        Sprite sprite = this.m_defaultTex;
+        CheckVisibleImage();
+        m_imageInfo = null;
+        FinishHandler = handler;
+        SwitchAbTestGroup(abTestGroup);
+        var sprite = m_defaultTex;
         switch (mode)
         {
             case AbTestWindowMode.Bomb:
-                sprite = this.m_bombTex;
-                this.m_place = "grenade";
-                this.m_changableText.text = LocalizationManager.Instance.GetString("get_bomb");
+                sprite = m_bombTex;
+                m_place = "grenade";
+                m_changableText.text = LocalizationManager.Instance.GetString("get_bomb");
                 break;
             case AbTestWindowMode.Lasso:
-                sprite = this.m_lassoTex;
-                this.m_place = "wand";
-                this.m_changableText.text = LocalizationManager.Instance.GetString("get_wand");
+                sprite = m_lassoTex;
+                m_place = "wand";
+                m_changableText.text = LocalizationManager.Instance.GetString("get_wand");
                 break;
             case AbTestWindowMode.Photo:
-                sprite = this.m_defaultTex;
-                this.m_place = "photo";
-                this.m_changableText.text = LocalizationManager.Instance.GetString("create_art");
+                sprite = m_defaultTex;
+                m_place = "photo";
+                m_changableText.text = LocalizationManager.Instance.GetString("create_art");
                 break;
         }
-        AnalyticsManager.Instance.ABTestWindowOpened(this.m_place);
-        this.m_picImage1.gameObject.SetActive(true);
-        this.m_picImage2.gameObject.SetActive(true);
-        this.m_image1.gameObject.SetActive(false);
-        this.m_image2.gameObject.SetActive(false);
-        this.m_picImage1.sprite = sprite;
-        this.m_picImage2.sprite = sprite;
+        AnalyticsManager.Instance.ABTestWindowOpened(m_place);
+        m_picImage1.gameObject.SetActive(true);
+        m_picImage2.gameObject.SetActive(true);
+        m_image1.gameObject.SetActive(false);
+        m_image2.gameObject.SetActive(false);
+        m_picImage1.sprite = sprite;
+        m_picImage2.sprite = sprite;
     }
 
-    private void CheckVisibleImage()
+    void CheckVisibleImage()
     {
-        if (this.m_imageInfo != null)
+        if (m_imageInfo != null)
         {
             /*if (IAPWrapper.Instance.NoAds || IAPWrapper.Instance.Subscribed)
             {
@@ -136,19 +124,19 @@ public class IapPopup : BaseWindow
         }
         else
         {
-            this.mozaic.SetActive(false);
+            mozaic.SetActive(false);
         }
     }
 
-    private void SwitchAbTestGroup(ABTestGroup abTestGroup)
+    void SwitchAbTestGroup(ABTestGroup abTestGroup)
     {
         switch (abTestGroup)
         {
             case ABTestGroup.RewardedNo_ContentMedium:
             case ABTestGroup.RewardedNo_ContentHard:
             case ABTestGroup.RewardedNo_ContentEasy:
-                this.m_subscrPart.SetActive(true);
-                this.m_subscrVideoPart.SetActive(false);
+                m_subscrPart.SetActive(true);
+                m_subscrVideoPart.SetActive(false);
                 break;
             default:
                 /*if (AdsWrapper.Instance.IsVideoAvailable() && m_imagePreview != null && m_imagePreview.AdsAvailable)
@@ -170,8 +158,8 @@ public class IapPopup : BaseWindow
         //ABTestGroup abTestGroup = INPluginWrapper.Instance.GetAbTestGroup();
         //if (abTestGroup == ABTestGroup.RewardedNo_ContentMedium_Old || abTestGroup == ABTestGroup.None)
         {
-            NewInappsWindow newInappsWindow = WindowManager.Instance.OpenInappsWindow();
-            newInappsWindow.Init(this.m_place, null);
+            var newInappsWindow = WindowManager.Instance.OpenInappsWindow();
+            newInappsWindow.Init(m_place, null);
             WindowManager.Instance.CloseMe(this);
         }
         //else
@@ -180,7 +168,7 @@ public class IapPopup : BaseWindow
         //	trialInappsWindow.Init(this.m_place, null, false, false);
         //	WindowManager.Instance.CloseMe(this);
         //}
-        AnalyticsManager.Instance.ABTestWindowAction("subscribe", this.m_place);
+        AnalyticsManager.Instance.ABTestWindowAction("subscribe", m_place);
     }
 
     public void WatchButtonClick()
@@ -208,18 +196,18 @@ public class IapPopup : BaseWindow
     public void CloseButtonClick()
     {
         WindowManager.Instance.CloseMe(this);
-        AnalyticsManager.Instance.ABTestWindowAction("close", this.m_place);
+        AnalyticsManager.Instance.ABTestWindowAction("close", m_place);
     }
 
-    private void OnPurchaseHandler(bool res, SubscriptionType type)
+    void OnPurchaseHandler(bool res, SubscriptionType type)
     {
-        if (base.gameObject.activeSelf)
+        if (gameObject.activeSelf)
         {
             WindowManager.Instance.CloseMe(this);
         }
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));

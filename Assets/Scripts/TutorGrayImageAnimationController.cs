@@ -2,13 +2,12 @@ using UnityEngine;
 
 public class TutorGrayImageAnimationController : MonoBehaviour
 {
-    [SerializeField] private Material m_material;
+    [SerializeField] Material m_material;
+    [SerializeField] float m_alpha = 1f;
 
-    [SerializeField] private float m_alpha = 1f;
-
-    private void Update()
+    void Update()
     {
-        this.m_material.SetFloat("_Alpha", this.m_alpha);
+        m_material.SetFloat("_Alpha", m_alpha);
     }
 }
 

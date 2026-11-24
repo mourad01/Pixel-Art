@@ -12,11 +12,11 @@ public class DataManager : MonoBehaviour
 {
     public Action OnInternetAppeared;
 
-    private DateTime m_startTime = DateTime.Now; 
+    DateTime m_startTime = DateTime.Now; 
 
-    [SerializeField] private ServerConnector m_serverConnector;
+    [SerializeField] ServerConnector m_serverConnector;
 
-    private ImagesInfo m_imagesInfo; 
+    ImagesInfo m_imagesInfo; 
 
     public static DataManager Instance { get; private set; }
 
@@ -32,7 +32,7 @@ public class DataManager : MonoBehaviour
     {
         get
         {
-            return InternetConnection.IsAvailable && !this.ServerError;
+            return InternetConnection.IsAvailable && !ServerError;
         }
     }
 
@@ -40,27 +40,26 @@ public class DataManager : MonoBehaviour
 
     public bool Inited { get; private set; }
 
-    private void Awake()
+    void Awake()
     {
-        DataManager.Instance = this; 
+        Instance = this; 
     }
 
     public void Init()
     { 
-        this.m_serverConnector.Init();
-        ServerConnector serverConnector = this.m_serverConnector;
-        serverConnector.OnInternetAppeared = (Action)Delegate.Combine(serverConnector.OnInternetAppeared, (Action)delegate
+        m_serverConnector.Init();
+        m_serverConnector.OnInternetAppeared += delegate
         {
-            this.OnInternetAppeared.SafeInvoke();
-        });
+            OnInternetAppeared.SafeInvoke();
+        };
     } 
 
     public void GetImages(bool force, Action<ImagesInfo> handler)
     {
         Debug.Log("GetImages 10");
-        if (this.m_imagesInfo != null && !force)
+        if (m_imagesInfo != null && !force)
         {
-            handler.SafeInvoke(this.m_imagesInfo);
+            handler.SafeInvoke(m_imagesInfo);
         }
         else
         {
@@ -72,17 +71,17 @@ public class DataManager : MonoBehaviour
             base.StartCoroutine(m_serverConnector.GetLocalStreamData((res) =>
             {
                 Debug.Log("GetImages this.m_imagesInfo = res; count = " + res.Count);
-                this.m_imagesInfo = res;
-                base.StartCoroutine(this.GetImagesListCoroutine(force, handler));
+                m_imagesInfo = res;
+                base.StartCoroutine(GetImagesListCoroutine(force, handler));
             }));
-            base.StartCoroutine(this.LoadImages(handler));
+            base.StartCoroutine(LoadImages(handler));
         }
     }
 
-    private IEnumerator LoadImages(Action<ImagesInfo> handler)
+    IEnumerator LoadImages(Action<ImagesInfo> handler)
     {
         yield return null;
-        if (this.m_imagesInfo == null || this.m_imagesInfo.Images.Count == 0)
+        if (m_imagesInfo == null || m_imagesInfo.Images.Count == 0)
         {
            
             yield return new WaitForSeconds(0.5f);
@@ -91,9 +90,9 @@ public class DataManager : MonoBehaviour
                 this.m_imagesInfo = Serializer.LoadFromTextStream<ImagesInfo>(stream);
             }*/
         }
-        handler(this.m_imagesInfo);
+        handler(m_imagesInfo);
     } 
-    private T CheckDownloadedFile<T>(string fileName)
+    T CheckDownloadedFile<T>(string fileName)
     { 
         string path = AppPathsConfig.DownloadsPath + fileName;
         Debug.Log("CheckDownloadedFile " + path);
@@ -111,12 +110,12 @@ public class DataManager : MonoBehaviour
 
     public ImageInfo GetImageInfo(string imageId)
     {
-        return this.m_imagesInfo.Images.FirstOrDefault((ImageInfo a) => a.Id == imageId);
+        return m_imagesInfo.Images.FirstOrDefault((ImageInfo a) => a.Id == imageId);
     }
 
     public void GetImageAsset(ImageInfo imageInfo, Action<bool, Texture2D> handler)
     {
-        base.StartCoroutine(this.GetImageAssetCoroutine(imageInfo, handler));
+        base.StartCoroutine(GetImageAssetCoroutine(imageInfo, handler));
     }
 
     public bool CheckLocalAsset(ImageInfo imageInfo)
@@ -127,12 +126,12 @@ public class DataManager : MonoBehaviour
 
     public void GetImageAsset3D(ImageInfo imageInfo, Action<bool, CashImage3D> handler)
     {
-        base.StartCoroutine(this.GetImageAsset3DCoroutine(imageInfo, handler));
+        base.StartCoroutine(GetImageAsset3DCoroutine(imageInfo, handler));
     }
 
     public void GetPhotoAsset(string id, Action<bool, Texture2D> handler)
     {
-        base.StartCoroutine(this.GetPhotoAssetCoroutine(id, handler));
+        base.StartCoroutine(GetPhotoAssetCoroutine(id, handler));
     } 
 
     public AssetBundle GetInappsWindow()
@@ -144,25 +143,25 @@ public class DataManager : MonoBehaviour
     {
         return null;
     } 
-    private void Log(string message)
+    void Log(string message)
     {
     }
 
-    private void LogError(string message)
+    void LogError(string message)
     {
     }
 
-    private void OnApplicationPause(bool pause)
+    void OnApplicationPause(bool pause)
     {
         if (pause)
         { 
         }
         else
         {
-            this.m_startTime = DateTime.Now;
+            m_startTime = DateTime.Now;
         }
     }  
-    private IEnumerator CheckEmbeddedVersion<T>(string fileName, Action<T> handler) 
+    IEnumerator CheckEmbeddedVersion<T>(string fileName, Action<T> handler) 
     {
         Debug.Log("CheckEmbeddedVersion " + AppPathsConfig.StreamingAssetsPath + fileName);
         var www = new WWW(AppPathsConfig.StreamingAssetsPath + fileName);
@@ -171,8 +170,8 @@ public class DataManager : MonoBehaviour
         if (string.IsNullOrEmpty(www.error))
         {
             Debug.Log("CheckEmbeddedVersion ok"); 
-            byte[] bytes = www.bytes;
-            T par = Serializer.LoadFromStream<T>((Stream)new MemoryStream(bytes));
+            var bytes = www.bytes;
+            var par = Serializer.LoadFromStream<T>((Stream)new MemoryStream(bytes));
             SystemExtends.SafeInvoke<T>(handler, par);
         }
         else
@@ -183,7 +182,7 @@ public class DataManager : MonoBehaviour
     }
 
 
-    private IEnumerator SearchForLocalFile<T>(string fileName, Action<T> handler)
+    IEnumerator SearchForLocalFile<T>(string fileName, Action<T> handler)
     { 
         Debug.Log("SearchForLocalFile"); 
         var downloadedVersion = CheckDownloadedFile<T>(fileName);
@@ -192,7 +191,7 @@ public class DataManager : MonoBehaviour
             SystemExtends.SafeInvoke<T>(handler, downloadedVersion);
             yield break;
         }
-        this.StartCoroutine(this.CheckEmbeddedVersion<T>(fileName, (Action<T>)delegate (T res)
+        StartCoroutine(CheckEmbeddedVersion<T>(fileName, (Action<T>)delegate (T res)
         { 
             if (res != null && !res.Equals(default(T)))
             {
@@ -205,7 +204,7 @@ public class DataManager : MonoBehaviour
         }));         yield return null;
     }
 
-    private IEnumerator GetImagesListCoroutine(bool force, Action<ImagesInfo> handler)
+    IEnumerator GetImagesListCoroutine(bool force, Action<ImagesInfo> handler)
     {
         Debug.Log("GetImagesListCoroutine");
         
@@ -214,14 +213,14 @@ public class DataManager : MonoBehaviour
             yield return null;
             
             Debug.Log("GetImagesListCoroutine not force");
-            this.StartCoroutine(this.SearchForLocalFile(AppPathsConfig.ImagesFile, delegate (ImagesInfo res)
+            StartCoroutine(SearchForLocalFile(AppPathsConfig.ImagesFile, delegate (ImagesInfo res)
             {
                 Debug.Log("GetImagesListCoroutine SearchForLocalFile response");
                 if (res != null)
-                    this.m_imagesInfo = res;
-                if (this.m_imagesInfo != null)
+                    m_imagesInfo = res;
+                if (m_imagesInfo != null)
                 {
-                    handler.SafeInvoke(this.m_imagesInfo);
+                    handler.SafeInvoke(m_imagesInfo);
                 }
             }));
             
@@ -230,36 +229,36 @@ public class DataManager : MonoBehaviour
         }
         
         yield return null;
-        this.m_serverConnector.GetImagesList(delegate (ImagesInfo imagesInfo)         {
+        m_serverConnector.GetImagesList(delegate (ImagesInfo imagesInfo)         {
             Debug.Log("GetImagesListCoroutine GetImagesList response");
             if (imagesInfo != null){
                 Debug.Log("GetImagesListCoroutine GetImagesList response count = " + imagesInfo.Count);
             }
-            if (imagesInfo != null && this.m_imagesInfo != null)
+            if (imagesInfo != null && m_imagesInfo != null)
             {
                 Debug.Log("GetImagesListCoroutine GetImagesList response OK");
-                int count = this.m_imagesInfo.Images.Count;
-                this.m_imagesInfo = imagesInfo;                 Serializer.SaveToTextFile(AppPathsConfig.DownloadsPath + AppPathsConfig.ImagesFile, imagesInfo, false);                 if (count != imagesInfo.Images.Count)
+                int count = m_imagesInfo.Images.Count;
+                m_imagesInfo = imagesInfo;                 Serializer.SaveToTextFile(AppPathsConfig.DownloadsPath + AppPathsConfig.ImagesFile, imagesInfo, false);                 if (count != imagesInfo.Images.Count)
                 {
                     handler.SafeInvoke(imagesInfo);
                 }
             }
         });         yield return null;
     }
-    private IEnumerator GetImageAssetCoroutine(ImageInfo imageInfo, Action<bool, Texture2D> handler)
+    IEnumerator GetImageAssetCoroutine(ImageInfo imageInfo, Action<bool, Texture2D> handler)
     {
-        this.StartCoroutine(SearchForLocalFile(imageInfo.Id + ".png", delegate (CashImage foundAsset)
+        StartCoroutine(SearchForLocalFile(imageInfo.Id + ".png", delegate (CashImage foundAsset)
         { 
             if (foundAsset != null)
             {
-                Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGB24, false);
+                var texture2D = new Texture2D(1, 1, TextureFormat.RGB24, false);
                 texture2D.filterMode = (FilterMode)(imageInfo.Is3D ? 1 : 0);
                 texture2D.LoadImage(foundAsset.Bytes);
                 handler.SafeInvoke(true, texture2D);
                 return;
             }
             Texture2D serverTex = null; 
-            this.m_serverConnector.GetImageAsset(imageInfo, delegate (bool res, byte[] bytes)
+            m_serverConnector.GetImageAsset(imageInfo, delegate (bool res, byte[] bytes)
             { 
                 if (res)
                 {
@@ -267,8 +266,8 @@ public class DataManager : MonoBehaviour
                     {
                         string fileName = AppPathsConfig.DownloadsPath + imageInfo.Id + ".png";
                         Serializer.SaveToFile(fileName, new CashImage(bytes), false);
-                        CashImage cashImage = Serializer.LoadFromFile<CashImage>(fileName);
-                        Texture2D texture2D2 = new Texture2D(1, 1, TextureFormat.RGB24, false);
+                        var cashImage = Serializer.LoadFromFile<CashImage>(fileName);
+                        var texture2D2 = new Texture2D(1, 1, TextureFormat.RGB24, false);
                         texture2D2.filterMode = (FilterMode)(imageInfo.Is3D ? 1 : 0);
                         texture2D2.LoadImage(cashImage.Bytes);
                         serverTex = texture2D2;
@@ -285,8 +284,8 @@ public class DataManager : MonoBehaviour
         yield return null;
     }
 
-    private IEnumerator GetImageAsset3DCoroutine(ImageInfo imageInfo, Action<bool, CashImage3D> handler)
-    {          this.StartCoroutine(this.SearchForLocalFile(imageInfo.Id + ".png.vox", delegate (CashImage3D foundAsset)         {
+    IEnumerator GetImageAsset3DCoroutine(ImageInfo imageInfo, Action<bool, CashImage3D> handler)
+    {          StartCoroutine(SearchForLocalFile(imageInfo.Id + ".png.vox", delegate (CashImage3D foundAsset)         {
             if (foundAsset != null)
             {
                 handler.SafeInvoke(true, foundAsset);
@@ -297,7 +296,7 @@ public class DataManager : MonoBehaviour
                 string path = AppPathsConfig.DownloadsPath + imageInfo.Id + ".png.vox";
                 if (File.Exists(path))
                 {
-                    CashImage3D data = Serializer.LoadFromFile<CashImage3D>(path);
+                    var data = Serializer.LoadFromFile<CashImage3D>(path);
                     handler.SafeInvoke(true, data);
                     return;
                 }
@@ -305,12 +304,12 @@ public class DataManager : MonoBehaviour
             catch
             {
             } 
-            this.m_serverConnector.GetImageAsset3D(imageInfo, delegate (bool res, byte[] bytes)
+            m_serverConnector.GetImageAsset3D(imageInfo, delegate (bool res, byte[] bytes)
             { 
             CashImage3D customVox = null;
                 if (res)
                 {
-                    CashImage3D data = new CashImage3D(new CashImage(bytes));
+                    var data = new CashImage3D(new CashImage(bytes));
                     string voxFilename = AppPathsConfig.DownloadsPath + imageInfo.Id + ".png.vox";
 
                     Serializer.SaveToFile(voxFilename, data);
@@ -327,7 +326,7 @@ public class DataManager : MonoBehaviour
         }));
         yield return null;  
     }
-    private IEnumerator GetPhotoAssetCoroutine(string id, Action<bool, Texture2D> handler)
+    IEnumerator GetPhotoAssetCoroutine(string id, Action<bool, Texture2D> handler)
     {
       
         yield return null;
@@ -335,8 +334,8 @@ public class DataManager : MonoBehaviour
         if (File.Exists(AppPathsConfig.DownloadsPath + fileName))
         {
             
-            byte[] data = File.ReadAllBytes(AppPathsConfig.DownloadsPath + fileName);
-            Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGB24, false);
+            var data = File.ReadAllBytes(AppPathsConfig.DownloadsPath + fileName);
+            var texture2D = new Texture2D(1, 1, TextureFormat.RGB24, false);
             texture2D.filterMode = FilterMode.Point;
             texture2D.LoadImage(data);
             handler.SafeInvoke(true, texture2D);

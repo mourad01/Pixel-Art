@@ -3,19 +3,16 @@ using System;
 public class TutorialModel
 {
     public Action OnToolsTutorialShow;
-
     public Action OnToolsTutorialClose;
-
     public Action OnPalettesTutorialShow;
-
     public Action OnPalettesTutorialClose;
 
-    private int m_imageClickCounter;
+    int m_imageClickCounter;
 
     public void ImageClick()
     {
-        this.m_imageClickCounter++;
-        if (this.m_imageClickCounter != 4)
+        m_imageClickCounter++;
+        if (m_imageClickCounter != 4)
         { 
         } 
     }

@@ -17,8 +17,7 @@ namespace Assets.Scripts.Navigation.Scenes
         {
             NavigationService.SetCurrentScene(this);
             UnitySingleton<BackButtonManager>.Instance.SetPause(false);
-            BackButtonManager instance = UnitySingleton<BackButtonManager>.Instance;
-            instance.BackButtonAction = (Action)Delegate.Combine(instance.BackButtonAction, new Action(this.BackButtonActions));
+            UnitySingleton<BackButtonManager>.Instance.BackButtonAction += BackButtonActions;
         }
 
         public abstract void OnNavigatedTo(NavigationArgs args);

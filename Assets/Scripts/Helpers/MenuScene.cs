@@ -16,15 +16,14 @@ namespace Assets.Scripts.Navigation.Scenes.Map
 
         public override void OnNavigatedTo(NavigationArgs args)
         {
-            MenuNavigationArgs menuNavigationArgs = args as MenuNavigationArgs;
-            this.SubscribeToPopupClose();
+            var menuNavigationArgs = args as MenuNavigationArgs;
+            SubscribeToPopupClose();
         }
 
         public override void OnNavigatedFrom()
         {
-            BackButtonManager instance = UnitySingleton<BackButtonManager>.Instance;
-            instance.BackButtonAction = (Action)Delegate.Remove(instance.BackButtonAction, new Action(((BaseScene)this).BackButtonActions));
-            this.UnsubscribeFromPopupClose();
+            UnitySingleton<BackButtonManager>.Instance.BackButtonAction -= ((BaseScene)this).BackButtonActions;
+            UnsubscribeFromPopupClose();
         }
 
         public override void BackButtonActions()
@@ -32,11 +31,11 @@ namespace Assets.Scripts.Navigation.Scenes.Map
             Application.Quit();
         }
 
-        private void SubscribeToPopupClose()
+        void SubscribeToPopupClose()
         {
         }
 
-        private void UnsubscribeFromPopupClose()
+        void UnsubscribeFromPopupClose()
         {
         }
     }

@@ -9,8 +9,8 @@ public class PhotoInfo
 
     public PhotoInfo(string id, PhotoSource source)
     {
-        this.Id = id;
-        this.Source = source;
+        Id = id;
+        Source = source;
     }
 }
 

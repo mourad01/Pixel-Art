@@ -5,7 +5,7 @@ public class MessagePanel : MonoBehaviour
 
     public Popup messagePanel;
 
-    private static MessagePanel instance;
+    static MessagePanel instance;
     void Awake()
     {
         DontDestroyOnLoad(gameObject);

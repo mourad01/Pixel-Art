@@ -17,8 +17,8 @@ namespace Serialization
             FileStream fileStream = null;
             try
             {
-                Serializer.SetNormalAttributesForFile(fileName);
-                BinaryFormatter binaryFormatter = new BinaryFormatter();
+                SetNormalAttributesForFile(fileName);
+                var binaryFormatter = new BinaryFormatter();
                 fileStream = new FileStream(fileName, FileMode.OpenOrCreate);
                 binaryFormatter.Serialize(fileStream, serializableObject);
             }
@@ -53,7 +53,7 @@ namespace Serialization
             FileStream fileStream = null;
             try
             {
-                XmlSerializer ser = new XmlSerializer(typeof(T)); 
+                var ser = new XmlSerializer(typeof(T)); 
 
                 fileStream = new FileStream(fileName, FileMode.OpenOrCreate);
                 var streamWriter = new StreamWriter(fileStream, Encoding.UTF8);
@@ -90,7 +90,7 @@ namespace Serialization
             {
                 fileStream = new FileStream(fileName, FileMode.Open);
                 fileStream.Position = 0L;
-                XmlSerializer ser = new XmlSerializer(typeof(T));
+                var ser = new XmlSerializer(typeof(T));
                 return (T)ser.Deserialize(fileStream);
             }
             catch (Exception ex)
@@ -116,7 +116,7 @@ namespace Serialization
                 FileStream fileStream = null;
                 try
                 {
-                    BinaryFormatter binaryFormatter = new BinaryFormatter();
+                    var binaryFormatter = new BinaryFormatter();
                     fileStream = new FileStream(fileName, FileMode.Open);
                     fileStream.Position = 0L;
                     return (T)binaryFormatter.Deserialize(fileStream);
@@ -144,14 +144,14 @@ namespace Serialization
         public static T LoadFromStream<T>(Stream stream)
         {
             DebugLogger.Log("LoadFromStream ");
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            var binaryFormatter = new BinaryFormatter();
             return (T)binaryFormatter.Deserialize(stream);
         }
         public static T LoadFromTextStream<T>(Stream stream)
         {
 
                 DebugLogger.Log("LoadFromTextStream ");
-                XmlSerializer ser = new XmlSerializer(typeof(T));
+                var ser = new XmlSerializer(typeof(T));
 
 
 
@@ -162,7 +162,7 @@ namespace Serialization
         {
             if (File.Exists(fileName))
             {
-                FileAttributes attributes = File.GetAttributes(fileName);
+                var attributes = File.GetAttributes(fileName);
                 attributes &= ~FileAttributes.ReadOnly;
                 File.SetAttributes(fileName, attributes);
             }

@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class SystemToolsWrapper
 {
-    private static AndroidJavaObject systemTool;
+    static AndroidJavaObject systemTool;
 
     public static void Minimize()
     {
-        AndroidJavaObject s = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
+        var s = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
         s.Call<bool>("moveTaskToBack", new object[1] {
             true
         });

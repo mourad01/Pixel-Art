@@ -10,7 +10,7 @@ public class ColorizationModeModel
 
     public Action<ColorizationModeModel> OnSpaceTypeChanged;
 
-    private BrushType m_spaceType;
+    BrushType m_spaceType;
 
     public BrushType CurrentSpaceType
     {

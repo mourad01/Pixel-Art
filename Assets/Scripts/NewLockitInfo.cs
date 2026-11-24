@@ -8,19 +8,19 @@ using System.Xml;
 [Serializable]
 public class NewLockitInfo
 {
-    private Dictionary<string, Dictionary<string, string>> m_dict;
+    Dictionary<string, Dictionary<string, string>> m_dict;
 
     public string this[string key]
     {
         get
         {
-            if (this.m_dict.ContainsKey(key))
+            if (m_dict.ContainsKey(key))
             {
                 string locale = LocalizationManager.Instance.CurrentLocale;
                 locale = locale.Replace("_", "-");
-                if (this.m_dict[key].ContainsKey(locale))
+                if (m_dict[key].ContainsKey(locale))
                 {
-                    string text = this.m_dict[key][locale];
+                    string text = m_dict[key][locale];
                     if (!string.IsNullOrEmpty(text))
                     {
                         if (locale == "ar")
@@ -45,35 +45,35 @@ public class NewLockitInfo
                     {
                         locale = locale.Substring(0, locale.LastIndexOf("-"));
                     }
-                    string text2 = this.m_dict[key].Keys.FirstOrDefault((string a) => a.StartsWith(locale));
-                    if (text2 == null)
+                    string localeKey = m_dict[key].Keys.FirstOrDefault((string a) => a.StartsWith(locale));
+                    if (localeKey == null)
                     {
                         continue;
                     }
-                    string text3 = this.m_dict[key][text2];
-                    if (string.IsNullOrEmpty(text3))
+                    string translation = m_dict[key][localeKey];
+                    if (string.IsNullOrEmpty(translation))
                     {
                         continue;
                     }
                     if (!(locale == "ar"))
                     {
-                        return text3;
+                        return translation;
                     }
-                    text3 = text3.Replace("[[[", string.Empty);
-                    text3 = text3.Replace("]]]", string.Empty);
+                    translation = translation.Replace("[[[", string.Empty);
+                    translation = translation.Replace("]]]", string.Empty);
                     //text3 = ArabicFixer.Fix(text3, false, false);
-                    text3 = text3.Replace(">/b<", "<b>");
-                    text3 = text3.Replace(">b<", "</b>");
-                    text3 = text3.Replace("//:https", "https://");
+                    translation = translation.Replace(">/b<", "<b>");
+                    translation = translation.Replace(">b<", "</b>");
+                    translation = translation.Replace("//:https", "https://");
                     break;
                 }
                 locale = LocalizationManager.Instance.DefaultLocale;
-                if (this.m_dict[key].ContainsKey(locale))
+                if (m_dict[key].ContainsKey(locale))
                 {
-                    string text4 = this.m_dict[key][locale];
-                    if (!string.IsNullOrEmpty(text4))
+                    string translation = m_dict[key][locale];
+                    if (!string.IsNullOrEmpty(translation))
                     {
-                        return text4;
+                        return translation;
                     }
                 }
             }
@@ -92,7 +92,7 @@ public class NewLockitInfo
 
         using (StringReader sw = new StringReader(text))
         {
-            XmlDocument doc = new XmlDocument();
+            var doc = new XmlDocument();
             doc.LoadXml(text);
 
             var pairs = doc.GetElementsByTagName("TextPair");

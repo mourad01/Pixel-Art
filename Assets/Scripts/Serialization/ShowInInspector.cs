@@ -45,10 +45,10 @@ namespace Core.Serialization
 
         public ShowInInspector(string fieldName, string toolTip, bool readOnly, bool staticArraySize)
         {
-            this.FieldName = fieldName;
-            this.ToolTip = toolTip;
-            this.ReadOnly = readOnly;
-            this.StaticArraySize = staticArraySize;
+            FieldName = fieldName;
+            ToolTip = toolTip;
+            ReadOnly = readOnly;
+            StaticArraySize = staticArraySize;
         }
     }
 }

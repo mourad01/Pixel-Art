@@ -5,11 +5,11 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public class FontSwitcher : MonoBehaviour
 {
-    private Text m_text;
+    Text m_text;
 
-    private void Awake()
+    void Awake()
     {
-        this.m_text = base.GetComponent<Text>();
+        m_text = base.GetComponent<Text>();
         switch (LocalizationManager.Instance.CurrentLanguage)
         {
             case SystemLanguage.Japanese:
@@ -18,23 +18,23 @@ public class FontSwitcher : MonoBehaviour
             case SystemLanguage.Vietnamese:
             case SystemLanguage.ChineseSimplified:
             case SystemLanguage.ChineseTraditional:
-                this.m_text.font = (Resources.Load("MyriadPro-Regular-dynamic") as Font);
+                m_text.font = (Resources.Load("MyriadPro-Regular-dynamic") as Font);
                 break;
             case SystemLanguage.Arabic:
-                this.m_text.font = (Resources.Load("MyriadPro-Regular-dynamic") as Font);
+                m_text.font = (Resources.Load("MyriadPro-Regular-dynamic") as Font);
                 break;
         }
     }
 
     [ContextMenu("ChangeFont")]
-    private void ChangeFont()
+    void ChangeFont()
     {
-        this.m_text = base.GetComponent<Text>();
-        if (!this.m_text.font.name.Contains("helvetica") && !this.m_text.font.name.Contains("HELVETICA"))
+        m_text = base.GetComponent<Text>();
+        if (!m_text.font.name.Contains("helvetica") && !m_text.font.name.Contains("HELVETICA"))
         {
             return;
         }
-        this.m_text.font = (Resources.Load("RobotoCondensed-Regular") as Font);
+        m_text.font = (Resources.Load("RobotoCondensed-Regular") as Font);
     }
 }
 

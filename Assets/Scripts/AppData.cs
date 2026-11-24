@@ -6,79 +6,45 @@ using System.Collections.Generic;
 
 public static class AppData
 {
-    private static string s_uidKey = "uid"; 
-
-    private static string s_appRatedKey = "app_rated";
-
-    private static string s_sessionIdKey = "session_id";
-
-    private static string s_oneSignalIdKey = "onesignal_id";
-
-    private static string s_rateUsShowsKey = "last_rateus_shows";
-
-    private static string s_localNotificationsKey = "local_notifs";
-
-    private static string s_purhasesKey = "purchases";
-
-    private static string s_freeImagesCounterKey = "free_images_counter";
-
-    private static string s_videoImagesKey = "video_images";
-
-    private static string s_vibroKey = "vibro";
-
-    private static string s_vibroRightKey = "vibro_right";
-
-    private static string s_vibroWrongKey = "vibro_wrong";
+    static string s_uidKey = "uid"; 
+    static string s_appRatedKey = "app_rated";
+    static string s_sessionIdKey = "session_id";
+    static string s_oneSignalIdKey = "onesignal_id";
+    static string s_rateUsShowsKey = "last_rateus_shows";
+    static string s_localNotificationsKey = "local_notifs";
+    static string s_purhasesKey = "purchases";
+    static string s_freeImagesCounterKey = "free_images_counter";
+    static string s_videoImagesKey = "video_images";
+    static string s_vibroKey = "vibro";
+    static string s_vibroRightKey = "vibro_right";
+    static string s_vibroWrongKey = "vibro_wrong";
 
     public static string s_soundsKey = "sounds";
 
-    private static string s_tutorialKey = "tutorial";
-
-    private static string s_tutorialKey3D = "tutorial3D";
-
-    private static string s_lassoCountKey = "lassos";
-
-    private static string s_bombCountKey = "bombs";
-
-    private static string s_prevHostKey = "prev_host";
-
-    private static string s_isOldUserKey = "is_old_user";
-
-    private static string s_bulbModeKey = "bulb_mode";
-
-    private static string s_loupeKey = "loupe";
-
-    private static string s_noAdsKey = "no_ads";
-
-    private static string s_specPageOpenedKey = "spec_page";
-
-    private static string s_unlockedImages = "unlocked_images";
-
-    private static string s_pictureDoneKey = "picture_done";
-
-    private static string s_pictureDoneCountKey = "picture_done_count";
-
-    private static string s_launchNextDayKey = "launch_next_day";
-
-    private static string s_launchNext2DaysKey = "launch_next2_days";
-
-    private static string s_endSessionTime = "end_session_time";
-
-    private static string s_lastDayTracked = "session_tracked";
-
-    private static string s_freePhotos = "free_photos";
-
-    private static string s_firstLaunch = "first_launch";
-
-    private static string s_intersCount = "inters_count";
-
-    private static string s_secondsInGame = "seconds_count";
-
-    private static string s_weekSecondsTracked = "week_sec_tracked";
-
-    private static string s_subCampaign = "sub_campaign";
-
-    private static string s_updateToNew = "udpate_to_new";
+    static string s_tutorialKey = "tutorial";
+    static string s_tutorialKey3D = "tutorial3D";
+    static string s_lassoCountKey = "lassos";
+    static string s_bombCountKey = "bombs";
+    static string s_prevHostKey = "prev_host";
+    static string s_isOldUserKey = "is_old_user";
+    static string s_bulbModeKey = "bulb_mode";
+    static string s_loupeKey = "loupe";
+    static string s_noAdsKey = "no_ads";
+    static string s_specPageOpenedKey = "spec_page";
+    static string s_unlockedImages = "unlocked_images";
+    static string s_pictureDoneKey = "picture_done";
+    static string s_pictureDoneCountKey = "picture_done_count";
+    static string s_launchNextDayKey = "launch_next_day";
+    static string s_launchNext2DaysKey = "launch_next2_days";
+    static string s_endSessionTime = "end_session_time";
+    static string s_lastDayTracked = "session_tracked";
+    static string s_freePhotos = "free_photos";
+    static string s_firstLaunch = "first_launch";
+    static string s_intersCount = "inters_count";
+    static string s_secondsInGame = "seconds_count";
+    static string s_weekSecondsTracked = "week_sec_tracked";
+    static string s_subCampaign = "sub_campaign";
+    static string s_updateToNew = "udpate_to_new";
 
     public static bool Inited { get; private set; }
 
@@ -86,11 +52,11 @@ public static class AppData
     {
         get
         {
-            string text = PlayerPrefsWrapper.GetString(AppData.s_uidKey);
+            string text = PlayerPrefsWrapper.GetString(s_uidKey);
             if (string.IsNullOrEmpty(text))
             {
                 text = Guid.NewGuid().ToString();
-                PlayerPrefsWrapper.SetString(AppData.s_uidKey, text);
+                PlayerPrefsWrapper.SetString(s_uidKey, text);
             }
             return text;
         }
@@ -100,11 +66,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_appRatedKey);
+            return PlayerPrefsWrapper.GetBool(s_appRatedKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_appRatedKey, value);
+            PlayerPrefsWrapper.SetBool(s_appRatedKey, value);
         }
     }
 
@@ -112,11 +78,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetInt(AppData.s_sessionIdKey);
+            return PlayerPrefsWrapper.GetInt(s_sessionIdKey);
         }
         private set
         {
-            PlayerPrefsWrapper.SetInt(AppData.s_sessionIdKey, value);
+            PlayerPrefsWrapper.SetInt(s_sessionIdKey, value);
         }
     }
 
@@ -124,11 +90,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetString(AppData.s_oneSignalIdKey);
+            return PlayerPrefsWrapper.GetString(s_oneSignalIdKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetString(AppData.s_oneSignalIdKey, value);
+            PlayerPrefsWrapper.SetString(s_oneSignalIdKey, value);
         }
     }
 
@@ -136,8 +102,8 @@ public static class AppData
     {
         get
         {
-            List<string> stringList = PlayerPrefsWrapper.GetStringList(AppData.s_rateUsShowsKey);
-            List<DateTime> list = new List<DateTime>();
+            var stringList = PlayerPrefsWrapper.GetStringList(s_rateUsShowsKey);
+            var list = new List<DateTime>();
             foreach (string item in stringList)
             {
                 list.Add(DateTime.Parse(item));
@@ -148,12 +114,12 @@ public static class AppData
         {
             if (value != null)
             {
-                List<string> list = new List<string>();
+                var list = new List<string>();
                 foreach (DateTime item in value)
                 {
                     list.Add(item.ToString());
                 }
-                PlayerPrefsWrapper.SetStringList(AppData.s_rateUsShowsKey, list);
+                PlayerPrefsWrapper.SetStringList(s_rateUsShowsKey, list);
             }
         }
     }
@@ -162,8 +128,8 @@ public static class AppData
     {
         get
         {
-            List<string> stringList = PlayerPrefsWrapper.GetStringList(AppData.s_localNotificationsKey);
-            List<int> list = new List<int>();
+            var stringList = PlayerPrefsWrapper.GetStringList(s_localNotificationsKey);
+            var list = new List<int>();
             foreach (string item in stringList)
             {
                 list.Add(int.Parse(item));
@@ -174,12 +140,12 @@ public static class AppData
         {
             if (value != null)
             {
-                List<string> list = new List<string>();
+                var list = new List<string>();
                 foreach (int item in value)
                 {
                     list.Add(item.ToString());
                 }
-                PlayerPrefsWrapper.SetStringList(AppData.s_localNotificationsKey, list);
+                PlayerPrefsWrapper.SetStringList(s_localNotificationsKey, list);
             }
         }
     }
@@ -188,11 +154,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetStringList(AppData.s_purhasesKey);
+            return PlayerPrefsWrapper.GetStringList(s_purhasesKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetStringList(AppData.s_purhasesKey, value);
+            PlayerPrefsWrapper.SetStringList(s_purhasesKey, value);
         }
     }
 
@@ -200,11 +166,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetInt(AppData.s_freeImagesCounterKey);
+            return PlayerPrefsWrapper.GetInt(s_freeImagesCounterKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetInt(AppData.s_freeImagesCounterKey, value);
+            PlayerPrefsWrapper.SetInt(s_freeImagesCounterKey, value);
         }
     }
 
@@ -212,23 +178,23 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetStringList(AppData.s_videoImagesKey);
+            return PlayerPrefsWrapper.GetStringList(s_videoImagesKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetStringList(AppData.s_videoImagesKey, value);
+            PlayerPrefsWrapper.SetStringList(s_videoImagesKey, value);
         }
     }
 
-    private static bool VibroEnabled
+    static bool VibroEnabled
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_vibroKey);
+            return PlayerPrefsWrapper.GetBool(s_vibroKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_vibroKey, value);
+            PlayerPrefsWrapper.SetBool(s_vibroKey, value);
         }
     }
 
@@ -236,11 +202,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_vibroRightKey);
+            return PlayerPrefsWrapper.GetBool(s_vibroRightKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_vibroRightKey, value);
+            PlayerPrefsWrapper.SetBool(s_vibroRightKey, value);
         }
     }
 
@@ -248,11 +214,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_vibroWrongKey);
+            return PlayerPrefsWrapper.GetBool(s_vibroWrongKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_vibroWrongKey, value);
+            PlayerPrefsWrapper.SetBool(s_vibroWrongKey, value);
         }
     }
 
@@ -260,11 +226,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_soundsKey);
+            return PlayerPrefsWrapper.GetBool(s_soundsKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_soundsKey, value);
+            PlayerPrefsWrapper.SetBool(s_soundsKey, value);
         }
     }
 
@@ -272,11 +238,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_tutorialKey);
+            return PlayerPrefsWrapper.GetBool(s_tutorialKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_tutorialKey, value);
+            PlayerPrefsWrapper.SetBool(s_tutorialKey, value);
         }
     }
 
@@ -296,11 +262,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetInt(AppData.s_lassoCountKey);
+            return PlayerPrefsWrapper.GetInt(s_lassoCountKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetInt(AppData.s_lassoCountKey, value);
+            PlayerPrefsWrapper.SetInt(s_lassoCountKey, value);
         }
     }
 
@@ -308,11 +274,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetInt(AppData.s_bombCountKey);
+            return PlayerPrefsWrapper.GetInt(s_bombCountKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetInt(AppData.s_bombCountKey, value);
+            PlayerPrefsWrapper.SetInt(s_bombCountKey, value);
         }
     } 
 
@@ -320,11 +286,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_isOldUserKey);
+            return PlayerPrefsWrapper.GetBool(s_isOldUserKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_isOldUserKey, value);
+            PlayerPrefsWrapper.SetBool(s_isOldUserKey, value);
         }
     }
 
@@ -332,11 +298,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_bulbModeKey);
+            return PlayerPrefsWrapper.GetBool(s_bulbModeKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_bulbModeKey, value);
+            PlayerPrefsWrapper.SetBool(s_bulbModeKey, value);
         }
     }
 
@@ -344,11 +310,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_loupeKey);
+            return PlayerPrefsWrapper.GetBool(s_loupeKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_loupeKey, value);
+            PlayerPrefsWrapper.SetBool(s_loupeKey, value);
         }
     }
 
@@ -356,11 +322,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_noAdsKey);
+            return PlayerPrefsWrapper.GetBool(s_noAdsKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_noAdsKey, value);
+            PlayerPrefsWrapper.SetBool(s_noAdsKey, value);
         }
     }
 
@@ -368,11 +334,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_specPageOpenedKey);
+            return PlayerPrefsWrapper.GetBool(s_specPageOpenedKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_specPageOpenedKey, value);
+            PlayerPrefsWrapper.SetBool(s_specPageOpenedKey, value);
         }
     }
 
@@ -380,11 +346,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetStringList(AppData.s_unlockedImages);
+            return PlayerPrefsWrapper.GetStringList(s_unlockedImages);
         }
         set
         {
-            PlayerPrefsWrapper.SetStringList(AppData.s_unlockedImages, value);
+            PlayerPrefsWrapper.SetStringList(s_unlockedImages, value);
         }
     }
 
@@ -392,11 +358,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_pictureDoneKey);
+            return PlayerPrefsWrapper.GetBool(s_pictureDoneKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_pictureDoneKey, value);
+            PlayerPrefsWrapper.SetBool(s_pictureDoneKey, value);
         }
     }
 
@@ -404,11 +370,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetInt(AppData.s_pictureDoneCountKey);
+            return PlayerPrefsWrapper.GetInt(s_pictureDoneCountKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetInt(AppData.s_pictureDoneCountKey, value);
+            PlayerPrefsWrapper.SetInt(s_pictureDoneCountKey, value);
         }
     }
 
@@ -416,11 +382,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_launchNextDayKey);
+            return PlayerPrefsWrapper.GetBool(s_launchNextDayKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_launchNextDayKey, value);
+            PlayerPrefsWrapper.SetBool(s_launchNextDayKey, value);
         }
     }
 
@@ -428,11 +394,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_launchNext2DaysKey);
+            return PlayerPrefsWrapper.GetBool(s_launchNext2DaysKey);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_launchNext2DaysKey, value);
+            PlayerPrefsWrapper.SetBool(s_launchNext2DaysKey, value);
         }
     }
 
@@ -440,7 +406,7 @@ public static class AppData
     {
         get
         {
-            string str = PlayerPrefsWrapper.GetString(AppData.s_endSessionTime);
+            string str = PlayerPrefsWrapper.GetString(s_endSessionTime);
             if (!string.IsNullOrEmpty(str))
             {
                 return DateTime.Parse(str);
@@ -449,7 +415,7 @@ public static class AppData
         }
         set
         {
-            PlayerPrefsWrapper.SetString(AppData.s_endSessionTime, value.ToString());
+            PlayerPrefsWrapper.SetString(s_endSessionTime, value.ToString());
         }
     }
 
@@ -457,7 +423,7 @@ public static class AppData
     {
         get
         {
-            string @string = PlayerPrefsWrapper.GetString(AppData.s_lastDayTracked);
+            string @string = PlayerPrefsWrapper.GetString(s_lastDayTracked);
             if (!string.IsNullOrEmpty(@string))
             {
                 return DateTime.Parse(@string);
@@ -466,7 +432,7 @@ public static class AppData
         }
         set
         {
-            PlayerPrefsWrapper.SetString(AppData.s_lastDayTracked, value.ToString());
+            PlayerPrefsWrapper.SetString(s_lastDayTracked, value.ToString());
         }
     }
 
@@ -478,7 +444,7 @@ public static class AppData
         }
         set
         {
-            PlayerPrefsWrapper.SetInt(AppData.s_freePhotos, value);
+            PlayerPrefsWrapper.SetInt(s_freePhotos, value);
         }
     }
 
@@ -486,7 +452,7 @@ public static class AppData
     {
         get
         {
-            string @string = PlayerPrefsWrapper.GetString(AppData.s_firstLaunch);
+            string @string = PlayerPrefsWrapper.GetString(s_firstLaunch);
             if (!string.IsNullOrEmpty(@string))
             {
                 return DateTime.Parse(@string);
@@ -495,7 +461,7 @@ public static class AppData
         }
         set
         {
-            PlayerPrefsWrapper.SetString(AppData.s_firstLaunch, value.ToString());
+            PlayerPrefsWrapper.SetString(s_firstLaunch, value.ToString());
         }
     }
 
@@ -503,11 +469,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetInt(AppData.s_intersCount);
+            return PlayerPrefsWrapper.GetInt(s_intersCount);
         }
         set
         {
-            PlayerPrefsWrapper.SetInt(AppData.s_intersCount, value);
+            PlayerPrefsWrapper.SetInt(s_intersCount, value);
         }
     }
 
@@ -515,11 +481,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetInt(AppData.s_secondsInGame);
+            return PlayerPrefsWrapper.GetInt(s_secondsInGame);
         }
         set
         {
-            PlayerPrefsWrapper.SetInt(AppData.s_secondsInGame, value);
+            PlayerPrefsWrapper.SetInt(s_secondsInGame, value);
         }
     }
 
@@ -527,11 +493,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_weekSecondsTracked);
+            return PlayerPrefsWrapper.GetBool(s_weekSecondsTracked);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_weekSecondsTracked, value);
+            PlayerPrefsWrapper.SetBool(s_weekSecondsTracked, value);
         }
     }
 
@@ -539,11 +505,11 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_subCampaign);
+            return PlayerPrefsWrapper.GetBool(s_subCampaign);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_subCampaign, value);
+            PlayerPrefsWrapper.SetBool(s_subCampaign, value);
         }
     }
 
@@ -551,139 +517,139 @@ public static class AppData
     {
         get
         {
-            return PlayerPrefsWrapper.GetBool(AppData.s_updateToNew);
+            return PlayerPrefsWrapper.GetBool(s_updateToNew);
         }
         set
         {
-            PlayerPrefsWrapper.SetBool(AppData.s_updateToNew, value);
+            PlayerPrefsWrapper.SetBool(s_updateToNew, value);
         }
     }
 
     public static void Init()
     {
-        AppData.Inited = true;
-        string uid = AppData.Uid; 
+        Inited = true;
+        string uid = Uid; 
         bool isOldUser = false;
-        if (!PlayerPrefsWrapper.Exists(AppData.s_isOldUserKey))
+        if (!PlayerPrefsWrapper.Exists(s_isOldUserKey))
         {
-            AppData.IsOldUser = (AppData.SessionId > 0);
-            UnityDebug.Log("IsOldUser: " + AppData.IsOldUser);
+            IsOldUser = (SessionId > 0);
+            UnityDebug.Log("IsOldUser: " + IsOldUser);
             isOldUser = true;
         }
-        AppData.SessionId++;
-        if (!PlayerPrefsWrapper.Exists(AppData.s_vibroRightKey))
+        SessionId++;
+        if (!PlayerPrefsWrapper.Exists(s_vibroRightKey))
         {
             if (isOldUser)
             {
-                if (AppData.IsOldUser)
+                if (IsOldUser)
                 {
-                    AppData.VibroRightEnabled = AppData.VibroEnabled;
-                    AppData.VibroWrongEnabled = false;
+                    VibroRightEnabled = VibroEnabled;
+                    VibroWrongEnabled = false;
                 }
                 else
                 {
-                    AppData.VibroRightEnabled = false;
-                    AppData.VibroWrongEnabled = true;
+                    VibroRightEnabled = false;
+                    VibroWrongEnabled = true;
                 }
             }
             else
             {
-                AppData.VibroRightEnabled = false;
-                AppData.VibroWrongEnabled = AppData.VibroEnabled;
+                VibroRightEnabled = false;
+                VibroWrongEnabled = VibroEnabled;
             }
         }
-        if (!PlayerPrefsWrapper.Exists(AppData.s_soundsKey))
+        if (!PlayerPrefsWrapper.Exists(s_soundsKey))
         {
-            AppData.SoundsEnabled = true;
+            SoundsEnabled = true;
         }
-        if (!PlayerPrefsWrapper.Exists(AppData.s_lassoCountKey))
+        if (!PlayerPrefsWrapper.Exists(s_lassoCountKey))
         {
-            AppData.LassoCount = 5;
+            LassoCount = 5;
         }
-        if (!PlayerPrefsWrapper.Exists(AppData.s_bombCountKey))
+        if (!PlayerPrefsWrapper.Exists(s_bombCountKey))
         {
-            AppData.BombCount = 5;
+            BombCount = 5;
         }
-        if (!PlayerPrefsWrapper.Exists(AppData.s_bulbModeKey))
+        if (!PlayerPrefsWrapper.Exists(s_bulbModeKey))
         {
-            AppData.BulbMode = true;
+            BulbMode = true;
         }
-        if (!PlayerPrefsWrapper.Exists(AppData.s_loupeKey))
+        if (!PlayerPrefsWrapper.Exists(s_loupeKey))
         {
-            AppData.LoupeEnabled = false;
+            LoupeEnabled = false;
         }
-        if (AppData.SessionId == 1)
+        if (SessionId == 1)
         {
-            AppData.FirstLaunch = DateTime.UtcNow;
-            AppData.SecondsInGame = 0;
+            FirstLaunch = DateTime.UtcNow;
+            SecondsInGame = 0;
         }
-        if (!PlayerPrefsWrapper.Exists(AppData.s_freePhotos))
+        if (!PlayerPrefsWrapper.Exists(s_freePhotos))
         {
-            AppData.FreePhotos = 2;
+            FreePhotos = 2;
         }
-        if (!PlayerPrefsWrapper.Exists(AppData.s_updateToNew))
+        if (!PlayerPrefsWrapper.Exists(s_updateToNew))
         {
-            AppData.UpdateToNew = (AppData.SessionId > 1);
+            UpdateToNew = (SessionId > 1);
         }
-        AppData.CheckSessionEvents();
+        CheckSessionEvents();
     }
 
     public static void CheckSessionEvents()
     {
-        if (!PlayerPrefsWrapper.Exists(AppData.s_launchNextDayKey))
+        if (!PlayerPrefsWrapper.Exists(s_launchNextDayKey))
         {
             // AnalyticsManager.Instance.Test();
             try
             {
                 DateTime installDate = SystemToolsWrapper.GetInstallDate();
                 DateTime today = DateTime.Today;
-                TimeSpan t = today - installDate;
+                var t = today - installDate;
                 if (t == new TimeSpan(1, 0, 0, 0))
                 {
                     AnalyticsManager.Instance.LaunchNextDay();
                     AnalyticsManager.Instance.LaunchNext2Days();
-                    AppData.LaunchNextDay = true;
-                    AppData.LaunchNext2Days = true;
+                    LaunchNextDay = true;
+                    LaunchNext2Days = true;
                 }
                 else if (t == new TimeSpan(2, 0, 0, 0))
                 {
                     AnalyticsManager.Instance.LaunchNext2Days();
-                    AppData.LaunchNextDay = true;
-                    AppData.LaunchNext2Days = true;
+                    LaunchNextDay = true;
+                    LaunchNext2Days = true;
                 }
                 if (t > new TimeSpan(2, 0, 0, 0))
                 {
-                    AppData.LaunchNextDay = true;
-                    AppData.LaunchNext2Days = true;
+                    LaunchNextDay = true;
+                    LaunchNext2Days = true;
                 }
             }
             catch
             {
             }
         }
-        if (PlayerPrefsWrapper.Exists(AppData.s_lastDayTracked) && !(AppData.LastDayTracked < DateTime.Today))
+        if (PlayerPrefsWrapper.Exists(s_lastDayTracked) && !(LastDayTracked < DateTime.Today))
         {
             return;
         }
 
             AnalyticsManager.Instance.TrackFirstSessionOfTheDay();
-            AppData.LastDayTracked = DateTime.Today;
+            LastDayTracked = DateTime.Today;
 
     }
 
     public static void AddNewRateUsView()
     {
-        List<DateTime> list = AppData.LastRateUsShows;
-        if (list == null)
+        var lastRateUsShows = LastRateUsShows;
+        if (lastRateUsShows == null)
         {
-            list = new List<DateTime>();
+            lastRateUsShows = new List<DateTime>();
         }
-        list.Add(DateTime.Now);
-        while (list.Count > 2)
+        lastRateUsShows.Add(DateTime.Now);
+        while (lastRateUsShows.Count > 2)
         {
-            list.RemoveAt(0);
+            lastRateUsShows.RemoveAt(0);
         }
-        AppData.LastRateUsShows = list;
+        LastRateUsShows = lastRateUsShows;
     }
 }
 

@@ -11,15 +11,11 @@ public class NewInappsWindowElement : MonoBehaviour
 
     //private Product m_product;
 
-    [SerializeField] private Text m_price;
-
-    [SerializeField] private Text m_description;
-
-    [SerializeField] private Text m_descriptionDescr;
-
-    [SerializeField] private Image m_back;
-
-    [SerializeField] private GameObject m_inMonth;
+    [SerializeField] Text m_price;
+    [SerializeField] Text m_description;
+    [SerializeField] Text m_descriptionDescr;
+    [SerializeField] Image m_back;
+    [SerializeField] GameObject m_inMonth;
 
     /*public void Init(Product product)
     {

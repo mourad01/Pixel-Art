@@ -2,25 +2,25 @@ using UnityEngine;
 
 public class ScreenFormatPos : MonoBehaviour
 {
-    [SerializeField] private Vector2 m_pos_4x3 = Vector2.zero;
+    [SerializeField] Vector2 m_pos_4x3 = Vector2.zero;
 
-    private void Awake()
+    void Awake()
     {
-        bool flag = false;
+        bool found = false;
         if (Screen.width > Screen.height)
         {
             if ((float)Screen.width / (float)Screen.height < 1.51f)
             {
-                flag = true;
+                found = true;
             }
         }
         else if ((float)Screen.height / (float)Screen.width < 1.51f)
         {
-            flag = true;
+            found = true;
         }
-        if (flag)
+        if (found)
         {
-            ((RectTransform)base.transform).anchoredPosition = this.m_pos_4x3;
+            ((RectTransform)transform).anchoredPosition = m_pos_4x3;
         }
     }
 }

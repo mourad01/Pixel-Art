@@ -7,41 +7,25 @@ using UnityEngine;
 
 public class WindowManager : MonoBehaviour
 {
-    [SerializeField] private Transform m_uiParent;
+    [SerializeField] Transform m_uiParent;
+    [SerializeField] Canvas m_canvas;
 
-    [SerializeField] private Canvas m_canvas;
-
-    private List<BaseWindow> m_openedWindows;
-
-    private MainMenu m_mainMenu;
-
-    private CreationWindow m_creationWindow;
-
-    private DailyArtWindow m_dailyArtWindow;
-
-    private NewWorkbook m_workbook;
-
-    private NewWorkbook3D m_workbook3D;
-
-    private ShareWindow m_shareWindow;
-
-    private SettingsWindow m_settingsWindow;
-
-    private HelpWindow m_helpWindow;
-
-    private DetailsWindow m_detailsWindow;
-
-    private NewInappsWindow m_inappsWindow;
-
-    private TrialInappsWindow m_trialInappsWindow;
-
-    private IapPopup m_abTestWindow;
-
-    private TutorialWindow m_tutorialWindow;
-
-    private TutorialWindow m_tutorialWindow3D;
-
-    private FilterWindow m_filterWindow;
+    List<BaseWindow> m_openedWindows;
+    MainMenu m_mainMenu;
+    CreationWindow m_creationWindow;
+    DailyArtWindow m_dailyArtWindow;
+    NewWorkbook m_workbook;
+    NewWorkbook3D m_workbook3D;
+    ShareWindow m_shareWindow;
+    SettingsWindow m_settingsWindow;
+    HelpWindow m_helpWindow;
+    DetailsWindow m_detailsWindow;
+    NewInappsWindow m_inappsWindow;
+    TrialInappsWindow m_trialInappsWindow;
+    IapPopup m_abTestWindow;
+    TutorialWindow m_tutorialWindow;
+    TutorialWindow m_tutorialWindow3D;
+    FilterWindow m_filterWindow;
 
     public static WindowManager Instance { get;  set; }
 
@@ -49,7 +33,7 @@ public class WindowManager : MonoBehaviour
     {
         get
         {
-            return (this.m_openedWindows != null) ? this.m_openedWindows.Count : 0;
+            return (m_openedWindows != null) ? m_openedWindows.Count : 0;
         }
     }
 
@@ -57,283 +41,282 @@ public class WindowManager : MonoBehaviour
     {
         get
         {
-            BaseWindow baseWindow = this.m_openedWindows.LastOrDefault();
+            var baseWindow = m_openedWindows.LastOrDefault();
             return baseWindow != null && baseWindow.EnableBanner;
         }
     }
 
-    private void Awake()
+    void Awake()
     {
-        WindowManager.Instance = this;
-        this.m_openedWindows = new List<BaseWindow>();
+        Instance = this;
+        m_openedWindows = new List<BaseWindow>();
     }
 
     public MainMenu OpenMainMenu()
     {
-        if (this.m_mainMenu == null)
+        if (m_mainMenu == null)
         {
 
-            this.m_mainMenu = ((Component)this.m_uiParent.Find("main_menu")).GetComponent<MainMenu>();
+            m_mainMenu = ((Component)m_uiParent.Find("main_menu")).GetComponent<MainMenu>();
 
         }
-        this.m_openedWindows.Add(this.m_mainMenu);
+        m_openedWindows.Add(m_mainMenu);
 
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_mainMenu.InitCanvas(this.m_canvas, true);
-        this.m_mainMenu.Open();
+        m_mainMenu.InitCanvas(m_canvas, true);
+        m_mainMenu.Open();
 
-        return this.m_mainMenu;
+        return m_mainMenu;
     }
 
     public MainMenu GetMainMenu()
     {
-        return this.m_mainMenu;
+        return m_mainMenu;
     }
 
     public CreationWindow OpenCreationWindow()
     {
-        if (this.m_creationWindow == null)
+        if (m_creationWindow == null)
         {
-            this.m_creationWindow = Object.Instantiate(PrefabLoader.Load<CreationWindow>("creation_window"));
-            this.m_creationWindow.transform.SetParent(this.m_uiParent);
-            this.m_creationWindow.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_creationWindow.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_creationWindow.transform).sizeDelta = Vector2.zero;
+            m_creationWindow = Object.Instantiate(PrefabLoader.Load<CreationWindow>("creation_window"));
+            m_creationWindow.transform.SetParent(m_uiParent);
+            m_creationWindow.transform.localScale = Vector2.one;
+            ((RectTransform)m_creationWindow.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_creationWindow.transform).sizeDelta = Vector2.zero;
         }
-        this.m_openedWindows.Add(this.m_creationWindow);
-        this.m_creationWindow.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_creationWindow);
+        m_creationWindow.transform.SetAsLastSibling();
 
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_creationWindow.InitCanvas(this.m_canvas, true);
-        this.m_creationWindow.Open();
-        return this.m_creationWindow;
+        m_creationWindow.InitCanvas(m_canvas, true);
+        m_creationWindow.Open();
+        return m_creationWindow;
     }
 
     public DailyArtWindow OpenDailyArtWindow()
     {
-        if (this.m_dailyArtWindow == null)
+        if (m_dailyArtWindow == null)
         {
-            this.m_dailyArtWindow = Object.Instantiate(PrefabLoader.Load<DailyArtWindow>("daily_art"));
-            this.m_dailyArtWindow.transform.SetParent(this.m_uiParent);
-            this.m_dailyArtWindow.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_dailyArtWindow.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_dailyArtWindow.transform).sizeDelta = Vector2.zero;
+            m_dailyArtWindow = Object.Instantiate(PrefabLoader.Load<DailyArtWindow>("daily_art"));
+            m_dailyArtWindow.transform.SetParent(m_uiParent);
+            m_dailyArtWindow.transform.localScale = Vector2.one;
+            ((RectTransform)m_dailyArtWindow.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_dailyArtWindow.transform).sizeDelta = Vector2.zero;
         }
-        this.m_openedWindows.Add(this.m_dailyArtWindow);
-        this.m_dailyArtWindow.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_dailyArtWindow);
+        m_dailyArtWindow.transform.SetAsLastSibling();
 
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_dailyArtWindow.InitCanvas(this.m_canvas, true);
-        this.m_dailyArtWindow.Open();
-        return this.m_dailyArtWindow;
+        m_dailyArtWindow.InitCanvas(m_canvas, true);
+        m_dailyArtWindow.Open();
+        return m_dailyArtWindow;
     }
 
     public NewWorkbook OpenWorkbook()
     {
-        if (this.m_workbook == null)
+        if (m_workbook == null)
         {
-            this.m_workbook = ((Component)this.m_uiParent.Find("workbook")).GetComponent<NewWorkbook>();
+            m_workbook = ((Component)m_uiParent.Find("workbook")).GetComponent<NewWorkbook>();
         }
-        this.m_openedWindows.Add(this.m_workbook);
+        m_openedWindows.Add(m_workbook);
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_workbook.InitCanvas(this.m_canvas, true);
-        this.m_workbook.Open();
-        return this.m_workbook;
+        m_workbook.InitCanvas(m_canvas, true);
+        m_workbook.Open();
+        return m_workbook;
     }
 
     public NewWorkbook3D OpenWorkbook3D()
     {
-        if (this.m_workbook3D == null)
+        if (m_workbook3D == null)
         {
-            this.m_workbook3D = ((Component)this.m_uiParent.Find("workbook")).GetComponent<NewWorkbook3D>();
+            m_workbook3D = ((Component)m_uiParent.Find("workbook")).GetComponent<NewWorkbook3D>();
         }
-        this.m_openedWindows.Add(this.m_workbook3D);
+        m_openedWindows.Add(m_workbook3D);
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_workbook3D.InitCanvas(this.m_canvas, true);
-        this.m_workbook3D.Open();
-        return this.m_workbook3D;
+        m_workbook3D.InitCanvas(m_canvas, true);
+        m_workbook3D.Open();
+        return m_workbook3D;
     }
 
     public TutorialWindow OpenTutorial()
     {
-        if (this.m_tutorialWindow == null)
+        if (m_tutorialWindow == null)
         {
             var r = PrefabLoader.Load<TutorialWindow>("tutorial_window_3d");
             if (r == null)
                 return null;
 
-            this.m_tutorialWindow = Object.Instantiate(r);
-            this.m_tutorialWindow.transform.SetParent(this.m_uiParent);
-            this.m_tutorialWindow.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_tutorialWindow.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_tutorialWindow.transform).sizeDelta = Vector2.zero;
+            m_tutorialWindow = Object.Instantiate(r);
+            m_tutorialWindow.transform.SetParent(m_uiParent);
+            m_tutorialWindow.transform.localScale = Vector2.one;
+            ((RectTransform)m_tutorialWindow.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_tutorialWindow.transform).sizeDelta = Vector2.zero;
         }
-        this.m_openedWindows.Add(this.m_tutorialWindow);
-        this.m_tutorialWindow.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_tutorialWindow);
+        m_tutorialWindow.transform.SetAsLastSibling();
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_tutorialWindow.InitCanvas(this.m_canvas, true);
-        this.m_tutorialWindow.Open();
-        return this.m_tutorialWindow;
+        m_tutorialWindow.InitCanvas(m_canvas, true);
+        m_tutorialWindow.Open();
+        return m_tutorialWindow;
     }
 
     public TutorialWindow OpenTutorial3D()
     {
-        if (this.m_tutorialWindow3D == null)
+        if (m_tutorialWindow3D == null)
         {
             var r = PrefabLoader.Load<TutorialWindow>("tutorial_window_3d");
             if (r == null)
                 return null;
-            this.m_tutorialWindow3D = Object.Instantiate(r);
+            m_tutorialWindow3D = Object.Instantiate(r);
             if (m_tutorialWindow3D == null)
                 return null;
 
-            this.m_tutorialWindow3D.transform.SetParent(this.m_uiParent);
-            this.m_tutorialWindow3D.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_tutorialWindow3D.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_tutorialWindow3D.transform).sizeDelta = Vector2.zero;
+            m_tutorialWindow3D.transform.SetParent(m_uiParent);
+            m_tutorialWindow3D.transform.localScale = Vector2.one;
+            ((RectTransform)m_tutorialWindow3D.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_tutorialWindow3D.transform).sizeDelta = Vector2.zero;
         }
-        this.m_openedWindows.Add(this.m_tutorialWindow3D);
-        this.m_tutorialWindow3D.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_tutorialWindow3D);
+        m_tutorialWindow3D.transform.SetAsLastSibling();
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_tutorialWindow3D.InitCanvas(this.m_canvas, true);
-        this.m_tutorialWindow3D.Open();
-        return this.m_tutorialWindow3D;
+        m_tutorialWindow3D.InitCanvas(m_canvas, true);
+        m_tutorialWindow3D.Open();
+        return m_tutorialWindow3D;
     }
 
     public FilterWindow OpenFilterWindow()
     {
         try
         {
-            if (this.m_filterWindow == null)
+            if (m_filterWindow == null)
             {
 
-                this.m_filterWindow = Object.Instantiate(PrefabLoader.Load<FilterWindow>("filter_window"));
-                this.m_filterWindow.transform.SetParent(this.m_uiParent);
-                this.m_filterWindow.transform.localScale = Vector2.one;
-                ((RectTransform)this.m_filterWindow.transform).anchoredPosition = Vector3.zero;
-                ((RectTransform)this.m_filterWindow.transform).sizeDelta = Vector2.zero;
+                m_filterWindow = Object.Instantiate(PrefabLoader.Load<FilterWindow>("filter_window"));
+                m_filterWindow.transform.SetParent(m_uiParent);
+                m_filterWindow.transform.localScale = Vector2.one;
+                ((RectTransform)m_filterWindow.transform).anchoredPosition = Vector3.zero;
+                ((RectTransform)m_filterWindow.transform).sizeDelta = Vector2.zero;
 
 
             }
-            this.m_openedWindows.Add(this.m_filterWindow);
-            this.m_filterWindow.transform.SetAsLastSibling();
+            m_openedWindows.Add(m_filterWindow);
+            m_filterWindow.transform.SetAsLastSibling();
             //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-            this.m_filterWindow.InitCanvas(this.m_canvas, true);
-            this.m_filterWindow.Open();
+            m_filterWindow.InitCanvas(m_canvas, true);
+            m_filterWindow.Open();
         }
         catch (System.Exception e)
         {
             Debug.Log(e.Message);
         }
-        return this.m_filterWindow;
+        return m_filterWindow;
     }
 
     public ShareWindow OpenShareWindow()
     {
-        if (this.m_shareWindow == null)
+        if (m_shareWindow == null)
         {
-            this.m_shareWindow = Object.Instantiate(PrefabLoader.Load<ShareWindow>("share_window"));
-            this.m_shareWindow.transform.SetParent(this.m_uiParent);
-            this.m_shareWindow.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_shareWindow.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_shareWindow.transform).sizeDelta = Vector2.zero;
-
-            this.m_shareWindow.OnOpen = (System.Action)System.Delegate.Combine(this.m_shareWindow.OnOpen, new System.Action(() =>
+            m_shareWindow = Object.Instantiate(PrefabLoader.Load<ShareWindow>("share_window"));
+            m_shareWindow.transform.SetParent(m_uiParent);
+            m_shareWindow.transform.localScale = Vector2.one;
+            ((RectTransform)m_shareWindow.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_shareWindow.transform).sizeDelta = Vector2.zero;
+            m_shareWindow.OnOpen += () =>
             {
                 if (GameScene.Instance != null)
                 {
                     GameScene.Instance.gameObject.SetActive(false);
                 }
-            }));
-            this.m_shareWindow.OnClose = (System.Action)System.Delegate.Combine(this.m_shareWindow.OnClose, new System.Action(() =>
+            };
+            m_shareWindow.OnClose += () =>
             {
                 if (GameScene.Instance != null)
                 {
                     GameScene.Instance.gameObject.SetActive(true);
                 }
-            }));
+            };
         }
-        this.m_openedWindows.Add(this.m_shareWindow);
-        this.m_shareWindow.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_shareWindow);
+        m_shareWindow.transform.SetAsLastSibling();
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_shareWindow.InitCanvas(this.m_canvas, true);
-        this.m_shareWindow.Open();
+        m_shareWindow.InitCanvas(m_canvas, true);
+        m_shareWindow.Open();
         AnalyticsManager.Instance.ShareWindowOpened();
-        return this.m_shareWindow;
+        return m_shareWindow;
     }
 
     public SettingsWindow OpenSettingsWindow()
     {
-        if (this.m_settingsWindow == null)
+        if (m_settingsWindow == null)
         {
-            this.m_settingsWindow = Object.Instantiate(PrefabLoader.Load<SettingsWindow>("settings_window"));
-            this.m_settingsWindow.transform.SetParent(this.m_uiParent);
-            this.m_settingsWindow.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_settingsWindow.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_settingsWindow.transform).sizeDelta = Vector2.zero;
+            m_settingsWindow = Object.Instantiate(PrefabLoader.Load<SettingsWindow>("settings_window"));
+            m_settingsWindow.transform.SetParent(m_uiParent);
+            m_settingsWindow.transform.localScale = Vector2.one;
+            ((RectTransform)m_settingsWindow.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_settingsWindow.transform).sizeDelta = Vector2.zero;
         }
-        this.m_openedWindows.Add(this.m_settingsWindow);
-        this.m_settingsWindow.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_settingsWindow);
+        m_settingsWindow.transform.SetAsLastSibling();
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_settingsWindow.InitCanvas(this.m_canvas, true);
-        this.m_settingsWindow.Open();
+        m_settingsWindow.InitCanvas(m_canvas, true);
+        m_settingsWindow.Open();
         AnalyticsManager.Instance.SettingsWindowOpened();
-        return this.m_settingsWindow;
+        return m_settingsWindow;
     }
 
     public HelpWindow OpenHelpWindow()
     {
-        if (this.m_helpWindow == null)
+        if (m_helpWindow == null)
         {
-            this.m_helpWindow = Object.Instantiate(PrefabLoader.Load<HelpWindow>("help_window"));
-            this.m_helpWindow.transform.SetParent(this.m_uiParent);
-            this.m_helpWindow.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_helpWindow.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_helpWindow.transform).sizeDelta = Vector2.zero;
+            m_helpWindow = Object.Instantiate(PrefabLoader.Load<HelpWindow>("help_window"));
+            m_helpWindow.transform.SetParent(m_uiParent);
+            m_helpWindow.transform.localScale = Vector2.one;
+            ((RectTransform)m_helpWindow.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_helpWindow.transform).sizeDelta = Vector2.zero;
         }
-        this.m_openedWindows.Add(this.m_helpWindow);
-        this.m_helpWindow.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_helpWindow);
+        m_helpWindow.transform.SetAsLastSibling();
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_helpWindow.InitCanvas(this.m_canvas, true);
-        this.m_helpWindow.Open();
+        m_helpWindow.InitCanvas(m_canvas, true);
+        m_helpWindow.Open();
         AnalyticsManager.Instance.HelpWindowOpened();
-        return this.m_helpWindow;
+        return m_helpWindow;
     }
 
     public DetailsWindow OpenDetailsWindow()
     {
-        if (this.m_detailsWindow == null)
+        if (m_detailsWindow == null)
         {
-            this.m_detailsWindow = Object.Instantiate(PrefabLoader.Load<DetailsWindow>("details_window"));
-            this.m_detailsWindow.transform.SetParent(this.m_uiParent);
-            this.m_detailsWindow.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_detailsWindow.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_detailsWindow.transform).sizeDelta = Vector2.zero;
+            m_detailsWindow = Object.Instantiate(PrefabLoader.Load<DetailsWindow>("details_window"));
+            m_detailsWindow.transform.SetParent(m_uiParent);
+            m_detailsWindow.transform.localScale = Vector2.one;
+            ((RectTransform)m_detailsWindow.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_detailsWindow.transform).sizeDelta = Vector2.zero;
         }
-        this.m_openedWindows.Add(this.m_detailsWindow);
-        this.m_detailsWindow.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_detailsWindow);
+        m_detailsWindow.transform.SetAsLastSibling();
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_detailsWindow.InitCanvas(this.m_canvas, true);
-        this.m_detailsWindow.Open();
-        return this.m_detailsWindow;
+        m_detailsWindow.InitCanvas(m_canvas, true);
+        m_detailsWindow.Open();
+        return m_detailsWindow;
     }
 
     public NewInappsWindow OpenInappsWindow()
     {
-        if (this.m_inappsWindow == null)
+        if (m_inappsWindow == null)
         {
-            this.m_inappsWindow = Object.Instantiate(PrefabLoader.Load<NewInappsWindow>("inapps_window_android"));
-            this.m_inappsWindow.transform.SetParent(this.m_uiParent);
-            this.m_inappsWindow.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_inappsWindow.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_inappsWindow.transform).sizeDelta = Vector2.zero;
+            m_inappsWindow = Object.Instantiate(PrefabLoader.Load<NewInappsWindow>("inapps_window_android"));
+            m_inappsWindow.transform.SetParent(m_uiParent);
+            m_inappsWindow.transform.localScale = Vector2.one;
+            ((RectTransform)m_inappsWindow.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_inappsWindow.transform).sizeDelta = Vector2.zero;
         }
-        this.m_openedWindows.Add(this.m_inappsWindow);
-        this.m_inappsWindow.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_inappsWindow);
+        m_inappsWindow.transform.SetAsLastSibling();
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_inappsWindow.InitCanvas(this.m_canvas, true);
-        this.m_inappsWindow.Open();
-        return this.m_inappsWindow;
+        m_inappsWindow.InitCanvas(m_canvas, true);
+        m_inappsWindow.Open();
+        return m_inappsWindow;
     }
 
     //public TrialInappsWindow OpenTrialInappsWindow()
@@ -356,28 +339,28 @@ public class WindowManager : MonoBehaviour
 
     public IapPopup OpenAbTestWindow()
     {
-        if (this.m_abTestWindow == null)
+        if (m_abTestWindow == null)
         {
-            this.m_abTestWindow = Object.Instantiate(PrefabLoader.Load<IapPopup>("ab_test_inapps_window"));
-            this.m_abTestWindow.transform.SetParent(this.m_uiParent);
-            this.m_abTestWindow.transform.localScale = Vector2.one;
-            ((RectTransform)this.m_abTestWindow.transform).anchoredPosition = Vector3.zero;
-            ((RectTransform)this.m_abTestWindow.transform).sizeDelta = Vector2.zero;
+            m_abTestWindow = Object.Instantiate(PrefabLoader.Load<IapPopup>("ab_test_inapps_window"));
+            m_abTestWindow.transform.SetParent(m_uiParent);
+            m_abTestWindow.transform.localScale = Vector2.one;
+            ((RectTransform)m_abTestWindow.transform).anchoredPosition = Vector3.zero;
+            ((RectTransform)m_abTestWindow.transform).sizeDelta = Vector2.zero;
         }
-        this.m_openedWindows.Add(this.m_abTestWindow);
-        this.m_abTestWindow.transform.SetAsLastSibling();
+        m_openedWindows.Add(m_abTestWindow);
+        m_abTestWindow.transform.SetAsLastSibling();
         //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-        this.m_abTestWindow.InitCanvas(this.m_canvas, true);
-        this.m_abTestWindow.Open();
-        return this.m_abTestWindow;
+        m_abTestWindow.InitCanvas(m_canvas, true);
+        m_abTestWindow.Open();
+        return m_abTestWindow;
     }
 
-    private void Update()
+    void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && this.m_openedWindows.Count > 0)
+        if (Input.GetKeyDown(KeyCode.Escape) && m_openedWindows.Count > 0)
         {
-            BaseWindow window = this.m_openedWindows.Last();
-            this.CloseMe(window);
+            var window = m_openedWindows.Last();
+            CloseMe(window);
         }
     }
 
@@ -385,10 +368,10 @@ public class WindowManager : MonoBehaviour
     {
         if (window.Close())
         {
-            this.m_openedWindows.Remove(window);
+            m_openedWindows.Remove(window);
 
             //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-            BaseWindow baseWindow = this.m_openedWindows.Last();
+            var baseWindow = m_openedWindows.Last();
             baseWindow.SendActiveScreenEvent();
         }
     }
@@ -397,9 +380,9 @@ public class WindowManager : MonoBehaviour
     {
         if (window.Close(style))
         {
-            this.m_openedWindows.Remove(window);
+            m_openedWindows.Remove(window);
             //AdsWrapper.Instance.OpenedWindowsCountChangedHandler();
-            BaseWindow baseWindow = this.m_openedWindows.Last();
+            var baseWindow = m_openedWindows.Last();
             baseWindow.SendActiveScreenEvent();
         }
     }

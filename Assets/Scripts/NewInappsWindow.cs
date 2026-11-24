@@ -13,49 +13,30 @@ public class NewInappsWindow : BaseWindow
 {
     public Action OnPurchase;
 
-    private bool restoredAnything;
+    bool restoredAnything;
 
-    [SerializeField] private GameObject m_mainPart;
+    [SerializeField] GameObject m_mainPart;
+    [SerializeField] NewInappsWindowElement m_prefab;
+    [SerializeField] NewInappsWindowElement m_trialInappsElement;
+    [SerializeField] Transform m_elementsParent;
+    [SerializeField] List<NewInappsWindowElement> m_elements;
+    [SerializeField] GameObject m_resultPart;
+    [SerializeField] Text m_resultTitle;
+    [SerializeField] Text m_resultText;
+    [SerializeField] Image m_resultIcon;
+    [SerializeField] Sprite m_goodResultSprite;
+    [SerializeField] Sprite m_badResultSprite;
+    [SerializeField] GameObject m_closeButton;
+    [SerializeField] Popup m_popup;
+    [SerializeField] GameObject m_waiter;
+    [SerializeField] ScrollRect m_textScrollRect;
+    [SerializeField] Text m_detailsText;
+    [SerializeField] Text m_urlPrefab;
 
-    [SerializeField] private NewInappsWindowElement m_prefab;
-
-    [SerializeField] private NewInappsWindowElement m_trialInappsElement;
-
-    [SerializeField] private Transform m_elementsParent;
-
-    [SerializeField] private List<NewInappsWindowElement> m_elements;
-
-    [SerializeField] private GameObject m_resultPart;
-
-    [SerializeField] private Text m_resultTitle;
-
-    [SerializeField] private Text m_resultText;
-
-    [SerializeField] private Image m_resultIcon;
-
-    [SerializeField] private Sprite m_goodResultSprite;
-
-    [SerializeField] private Sprite m_badResultSprite;
-
-    [SerializeField] private GameObject m_closeButton;
-
-    [SerializeField] private Popup m_popup;
-
-    [SerializeField] private GameObject m_waiter;
-
-    [SerializeField] private ScrollRect m_textScrollRect;
-
-    [SerializeField] private Text m_detailsText;
-
-    [SerializeField] private Text m_urlPrefab;
-
-    private bool m_textInited;
-
-    private bool m_waitPurchases;
-
-    private Action m_closeHandler;
-
-    private string m_place;
+    bool m_textInited;
+    bool m_waitPurchases;
+    Action m_closeHandler;
+    string m_place;
 
 
 
@@ -69,8 +50,8 @@ public class NewInappsWindow : BaseWindow
 
     public void Init(string place, Action closeHandler = null)
     {
-        this.m_place = place;
-        this.m_closeHandler = closeHandler;
+        m_place = place;
+        m_closeHandler = closeHandler;
         /*Product[] products = IAPWrapper.Instance.GetProducts();
         if (products != null)
         {
@@ -89,68 +70,68 @@ public class NewInappsWindow : BaseWindow
         AnalyticsManager.Instance.InappsWindowOpened(this.m_place);*/
     }
 
-    private void InitTexts()
+    void InitTexts()
     {
-        if (!this.m_textInited)
+        if (!m_textInited)
         {
-            this.m_textInited = true;
-            base.StartCoroutine(this.SetContentSizeCoroutine());
-            this.m_textScrollRect.verticalNormalizedPosition = 1f;
+            m_textInited = true;
+            base.StartCoroutine(SetContentSizeCoroutine());
+            m_textScrollRect.verticalNormalizedPosition = 1f;
             string text = LocalizationManager.Instance.GetString("details_text_android");
-            MatchCollection matchCollection = Regex.Matches(text, "(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
-            for (int num = matchCollection.Count - 1; num >= 0; num--)
+            var matchCollection = Regex.Matches(text, "(http|ftp|https)://([\\w_-]+(?:(?:\\.[\\w_-]+)+))([\\w.,@?^=%&:/~+#-]*[\\w@?^=%&/~+#-])?");
+            for (int i = matchCollection.Count - 1; i >= 0; i--)
             {
-                int index = matchCollection[num].Index;
-                text = text.Insert(index + matchCollection[num].Length, "</a>");
+                int index = matchCollection[i].Index;
+                text = text.Insert(index + matchCollection[i].Length, "</a>");
                 text = ((text[index - 1] == '\n') ? text.Insert(index, "<a>") : text.Insert(index, "\n<a>"));
             }
-            string[] array = text.Split(new string[1] {
+            var parts = text.Split(new string[1] {
                 "\n"
             }, StringSplitOptions.RemoveEmptyEntries);
-            for (int value2 = 0; value2 < array.Length; value2++)
+            for (int value2 = 0; value2 < parts.Length; value2++)
             {
-                string text2 = string.Empty;
+                string detailsText = string.Empty;
 
-                if (value2 < array.Length && !array[value2].Contains("<a>"))
+                if (value2 < parts.Length && !parts[value2].Contains("<a>"))
                 {
-                    text2 = text2 + array[value2] + "\n";
+                    detailsText = detailsText + parts[value2] + "\n";
                 }
-                if (!string.IsNullOrEmpty(text2))
+                if (!string.IsNullOrEmpty(detailsText))
                 {
-                    Text text3 = UnityObject.Instantiate(this.m_detailsText);
-                    text3.transform.SetParent(this.m_detailsText.transform.parent);
-                    text3.transform.localScale = Vector2.one;
-                    text3.gameObject.SetActive(true);
-                    if (text2.Contains("<center>"))
+                    var lineText = UnityObject.Instantiate(m_detailsText);
+                    lineText.transform.SetParent(m_detailsText.transform.parent);
+                    lineText.transform.localScale = Vector2.one;
+                    lineText.gameObject.SetActive(true);
+                    if (detailsText.Contains("<center>"))
                     {
-                        text3.alignment = TextAnchor.UpperCenter;
-                        text2 = text2.Replace("<center>", string.Empty).Replace("</center>", string.Empty);
+                        lineText.alignment = TextAnchor.UpperCenter;
+                        detailsText = detailsText.Replace("<center>", string.Empty).Replace("</center>", string.Empty);
                     }
-                    string text4 = text2;
-                    char[] trimChars = new char[1] {
+                    string line = detailsText;
+                    var trimChars = new char[1] {
                         '\n'
                     };
-                    text2 = (text3.text = text4.Trim(trimChars).Replace("<br>", "\n"));
+                    detailsText = (lineText.text = line.Trim(trimChars).Replace("<br>", "\n"));
                     if (LocalizationManager.Instance.CurrentLanguage == SystemLanguage.Arabic)
                     {
-                        text3.alignment = TextAnchor.MiddleRight;
+                        lineText.alignment = TextAnchor.MiddleRight;
                     }
                 }
-                if (array[value2].Contains("<a>"))
+                if (parts[value2].Contains("<a>"))
                 {
-                    Match match = Regex.Match(array[value2], "(?<text>[^~]*)<a>(?<url>[^~]+)</a>");
-                    Text text6 = UnityObject.Instantiate(this.m_urlPrefab);
-                    text6.transform.SetParent(this.m_detailsText.transform.parent);
-                    text6.transform.localScale = Vector2.one;
-                    text6.gameObject.SetActive(true);
+                    var match = Regex.Match(parts[value2], "(?<text>[^~]*)<a>(?<url>[^~]+)</a>");
+                    var urlText = UnityObject.Instantiate(m_urlPrefab);
+                    urlText.transform.SetParent(m_detailsText.transform.parent);
+                    urlText.transform.localScale = Vector2.one;
+                    urlText.gameObject.SetActive(true);
                     string url = match.Groups["url"].Value;
                     if (url.Contains("<center>"))
                     {
-                        text6.alignment = TextAnchor.UpperCenter;
+                        urlText.alignment = TextAnchor.UpperCenter;
                         url = url.Replace("<center>", string.Empty).Replace("</center>", string.Empty);
                     }
-                    text6.text = url;
-                    ((Component)text6).GetComponent<Button>().onClick.AddListener(delegate
+                    urlText.text = url;
+                    ((Component)urlText).GetComponent<Button>().onClick.AddListener(delegate
                     {
                         Application.OpenURL(url);
                     });
@@ -159,7 +140,7 @@ public class NewInappsWindow : BaseWindow
         }
     }
 
-    private void Update()
+    void Update()
     {
         /*if (this.m_waitPurchases && IAPWrapper.Instance.GetProducts() != null)
         {
@@ -263,22 +244,22 @@ public class NewInappsWindow : BaseWindow
         WindowManager.Instance.CloseMe(this);
         AnalyticsManager.Instance.BackButtonClicked();
         AudioManager.Instance.PlayClick();
-        AnalyticsManager.Instance.InappsWindowAction("close", this.m_place);
+        AnalyticsManager.Instance.InappsWindowAction("close", m_place);
     }
 
     public void DetailsButtonClick()
     {
-        DetailsWindow detailsWindow = WindowManager.Instance.OpenDetailsWindow();
+        var detailsWindow = WindowManager.Instance.OpenDetailsWindow();
         //detailsWindow.Init(this._products);
         AudioManager.Instance.PlayClick();
     }
 
     public override bool Close()
     {
-        if (this.m_closeButton.activeSelf)
+        if (m_closeButton.activeSelf)
         {
             AnalyticsManager.Instance.InappsWindowClosed();
-            this.m_closeHandler.SafeInvoke();
+            m_closeHandler.SafeInvoke();
             return base.Close();
         }
         return false;
@@ -288,34 +269,34 @@ public class NewInappsWindow : BaseWindow
     {
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
-        base.StartCoroutine(this.WaitForRestored());
+        base.StartCoroutine(WaitForRestored());
         //IAPWrapper.Instance.RestorePurchases(null);
         AnalyticsManager.Instance.RestoreButtonClicked();
         AudioManager.Instance.PlayClick();
-        AnalyticsManager.Instance.InappsWindowAction("restore", this.m_place);
+        AnalyticsManager.Instance.InappsWindowAction("restore", m_place);
     }
 
-    private void OnPurchaseHandler(bool res, SubscriptionType type)
+    void OnPurchaseHandler(bool res, SubscriptionType type)
     {
-        this.restoredAnything = true;
+        restoredAnything = true;
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
     }
-    private IEnumerator SetContentSizeCoroutine()
+    IEnumerator SetContentSizeCoroutine()
     {
         yield return null;
-        this.m_textScrollRect.gameObject.SetActive(false);
-        this.m_textScrollRect.verticalNormalizedPosition = 1f;
+        m_textScrollRect.gameObject.SetActive(false);
+        m_textScrollRect.verticalNormalizedPosition = 1f;
     }
-    private IEnumerator WaitForProductsCoroutine()
+    IEnumerator WaitForProductsCoroutine()
     {
         //while (IAPWrapper.Instance.GetProducts() == null)
         {
             yield return new WaitForSeconds(2f); 
         }
-        this.Init(this.m_place, this.m_closeHandler);
+        Init(m_place, m_closeHandler);
     }
-    private IEnumerator WaitForRestored()
+    IEnumerator WaitForRestored()
     {
         float timer = 2f;
         while (timer > 0f)
@@ -325,7 +306,7 @@ public class NewInappsWindow : BaseWindow
         }
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
-        if (this.restoredAnything)
+        if (restoredAnything)
         {
             /*if (IAPWrapper.Instance.Subscribed)
             {
@@ -339,7 +320,7 @@ public class NewInappsWindow : BaseWindow
         }
         else
         {
-            this.m_popup.Show(LocalizationManager.Instance.GetString("restored0"));
+            m_popup.Show(LocalizationManager.Instance.GetString("restored0"));
         }
     }
 }

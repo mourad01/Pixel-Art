@@ -5,34 +5,31 @@ public class DebugController : MonoBehaviour
 {
     public Action<bool> OnEnableDebugTexts;
 
-    private Action externalGui;
+    Action externalGui;
 
-    [SerializeField] private float m_updateInterval = 0.5f;
+    [SerializeField] float m_updateInterval = 0.5f;
 
-    private float m_fps;
-
-    private float m_accum;
-
-    private int m_frames;
-
-    private float m_timeleft;
+    float m_fps;
+    float m_accum;
+    int m_frames;
+    float m_timeleft;
 
     public static DebugController Instance { get; private set; }
 
     public bool EnableDebugTexts { get; private set; }
 
-    private void Awake()
+    void Awake()
     {
-        DebugController.Instance = this;
+        Instance = this;
     }
 
-    private void OnGUI()
+    void OnGUI()
     {
-        if (this.externalGui != null)
+        if (externalGui != null)
         {
-            this.externalGui.SafeInvoke();
+            externalGui.SafeInvoke();
         }
-        else if (this.EnableDebugTexts && GUILayout.Button("fps: " + this.m_fps.ToString()))
+        else if (EnableDebugTexts && GUILayout.Button("fps: " + m_fps.ToString()))
         {
             int targetFrameRate = Application.targetFrameRate;
             Debug.Log(": " + targetFrameRate);
@@ -51,38 +48,38 @@ public class DebugController : MonoBehaviour
         }
     }
 
-    private void Update()
+    void Update()
     {
-        this.CalculateFps();
+        CalculateFps();
     }
 
     public void ShowExternalGui(Action _externalGui)
     {
-        this.externalGui = _externalGui;
+        externalGui = _externalGui;
     }
 
     public void StopShowExternalGui()
     {
-        this.externalGui = null;
+        externalGui = null;
     }
 
     public void ClickDebugTexts()
     {
-        this.EnableDebugTexts = !this.EnableDebugTexts;
-        this.OnEnableDebugTexts.SafeInvoke(this.EnableDebugTexts);
+        EnableDebugTexts = !EnableDebugTexts;
+        OnEnableDebugTexts.SafeInvoke(EnableDebugTexts);
     }
 
-    private void CalculateFps()
+    void CalculateFps()
     {
-        this.m_timeleft -= Time.deltaTime;
-        this.m_accum += Time.timeScale / Time.deltaTime;
-        this.m_frames++;
-        if ((double)this.m_timeleft <= 0.0)
+        m_timeleft -= Time.deltaTime;
+        m_accum += Time.timeScale / Time.deltaTime;
+        m_frames++;
+        if ((double)m_timeleft <= 0.0)
         {
-            this.m_fps = this.m_accum / (float)this.m_frames;
-            this.m_timeleft = this.m_updateInterval;
-            this.m_accum = 0f;
-            this.m_frames = 0;
+            m_fps = m_accum / (float)m_frames;
+            m_timeleft = m_updateInterval;
+            m_accum = 0f;
+            m_frames = 0;
         }
     }
 }

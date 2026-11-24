@@ -6,21 +6,20 @@ namespace VoxDLL
 {
     public class ColorSettings
     {
-        private List<Color> colors = new List<Color>();
-
-        private IDictionary<Color, int> dicColors = new Dictionary<Color, int>();
+        List<Color> colors = new List<Color>();
+        IDictionary<Color, int> dicColors = new Dictionary<Color, int>();
 
         public ColorSettings(Color[] pallete)
         {
-            this.colors = pallete.ToList<Color>().Distinct<Color>().ToList<Color>();
+            colors = pallete.ToList<Color>().Distinct<Color>().ToList<Color>();
             //this.colors.Remove(Color.white);
             //this.colors.Remove(new Color32(75, 75, 75, 255));
-            this.colors.Remove(new Color32(0, 0, 0, 0));
-            int num = 0;
-            foreach (Color color in this.colors)
+            colors.Remove(new Color32(0, 0, 0, 0));
+            int index = 0;
+            foreach (Color color in colors)
             {
-                this.dicColors.Add(color, num);
-                num++;
+                dicColors.Add(color, index);
+                index++;
             }
         }
 
@@ -30,18 +29,18 @@ namespace VoxDLL
             {
                 return Color.white;
             }
-            KeyValuePair<Color, int> keyValuePair = this.dicColors.FirstOrDefault<KeyValuePair<Color, int>>((KeyValuePair<Color, int> x) => x.Value == value);
+            var keyValuePair = dicColors.FirstOrDefault<KeyValuePair<Color, int>>((KeyValuePair<Color, int> x) => x.Value == value);
             return keyValuePair.Key;
         }
 
         internal IDictionary<Color, int> GetColorPallete()
         {
-            return this.dicColors;
+            return dicColors;
         }
 
         internal List<Color> GetColorPalleteList()
         {
-            return this.colors;
+            return colors;
         }
 
         internal int GetNumberByColor(Color color)
@@ -50,7 +49,7 @@ namespace VoxDLL
             {
                 return -1;
             }
-            KeyValuePair<Color, int> keyValuePair = this.dicColors.FirstOrDefault<KeyValuePair<Color, int>>((KeyValuePair<Color, int> x) => x.Key == color);
+            var keyValuePair = dicColors.FirstOrDefault<KeyValuePair<Color, int>>((KeyValuePair<Color, int> x) => x.Key == color);
             return keyValuePair.Value;
         }
     }

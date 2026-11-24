@@ -6,11 +6,9 @@ public class ColorImage : MonoBehaviour
 {
     public Action<ColorImage> OnClick;
 
-    [SerializeField] private Image m_image;
-
-    [SerializeField] private Text m_title;
-
-    [SerializeField] private Image m_mark;
+    [SerializeField] Image m_image;
+    [SerializeField] Text m_title;
+    [SerializeField] Image m_mark;
 
     public Color Color { get; set; }
 
@@ -18,36 +16,36 @@ public class ColorImage : MonoBehaviour
 
     public void Init(Color color, int number)
     {
-        this.Color = color;
-        this.m_image.color = color;
-        this.ColorIndex = number;
-        this.m_title.text = number.ToString();
-        this.m_title.color = ((!color.IsDark()) ? Color.black : Color.white);
-        this.m_mark.color = ((!color.IsDark()) ? Color.black : Color.white);
+        Color = color;
+        m_image.color = color;
+        ColorIndex = number;
+        m_title.text = number.ToString();
+        m_title.color = ((!color.IsDark()) ? Color.black : Color.white);
+        m_mark.color = ((!color.IsDark()) ? Color.black : Color.white);
     }
 
     public void Select()
     {
-        this.m_title.transform.localScale = new Vector2(1.5f, 1.5f);
+        m_title.transform.localScale = new Vector2(1.5f, 1.5f);
     }
 
     public void Unselect()
     {
-        this.m_title.transform.localScale = new Vector2(1f, 1f);
+        m_title.transform.localScale = new Vector2(1f, 1f);
     }
 
     public void Click()
     {
-        this.OnClick.SafeInvoke(this);
+        OnClick.SafeInvoke(this);
         AudioManager.Instance.PlayClick();
     }
 
     public void Disable()
     {
-        this.m_image.SetAlpha(0.5f);
-        this.m_title.gameObject.SetActive(false);
-        this.m_mark.gameObject.SetActive(true);
-        ((Component)this.m_image).GetComponent<Button>().enabled = false;
+        m_image.SetAlpha(0.5f);
+        m_title.gameObject.SetActive(false);
+        m_mark.gameObject.SetActive(true);
+        ((Component)m_image).GetComponent<Button>().enabled = false;
     }
 }
 

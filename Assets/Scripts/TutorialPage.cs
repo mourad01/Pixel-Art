@@ -2,9 +2,8 @@ using UnityEngine;
 
 public class TutorialPage : MonoBehaviour
 {
-    [SerializeField] private GameObject m_content;
-
-    [SerializeField] private GameObject m_closeButton;
+    [SerializeField] GameObject m_content;
+    [SerializeField] GameObject m_closeButton;
 
     public void Play()
     {
@@ -16,7 +15,7 @@ public class TutorialPage : MonoBehaviour
 
     public void EnableCloseButton()
     {
-        this.m_closeButton.SetActive(true);
+        m_closeButton.SetActive(true);
     }
 }
 

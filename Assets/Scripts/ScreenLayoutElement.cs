@@ -6,47 +6,44 @@ using UnityEngine.UI;
 [RequireComponent(typeof(LayoutElement))]
 public class ScreenLayoutElement : MonoBehaviour
 {
-    private RectTransform m_canvas;
+    RectTransform m_canvas;
 
-    [SerializeField] private float m_extends;
+    [SerializeField] float m_extends;
+    [SerializeField] bool m_onlyWidth;
+    [SerializeField] bool m_heightDependsOnWidth;
+    [SerializeField] float m_extraHeight;
 
-    [SerializeField] private bool m_onlyWidth;
-
-    [SerializeField] private bool m_heightDependsOnWidth;
-
-    [SerializeField] private float m_extraHeight;
-
-    private void Awake()
+    void Awake()
     {
-        LayoutElement component = base.GetComponent<LayoutElement>();
-        this.FindCanvas();
-        if (this.m_canvas != null)
+        var layout = base.GetComponent<LayoutElement>();
+        FindCanvas();
+        if (m_canvas != null)
         {
-            float num = Mathf.Min(this.m_canvas.rect.width, this.m_canvas.rect.height);
-            component.preferredWidth = num - this.m_extends * 2f;
-            component.minWidth = num - this.m_extends * 2f;
-            if (!this.m_onlyWidth)
+            float minSide = Mathf.Min(m_canvas.rect.width, m_canvas.rect.height);
+            layout.preferredWidth = minSide - m_extends * 2f;
+            layout.minWidth = minSide - m_extends * 2f;
+            if (!m_onlyWidth)
             {
-                component.preferredHeight = num - this.m_extends * 2f;
-                component.minHeight = num - this.m_extends * 2f;
-                if (this.m_heightDependsOnWidth)
+                layout.preferredHeight = minSide - m_extends * 2f;
+                layout.minHeight = minSide - m_extends * 2f;
+                if (m_heightDependsOnWidth)
                 {
-                    LayoutElement layoutElement = component;
-                    component.minHeight = component.minWidth + this.m_extraHeight; float value4 = layoutElement.preferredHeight = (component.minHeight);
+                    var layoutElement = layout;
+                    layout.minHeight = layout.minWidth + m_extraHeight; float value4 = layoutElement.preferredHeight = (layout.minHeight);
                 }
             }
         }
     }
 
-    private void FindCanvas()
+    void FindCanvas()
     {
-        Transform transform = base.transform;
+        var transform = base.transform;
         while (true)
         {
             if (transform != null)
             {
-                Canvas component = ((Component)transform).GetComponent<Canvas>();
-                if (!(component != null))
+                var canvas = ((Component)transform).GetComponent<Canvas>();
+                if (!(canvas != null))
                 {
                     transform = transform.parent;
                     continue;
@@ -55,7 +52,7 @@ public class ScreenLayoutElement : MonoBehaviour
             }
             return;
         }
-        this.m_canvas = (transform as RectTransform);
+        m_canvas = (transform as RectTransform);
     }
 }
 

@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class CheatButton : MonoBehaviour
 {
-    private void Awake()
+    void Awake()
     {
-        base.gameObject.SetActive(false);
+        gameObject.SetActive(false);
     }
 }
 

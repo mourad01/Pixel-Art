@@ -5,39 +5,38 @@ using UnityEngine.UI;
 
 public class WidthDependsOnHeight : MonoBehaviour
 {
-    [SerializeField] private string m_expression;
+    [SerializeField] string m_expression;
 
-    private RectTransform m_rectTransform;
+    RectTransform m_rectTransform;
+    float m_height = -1f;
 
-    private float m_height = -1f;
-
-    private void Start()
+    void Start()
     {
-        this.m_rectTransform = (RectTransform)base.transform;
-        this.UpdateWidth();
+        m_rectTransform = (RectTransform)transform;
+        UpdateWidth();
     }
 
-    private void Update()
+    void Update()
     {
-        if (this.m_rectTransform.rect.height != this.m_height)
+        if (m_rectTransform.rect.height != m_height)
         {
-            this.UpdateWidth();
-            base.enabled = false;
+            UpdateWidth();
+            enabled = false;
         }
     }
 
-    private void UpdateWidth()
+    void UpdateWidth()
     {
-        this.m_height = this.m_rectTransform.rect.height;
-        float height = this.m_height;
-        Vector2 sizeDelta = this.m_rectTransform.sizeDelta;
+        m_height = m_rectTransform.rect.height;
+        float height = m_height;
+        Vector2 sizeDelta = m_rectTransform.sizeDelta;
         sizeDelta.x = height;
-        this.m_rectTransform.sizeDelta = sizeDelta;
-        LayoutElement component = base.GetComponent<LayoutElement>();
-        if (component != null)
+        m_rectTransform.sizeDelta = sizeDelta;
+        var layout = base.GetComponent<LayoutElement>();
+        if (layout != null)
         {
-            LayoutElement layoutElement = component;
-            component.preferredWidth = height; float value3 = layoutElement.minWidth = (component.preferredWidth);
+            var layoutElement = layout;
+            layout.preferredWidth = height; float value3 = layoutElement.minWidth = (layout.preferredWidth);
         }
     }
 }

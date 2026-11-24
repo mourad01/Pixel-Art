@@ -8,24 +8,23 @@ public class GroupOfPreviews : MonoBehaviour
 {
     public Action<ImageInfo, ImagePreview, GroupOfPreviews> OnImageClick;
 
-    private int m_index = -1;
+    int m_index = -1;
 
-    [SerializeField] private List<ImagePreview> m_previews;
+    [SerializeField] List<ImagePreview> m_previews;
 
-    private int m_emptyIndex;
-
-    private bool m_subscribed;
+    int m_emptyIndex;
+    bool m_subscribed;
 
     public int Index
     {
         get
         {
-            return this.m_index;
+            return m_index;
         }
         set
         {
-            this.m_index = value;
-            base.gameObject.SetActive(this.m_index >= 0);
+            m_index = value;
+            gameObject.SetActive(m_index >= 0);
         }
     }
 
@@ -33,88 +32,87 @@ public class GroupOfPreviews : MonoBehaviour
     {
         get
         {
-            return this.m_previews.All((ImagePreview a) => a.Loaded);
+            return m_previews.All((ImagePreview a) => a.Loaded);
         }
     }
 
     public void AddPreview(ImageInfo imageInfo)
     {
 
-        if (!this.m_subscribed)
+        if (!m_subscribed)
         {
 
-            this.Subscribe();
+            Subscribe();
         }
-        if (!this.m_previews[this.m_emptyIndex].CheckTheSame(imageInfo))
+        if (!m_previews[m_emptyIndex].CheckTheSame(imageInfo))
         {
 
-            this.m_previews[this.m_emptyIndex].Init(imageInfo);
+            m_previews[m_emptyIndex].Init(imageInfo);
         }
-        this.m_previews[this.m_emptyIndex].gameObject.SetActive(true);
-        this.m_emptyIndex++;
+        m_previews[m_emptyIndex].gameObject.SetActive(true);
+        m_emptyIndex++;
     }
 
     public void Subscribe()
     {
 
-        this.m_subscribed = true;
+        m_subscribed = true;
 
-        for (int i = 0; i < this.m_previews.Count; i++)
+        for (int i = 0; i < m_previews.Count; i++)
         {
-            ImagePreview imagePreview = this.m_previews[i];
-            imagePreview.OnClick = (Action<ImageInfo, ImagePreview>)Delegate.Combine(imagePreview.OnClick, new Action<ImageInfo, ImagePreview>(this.OnImageClickHandler));
+            m_previews[i].OnClick += OnImageClickHandler;
         }
     }
 
     public void LoadIcons()
     {
 
-        base.StartCoroutine(this.LoadIconsCoroutine());
+        base.StartCoroutine(LoadIconsCoroutine());
     }
 
     public void UnloadIcons()
     {
-        for (int i = 0; i < this.m_previews.Count; i++)
+        for (int i = 0; i < m_previews.Count; i++)
         {
-            if (this.m_previews[i].isActiveAndEnabled)
+            if (m_previews[i].isActiveAndEnabled)
             {
-                this.m_previews[i].UnloadIcon();
+                m_previews[i].UnloadIcon();
             }
         }
     }
 
     public void Reinit()
     {
-        for (int i = 0; i < this.m_previews.Count; i++)
+        for (int i = 0; i < m_previews.Count; i++)
         {
-            if (this.m_previews[i].Inited)
+            if (m_previews[i].Inited)
             {
-                this.m_previews[i].Reinit();
+                m_previews[i].Reinit();
             }
         }
     }
 
-    private void OnImageClickHandler(ImageInfo imageInfo, ImagePreview imagePreview)
+    void OnImageClickHandler(ImageInfo imageInfo, ImagePreview imagePreview)
     {
-        this.OnImageClick.SafeInvoke(imageInfo, imagePreview, this);
+        OnImageClick.SafeInvoke(imageInfo, imagePreview, this);
     }
 
     public void Clear()
     {
 
-        for (int i = 0; i < this.m_previews.Count; i++)
+        for (int i = 0; i < m_previews.Count; i++)
         {
-            this.m_previews[i].gameObject.SetActive(false);
+            m_previews[i].gameObject.SetActive(false);
         }
-        this.m_emptyIndex = 0;
+        m_emptyIndex = 0;
     }
-    private IEnumerator LoadIconsCoroutine()
+    IEnumerator LoadIconsCoroutine()
     {
-        for(int i = 0; i < this.m_previews.Count; i++)
+        for(int i = 0; i < m_previews.Count; i++)
         {
-            if (this.m_previews[i].Inited)
+            if (m_previews[i].Inited)
             {
-                this.m_previews[i].LoadIcon();
+                m_previews[i].LoadIcon();
             }
             yield return null;
         }

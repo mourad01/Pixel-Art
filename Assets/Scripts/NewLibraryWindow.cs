@@ -11,33 +11,21 @@ using UnityEngine.UI;
 
 public class NewLibraryWindow : BaseWindow
 {
-    private ImagesInfo m_imagesInfo;
+    ImagesInfo m_imagesInfo;
+    List<ImageInfo> m_images;
+    List<GroupOfPreviews> m_imageGroups;
+    int m_currentGroupIndex = -1;
+    bool m_lock;
+    bool m_needShowGroupIndex;
+    float m_delta = -1f;
+    float m_previewSize = -1f;
+    int m_pairsCount = -1;
 
-    private List<ImageInfo> m_images;
-
-    private List<GroupOfPreviews> m_imageGroups;
-
-    private int m_currentGroupIndex = -1;
-
-    private bool m_lock;
-
-    private bool m_needShowGroupIndex;
-
-    private float m_delta = -1f;
-
-    private float m_previewSize = -1f;
-
-    private int m_pairsCount = -1;
-
-    [SerializeField] private ScrollRect m_scrollRect;
-
-    [SerializeField] private GroupOfPreviews m_groupOfPreviewsPrefab;
-
-    [SerializeField] private RectTransform m_groupOfPreviewsParent;
-
-    [SerializeField] private BigPreview m_bigPreview;
-
-    [SerializeField] private GameObject m_blockPlane;
+    [SerializeField] ScrollRect m_scrollRect;
+    [SerializeField] GroupOfPreviews m_groupOfPreviewsPrefab;
+    [SerializeField] RectTransform m_groupOfPreviewsParent;
+    [SerializeField] BigPreview m_bigPreview;
+    [SerializeField] GameObject m_blockPlane;
 
 
 
@@ -45,7 +33,7 @@ public class NewLibraryWindow : BaseWindow
     {
         get
         {
-            return this.m_imageGroups[0].Loaded;
+            return m_imageGroups[0].Loaded;
         }
     }
 
@@ -57,15 +45,15 @@ public class NewLibraryWindow : BaseWindow
         }
     }
 
-    private NewLibraryWindow()
+    NewLibraryWindow()
     {
-        this.m_imageGroups = new List<GroupOfPreviews>();
+        m_imageGroups = new List<GroupOfPreviews>();
     }
 
-    private static NewLibraryWindow instance;
-    private void Awake()
+    static NewLibraryWindow instance;
+    void Awake()
     {
-        NewLibraryWindow.instance = this;
+        instance = this;
 
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Combine(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
@@ -80,40 +68,40 @@ public class NewLibraryWindow : BaseWindow
     public void Init(ImagesInfo imagesInfo)
     {
         Debug.Log("New library Images count = " + imagesInfo.Count);
-        if (this.m_imagesInfo != null && this.m_imagesInfo.Images.Count == imagesInfo.Images.Count)
+        if (m_imagesInfo != null && m_imagesInfo.Images.Count == imagesInfo.Images.Count)
         {
             return;
         }
         Debug.Log("New library Create categories");
-        this.m_imagesInfo = imagesInfo;
-        this.m_currentGroupIndex = -1;
-        this.m_images = this.m_imagesInfo.Images;
-        this.m_pairsCount = (this.m_images.Count + 1) / 2;
-        this.m_delta = 20f;
-        float size = ((RectTransform)base.transform).rect.width - this.m_delta * 2f;
-        this.m_previewSize = (size - this.m_delta) / 2f;
-        this.m_scrollRect.content.sizeDelta = new Vector2(size, (float)this.m_pairsCount * (this.m_previewSize + this.m_delta) + this.m_delta);
-        if (this.m_imageGroups.Count == 0)
+        m_imagesInfo = imagesInfo;
+        m_currentGroupIndex = -1;
+        m_images = m_imagesInfo.Images;
+        m_pairsCount = (m_images.Count + 1) / 2;
+        m_delta = 20f;
+        float size = ((RectTransform)transform).rect.width - m_delta * 2f;
+        m_previewSize = (size - m_delta) / 2f;
+        m_scrollRect.content.sizeDelta = new Vector2(size, (float)m_pairsCount * (m_previewSize + m_delta) + m_delta);
+        if (m_imageGroups.Count == 0)
         {
             for (int i = 0; i < 10; i++)
             {
-                GroupOfPreviews groupOfPreviews = UnityObject.Instantiate(this.m_groupOfPreviewsPrefab);
-                groupOfPreviews.transform.SetParent(this.m_groupOfPreviewsParent);
+                var groupOfPreviews = UnityObject.Instantiate(m_groupOfPreviewsPrefab);
+                groupOfPreviews.transform.SetParent(m_groupOfPreviewsParent);
                 groupOfPreviews.transform.localPosition = Vector3.zero;
                 groupOfPreviews.transform.localScale = Vector3.one;
-                ((RectTransform)groupOfPreviews.transform).sizeDelta = new Vector2(size, this.m_previewSize);
+                ((RectTransform)groupOfPreviews.transform).sizeDelta = new Vector2(size, m_previewSize);
                 groupOfPreviews.gameObject.SetActive(false);
-                groupOfPreviews.OnImageClick = (Action<ImageInfo, ImagePreview, GroupOfPreviews>)Delegate.Combine(groupOfPreviews.OnImageClick, new Action<ImageInfo, ImagePreview, GroupOfPreviews>(this.OnImageClickHandler));
+                groupOfPreviews.OnImageClick += OnImageClickHandler;
                 groupOfPreviews.Index = -1;
-                this.m_imageGroups.Add(groupOfPreviews);
+                m_imageGroups.Add(groupOfPreviews);
             }
         }
-        int index = this.m_images.FindIndex((ImageInfo a) => a.Id == MainMenu.ImageId) / 2;
+        int index = m_images.FindIndex((ImageInfo a) => a.Id == MainMenu.ImageId) / 2;
         if (index < 0)
         {
             index = 0;
         }
-        this.ShowGroupIndex(index, true);
+        ShowGroupIndex(index, true);
 
     }
 
@@ -127,14 +115,14 @@ public class NewLibraryWindow : BaseWindow
         }
     }
 
-    private void Update()
+    void Update()
     {
-        GameObject blockPlane = this.m_blockPlane;
-        Vector2 velocity = this.m_scrollRect.velocity;
+        var blockPlane = m_blockPlane;
+        Vector2 velocity = m_scrollRect.velocity;
         int active;
         if (!(velocity.y > 500f))
         {
-            Vector2 velocity2 = this.m_scrollRect.velocity;
+            Vector2 velocity2 = m_scrollRect.velocity;
             active = ((velocity2.y < -500f) ? 1 : 0);
         }
         else
@@ -142,42 +130,42 @@ public class NewLibraryWindow : BaseWindow
             active = 1;
         }
         blockPlane.SetActive((byte)active != 0);
-        if (this.m_needShowGroupIndex)
+        if (m_needShowGroupIndex)
         {
-            this.ShowGroupIndex(this.m_currentGroupIndex, true);
-            this.m_needShowGroupIndex = false;
+            ShowGroupIndex(m_currentGroupIndex, true);
+            m_needShowGroupIndex = false;
         }
     }
 
     public void ShowGroupIndex(int index, bool force = false)
     {
-        if (base.isActiveAndEnabled)
+        if (isActiveAndEnabled)
         {
-            base.StartCoroutine(this.ShowGroupIndexCoroutine(index, force));
+            base.StartCoroutine(ShowGroupIndexCoroutine(index, force));
         }
         else
         {
-            this.m_needShowGroupIndex = true;
+            m_needShowGroupIndex = true;
         }
     }
 
     public void OnScrollRectScrolled(Vector2 pos)
     {
-        if (!this.m_lock && this.m_imageGroups.Count > 0)
+        if (!m_lock && m_imageGroups.Count > 0)
         {
-            Vector2 sizeDelta = ((Component)this.m_imageGroups[0]).GetComponent<RectTransform>().sizeDelta;
+            Vector2 sizeDelta = ((Component)m_imageGroups[0]).GetComponent<RectTransform>().sizeDelta;
             float y = sizeDelta.y;
-            int num = 20;
-            Vector2 sizeDelta2 = this.m_scrollRect.content.sizeDelta;
+            int spacing = 20;
+            Vector2 sizeDelta2 = m_scrollRect.content.sizeDelta;
             float value2 = sizeDelta2.y * (1f - pos.y);
-            int index = Mathf.RoundToInt((value2 - (float)num) / (y + (float)num));
-            this.OnSelectIndexHandler(index, false);
+            int index = Mathf.RoundToInt((value2 - (float)spacing) / (y + (float)spacing));
+            OnSelectIndexHandler(index, false);
         }
     }
 
-    private void OnImageClickHandler(ImageInfo imageInfo, ImagePreview imagePreview, GroupOfPreviews groupOfPreviews)
+    void OnImageClickHandler(ImageInfo imageInfo, ImagePreview imagePreview, GroupOfPreviews groupOfPreviews)
     {
-        this.m_currentGroupIndex = this.m_imageGroups.IndexOf(groupOfPreviews);
+        m_currentGroupIndex = m_imageGroups.IndexOf(groupOfPreviews);
         OpenImage(imageInfo, imagePreview);
     }
 
@@ -187,10 +175,10 @@ public class NewLibraryWindow : BaseWindow
 
         AnalyticsManager.Instance.ImageSelected(imageInfo);
 
-        this.DrawAction(imageInfo, imagePreview);
+        DrawAction(imageInfo, imagePreview);
     }
 
-    private void SelectPreview(string saveId, ImageInfo imageInfo, ImagePreview preview)
+    void SelectPreview(string saveId, ImageInfo imageInfo, ImagePreview preview)
     {
         ISavedWorkData swd = null;
 
@@ -199,7 +187,7 @@ public class NewLibraryWindow : BaseWindow
             swd = MainManager.Instance.SavedWorksList.LoadById(saveId);
 
         }
-        this.m_bigPreview.Init((RectTransform)preview.transform, preview.Texture, preview.Locked, swd);
+        m_bigPreview.Init((RectTransform)preview.transform, preview.Texture, preview.Locked, swd);
 
     }
     public void ExecutePuzzle()
@@ -228,9 +216,9 @@ public class NewLibraryWindow : BaseWindow
         {
             DialogToolWrapper.ShowNoInternetDialog();
         }
-        else if (!this.m_lock)
+        else if (!m_lock)
         {
-            this.m_lock = true;
+            m_lock = true;
             string text = MainManager.Instance.SavedWorksList.LastSaveOfImageId(imageInfo.Id);
 
             if (preview != null)
@@ -244,30 +232,30 @@ public class NewLibraryWindow : BaseWindow
 
             if (text == null)
             { 
-                this.NewImageButtonClick(imageInfo, ImageOpenType.New, preview);
+                NewImageButtonClick(imageInfo, ImageOpenType.New, preview);
             }
             else
             {
                 if (preview != null)
                 {
-                    this.SelectPreview(text, imageInfo, preview);
+                    SelectPreview(text, imageInfo, preview);
                 }
                 ActionSheetWrapper.ShowImagePreviewActionSheet(delegate (ActionSheetResult a)
                 {
                     switch (a)
                     {
                         case ActionSheetResult.Continue:
-                            this.LoadButtonClick(imageInfo);
+                            LoadButtonClick(imageInfo);
 
-                            this.m_lock = false;
+                            m_lock = false;
                             break;
                         case ActionSheetResult.New:
-                            this.NewImageButtonClick(imageInfo, ImageOpenType.Reopened, preview);
-                            this.m_lock = false;
+                            NewImageButtonClick(imageInfo, ImageOpenType.Reopened, preview);
+                            m_lock = false;
                             break;
                         case ActionSheetResult.Cancel:
-                            this.m_bigPreview.Close();
-                            this.m_lock = false;
+                            m_bigPreview.Close();
+                            m_lock = false;
                             break;
                     }
                 });
@@ -282,26 +270,26 @@ public class NewLibraryWindow : BaseWindow
         if ((imageInfo.CustomAccessStatus == AccessStatus.Free && imagePreview != null && !imagePreview.AdsAvailable) || AppData.UnlockedImages.Contains(imageInfo.Id))
         {
 
-            base.StartCoroutine(this.NewImageButtonClickCoroutine(imageInfo, imageOpenType));
+            base.StartCoroutine(NewImageButtonClickCoroutine(imageInfo, imageOpenType));
         }
         else
         {
 
 
-            base.StartCoroutine(this.NewImageButtonClickCoroutine(imageInfo, imageOpenType));
+            base.StartCoroutine(NewImageButtonClickCoroutine(imageInfo, imageOpenType));
 
-            this.m_lock = false;
+            m_lock = false;
         }
     }
 
     public void LoadButtonClick(ImageInfo imageInfo)
     {
 
-        this.m_lock = true;
+        m_lock = true;
 
-            this.ClearPreviews();
+            ClearPreviews();
             string id = MainManager.Instance.SavedWorksList.LastSaveOfImageId(imageInfo.Id);
-            ISavedWorkData savedWorkData = MainManager.Instance.SavedWorksList.Load(SavedWorksList.GetPathToSave(id));
+            var savedWorkData = MainManager.Instance.SavedWorksList.Load(SavedWorksList.GetPathToSave(id));
             MainMenu.LastPage = MainMenuPage.Library;
             MainMenu.ImageId = savedWorkData.ImageInfo.Id;
             MainMenu.WorkId = savedWorkData.Id;
@@ -311,57 +299,57 @@ public class NewLibraryWindow : BaseWindow
             MainManager.Instance.StartWorkbook(savedWorkData, ImageOpenType.Continued, delegate
             {
 
-                this.m_bigPreview.Close();
-                this.m_lock = false;
+                m_bigPreview.Close();
+                m_lock = false;
             });
 
     }
 
-    private void ClearPreviews()
+    void ClearPreviews()
     {
     }
 
-    private void OnSelectIndexHandler(int index, bool force = false)
+    void OnSelectIndexHandler(int index, bool force = false)
     {
         try
         {
-            if (index >= 0 && index < this.m_pairsCount && !this.m_lock || force)
+            if (index >= 0 && index < m_pairsCount && !m_lock || force)
             {
-                if (index != this.m_currentGroupIndex || force)
+                if (index != m_currentGroupIndex || force)
                 {
-                    bool flag = index > this.m_currentGroupIndex;
-                    List<GroupOfPreviews> list = (from a in this.m_imageGroups
+                    bool forward = index > m_currentGroupIndex;
+                    var list = (from a in m_imageGroups
                                                   orderby a.Index
                                                   select a).ToList();
-                    this.m_currentGroupIndex = index;
+                    m_currentGroupIndex = index;
                     for (int i = -4; i < 6; i++)
                     {
-                        int localIndex = this.m_currentGroupIndex + i;
-                        if (localIndex >= 0 && localIndex < this.m_pairsCount)
+                        int localIndex = m_currentGroupIndex + i;
+                        if (localIndex >= 0 && localIndex < m_pairsCount)
                         {
-                            GroupOfPreviews groupOfPreviews = this.m_imageGroups.FirstOrDefault((GroupOfPreviews a) => a.Index == localIndex);
+                            var groupOfPreviews = m_imageGroups.FirstOrDefault((GroupOfPreviews a) => a.Index == localIndex);
                             if (groupOfPreviews == null)
                             {
-                                groupOfPreviews = ((!flag) ? list[this.m_imageGroups.Count - 1] : list[0]);
+                                groupOfPreviews = ((!forward) ? list[m_imageGroups.Count - 1] : list[0]);
                                 groupOfPreviews.Index = localIndex;
                                 groupOfPreviews.Clear();
-                                groupOfPreviews.AddPreview(this.m_images[localIndex * 2]);
-                                if (localIndex * 2 + 1 < this.m_images.Count)
+                                groupOfPreviews.AddPreview(m_images[localIndex * 2]);
+                                if (localIndex * 2 + 1 < m_images.Count)
                                 {
-                                    groupOfPreviews.AddPreview(this.m_images[localIndex * 2 + 1]);
+                                    groupOfPreviews.AddPreview(m_images[localIndex * 2 + 1]);
                                 }
                                 groupOfPreviews.LoadIcons();
-                                ((RectTransform)groupOfPreviews.transform).anchoredPosition = new Vector2(0f, 0f - ((float)localIndex * (this.m_previewSize + this.m_delta) + this.m_delta));
+                                ((RectTransform)groupOfPreviews.transform).anchoredPosition = new Vector2(0f, 0f - ((float)localIndex * (m_previewSize + m_delta) + m_delta));
                                 list.Remove(groupOfPreviews);
                             }
                             else if (force)
                             {
                                 groupOfPreviews.Index = localIndex;
                                 groupOfPreviews.Clear();
-                                groupOfPreviews.AddPreview(this.m_images[localIndex * 2]);
-                                if (localIndex * 2 + 1 < this.m_images.Count)
+                                groupOfPreviews.AddPreview(m_images[localIndex * 2]);
+                                if (localIndex * 2 + 1 < m_images.Count)
                                 {
-                                    groupOfPreviews.AddPreview(this.m_images[localIndex * 2 + 1]);
+                                    groupOfPreviews.AddPreview(m_images[localIndex * 2 + 1]);
                                 }
                                 groupOfPreviews.LoadIcons();
                             }
@@ -376,54 +364,54 @@ public class NewLibraryWindow : BaseWindow
         }
     }
 
-    private void ActivateWindowElement(MonoBehaviour element)
+    void ActivateWindowElement(MonoBehaviour element)
     {
         ((GroupOfPreviews)element).LoadIcons();
     }
 
-    private void DesactivateWindowElement(MonoBehaviour element)
+    void DesactivateWindowElement(MonoBehaviour element)
     {
         ((GroupOfPreviews)element).UnloadIcons();
     }
 
-    private void OnPurchaseHandler(bool res, SubscriptionType subscription)
+    void OnPurchaseHandler(bool res, SubscriptionType subscription)
     {
-        foreach (GroupOfPreviews imageGroup in this.m_imageGroups)
+        foreach (GroupOfPreviews imageGroup in m_imageGroups)
         {
             imageGroup.Reinit();
         }
     }
 
-    private void OnInternetAppearedHandler()
+    void OnInternetAppearedHandler()
     {
-        this.OnSelectIndexHandler(this.m_currentGroupIndex, true);
+        OnSelectIndexHandler(m_currentGroupIndex, true);
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         //IAPWrapper instance = IAPWrapper.Instance;
         //instance.OnPurchase = (Action<bool, SubscriptionType>)Delegate.Remove(instance.OnPurchase, new Action<bool, SubscriptionType>(this.OnPurchaseHandler));
         //DataManager instance2 = DataManager.Instance;
         //instance2.OnInternetAppeared = (Action)Delegate.Remove(instance2.OnInternetAppeared, new Action(this.OnInternetAppearedHandler));
     }
-    private IEnumerator ShowGroupIndexCoroutine(int index, bool force = false)
+    IEnumerator ShowGroupIndexCoroutine(int index, bool force = false)
     {
         yield return null;
 
-        var y = (float)index * (this.m_previewSize + this.m_delta);
-        var p = this.m_scrollRect.content.anchoredPosition;
+        var y = (float)index * (m_previewSize + m_delta);
+        var p = m_scrollRect.content.anchoredPosition;
         p.y = y;
-        this.m_scrollRect.content.anchoredPosition = p;
-        this.OnSelectIndexHandler(index, force);
+        m_scrollRect.content.anchoredPosition = p;
+        OnSelectIndexHandler(index, force);
     }
-    private IEnumerator NewImageButtonClickCoroutine(ImageInfo imageInfo, ImageOpenType imageOpenType)
+    IEnumerator NewImageButtonClickCoroutine(ImageInfo imageInfo, ImageOpenType imageOpenType)
     { 
-        this.m_lock = true; 
-        this.ClearPreviews();
+        m_lock = true; 
+        ClearPreviews();
         MainManager.Instance.StartWorkbook(imageInfo, imageOpenType, MainMenuPage.Library, delegate
         {
-            this.m_bigPreview.Close();
-            this.m_lock = false;
+            m_bigPreview.Close();
+            m_lock = false;
         });
         yield return null;
     }

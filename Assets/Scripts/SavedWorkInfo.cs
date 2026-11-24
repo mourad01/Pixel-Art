@@ -9,8 +9,8 @@ public class SavedWorkInfo
 
     public SavedWorkInfo(string id, DateTime dateTime)
     {
-        this.Id = id;
-        this.DateTime = dateTime;
+        Id = id;
+        DateTime = dateTime;
     }
 }
 

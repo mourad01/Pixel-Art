@@ -7,20 +7,19 @@ using UnityEngine;
 
 public class PixelSize : MonoBehaviour
 {
-    [SerializeField] private RectTransform m_canvas;
+    [SerializeField] RectTransform m_canvas;
+    [SerializeField] float m_pixels;
 
-    [SerializeField] private float m_pixels;
-
-    private void Awake()
+    void Awake()
     {
-        base.StartCoroutine(this.InitCoroutine());
+        base.StartCoroutine(InitCoroutine());
     }
-    private IEnumerator InitCoroutine()
+    IEnumerator InitCoroutine()
     {
         yield return null;
 
-        var size = this.m_pixels * ScreenToolWrapper.Density * 1.777778f / (this.m_canvas.rect.height / this.m_canvas.rect.width);
+        var size = m_pixels * ScreenToolWrapper.Density * 1.777778f / (m_canvas.rect.height / m_canvas.rect.width);
         var sizeDelta = new Vector2(size, size);
-        (this.transform as RectTransform).sizeDelta = sizeDelta;
+        (transform as RectTransform).sizeDelta = sizeDelta;
     }
 }

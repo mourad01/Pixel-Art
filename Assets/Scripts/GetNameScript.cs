@@ -10,37 +10,21 @@ using UnityEngine.UI;
 public class GetNameScript : MonoBehaviour
 {
     public Text resultText;
-
     public Button goButton;
-
     public Button todayButton;
-
     public Button yesterdayButton;
-
     public Button ereyesterdayButton;
-
     public Image puzzleReadyTodayImg;
-
     public Image puzzleReadyYesterdayImg;
-
     public Image puzzleReadyEreyesterdayImg;
-
     public GameObject starsParentToday;
-
     public GameObject starsParentYesterday;
-
     public GameObject starsParentEreyesterday;
-
     public Text dateNumTodayText;
-
     public Text dateNumYesterdayText;
-
     public Text dateNumEreyesterdayText;
-
     public Button leaderboardButton;
-
     public Text leaderboardPromptText;
-
     public Material grayMaterial;
     //public Button lbDialogSignoutButton;
 
@@ -53,39 +37,25 @@ public class GetNameScript : MonoBehaviour
     //public Sprite gcLeaderboardSprite;
 
     public GameObject dlSpinner;
-
     public Text rolloverTimeText;
-
     public Text bestTimeText;
-
     public Image bestTimeNewImage;
-
     public LeaderboardScript leaderBoardScript;
 
-    private bool bTodayDataExists;
-
-    private bool bYesterdayDataExists;
-
-    private bool bEreyesterdayDataExists;
-
-    private bool bIsDataFetched;
-
-    private bool bIsImageFetched;
-
-    private string todayFilename;
-
-    private string yesterdayFilename;
-
-    private string ereyesterdayFilename;
-
-    private int todayStars;
-
-    private int yesterdayStars;
-
-    private int ereyesterdayStars;
+    bool bTodayDataExists;
+    bool bYesterdayDataExists;
+    bool bEreyesterdayDataExists;
+    bool bIsDataFetched;
+    bool bIsImageFetched;
+    string todayFilename;
+    string yesterdayFilename;
+    string ereyesterdayFilename;
+    int todayStars;
+    int yesterdayStars;
+    int ereyesterdayStars;
 
     public static GetNameScript Instance;
-    private void Awake()
+    void Awake()
     {
         Instance = this;
         //Init();
@@ -93,125 +63,125 @@ public class GetNameScript : MonoBehaviour
 
     public void Init()
     {
-        this.todayFilename = GetDailyIdentity(0);
-        this.yesterdayFilename = GetDailyIdentity(-1);
-        this.ereyesterdayFilename = GetDailyIdentity(-2);
-        this.CheckDailyPrefDataExists();
-        this.CalcDailyPrefDateDiff();
-        this.todayStars = GetDailyStars("dailytodaydata");
-        this.yesterdayStars = GetDailyStars("dailyyesterdaydata");
-        this.ereyesterdayStars = GetDailyStars("dailyereyesterdaydata");
-        if (this.todayStars >= 1 && this.todayStars != 99)
+        todayFilename = GetDailyIdentity(0);
+        yesterdayFilename = GetDailyIdentity(-1);
+        ereyesterdayFilename = GetDailyIdentity(-2);
+        CheckDailyPrefDataExists();
+        CalcDailyPrefDateDiff();
+        todayStars = GetDailyStars("dailytodaydata");
+        yesterdayStars = GetDailyStars("dailyyesterdaydata");
+        ereyesterdayStars = GetDailyStars("dailyereyesterdaydata");
+        if (todayStars >= 1 && todayStars != 99)
         {
-            ((Component)this.starsParentToday.transform.Find("StarL")).GetComponent<Image>().enabled = true;
-            ((Component)this.starsParentToday.transform.Find("StarMarkerL")).GetComponent<Image>().enabled = false;
+            ((Component)starsParentToday.transform.Find("StarL")).GetComponent<Image>().enabled = true;
+            ((Component)starsParentToday.transform.Find("StarMarkerL")).GetComponent<Image>().enabled = false;
         }
-        if (this.todayStars >= 2 && this.todayStars != 99)
+        if (todayStars >= 2 && todayStars != 99)
         {
-            ((Component)this.starsParentToday.transform.Find("StarM")).GetComponent<Image>().enabled = true;
-            ((Component)this.starsParentToday.transform.Find("StarMarkerM")).GetComponent<Image>().enabled = false;
+            ((Component)starsParentToday.transform.Find("StarM")).GetComponent<Image>().enabled = true;
+            ((Component)starsParentToday.transform.Find("StarMarkerM")).GetComponent<Image>().enabled = false;
         }
-        if (this.todayStars >= 3 && this.todayStars != 99)
+        if (todayStars >= 3 && todayStars != 99)
         {
-            ((Component)this.starsParentToday.transform.Find("StarR")).GetComponent<Image>().enabled = true;
-            ((Component)this.starsParentToday.transform.Find("StarMarkerR")).GetComponent<Image>().enabled = false;
+            ((Component)starsParentToday.transform.Find("StarR")).GetComponent<Image>().enabled = true;
+            ((Component)starsParentToday.transform.Find("StarMarkerR")).GetComponent<Image>().enabled = false;
         }
-        if (this.yesterdayStars >= 1 && this.yesterdayStars != 99)
+        if (yesterdayStars >= 1 && yesterdayStars != 99)
         {
-            ((Component)this.starsParentYesterday.transform.Find("StarL")).GetComponent<Image>().enabled = true;
-            ((Component)this.starsParentYesterday.transform.Find("StarMarkerL")).GetComponent<Image>().enabled = false;
+            ((Component)starsParentYesterday.transform.Find("StarL")).GetComponent<Image>().enabled = true;
+            ((Component)starsParentYesterday.transform.Find("StarMarkerL")).GetComponent<Image>().enabled = false;
         }
-        if (this.yesterdayStars >= 2 && this.yesterdayStars != 99)
+        if (yesterdayStars >= 2 && yesterdayStars != 99)
         {
-            ((Component)this.starsParentYesterday.transform.Find("StarM")).GetComponent<Image>().enabled = true;
-            ((Component)this.starsParentYesterday.transform.Find("StarMarkerM")).GetComponent<Image>().enabled = false;
+            ((Component)starsParentYesterday.transform.Find("StarM")).GetComponent<Image>().enabled = true;
+            ((Component)starsParentYesterday.transform.Find("StarMarkerM")).GetComponent<Image>().enabled = false;
         }
-        if (this.yesterdayStars >= 3 && this.yesterdayStars != 99)
+        if (yesterdayStars >= 3 && yesterdayStars != 99)
         {
-            ((Component)this.starsParentYesterday.transform.Find("StarR")).GetComponent<Image>().enabled = true;
-            ((Component)this.starsParentYesterday.transform.Find("StarMarkerR")).GetComponent<Image>().enabled = false;
+            ((Component)starsParentYesterday.transform.Find("StarR")).GetComponent<Image>().enabled = true;
+            ((Component)starsParentYesterday.transform.Find("StarMarkerR")).GetComponent<Image>().enabled = false;
         }
-        if (this.ereyesterdayStars >= 1 && this.ereyesterdayStars != 99)
+        if (ereyesterdayStars >= 1 && ereyesterdayStars != 99)
         {
-            ((Component)this.starsParentEreyesterday.transform.Find("StarL")).GetComponent<Image>().enabled = true;
-            ((Component)this.starsParentEreyesterday.transform.Find("StarMarkerL")).GetComponent<Image>().enabled = false;
+            ((Component)starsParentEreyesterday.transform.Find("StarL")).GetComponent<Image>().enabled = true;
+            ((Component)starsParentEreyesterday.transform.Find("StarMarkerL")).GetComponent<Image>().enabled = false;
         }
-        if (this.ereyesterdayStars >= 2 && this.ereyesterdayStars != 99)
+        if (ereyesterdayStars >= 2 && ereyesterdayStars != 99)
         {
-            ((Component)this.starsParentEreyesterday.transform.Find("StarM")).GetComponent<Image>().enabled = true;
-            ((Component)this.starsParentEreyesterday.transform.Find("StarMarkerM")).GetComponent<Image>().enabled = false;
+            ((Component)starsParentEreyesterday.transform.Find("StarM")).GetComponent<Image>().enabled = true;
+            ((Component)starsParentEreyesterday.transform.Find("StarMarkerM")).GetComponent<Image>().enabled = false;
         }
-        if (this.ereyesterdayStars >= 3 && this.ereyesterdayStars != 99)
+        if (ereyesterdayStars >= 3 && ereyesterdayStars != 99)
         {
-            ((Component)this.starsParentEreyesterday.transform.Find("StarR")).GetComponent<Image>().enabled = true;
-            ((Component)this.starsParentEreyesterday.transform.Find("StarMarkerR")).GetComponent<Image>().enabled = false;
+            ((Component)starsParentEreyesterday.transform.Find("StarR")).GetComponent<Image>().enabled = true;
+            ((Component)starsParentEreyesterday.transform.Find("StarMarkerR")).GetComponent<Image>().enabled = false;
         }
-        if (DailyDataExists(this.todayFilename))
+        if (DailyDataExists(todayFilename))
         {
-            this.SetDailyButtonVerb("Play", 0);
-            this.bTodayDataExists = true;
-            if (this.todayStars == 99)
+            SetDailyButtonVerb("Play", 0);
+            bTodayDataExists = true;
+            if (todayStars == 99)
             {
-                this.LoadDailyPuzzleIcon(0, true);
+                LoadDailyPuzzleIcon(0, true);
             }
             else
             {
-                this.LoadDailyPuzzleIcon(0, false);
+                LoadDailyPuzzleIcon(0, false);
             }
         }
         else
         {
-            this.SetDailyButtonVerb("Download", 0);
+            SetDailyButtonVerb("Download", 0);
         }
-        this.dateNumTodayText.text = this.GetDailyDateDayString(0);
-        if (DailyDataExists(this.yesterdayFilename))
+        dateNumTodayText.text = GetDailyDateDayString(0);
+        if (DailyDataExists(yesterdayFilename))
         {
-            this.SetDailyButtonVerb("Play", -1);
-            this.bYesterdayDataExists = true;
-            if (this.yesterdayStars == 99)
+            SetDailyButtonVerb("Play", -1);
+            bYesterdayDataExists = true;
+            if (yesterdayStars == 99)
             {
-                this.LoadDailyPuzzleIcon(-1, true);
+                LoadDailyPuzzleIcon(-1, true);
             }
             else
             {
-                this.LoadDailyPuzzleIcon(-1, false);
+                LoadDailyPuzzleIcon(-1, false);
             }
         }
         else
         {
-            this.SetDailyButtonVerb("Download", -1);
+            SetDailyButtonVerb("Download", -1);
         }
-        this.dateNumYesterdayText.text = this.GetDailyDateDayString(-1);
-        if (DailyDataExists(this.ereyesterdayFilename))
+        dateNumYesterdayText.text = GetDailyDateDayString(-1);
+        if (DailyDataExists(ereyesterdayFilename))
         {
-            this.SetDailyButtonVerb("Play", -2);
-            this.bEreyesterdayDataExists = true;
-            if (this.ereyesterdayStars == 99)
+            SetDailyButtonVerb("Play", -2);
+            bEreyesterdayDataExists = true;
+            if (ereyesterdayStars == 99)
             {
-                this.LoadDailyPuzzleIcon(-2, true);
+                LoadDailyPuzzleIcon(-2, true);
             }
             else
             {
-                this.LoadDailyPuzzleIcon(-2, false);
+                LoadDailyPuzzleIcon(-2, false);
             }
         }
         else
         {
-            this.SetDailyButtonVerb("Download", -2);
+            SetDailyButtonVerb("Download", -2);
         }
-        this.dateNumEreyesterdayText.text = this.GetDailyDateDayString(-2);
+        dateNumEreyesterdayText.text = GetDailyDateDayString(-2);
         //this.leaderBoardScript = base.GetComponent<LeaderboardScript>();
         //if (LevelProgressControl.control.androidSdkLevel < 14)
         //{
         //    this.leaderboardButton.interactable = false;
         //}
 
-        this.resultText.gameObject.SetActive(false);
-        this.dlSpinner.SetActive(false);
-        this.bestTimeNewImage.gameObject.SetActive(false);
-        TimeSpan timeSpan = TimeSpan.FromSeconds((double)LevelProgressControl.control.dailyTodayPersonalBest);
+        resultText.gameObject.SetActive(false);
+        dlSpinner.SetActive(false);
+        bestTimeNewImage.gameObject.SetActive(false);
+        var timeSpan = TimeSpan.FromSeconds((double)LevelProgressControl.control.dailyTodayPersonalBest);
         string str = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds);
-        this.bestTimeText.text = "Today's Personal Best Time is " + str;
+        bestTimeText.text = "Today's Personal Best Time is " + str;
          
         base.InvokeRepeating("DailyRolloverCountdown", 0f, 60f);
         if (LevelProgressControl.control.isReturningFromLevel)
@@ -280,22 +250,22 @@ public class GetNameScript : MonoBehaviour
         {
             Debug.Log("PLAY");
             LevelProgressControl.control.dailyDayOffset = dailyOffset;
-            this.ExecutePuzzle(GetDailyIdentity(dailyOffset));
+            ExecutePuzzle(GetDailyIdentity(dailyOffset));
         }
         else
         {
             Debug.Log("DOWNLOAD");
-            this.ResetDailyDownload();
-            this.dlSpinner.SetActive(true);
+            ResetDailyDownload();
+            dlSpinner.SetActive(true);
             string str = GetDailyIdentity(dailyOffset);
-            base.StartCoroutine(this.DownloadTextureData(str, dailyOffset)); 
+            base.StartCoroutine(DownloadTextureData(str, dailyOffset)); 
         }
     }
 
     public void ResetDailyDownload()
     {
-        this.bIsDataFetched = false;
-        this.bIsImageFetched = false;
+        bIsDataFetched = false;
+        bIsImageFetched = false;
     }
 
     public void ExecutePuzzle()
@@ -319,24 +289,24 @@ public class GetNameScript : MonoBehaviour
             NewLibraryWindow.ExecutePuzzle(imageInfo);
         });
     }
-    private static int GetIdentifyIndex(string str, int maxSize)
+    static int GetIdentifyIndex(string str, int maxSize)
     {
         uint number = (uint)str.GetHashCode();
         return (int)((number + (maxSize + 200)) % maxSize);
     }
-    private IEnumerator DownloadTextureData(string identify, int dailyOffset)
+    IEnumerator DownloadTextureData(string identify, int dailyOffset)
     {
         if (DataManager.Instance == null)
             yield return null;
 
-        this.LoadDailyPuzzleIcon(dailyOffset, true);
+        LoadDailyPuzzleIcon(dailyOffset, true);
     } 
 
-    private void LoadSilhouette()
+    void LoadSilhouette()
     {
-        Texture2D texture2D = LoadPNG(Application.persistentDataPath + "/daily.png");
+        var texture2D = LoadPNG(Application.persistentDataPath + "/daily.png");
     }
-    private IEnumerator LoadSaveCoroutine(ImageInfo imageInfo, Image image, string id)
+    IEnumerator LoadSaveCoroutine(ImageInfo imageInfo, Image image, string id)
     {
         var resTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
         resTex.filterMode = (FilterMode)(imageInfo.Is3D ? 1 : 0);
@@ -347,7 +317,7 @@ public class GetNameScript : MonoBehaviour
         image.sprite = Sprite.Create(resTex, new Rect(0f, 0f, (float)resTex.width, (float)resTex.height), new Vector2(0.5f, 0.5f));
     }
 
-    private void LoadDailyPuzzleIcon(Image image, string identify, int dailyOffset, bool isSilhouette)
+    void LoadDailyPuzzleIcon(Image image, string identify, int dailyOffset, bool isSilhouette)
     {
         if (isSilhouette)
         {
@@ -367,11 +337,11 @@ public class GetNameScript : MonoBehaviour
 
             if (imageInfo.Is3D && saveId != null)
             {
-                this.bIsImageFetched = true;
+                bIsImageFetched = true;
                 image.gameObject.SetActive(true);
                 base.StartCoroutine(LoadSaveCoroutine(imageInfo, image, saveId));
-                this.SetDailyButtonVerb("Play", dailyOffset);
-                this.dlSpinner.SetActive(false); 
+                SetDailyButtonVerb("Play", dailyOffset);
+                dlSpinner.SetActive(false); 
 
                 PlayerPrefsWrapper.SetBool("Daily-" + identify, true);
                 if (dailyOffset == 0)
@@ -385,14 +355,14 @@ public class GetNameScript : MonoBehaviour
                 {
                     if (res)
                     {
-                        this.bIsImageFetched = true;
+                        bIsImageFetched = true;
                         image.sprite = Sprite.Create(tex, new Rect(0f, 0f, (float)tex.width, (float)tex.height), new Vector2(0.5f, 0.5f));
                         if (saveId != null)
                         {
                             base.StartCoroutine(LoadSaveCoroutine(imageInfo, image, saveId));
                         }
-                        this.SetDailyButtonVerb("Play", dailyOffset);
-                        this.dlSpinner.SetActive(false);
+                        SetDailyButtonVerb("Play", dailyOffset);
+                        dlSpinner.SetActive(false);
 
                         PlayerPrefsWrapper.SetBool("Daily-" + identify, true);
                         if (dailyOffset == 0)
@@ -409,7 +379,7 @@ public class GetNameScript : MonoBehaviour
         }); 
     }
 
-    private void LoadDailyPuzzleIcon(int todayOffset, bool isSilhouette)
+    void LoadDailyPuzzleIcon(int todayOffset, bool isSilhouette)
     {
         switch (todayOffset)
         {
@@ -468,7 +438,7 @@ public class GetNameScript : MonoBehaviour
         Texture2D texture2D = null;
         if (File.Exists(filePath))
         {
-            byte[] data = File.ReadAllBytes(filePath);
+            var data = File.ReadAllBytes(filePath);
             texture2D = new Texture2D(2, 2, TextureFormat.RGBA32, false);
             texture2D.filterMode = FilterMode.Point;
             texture2D.wrapMode = TextureWrapMode.Clamp;
@@ -490,7 +460,7 @@ public class GetNameScript : MonoBehaviour
         return text;
     }
 
-    private string GetDailyDateString(int todayOffset)
+    string GetDailyDateString(int todayOffset)
     {
         DateTime dateTime = DateTime.UtcNow.AddHours(-8.0);
         if (todayOffset != 0)
@@ -500,7 +470,7 @@ public class GetNameScript : MonoBehaviour
         return DateTimeFormatInfo.CurrentInfo.GetAbbreviatedMonthName(dateTime.Month) + " " + dateTime.Day.ToString("00");
     }
 
-    private string GetDailyDateDayString(int todayOffset)
+    string GetDailyDateDayString(int todayOffset)
     {
         DateTime dateTime = DateTime.UtcNow.AddHours(-8.0);
         if (todayOffset != 0)
@@ -510,7 +480,7 @@ public class GetNameScript : MonoBehaviour
         return dateTime.Day.ToString("00");
     }
 
-    private static bool DailyDataExists(string identify)
+    static bool DailyDataExists(string identify)
     {
         return PlayerPrefsWrapper.GetBool("Daily-" + identify);
         //if (DataManager.Instance.AllImages == null || DataManager.Instance.AllImages.Images.Count == 0)
@@ -535,18 +505,18 @@ public class GetNameScript : MonoBehaviour
   //      return result;
     }
 
-    private void SetDailyButtonVerb(string verb, int dailyOffset)
+    void SetDailyButtonVerb(string verb, int dailyOffset)
     {
         switch (dailyOffset)
         {
             case 0:
-                ((Component)this.todayButton).GetComponentInChildren<Text>().text = verb + " " + this.GetDailyDateString(0);
+                ((Component)todayButton).GetComponentInChildren<Text>().text = verb + " " + GetDailyDateString(0);
                 break;
             case -1:
-                ((Component)this.yesterdayButton).GetComponentInChildren<Text>().text = verb + " " + this.GetDailyDateString(-1);
+                ((Component)yesterdayButton).GetComponentInChildren<Text>().text = verb + " " + GetDailyDateString(-1);
                 break;
             case -2:
-                ((Component)this.ereyesterdayButton).GetComponentInChildren<Text>().text = verb + " " + this.GetDailyDateString(-2);
+                ((Component)ereyesterdayButton).GetComponentInChildren<Text>().text = verb + " " + GetDailyDateString(-2);
                 break;
         }
     }
@@ -554,24 +524,24 @@ public class GetNameScript : MonoBehaviour
     public void CleanDailyPuzzleDataFiles()
     {
         Debug.Log("*** CleanDailyPuzzleDataFiles ***");
-        string[] files = Directory.GetFiles(Application.persistentDataPath, "???-20??*.*", SearchOption.TopDirectoryOnly);
+        var files = Directory.GetFiles(Application.persistentDataPath, "???-20??*.*", SearchOption.TopDirectoryOnly);
         if (files.Length > 12)
         {
-            string[] array = files;
-            foreach (string text in array)
+            var dataFiles = files;
+            foreach (string text in dataFiles)
             {
                 Debug.Log("Daily data file -> " + text);
                 string fileName = Path.GetFileName(text);
                 Debug.Log("Daily data file -> " + fileName);
-                if (fileName.Contains(this.todayFilename))
+                if (fileName.Contains(todayFilename))
                 {
                     Debug.Log("Daily is today. NOT DELETING!");
                 }
-                else if (fileName.Contains(this.yesterdayFilename))
+                else if (fileName.Contains(yesterdayFilename))
                 {
                     Debug.Log("Daily is yesterday. NOT DELETING!");
                 }
-                else if (fileName.Contains(this.ereyesterdayFilename))
+                else if (fileName.Contains(ereyesterdayFilename))
                 {
                     Debug.Log("Daily is ereyesterday. NOT DELETING!");
                 }
@@ -587,21 +557,21 @@ public class GetNameScript : MonoBehaviour
     public int CalcDailyPrefDateDiff()
     {
         Debug.Log("CalcDailyDateDiff");
-        string[] array = this.todayFilename.Split('-');
-        Debug.Log("today day " + array[0] + " today year " + array[1]);
-        int num = Convert.ToInt32(array[0]);
-        int val2 = Convert.ToInt32(array[1]);
-        int val3 = val2 * 365 + num;
-        Debug.Log("Integer version: today day " + num + " today year " + val2 + " total days " + val3);
+        var parts = todayFilename.Split('-');
+        Debug.Log("today day " + parts[0] + " today year " + parts[1]);
+        int todayDay = Convert.ToInt32(parts[0]);
+        int val2 = Convert.ToInt32(parts[1]);
+        int val3 = val2 * 365 + todayDay;
+        Debug.Log("Integer version: today day " + todayDay + " today year " + val2 + " total days " + val3);
         string @string = PlayerPrefs.GetString("dailytodaydata", "nodata");
         if (@string.Equals("nodata"))
         {
             Debug.Log("CalcDailyPrefDateDiff -> nodata for dailytodaydata. This shouldn't happen");
         }
-        string[] array2 = @string.Split('-');
-        int val4 = Convert.ToInt32(array2[0]);
-        int val5 = Convert.ToInt32(array2[1]);
-        int val6 = Convert.ToInt32(array2[2]);
+        var savedParts = @string.Split('-');
+        int val4 = Convert.ToInt32(savedParts[0]);
+        int val5 = Convert.ToInt32(savedParts[1]);
+        int val6 = Convert.ToInt32(savedParts[2]);
         switch (val3 - (val5 * 365 + val4))
         {
             case 0:
@@ -618,7 +588,7 @@ public class GetNameScript : MonoBehaviour
                 }
                 PlayerPrefs.SetString("dailyereyesterdaydata", PlayerPrefs.GetString("dailyyesterdaydata", "nodata"));
                 PlayerPrefs.SetString("dailyyesterdaydata", PlayerPrefs.GetString("dailytodaydata", "nodata"));
-                string value4 = this.todayFilename + "-99";
+                string value4 = todayFilename + "-99";
                 PlayerPrefs.SetString("dailytodaydata", value4);
                 LevelProgressControl.control.dailyTodayPersonalBest = 600f;
                 break;
@@ -630,9 +600,9 @@ public class GetNameScript : MonoBehaviour
                     Debug.Log("daysDiff == 2");
                 }
                 PlayerPrefs.SetString("dailyereyesterdaydata", PlayerPrefs.GetString("dailytodaydata", "nodata"));
-                string value5 = this.yesterdayFilename + "-99";
+                string value5 = yesterdayFilename + "-99";
                 PlayerPrefs.SetString("dailyyesterdaydata", value5);
-                string value6 = this.todayFilename + "-99";
+                string value6 = todayFilename + "-99";
                 PlayerPrefs.SetString("dailytodaydata", value6);
                 LevelProgressControl.control.dailyTodayPersonalBest = 600f;
                 break;
@@ -643,12 +613,12 @@ public class GetNameScript : MonoBehaviour
                 {
                     Debug.Log("daysDiff > 2");
                 }
-                string value = this.todayFilename + "-99";
+                string value = todayFilename + "-99";
                 PlayerPrefs.SetString("dailytodaydata", value);
                 LevelProgressControl.control.dailyTodayPersonalBest = 600f;
-                string value2 = this.yesterdayFilename + "-99";
+                string value2 = yesterdayFilename + "-99";
                 PlayerPrefs.SetString("dailyyesterdaydata", value2);
-                string value3 = this.ereyesterdayFilename + "-99";
+                string value3 = ereyesterdayFilename + "-99";
                 PlayerPrefs.SetString("dailyereyesterdaydata", value3);
                 break;
             }
@@ -658,12 +628,12 @@ public class GetNameScript : MonoBehaviour
         return 0;
     }
 
-    private void CheckDailyPrefDataExists()
+    void CheckDailyPrefDataExists()
     {
         string @string = PlayerPrefs.GetString("dailytodaydata", "nodata");
         if (@string.Equals("nodata"))
         {
-            string value = this.todayFilename + "-99";
+            string value = todayFilename + "-99";
             PlayerPrefs.SetString("dailytodaydata", value);
             if (Debug.isDebugBuild)
             {
@@ -674,7 +644,7 @@ public class GetNameScript : MonoBehaviour
         string string2 = PlayerPrefs.GetString("dailyyesterdaydata", "nodata");
         if (string2.Equals("nodata"))
         {
-            string value2 = this.yesterdayFilename + "-99";
+            string value2 = yesterdayFilename + "-99";
             PlayerPrefs.SetString("dailyyesterdaydata", value2);
             if (Debug.isDebugBuild)
             {
@@ -684,7 +654,7 @@ public class GetNameScript : MonoBehaviour
         string string3 = PlayerPrefs.GetString("dailyereyesterdaydata", "nodata");
         if (string3.Equals("nodata"))
         {
-            string value3 = this.ereyesterdayFilename + "-99";
+            string value3 = ereyesterdayFilename + "-99";
             PlayerPrefs.SetString("dailyereyesterdaydata", value3);
             if (Debug.isDebugBuild)
             {
@@ -694,38 +664,38 @@ public class GetNameScript : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    private static int GetDailyStars(string prefname)
+    static int GetDailyStars(string prefname)
     {
         string str = PlayerPrefs.GetString(prefname, "nodata");
-        string[] array = str.Split('-');
-        return Convert.ToInt32(array[2]);
+        var parts = str.Split('-');
+        return Convert.ToInt32(parts[2]);
     } 
 
     public void PressShowLeaderboardButton()
     {
         AudioManager.Instance.PlayClick();
-        this.leaderBoardScript.ShowLeaderboards();
+        leaderBoardScript.ShowLeaderboards();
     } 
 
     public void PressSignoutButton()
     {
         AudioManager.Instance.PlayClick();
-        this.leaderBoardScript.LeaderboardLogout();
-        this.PressCloseButton();
+        leaderBoardScript.LeaderboardLogout();
+        PressCloseButton();
     }
 
     public void PressCloseButton()
     { 
-        this.SetButtonsInteractable(true);
+        SetButtonsInteractable(true);
         AudioManager.Instance.PlayClick();
     }
 
-    private void SetButtonsInteractable(bool bSetting)
+    void SetButtonsInteractable(bool bSetting)
     {
-        this.todayButton.interactable = bSetting;
-        this.yesterdayButton.interactable = bSetting;
-        this.ereyesterdayButton.interactable = bSetting;
-        this.leaderboardButton.interactable = bSetting;
+        todayButton.interactable = bSetting;
+        yesterdayButton.interactable = bSetting;
+        ereyesterdayButton.interactable = bSetting;
+        leaderboardButton.interactable = bSetting;
         //if (LevelProgressControl.control.androidSdkLevel < 14)
         //{
         //    this.leaderboardButton.interactable = false;
@@ -736,12 +706,12 @@ public class GetNameScript : MonoBehaviour
             a = 0.25f;
         }
         Color color = new Color(1f, 1f, 1f, a);
-        ((Component)this.todayButton).GetComponentInChildren<Text>().color = color;
-        ((Component)this.yesterdayButton).GetComponentInChildren<Text>().color = color;
-        ((Component)this.ereyesterdayButton).GetComponentInChildren<Text>().color = color;
+        ((Component)todayButton).GetComponentInChildren<Text>().color = color;
+        ((Component)yesterdayButton).GetComponentInChildren<Text>().color = color;
+        ((Component)ereyesterdayButton).GetComponentInChildren<Text>().color = color;
     }
 
-    private void DailyRolloverCountdown()
+    void DailyRolloverCountdown()
     {
         DateTime dateTime = DateTime.UtcNow.AddHours(-8.0);
         Debug.Log("UTC Now today (PST) : " + dateTime);
@@ -749,20 +719,20 @@ public class GetNameScript : MonoBehaviour
         Debug.Log("UTC Rollover midnight 24 hrs early (PST) : " + dateTime2);
         DateTime dateTime3 = dateTime2.AddDays(1.0);
         Debug.Log("UTC Rollover midnight (PST) : " + dateTime3);
-        TimeSpan timeSpan = dateTime3.Subtract(dateTime);
+        var timeSpan = dateTime3.Subtract(dateTime);
         Debug.Log("Time until roll over " + timeSpan);
         string str = string.Format("{0:D2}:{1:D2}", timeSpan.Hours, timeSpan.Minutes);
-        this.rolloverTimeText.text = "New Daily Puzzle in " + str;
+        rolloverTimeText.text = "New Daily Puzzle in " + str;
     }
 
-    private IEnumerator FlashSchedule()
+    IEnumerator FlashSchedule()
     {
         while (true)
         {
             yield return (object)new WaitForSeconds(1f);
-            this.bestTimeText.gameObject.SetActive(false);
+            bestTimeText.gameObject.SetActive(false);
             yield return (object)new WaitForSeconds(0.25f);
-            this.bestTimeText.gameObject.SetActive(true);
+            bestTimeText.gameObject.SetActive(true);
         }
     }
 }

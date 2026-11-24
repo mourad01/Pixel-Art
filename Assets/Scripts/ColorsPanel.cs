@@ -9,44 +9,30 @@ using UnityEngine.UI;
 public class ColorsPanel : MonoBehaviour
 {
     public SimpleObjectPooler[] poolers;
-
     public Action<int, Color> OnSelectColor;
 
-    private List<Image> m_points;
+    List<Image> m_points;
 
-    [SerializeField] private LayoutElement m_layoutElement;
-
-    [SerializeField] private ColorsPage m_colorsPagePrefab;
-
-    [SerializeField] private Transform m_colorsPagesParent;
-
-    [SerializeField] private PositScrollRect m_positScrollRect;
-
-    [SerializeField] private RectTransform m_specPage;
-
-    [SerializeField] private RectTransform m_specPageInternal;
-
-    [SerializeField] private List<ColorsPage> m_colorsPages;
-
-    [SerializeField] private ColorPointer m_colorPointer;
-
-    [SerializeField] private Image m_pointPrefab;
-
-    [SerializeField] private RectTransform m_pointsParent;
-
-    [SerializeField] private float m_pointsDelta = 20f;
+    [SerializeField] LayoutElement m_layoutElement;
+    [SerializeField] ColorsPage m_colorsPagePrefab;
+    [SerializeField] Transform m_colorsPagesParent;
+    [SerializeField] PositScrollRect m_positScrollRect;
+    [SerializeField] RectTransform m_specPage;
+    [SerializeField] RectTransform m_specPageInternal;
+    [SerializeField] List<ColorsPage> m_colorsPages;
+    [SerializeField] ColorPointer m_colorPointer;
+    [SerializeField] Image m_pointPrefab;
+    [SerializeField] RectTransform m_pointsParent;
+    [SerializeField] float m_pointsDelta = 20f;
 
     public GameObject restColorPanel;
-
     public Image restColorIndicator;
-
     public Text restLabel;
-
     public Animator _resetTextAni;
 
-    private bool isWorking3D = false;
-    private bool colorButtonFirstClicked = true;
-    private void Start()
+    bool isWorking3D = false;
+    bool colorButtonFirstClicked = true;
+    void Start()
     {
         isWorking3D = false;
         if (SceneManager.GetActiveScene().name == "3DScene")
@@ -59,12 +45,12 @@ public class ColorsPanel : MonoBehaviour
     {
         restColorPanel.SetActive(false);
 
-        Vector2 sizeDelta = ((RectTransform)base.transform).sizeDelta;
-        Vector2 anchoredPosition = ((RectTransform)base.transform).anchoredPosition;
-        float num = 0f - anchoredPosition.y + sizeDelta.y;
+        Vector2 sizeDelta = ((RectTransform)transform).sizeDelta;
+        Vector2 anchoredPosition = ((RectTransform)transform).anchoredPosition;
+        float panelHeight = 0f - anchoredPosition.y + sizeDelta.y;
         int count = 0;
         count = 10;
-        while (!(sizeDelta.x / (float)count / num * 2f >= 0.25f))
+        while (!(sizeDelta.x / (float)count / panelHeight * 2f >= 0.25f))
         {
             count--;
         }
@@ -75,140 +61,138 @@ public class ColorsPanel : MonoBehaviour
         int value6 = Mathf.CeilToInt((float)colors.Count / (float)value5);
         for (count = 0; count < value6; count++)
         {
-            List<Color> range = colors.GetRange(count * value5, Math.Min(value5, colors.Count - count * value5));
-            ColorsPage colorsPage = UnityObject.Instantiate(this.m_colorsPagePrefab);
-            colorsPage.transform.SetParent(this.m_colorsPagesParent);
+            var range = colors.GetRange(count * value5, Math.Min(value5, colors.Count - count * value5));
+            var colorsPage = UnityObject.Instantiate(m_colorsPagePrefab);
+            colorsPage.transform.SetParent(m_colorsPagesParent);
             colorsPage.transform.localScale = Vector3.one;
             colorsPage.gameObject.SetActive(true);
-            this.m_colorsPages.Add(colorsPage);
-            colorsPage.Init(range, count * value5, rowWidth, colorSize, this.m_colorsPages.Count - 1);
-            ColorsPage colorsPage2 = colorsPage;
-            colorsPage2.OnColorClick = (Action<ColorImage, SpecialColorPosition>)Delegate.Combine(colorsPage2.OnColorClick, new Action<ColorImage, SpecialColorPosition>(this.OnColorClickedHandler));
+            m_colorsPages.Add(colorsPage);
+            colorsPage.Init(range, count * value5, rowWidth, colorSize, m_colorsPages.Count - 1);
+            colorsPage.OnColorClick += OnColorClickedHandler;
         }
-        Vector2 sizeDelta2 = this.m_pointsParent.sizeDelta;
+        Vector2 sizeDelta2 = m_pointsParent.sizeDelta;
         float y = sizeDelta2.y;
         if (colors.Count <= rowWidth)
         {
-            LayoutElement layoutElement = this.m_layoutElement;
+            var layoutElement = m_layoutElement;
             float value7 = colorSize + y;
-            this.m_layoutElement.preferredHeight = value7;
+            m_layoutElement.preferredHeight = value7;
             layoutElement.minHeight = value7;
         }
         else
         {
-            LayoutElement layoutElement2 = this.m_layoutElement;
+            var layoutElement = m_layoutElement;
             float value7 = colorSize * 2f + y;
-            this.m_layoutElement.preferredHeight = value7;
-            layoutElement2.minHeight = value7;
+            m_layoutElement.preferredHeight = value7;
+            layoutElement.minHeight = value7;
         }
-        this.m_specPage.sizeDelta = new Vector2(this.m_specPage.rect.width, this.m_layoutElement.minHeight);
-        this.m_specPageInternal.sizeDelta = new Vector2(0f, colorSize * 2f);
-        this.m_specPageInternal.anchoredPosition = new Vector2(0f, y);
-        this.m_positScrollRect.Reinit(-1f, false);
-        if (this.m_colorsPages.Count > 0)
+        m_specPage.sizeDelta = new Vector2(m_specPage.rect.width, m_layoutElement.minHeight);
+        m_specPageInternal.sizeDelta = new Vector2(0f, colorSize * 2f);
+        m_specPageInternal.anchoredPosition = new Vector2(0f, y);
+        m_positScrollRect.Reinit(-1f, false);
+        if (m_colorsPages.Count > 0)
         {
-            this.m_colorsPages[0].SelectFirstColor();
+            m_colorsPages[0].SelectFirstColor();
             colorButtonFirstClicked = true;
-            this.GeneratePoints();
-            PositScrollRect positScrollRect = this.m_positScrollRect;
-            positScrollRect.OnSelectIndex = (Action<int>)Delegate.Combine(positScrollRect.OnSelectIndex, new Action<int>(this.OnIndexChangedHandler));
-            this.m_positScrollRect.SetIndex(this.m_specPage.gameObject.activeSelf ? 1 : 0);
+            GeneratePoints();
+            m_positScrollRect.OnSelectIndex += OnIndexChangedHandler;
+            m_positScrollRect.SetIndex(m_specPage.gameObject.activeSelf ? 1 : 0);
         }
         else
         {
-            this.m_colorPointer.gameObject.SetActive(false);
+            m_colorPointer.gameObject.SetActive(false);
         }
         if (SceneManager.GetActiveScene().name == "2DScene")
         {
-            NumberColoring numberColoring = NewWorkbookManager.Instance.NumberColoring;
-            numberColoring.OnColorComplete = (Action<Color>)Delegate.Combine(numberColoring.OnColorComplete, new Action<Color>(this.OnColorCompleteHandler));
-            numberColoring.OnCountLeft = (Action<Color, int>)Delegate.Combine(numberColoring.OnCountLeft, new Action<Color, int>(this.OnColorCount));
-            numberColoring.OnPaintedPixel = (Action<Color>)Delegate.Combine(numberColoring.OnPaintedPixel, new Action<Color>(this.OnPaintPixel));
+            var numberColoring = NewWorkbookManager.Instance.NumberColoring;
+            numberColoring.OnColorComplete += OnColorCompleteHandler;
+            numberColoring.OnCountLeft += OnColorCount;
+            numberColoring.OnPaintedPixel += OnPaintPixel;
         }
         else
         {
-            GameController instance = UnitySingleton<GameController>.Instance;
-            instance.OnColorComplete = (Action<Color>)Delegate.Combine(instance.OnColorComplete, new Action<Color>(this.OnColorCompleteHandler));
-            instance.OnCountLeft = (Action<Color, int>)Delegate.Combine(instance.OnCountLeft, new Action<Color, int>(this.OnColorCount));
-            instance.OnPaintedPixel = (Action<Color>)Delegate.Combine(instance.OnPaintedPixel, new Action<Color>(this.OnPaintPixel));
+            var gameController = UnitySingleton<GameController>.Instance;
+            gameController.OnColorComplete += OnColorCompleteHandler;
+            gameController.OnCountLeft += OnColorCount;
+            gameController.OnPaintedPixel += OnPaintPixel;
             UnitySingleton<GameController>.Instance.UpdateColors();
         }
 
-        if (this.m_colorsPages.Count > 0)
+        if (m_colorsPages.Count > 0)
         {
-            this.m_colorsPages[0].SelectFirstColor();
+            m_colorsPages[0].SelectFirstColor();
         }
     }
 
-    private void GeneratePoints()
+    void GeneratePoints()
     {
-        int num = this.m_colorsPages.Count + (this.m_specPage.gameObject.activeSelf ? 1 : 0);
-        float value2 = ((float)(-num) / 2f + 0.5f) * this.m_pointsDelta;
-        this.m_points = new List<Image>(num);
-        for (int i = 0; i < num; i++)
+        int pageCount = m_colorsPages.Count + (m_specPage.gameObject.activeSelf ? 1 : 0);
+        float value2 = ((float)(-pageCount) / 2f + 0.5f) * m_pointsDelta;
+        m_points = new List<Image>(pageCount);
+        for (int i = 0; i < pageCount; i++)
         {
-            Image image = UnityObject.Instantiate(this.m_pointPrefab);
+            var image = UnityObject.Instantiate(m_pointPrefab);
             image.gameObject.SetActive(true);
-            image.transform.SetParent(this.m_pointsParent);
+            image.transform.SetParent(m_pointsParent);
             image.transform.localScale = Vector2.one;
-            ((RectTransform)image.transform).anchoredPosition = new Vector2(value2 + (float)i * this.m_pointsDelta, 0f);
-            this.m_points.Add(image);
+            ((RectTransform)image.transform).anchoredPosition = new Vector2(value2 + (float)i * m_pointsDelta, 0f);
+            m_points.Add(image);
         }
     }
 
-    private void OnColorClickedHandler(ColorImage colorImage, SpecialColorPosition pos)
+    void OnColorClickedHandler(ColorImage colorImage, SpecialColorPosition pos)
     {
-        this.restColorPanel.SetActive(true);
+        restColorPanel.SetActive(true);
 
         if (SceneManager.GetActiveScene().name == "3DScene")
         {
             UnitySingleton<GameController>.Instance.SetCurrentIndexCollorPallete(colorImage.ColorIndex);
         }
         WorkbookModel.Instance.CurrentColorModel.UpdateColor(colorImage.Color);
-        this.m_colorPointer.UpdateColor(colorImage, pos);
+        m_colorPointer.UpdateColor(colorImage, pos);
 
         if (isWorking3D)
         {
             bool stillAvailable = UnitySingleton<GameController>.Instance.CheckColorLeft(colorImage.ColorIndex, !colorButtonFirstClicked);
-            this.restColorPanel.SetActive(stillAvailable);
+            restColorPanel.SetActive(stillAvailable);
             if (stillAvailable)
             {
-                this.restColorPanel.GetComponent<Animator>().Play("RestPanelDefaultAni", -1, 0f);
+                restColorPanel.GetComponent<Animator>().Play("RestPanelDefaultAni", -1, 0f);
             }
         }
         else
         {
             bool stillAvailable = NewWorkbookManager.Instance.NumberColoring.CheckColorLeft(colorImage.Color, !colorButtonFirstClicked);
-            this.restColorPanel.SetActive(stillAvailable);
+            restColorPanel.SetActive(stillAvailable);
             if (stillAvailable)
             {
-                this.restColorPanel.GetComponent<Animator>().Play("RestPanelDefaultAni", -1, 0f);
+                restColorPanel.GetComponent<Animator>().Play("RestPanelDefaultAni", -1, 0f);
             }
         }
 
-        this.restColorIndicator.color = colorImage.Color;
+        restColorIndicator.color = colorImage.Color;
 
         colorButtonFirstClicked = false;
     }
-    private System.Collections.IEnumerator DestroyEffectRoutine(GameObject obj)
+    System.Collections.IEnumerator DestroyEffectRoutine(GameObject obj)
     {
         yield return new WaitForSeconds(1f);
         obj.SetActive(false);
     }
-    private void PlayParticle(Color color, Vector3 pos, GameObject particle, bool shouldChangeColor = true, bool repeat = false)
+    void PlayParticle(Color color, Vector3 pos, GameObject particle, bool shouldChangeColor = true, bool repeat = false)
     {
         particle.transform.localScale = Vector3.one;
         particle.transform.position = pos;
         particle.SetActive(true);
         if (shouldChangeColor)
         {
-            ParticleSystem component = particle.GetComponent<ParticleSystem>();
-            ParticleSystem.MainModule main = component.main;
+            var component = particle.GetComponent<ParticleSystem>();
+            var main = component.main;
             main.startColor = color;
-            Transform transform = particle.transform.Find("2-2");
+            var transform = particle.transform.Find("2-2");
             if (transform != null)
             {
-                ParticleSystem particles = (transform).GetComponent<ParticleSystem>();
+                var particles = (transform).GetComponent<ParticleSystem>();
                 if (particles != null)
                 {
                     var m = particles.main;
@@ -218,16 +202,16 @@ public class ColorsPanel : MonoBehaviour
         }
         if (!repeat)
         {
-            base.StartCoroutine(this.DestroyEffectRoutine(particle));
+            base.StartCoroutine(DestroyEffectRoutine(particle));
         }
     }
-    private void OnPaintPixel(Color color)
+    void OnPaintPixel(Color color)
     {
         AudioManager.Instance.PlayColor();
 
         if (isWorking3D)
         {
-            this.PlayParticle(color, Camera.main.ScreenPointToRay(Input.mousePosition).origin, this.poolers[1].GetPooledGameObject(), true, false);
+            PlayParticle(color, Camera.main.ScreenPointToRay(Input.mousePosition).origin, poolers[1].GetPooledGameObject(), true, false);
         }
         //else
         //{
@@ -235,16 +219,16 @@ public class ColorsPanel : MonoBehaviour
         //}
     }
 
-    private void OnColorCount(Color color, int restColorCount)
+    void OnColorCount(Color color, int restColorCount)
     {
-        if (!this.restLabel.text.Equals(string.Format("{0}", restColorCount)))
+        if (!restLabel.text.Equals(string.Format("{0}", restColorCount)))
         {
-            this.restLabel.text = string.Format("{0}", restColorCount);
-            this._resetTextAni.Play("ResetTextChangeOnce", -1, 0f);
+            restLabel.text = string.Format("{0}", restColorCount);
+            _resetTextAni.Play("ResetTextChangeOnce", -1, 0f);
         }
         if (restColorCount == 0)
         {
-            Animator a = this.restColorPanel.GetComponent<Animator>();
+            var a = restColorPanel.GetComponent<Animator>();
             if (a != null)
             {
                 a.Play("Disappear", -1, 0f);
@@ -256,9 +240,9 @@ public class ColorsPanel : MonoBehaviour
         }
     }
 
-    private void OnColorCompleteHandler(Color color)
+    void OnColorCompleteHandler(Color color)
     {
-        foreach (ColorsPage colorsPage in this.m_colorsPages)
+        foreach (ColorsPage colorsPage in m_colorsPages)
         {
             colorsPage.DisableColor(color);
         }
@@ -266,7 +250,7 @@ public class ColorsPanel : MonoBehaviour
         OnColorCount(color, 0);
     }
 
-    private void OnIndexChangedHandler(int index)
+    void OnIndexChangedHandler(int index)
     {
         if (index == 0 && !AppData.SpecPageOpened)
         {
@@ -277,11 +261,11 @@ public class ColorsPanel : MonoBehaviour
             WorkbookModel.Instance.SpecBoostersModel.BombMode = false;
             WorkbookModel.Instance.SpecBoostersModel.LassoMode = false;
         }
-        if (index >= 0 && index < this.m_points.Count)
+        if (index >= 0 && index < m_points.Count)
         {
-            for (int i = 0; i < this.m_points.Count; i++)
+            for (int i = 0; i < m_points.Count; i++)
             {
-                this.m_points[i].SetAlpha((i != index) ? 0.7f : 1f);
+                m_points[i].SetAlpha((i != index) ? 0.7f : 1f);
             }
         }
     }

@@ -6,37 +6,23 @@ using UnityEngine.UI;
 
 public class CreationWindow : BaseWindow
 {
-    private Action<PhotoInfo> OnCreate;
+    Action<PhotoInfo> OnCreate;
+    Texture2D m_fullTexture;
+    Rect m_rect = new Rect(0f, 0f, 1f, 1f);
+    Rect m_lastRect;
+    float m_maxZoom = 5f;
+    float m_currentImageZoom = 1f;
+    bool m_subscribed;
+    int m_maxSize = 1024;
+    PhotoSource m_currentSource;
 
-    private Texture2D m_fullTexture;
-
-    private Rect m_rect = new Rect(0f, 0f, 1f, 1f);
-
-    private Rect m_lastRect;
-
-    private float m_maxZoom = 5f;
-
-    private float m_currentImageZoom = 1f;
-
-    private bool m_subscribed;
-
-    private int m_maxSize = 1024;
-
-    private PhotoSource m_currentSource;
-
-    [SerializeField] private RawImage m_image;
-
-    [SerializeField] private RawImage m_readyImage;
-
-    [SerializeField] private CameraPlugin m_cameraPlugin;
-
-    [SerializeField] private GameObject m_firstButtonsBlock;
-
-    [SerializeField] private GameObject m_okButtonsBlock;
-
-    [SerializeField] private Slider m_qualitySlider;
-
-    [SerializeField] private CreationWindowInputReceiver m_inputReceiver;
+    [SerializeField] RawImage m_image;
+    [SerializeField] RawImage m_readyImage;
+    [SerializeField] CameraPlugin m_cameraPlugin;
+    [SerializeField] GameObject m_firstButtonsBlock;
+    [SerializeField] GameObject m_okButtonsBlock;
+    [SerializeField] Slider m_qualitySlider;
+    [SerializeField] CreationWindowInputReceiver m_inputReceiver;
 
     protected override string WindowName
     {
@@ -48,238 +34,232 @@ public class CreationWindow : BaseWindow
 
     public void Init(Action<PhotoInfo> handler)
     {
-        this.OnCreate = handler;
-        if (!this.m_subscribed)
+        OnCreate = handler;
+        if (!m_subscribed)
         {
-            this.m_subscribed = true;
-            CreationWindowInputReceiver inputReceiver = this.m_inputReceiver;
-            inputReceiver.OnScrolled = (Action<float>)Delegate.Combine(inputReceiver.OnScrolled, new Action<float>(this.OnScrolledImageHandler));
-            CreationWindowInputReceiver inputReceiver2 = this.m_inputReceiver;
-            inputReceiver2.OnDragged = (Action<Vector2>)Delegate.Combine(inputReceiver2.OnDragged, new Action<Vector2>(this.OnImageDraggedHandler));
-            CreationWindowInputReceiver inputReceiver3 = this.m_inputReceiver;
-            inputReceiver3.OnZoomed = (Action<float>)Delegate.Combine(inputReceiver3.OnZoomed, new Action<float>(this.OnZoomedImageHandler));
-            base.OnOpen = (Action)Delegate.Combine(base.OnOpen, (Action)delegate
+            m_subscribed = true;
+            m_inputReceiver.OnScrolled += OnScrolledImageHandler;
+            m_inputReceiver.OnDragged += OnImageDraggedHandler;
+            m_inputReceiver.OnZoomed += OnZoomedImageHandler;
+            OnOpen += delegate
             {
-                CameraPlugin cameraPlugin = this.m_cameraPlugin;
-                cameraPlugin.OnUpdateTexture = (Action<Texture2D, float>)Delegate.Combine(cameraPlugin.OnUpdateTexture, new Action<Texture2D, float>(this.OnUpdateTextureHandler));
-                this.m_cameraPlugin.Initilized();
-                this.m_cameraPlugin.Quality = (this.m_qualitySlider.minValue + this.m_qualitySlider.maxValue) / 2f;
-                this.m_qualitySlider.value = this.m_cameraPlugin.Quality;
-            });
+                m_cameraPlugin.OnUpdateTexture += OnUpdateTextureHandler;
+                m_cameraPlugin.Initilized();
+                m_cameraPlugin.Quality = (m_qualitySlider.minValue + m_qualitySlider.maxValue) / 2f;
+                m_qualitySlider.value = m_cameraPlugin.Quality;
+            };
         }
-        this.m_qualitySlider.value = (this.m_qualitySlider.minValue + this.m_qualitySlider.maxValue) / 2f;
-        this.m_image.texture = null;
+        m_qualitySlider.value = (m_qualitySlider.minValue + m_qualitySlider.maxValue) / 2f;
+        m_image.texture = null;
     }
 
-    private void OnUpdateTextureHandler(Texture2D tex, float angle)
+    void OnUpdateTextureHandler(Texture2D tex, float angle)
     {
-        GameHelper.CamScaleTexture(tex, 40, 1f, this.m_qualitySlider.value);
-        this.m_image.rectTransform.localEulerAngles = new Vector3(0f, 0f, angle);
-        this.m_image.texture = tex;
+        GameHelper.CamScaleTexture(tex, 40, 1f, m_qualitySlider.value);
+        m_image.rectTransform.localEulerAngles = new Vector3(0f, 0f, angle);
+        m_image.texture = tex;
     }
 
     public void QualitySliderValueChanged(float value)
     {
-        this.m_cameraPlugin.Quality = value;
-        if (this.m_okButtonsBlock.activeSelf)
+        m_cameraPlugin.Quality = value;
+        if (m_okButtonsBlock.activeSelf)
         {
-            this.UpdateTexture(true);
+            UpdateTexture(true);
         }
     }
 
     public void ChangeCameraButtonCLicked()
     {
-        this.m_cameraPlugin.ChangeCamera();
+        m_cameraPlugin.ChangeCamera();
     }
 
     public void PhotoButtonClicked()
     {
-        Texture2D texture2D = this.m_cameraPlugin.TakeSnapshot();
-        if (texture2D.width > this.m_maxSize || texture2D.height > this.m_maxSize)
+        var texture2D = m_cameraPlugin.TakeSnapshot();
+        if (texture2D.width > m_maxSize || texture2D.height > m_maxSize)
         {
-            float num = (float)texture2D.width / (float)texture2D.height;
-            int height = (int)Mathf.Min((float)this.m_maxSize, (float)this.m_maxSize / num);
-            GameHelper.CamScaleTexture(texture2D, height, num, 1f);
+            float aspect = (float)texture2D.width / (float)texture2D.height;
+            int height = (int)Mathf.Min((float)m_maxSize, (float)m_maxSize / aspect);
+            GameHelper.CamScaleTexture(texture2D, height, aspect, 1f);
         }
-        this.m_fullTexture = texture2D;
-        this.m_currentImageZoom = 1f;
-        this.m_rect = new Rect(0f, 0f, 1f, 1f);
-        this.UpdateTextureScale();
-        this.UpdateTexture(true);
-        this.m_okButtonsBlock.SetActive(true);
-        this.m_firstButtonsBlock.SetActive(false);
-        this.m_cameraPlugin.Stop();
-        this.m_image.rectTransform.localEulerAngles = Vector3.zero;
-        this.m_currentSource = (PhotoSource)((!this.m_cameraPlugin.CurrentDevice.isFrontFacing) ? 2 : 3);
+        m_fullTexture = texture2D;
+        m_currentImageZoom = 1f;
+        m_rect = new Rect(0f, 0f, 1f, 1f);
+        UpdateTextureScale();
+        UpdateTexture(true);
+        m_okButtonsBlock.SetActive(true);
+        m_firstButtonsBlock.SetActive(false);
+        m_cameraPlugin.Stop();
+        m_image.rectTransform.localEulerAngles = Vector3.zero;
+        m_currentSource = (PhotoSource)((!m_cameraPlugin.CurrentDevice.isFrontFacing) ? 2 : 3);
     }
 
     public void GalleryButtonClicked()
     {
         if (!UnitySingleton<PickerController>.Instance.IsInit())
         {
-            PickerController instance = UnitySingleton<PickerController>.Instance;
-            instance.InitComplete = (Action<bool>)Delegate.Combine(instance.InitComplete, new Action<bool>(this.AfterInitPicker));
-            UnitySingleton<PickerController>.Instance.Subscribe(new Action<Texture2D>(this.GetImageFromGallery), null, null, null);
+            UnitySingleton<PickerController>.Instance.InitComplete += AfterInitPicker;
+            UnitySingleton<PickerController>.Instance.Subscribe(new Action<Texture2D>(GetImageFromGallery), null, null, null);
             UnitySingleton<PickerController>.Instance.Initilized();
         }
         else
         {
-            UnitySingleton<PickerController>.Instance.Subscribe(new Action<Texture2D>(this.GetImageFromGallery), null, null, null);
+            UnitySingleton<PickerController>.Instance.Subscribe(new Action<Texture2D>(GetImageFromGallery), null, null, null);
             UnitySingleton<PickerController>.Instance.OpenGallery();
         }
     }
 
-    private void AfterInitPicker(bool isInit)
+    void AfterInitPicker(bool isInit)
     {
-        PickerController instance = UnitySingleton<PickerController>.Instance;
-        instance.InitComplete = (Action<bool>)Delegate.Remove(instance.InitComplete, new Action<bool>(this.AfterInitPicker));
+        UnitySingleton<PickerController>.Instance.InitComplete -= AfterInitPicker;
         if (isInit)
         {
             UnitySingleton<PickerController>.Instance.OpenGallery();
         }
     }
 
-    private void GetImageFromGallery(Texture2D texture)
+    void GetImageFromGallery(Texture2D texture)
     {
-        UnitySingleton<PickerController>.Instance.UnSubscribe(new Action<Texture2D>(this.GetImageFromGallery), null, null, null);
-        this.m_fullTexture = texture;
-        this.m_image.texture = texture;
-        this.m_image.rectTransform.localEulerAngles = Vector3.zero;
-        this.m_currentImageZoom = 1f;
-        this.UpdateTextureScale();
-        this.UpdateTexture(true);
-        this.m_okButtonsBlock.SetActive(true);
-        this.m_firstButtonsBlock.SetActive(false);
-        this.m_cameraPlugin.Stop();
-        this.m_currentSource = PhotoSource.Album;
+        UnitySingleton<PickerController>.Instance.UnSubscribe(new Action<Texture2D>(GetImageFromGallery), null, null, null);
+        m_fullTexture = texture;
+        m_image.texture = texture;
+        m_image.rectTransform.localEulerAngles = Vector3.zero;
+        m_currentImageZoom = 1f;
+        UpdateTextureScale();
+        UpdateTexture(true);
+        m_okButtonsBlock.SetActive(true);
+        m_firstButtonsBlock.SetActive(false);
+        m_cameraPlugin.Stop();
+        m_currentSource = PhotoSource.Album;
     }
 
-    private void OnImageDraggedHandler(Vector2 delta)
+    void OnImageDraggedHandler(Vector2 delta)
     {
-        if (this.m_okButtonsBlock.activeSelf)
+        if (m_okButtonsBlock.activeSelf)
         {
-            Canvas canvas = this.m_image.canvas;
-            float num = canvas.pixelRect.height / (float)Screen.height;
-            delta.x /= canvas.pixelRect.width / this.m_rect.width;
-            delta.y /= canvas.pixelRect.width / this.m_rect.height; 
-            this.m_rect.center -= delta; 
-            this.CheckBorders();
-            this.UpdateTexture(false);
+            var canvas = m_image.canvas;
+            float pixelScale = canvas.pixelRect.height / (float)Screen.height;
+            delta.x /= canvas.pixelRect.width / m_rect.width;
+            delta.y /= canvas.pixelRect.width / m_rect.height; 
+            m_rect.center -= delta; 
+            CheckBorders();
+            UpdateTexture(false);
         }
     }
 
-    private void OnScrolledImageHandler(float delta)
+    void OnScrolledImageHandler(float delta)
     {
-        if (this.m_okButtonsBlock.activeSelf)
+        if (m_okButtonsBlock.activeSelf)
         {
-            this.m_currentImageZoom *= Mathf.Pow(1.1f, delta);
-            this.UpdateTextureScale();
-            this.UpdateTexture(false);
+            m_currentImageZoom *= Mathf.Pow(1.1f, delta);
+            UpdateTextureScale();
+            UpdateTexture(false);
         }
     }
 
-    private void OnZoomedImageHandler(float koef)
+    void OnZoomedImageHandler(float koef)
     {
-        if (this.m_okButtonsBlock.activeSelf)
+        if (m_okButtonsBlock.activeSelf)
         {
-            this.m_currentImageZoom *= koef;
-            this.UpdateTextureScale();
-            this.UpdateTexture(false);
+            m_currentImageZoom *= koef;
+            UpdateTextureScale();
+            UpdateTexture(false);
         }
     }
 
-    private void UpdateTextureScale()
+    void UpdateTextureScale()
     {
-        this.m_currentImageZoom = Mathf.Max(1f, this.m_currentImageZoom);
-        this.m_currentImageZoom = Mathf.Min(this.m_currentImageZoom, this.m_maxZoom);
-        Vector2 center = this.m_rect.center;
-        if (this.m_fullTexture.width > this.m_fullTexture.height)
+        m_currentImageZoom = Mathf.Max(1f, m_currentImageZoom);
+        m_currentImageZoom = Mathf.Min(m_currentImageZoom, m_maxZoom);
+        Vector2 center = m_rect.center;
+        if (m_fullTexture.width > m_fullTexture.height)
         {
-            float num = (float)this.m_fullTexture.height / (float)this.m_fullTexture.width;
-            this.m_rect = new Rect((1f - num) / 2f, 0f, num / this.m_currentImageZoom, 1f / this.m_currentImageZoom);
+            float aspect = (float)m_fullTexture.height / (float)m_fullTexture.width;
+            m_rect = new Rect((1f - aspect) / 2f, 0f, aspect / m_currentImageZoom, 1f / m_currentImageZoom);
         }
         else
         {
-            float value2 = (float)this.m_fullTexture.width / (float)this.m_fullTexture.height;
-            this.m_rect = new Rect(0f, (1f - value2) / 2f, 1f / this.m_currentImageZoom, value2 / this.m_currentImageZoom);
+            float value2 = (float)m_fullTexture.width / (float)m_fullTexture.height;
+            m_rect = new Rect(0f, (1f - value2) / 2f, 1f / m_currentImageZoom, value2 / m_currentImageZoom);
         }
-        this.m_rect.center = center;
-        this.CheckBorders();
+        m_rect.center = center;
+        CheckBorders();
     }
 
-    private void CheckBorders()
+    void CheckBorders()
     { 
-        if (this.m_rect.min.x < 0f)
+        if (m_rect.min.x < 0f)
         {    
-            this.m_rect.center = new Vector2(this.m_rect.center.x - this.m_rect.min.x, this.m_rect.center.y);
+            m_rect.center = new Vector2(m_rect.center.x - m_rect.min.x, m_rect.center.y);
         } 
-        if (this.m_rect.max.x > 1f)
+        if (m_rect.max.x > 1f)
         {    
-            this.m_rect.center = new Vector2(this.m_rect.center.x + 1f - this.m_rect.max.x, this.m_rect.center.y);
+            m_rect.center = new Vector2(m_rect.center.x + 1f - m_rect.max.x, m_rect.center.y);
         } 
-        if (this.m_rect.min.y < 0f)
+        if (m_rect.min.y < 0f)
         {     
-            this.m_rect.center = new Vector2(this.m_rect.center.x, this.m_rect.center.y - this.m_rect.min.y);
+            m_rect.center = new Vector2(m_rect.center.x, m_rect.center.y - m_rect.min.y);
         } 
-        if (this.m_rect.max.y > 1f)
+        if (m_rect.max.y > 1f)
         {   
-            this.m_rect.center = new Vector2(this.m_rect.center.x, this.m_rect.center.y + 1f - this.m_rect.max.y);
+            m_rect.center = new Vector2(m_rect.center.x, m_rect.center.y + 1f - m_rect.max.y);
         }
     }
 
-    private void UpdateTexture(bool force = false)
+    void UpdateTexture(bool force = false)
     {
-        if (!(this.m_rect != this.m_lastRect) && !force)
+        if (!(m_rect != m_lastRect) && !force)
         {
             return;
         }
 
-        this.m_lastRect = this.m_rect;
+        m_lastRect = m_rect;
         Texture2D texture2D = null;
-        if (this.m_rect == new Rect(0f, 0f, 1f, 1f))
+        if (m_rect == new Rect(0f, 0f, 1f, 1f))
         {
-            Texture2D texture2D2 = new Texture2D(this.m_fullTexture.width, this.m_fullTexture.height, TextureFormat.RGB24, false);
+            var texture2D2 = new Texture2D(m_fullTexture.width, m_fullTexture.height, TextureFormat.RGB24, false);
             texture2D2.filterMode = FilterMode.Point;
             texture2D = texture2D2;
-            texture2D.SetPixels(this.m_fullTexture.GetPixels());
+            texture2D.SetPixels(m_fullTexture.GetPixels());
         }
         else
         {
-            int x = (int)(this.m_rect.xMin * (float)this.m_fullTexture.width);
-            int y = (int)(this.m_rect.yMin * (float)this.m_fullTexture.height);
-            int a = (int)(this.m_rect.width * (float)this.m_fullTexture.width);
-            int b = (int)(this.m_rect.height * (float)this.m_fullTexture.height); 
+            int x = (int)(m_rect.xMin * (float)m_fullTexture.width);
+            int y = (int)(m_rect.yMin * (float)m_fullTexture.height);
+            int a = (int)(m_rect.width * (float)m_fullTexture.width);
+            int b = (int)(m_rect.height * (float)m_fullTexture.height); 
 
-            int num = Mathf.Min(a, b);
-            if (num >= this.m_fullTexture.width || num >= this.m_fullTexture.height)
+            int side = Mathf.Min(a, b);
+            if (side >= m_fullTexture.width || side >= m_fullTexture.height)
             {
 
             }
-            Color[] pixels = this.m_fullTexture.GetPixels(x, y, num, num);
+            var pixels = m_fullTexture.GetPixels(x, y, side, side);
 
-            Texture2D texture2D2 = new Texture2D(num, num, TextureFormat.RGB24, false);
+            var texture2D2 = new Texture2D(side, side, TextureFormat.RGB24, false);
             texture2D2.filterMode = FilterMode.Point;
             texture2D = texture2D2;
             texture2D.SetPixels(pixels);
             texture2D.Apply();
         }
-        this.m_image.texture = texture2D;
-        GameHelper.CamScaleTexture((Texture2D)this.m_image.texture, 40, 1f, this.m_qualitySlider.value); 
+        m_image.texture = texture2D;
+        GameHelper.CamScaleTexture((Texture2D)m_image.texture, 40, 1f, m_qualitySlider.value); 
     }
 
     public void OkButtonClick()
     {
         string text = Guid.NewGuid().ToString();
-        Texture2D texture2D = (Texture2D)this.m_image.texture;
-        int num = (int)Mathf.Lerp(15f, 50f, (this.m_qualitySlider.value - this.m_qualitySlider.minValue) / (this.m_qualitySlider.maxValue - this.m_qualitySlider.minValue));
-        if (TextureColoring.CheckToNeedConverColor(texture2D, num))
+        var texture2D = (Texture2D)m_image.texture;
+        int colorCount = (int)Mathf.Lerp(15f, 50f, (m_qualitySlider.value - m_qualitySlider.minValue) / (m_qualitySlider.maxValue - m_qualitySlider.minValue));
+        if (TextureColoring.CheckToNeedConverColor(texture2D, colorCount))
         {
-            texture2D = TextureColorsReducer.Process(texture2D, num);
+            texture2D = TextureColorsReducer.Process(texture2D, colorCount);
         }
         File.WriteAllBytes(AppPathsConfig.DownloadsPath + text + ".png", texture2D.EncodeToPNG());
-        PhotoInfo photoInfo = new PhotoInfo(text, this.m_currentSource);
+        var photoInfo = new PhotoInfo(text, m_currentSource);
         MainManager.Instance.SavedWorksList.AddPhoto(photoInfo);
-        this.OnCreate.SafeInvoke(photoInfo);
+        OnCreate.SafeInvoke(photoInfo);
     }
 
     public void CloseButtonClick()
@@ -290,14 +270,14 @@ public class CreationWindow : BaseWindow
 
     public override bool Close()
     {
-        if (this.m_okButtonsBlock.activeSelf)
+        if (m_okButtonsBlock.activeSelf)
         {
-            this.m_okButtonsBlock.SetActive(false);
-            this.m_firstButtonsBlock.SetActive(true);
-            this.m_cameraPlugin.Initilized();
+            m_okButtonsBlock.SetActive(false);
+            m_firstButtonsBlock.SetActive(true);
+            m_cameraPlugin.Initilized();
             return false;
         }
-        this.m_cameraPlugin.Stop();
+        m_cameraPlugin.Stop();
         return base.Close();
     }
 }

@@ -4,25 +4,25 @@ using UnityEngine.UI;
 [RequireComponent(typeof(HorizontalOrVerticalLayoutGroup))]
 internal class ScreenFormatLayoutGroup : MonoBehaviour
 {
-    [SerializeField] private float m_spacing4_3;
+    [SerializeField] float m_spacing4_3;
 
-    private void Awake()
+    void Awake()
     {
-        bool flag = false;
+        bool found = false;
         if (Screen.width > Screen.height)
         {
             if ((float)Screen.width / (float)Screen.height < 1.55f)
             {
-                flag = true;
+                found = true;
             }
         }
         else if ((float)Screen.height / (float)Screen.width < 1.55f)
         {
-            flag = true;
+            found = true;
         }
-        if (flag)
+        if (found)
         {
-            base.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = this.m_spacing4_3;
+            base.GetComponent<HorizontalOrVerticalLayoutGroup>().spacing = m_spacing4_3;
         }
     }
 }
