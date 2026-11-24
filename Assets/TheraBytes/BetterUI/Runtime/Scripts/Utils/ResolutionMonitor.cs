@@ -493,7 +493,11 @@ namespace TheraBytes.BetterUi
                 yield return go;
 
 #if UNITY_EDITOR && UNITY_2018_3_OR_NEWER
+#if UNITY_2021_2_OR_NEWER
+            var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
+#else
             var prefabStage = UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
+#endif
             if (prefabStage != null)
             {
                 foreach(GameObject root in prefabStage.scene.GetRootGameObjects())

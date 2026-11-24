@@ -150,6 +150,9 @@ public class ShareWrapper : MonoBehaviour
         return ShareStatus.Success;
 #endif
 
+#if !UNITY_ANDROID && !UNITY_IPHONE
+        return ShareStatus.Failure;
+#endif
     }
 
     public static void ShareVideo(string handline, string subject, string text, string filePath)

@@ -12,7 +12,11 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 /*
-chn
+* http://www.opensource.org/licenses/lgpl-2.1.php
+* JSONObject class v.1.4.1
+* for use with Unity
+* Copyright Matt Schoen 2010 - 2013
+*/
 
 public class JSONObject
 {
