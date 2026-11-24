@@ -282,9 +282,9 @@ public class DataManager : MonoBehaviour
                         Debug.Log(e.Message);
                     }
                 }
-                handler.SafeInvoke((UnityEngine.Object)serverTex != (UnityEngine.Object)null, serverTex);
+                handler.SafeInvoke(serverTex != null, serverTex);
             }); 
-            handler.SafeInvoke((UnityEngine.Object)serverTex != (UnityEngine.Object)null, serverTex); 
+            handler.SafeInvoke(serverTex != null, serverTex); 
         })); 
         yield return null;
     }

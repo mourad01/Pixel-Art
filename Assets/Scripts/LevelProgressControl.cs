@@ -109,7 +109,7 @@ public class LevelProgressControl : MonoBehaviour
         {
             Debug.Log("LevelProgressControl : Awake()");
         }
-        if ((UnityEngine.Object)control == (UnityEngine.Object)null)
+        if (control == null)
         {
             UnityObject.DontDestroyOnLoad(gameObject);
             control = this;
@@ -143,7 +143,7 @@ public class LevelProgressControl : MonoBehaviour
             #endif
             //this.androidSdkLevel = this.GetAndroidSDKLevel();
         }
-        else if ((UnityEngine.Object)control != (UnityEngine.Object)this)
+        else if (control != this)
         {
             UnityObject.Destroy(gameObject);
         }

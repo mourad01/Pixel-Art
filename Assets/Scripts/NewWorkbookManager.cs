@@ -131,7 +131,7 @@ public class NewWorkbookManager : MonoBehaviour
             {
                 DataManager.Instance.GetImageAsset(m_imageInfo, delegate (bool res, Texture2D tex)
                 {
-                    if ((UnityEngine.Object)tex == (UnityEngine.Object)null)
+                    if (tex == null)
                     {
                         MainManager.Instance.StartLibrary(MainMenu.LastPage);
                         DialogToolWrapper.ShowNoInternetDialog();
@@ -147,7 +147,7 @@ public class NewWorkbookManager : MonoBehaviour
             {
                 DataManager.Instance.GetPhotoAsset(m_imageInfo.Id, delegate (bool res, Texture2D tex)
                 {
-                    if ((UnityEngine.Object)tex == (UnityEngine.Object)null)
+                    if (tex == null)
                     {
                         MainManager.Instance.StartLibrary(MainMenu.LastPage);
                         DialogToolWrapper.ShowNoInternetDialog();

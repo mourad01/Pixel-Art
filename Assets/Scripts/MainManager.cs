@@ -52,7 +52,7 @@ public class MainManager : MonoBehaviour
     {
         get
         {
-            if ((UnityEngine.Object)m_currentEventSystemInternal == (UnityEngine.Object)null)
+            if (m_currentEventSystemInternal == null)
             {
                 m_currentEventSystemInternal = EventSystem.current;
             }
@@ -177,7 +177,7 @@ public class MainManager : MonoBehaviour
                         {
 
                             var mainMenu = WindowManager.Instance.GetMainMenu();
-                            if ((UnityEngine.Object)mainMenu != (UnityEngine.Object)null)
+                            if (mainMenu != null)
                             {
                                 mainMenu.UpdateLibrary(imagesInfo);
 

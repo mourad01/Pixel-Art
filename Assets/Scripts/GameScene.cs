@@ -261,7 +261,7 @@ internal class GameScene : BaseScene
                 gameObject.SetActive(false);
                 tutorialWindow.OnStartClose += delegate
                 {
-                    if ((UnityEngine.Object)gameObject != (UnityEngine.Object)null)
+                    if (gameObject != null)
                     {
                         gameObject.SetActive(true);
                     }
