@@ -1,17 +1,4 @@
-/*
-http://www.cgsoso.com/forum-211-1.html
-
-CG搜搜 Unity3d 每日Unity3d插件免费更新 更有VIP资源！
-
-CGSOSO 主打游戏开发，影视设计等CG资源素材。
-
-插件由会员免费分享，如果商用，请务必联系原著购买授权！
-
-daily assets update for try.
-
-U should buy a license from author if u use it in your project!
-*/
-
+using UnityObject = global::UnityEngine.Object;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using System;
@@ -102,10 +89,10 @@ public class LevelProgressControl : MonoBehaviour
     public float dailyTodayPersonalBest = 600f;
 
     [HideInInspector]
-	public bool dailyTodayPersonalBestBeaten
-	{
-		get { return true; }
-	}
+    public bool dailyTodayPersonalBestBeaten
+    {
+        get { return true; }
+    }
 
     [HideInInspector]
     public int hintPotCount;
@@ -126,11 +113,11 @@ public class LevelProgressControl : MonoBehaviour
     {
         if (Debug.isDebugBuild)
         {
-            UnityEngine.Debug.Log("LevelProgressControl : Awake()");
+            Debug.Log("LevelProgressControl : Awake()");
         }
         if ((UnityEngine.Object)LevelProgressControl.control == (UnityEngine.Object)null)
         {
-            UnityEngine.Object.DontDestroyOnLoad(base.gameObject);
+            UnityObject.DontDestroyOnLoad(base.gameObject);
             LevelProgressControl.control = this;
             this.levelOffsetArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
             this.completeArray = new int[LevelProgressControl.LevelsPerPack * LevelProgressControl.NumberOfPacks];
@@ -145,24 +132,24 @@ public class LevelProgressControl : MonoBehaviour
             this.LoadProgressData();
 
 
-			#if (UNITY_ANDROID || (UNITY_IPHONE && !NO_GPGS))
-			PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
-				// enables saving game progress.
-				//.EnableSavedGames()
+            #if (UNITY_ANDROID || (UNITY_IPHONE && !NO_GPGS))
+            PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
+                // enables saving game progress.
+                //.EnableSavedGames()
 
-				// require access to a player's Google+ social graph (usually not needed)
-				//.RequireGooglePlus()
-				.Build();
-			PlayGamesPlatform.InitializeInstance(config);
+                // require access to a player's Google+ social graph (usually not needed)
+                //.RequireGooglePlus()
+                .Build();
+            PlayGamesPlatform.InitializeInstance(config);
 
-			PlayGamesPlatform.DebugLogEnabled = true;
-			PlayGamesPlatform.Activate();
-			#endif
-			//this.androidSdkLevel = this.GetAndroidSDKLevel();
-		}
+            PlayGamesPlatform.DebugLogEnabled = true;
+            PlayGamesPlatform.Activate();
+            #endif
+            //this.androidSdkLevel = this.GetAndroidSDKLevel();
+        }
         else if ((UnityEngine.Object)LevelProgressControl.control != (UnityEngine.Object)this)
         {
-            UnityEngine.Object.Destroy(base.gameObject);
+            UnityObject.Destroy(base.gameObject);
         }
     }
 
@@ -212,7 +199,7 @@ public class LevelProgressControl : MonoBehaviour
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("LoadProgressData() : Data file found. Loading..." + Application.persistentDataPath + "/lp.dat");
+                Debug.Log("LoadProgressData() : Data file found. Loading..." + Application.persistentDataPath + "/lp.dat");
             }
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             FileStream fileStream = File.Open(Application.persistentDataPath + "/lp.dat", FileMode.Open);
@@ -231,7 +218,7 @@ public class LevelProgressControl : MonoBehaviour
         }
         else if (Debug.isDebugBuild)
         {
-            UnityEngine.Debug.Log("LoadProgressData() : No data file, so assuming a fresh start");
+            Debug.Log("LoadProgressData() : No data file, so assuming a fresh start");
         }
         this.LoadPlayerPrefs();
     }
@@ -240,7 +227,7 @@ public class LevelProgressControl : MonoBehaviour
     {
         if (Debug.isDebugBuild)
         {
-            UnityEngine.Debug.Log("LoadProgressDataLegacy()");
+            Debug.Log("LoadProgressDataLegacy()");
         }
         BinaryFormatter binaryFormatter = new BinaryFormatter();
         FileStream fileStream = File.Open(Application.persistentDataPath + "/lp.dat", FileMode.Open);
@@ -258,8 +245,8 @@ public class LevelProgressControl : MonoBehaviour
         Array.Copy(playerData.postcardCompleteStateArray, this.postcardCompleteStateArray, playerData.postcardCompleteStateArray.Length);
         if (Debug.isDebugBuild)
         {
-            UnityEngine.Debug.Log("Legacy array length : " + playerData.completeArray.Length);
-            UnityEngine.Debug.Log("C10 array length : " + this.completeArray.Length);
+            Debug.Log("Legacy array length : " + playerData.completeArray.Length);
+            Debug.Log("C10 array length : " + this.completeArray.Length);
         }
     }
 
@@ -268,19 +255,19 @@ public class LevelProgressControl : MonoBehaviour
         this.LoadPlayerPrefs();
         if (File.Exists(Application.persistentDataPath + "/lpC10.dat"))
         {
-            UnityEngine.Debug.Log("10-CHAPTER FILE EXISTS");
+            Debug.Log("10-CHAPTER FILE EXISTS");
             this.LoadDataStandardStart();
         }
         else if (File.Exists(Application.persistentDataPath + "/lp.dat"))
         {
-            UnityEngine.Debug.Log("LEGACY DATA EXISTS");
+            Debug.Log("LEGACY DATA EXISTS");
             PlayerPrefs.SetInt("SuggestHint", 0);
             PlayerPrefs.Save();
             this.LoadDataUpdateStart();
         }
         else
         {
-            UnityEngine.Debug.Log("LEGACY DATA DOES NOT EXIST");
+            Debug.Log("LEGACY DATA DOES NOT EXIST");
             this.LoadDataFreshStart();
         }
     }
@@ -289,7 +276,7 @@ public class LevelProgressControl : MonoBehaviour
     {
         if (Debug.isDebugBuild)
         {
-            UnityEngine.Debug.Log("LoadDataStandardStart()");
+            Debug.Log("LoadDataStandardStart()");
         }
         BinaryFormatter binaryFormatter = new BinaryFormatter();
         FileStream fileStream = File.Open(Application.persistentDataPath + "/lpC10.dat", FileMode.Open);
@@ -311,7 +298,7 @@ public class LevelProgressControl : MonoBehaviour
     {
         if (Debug.isDebugBuild)
         {
-            UnityEngine.Debug.Log("LoadDataUpdateStart()");
+            Debug.Log("LoadDataUpdateStart()");
         }
         BinaryFormatter binaryFormatter = new BinaryFormatter();
         FileStream fileStream = File.Open(Application.persistentDataPath + "/lp.dat", FileMode.Open);
@@ -333,7 +320,7 @@ public class LevelProgressControl : MonoBehaviour
     {
         if (Debug.isDebugBuild)
         {
-            UnityEngine.Debug.Log("LoadDataFreshStart()");
+            Debug.Log("LoadDataFreshStart()");
         }
     }
 
@@ -376,12 +363,12 @@ public class LevelProgressControl : MonoBehaviour
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("PuzzleColorKey : " + value3.ToString());
+                Debug.Log("PuzzleColorKey : " + value3.ToString());
             }
             long value4 = value3 ^ LevelProgressControl.CipherKey;
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("decode : " + value4);
+                Debug.Log("decode : " + value4);
             }
             this.hintPotCount = Convert.ToInt32(value4);
         }
@@ -391,7 +378,7 @@ public class LevelProgressControl : MonoBehaviour
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("PuzzleShapeSeed NOT SET");
+                Debug.Log("PuzzleShapeSeed NOT SET");
             }
             PlayerPrefs.SetString("PuzzleShapeSeed", (Convert.ToInt64(false) + 2927 ^ LevelProgressControl.CipherKey).ToString());
             this.iapUnlockLevels = false;
@@ -400,12 +387,12 @@ public class LevelProgressControl : MonoBehaviour
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("PuzzleShapeSeed : " + value5.ToString());
+                Debug.Log("PuzzleShapeSeed : " + value5.ToString());
             }
             long value6 = (value5 ^ LevelProgressControl.CipherKey) - 2927;
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("decode : " + value6);
+                Debug.Log("decode : " + value6);
             }
             this.iapUnlockLevels = Convert.ToBoolean(value6);
         }
@@ -415,7 +402,7 @@ public class LevelProgressControl : MonoBehaviour
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("PuzzleDiffTrackSeed NOT SET");
+                Debug.Log("PuzzleDiffTrackSeed NOT SET");
             }
             PlayerPrefs.SetString("PuzzleDiffTrackSeed", (Convert.ToInt64(false) + 1066 ^ LevelProgressControl.CipherKey).ToString());
             this.iapDisableAds = false;
@@ -424,12 +411,12 @@ public class LevelProgressControl : MonoBehaviour
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("PuzzleDiffTrackSeed : " + value7.ToString());
+                Debug.Log("PuzzleDiffTrackSeed : " + value7.ToString());
             }
             long value8 = (value7 ^ LevelProgressControl.CipherKey) - 1066;
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("decode : " + value8);
+                Debug.Log("decode : " + value8);
             }
             this.iapDisableAds = Convert.ToBoolean(value8);
         }
@@ -454,16 +441,16 @@ public class LevelProgressControl : MonoBehaviour
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("CheckHintPot : earlier");
+                Debug.Log("CheckHintPot : earlier");
             }
             TimeSpan timeSpan = now - dateTime;
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log(now);
-                UnityEngine.Debug.Log(dateTime);
-                UnityEngine.Debug.Log(timeSpan);
-                UnityEngine.Debug.Log("timediff.TotalHours : " + timeSpan.TotalHours);
-                UnityEngine.Debug.Log("timediff.Days*24 + timeDiff.Hours : " + (timeSpan.Days * 24 + timeSpan.Hours));
+                Debug.Log(now);
+                Debug.Log(dateTime);
+                Debug.Log(timeSpan);
+                Debug.Log("timediff.TotalHours : " + timeSpan.TotalHours);
+                Debug.Log("timediff.Days*24 + timeDiff.Hours : " + (timeSpan.Days * 24 + timeSpan.Hours));
             }
             if (timeSpan.Days * 24 + timeSpan.Hours > 6)
             {
@@ -474,12 +461,12 @@ public class LevelProgressControl : MonoBehaviour
         {
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("CheckHintPot : same");
+                Debug.Log("CheckHintPot : same");
             }
         }
         else if (Debug.isDebugBuild)
         {
-            UnityEngine.Debug.Log("CheckHintPot : later");
+            Debug.Log("CheckHintPot : later");
         }
         return false;
     }

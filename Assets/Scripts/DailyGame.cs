@@ -1,17 +1,3 @@
-/*
-http://www.cgsoso.com/forum-211-1.html
-
-CG搜搜 Unity3d 每日Unity3d插件免费更新 更有VIP资源！
-
-CGSOSO 主打游戏开发，影视设计等CG资源素材。
-
-插件由会员免费分享，如果商用，请务必联系原著购买授权！
-
-daily assets update for try.
-
-U should buy a license from author if u use it in your project!
-*/
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -161,7 +147,7 @@ public class DailyGame : MonoBehaviour
                     PlayerPrefs.SetString("dailyereyesterdaydata", LevelProgressControl.control.puzzleBasename + "-" + starsCount);
                     if (Debug.isDebugBuild)
                     {
-                        UnityEngine.Debug.Log("Ereyesterday COMPLETED");
+                        Debug.Log("Ereyesterday COMPLETED");
                     }
                     break;
                 case -1:
@@ -169,7 +155,7 @@ public class DailyGame : MonoBehaviour
                     PlayerPrefs.SetString("dailyyesterdaydata", LevelProgressControl.control.puzzleBasename + "-" + starsCount);
                     if (Debug.isDebugBuild)
                     {
-                        UnityEngine.Debug.Log("Yesterday COMPLETED");
+                        Debug.Log("Yesterday COMPLETED");
                     }
                     break;
                 case 0:
@@ -178,7 +164,7 @@ public class DailyGame : MonoBehaviour
                         PlayerPrefs.SetString("dailytodaydata", LevelProgressControl.control.puzzleBasename + "-" + starsCount);
                         if (Debug.isDebugBuild)
                         {
-                            UnityEngine.Debug.Log("Today COMPLETED");
+                            Debug.Log("Today COMPLETED");
                         }
                         if (this.timer < LevelProgressControl.control.dailyTodayPersonalBest)
                         {
@@ -196,69 +182,69 @@ public class DailyGame : MonoBehaviour
                             this.leaderBoardScript.ReportLeaderboardScore(score, "pixelart_dailybest");
 #endif
                         }
-						break;
-					}
-			}
-			LevelProgressControl.control.SaveProgressData();
+                        break;
+                    }
+            }
+            LevelProgressControl.control.SaveProgressData();
 
-			//MainMenu.Instance.RefreshTodayArt();
-		}
-	}
+            //MainMenu.Instance.RefreshTodayArt();
+        }
+    }
 
-	private IEnumerator CompletionSchedule()
-	{ 
-		yield return (object)new WaitForSeconds(1f);
-		this.particlesCascade.Play();
-		for (int i = 0; i < this.emptyStarsArray.Length; i++)
-		{
-			this.emptyStarsArray[i].GetComponent<Animation>().Play();
-		}
-		this.movesText.CrossFadeAlpha(1f, 0.5f, false); 
-		this.guiTimerText.CrossFadeAlpha(1f, 0.5f, false); 
-		yield return (object)new WaitForSeconds(0.6f);
-		int starsWon = this.CalculateStarsWon();
-		if (starsWon >= 1)
-		{
-			this.fullStarsArray[0].GetComponent<SpriteRenderer>().enabled = true;
-			this.fullStarsArray[0].GetComponent<RadialParticlesScript>().Reset(false);
-		}
-		yield return (object)new WaitForSeconds(0.2f);
-		if (starsWon >= 2)
-		{
-			this.fullStarsArray[1].GetComponent<SpriteRenderer>().enabled = true;
-			this.fullStarsArray[1].GetComponent<RadialParticlesScript>().Reset(false);
-		}
-		yield return (object)new WaitForSeconds(0.2f);
-		if (starsWon == 3)
-		{
-			this.fullStarsArray[2].GetComponent<SpriteRenderer>().enabled = true;
-			this.fullStarsArray[2].GetComponent<RadialParticlesScript>().Reset(false);
-		}
-		this.puzzleState = PuzzleState.PUZZLE_COMPLETE; 
-	}
-	private int CalculateStarsWon()
-	{
-		float duration = Time.deltaTime - this.startTime;
-		if (duration <= numberOfCells + this.starAwardIncrement && errorsCount < 3)
-		{
-			return 3;
-		}
-		if (duration <= numberOfCells + this.starAwardIncrement * 2 && errorsCount < 10)
-		{
-			return 2;
-		}
-		if (duration <= numberOfCells + this.starAwardIncrement * 3)
-		{
-			return 1;
-		}
-		return 0;
-	}
+    private IEnumerator CompletionSchedule()
+    { 
+        yield return (object)new WaitForSeconds(1f);
+        this.particlesCascade.Play();
+        for (int i = 0; i < this.emptyStarsArray.Length; i++)
+        {
+            this.emptyStarsArray[i].GetComponent<Animation>().Play();
+        }
+        this.movesText.CrossFadeAlpha(1f, 0.5f, false); 
+        this.guiTimerText.CrossFadeAlpha(1f, 0.5f, false); 
+        yield return (object)new WaitForSeconds(0.6f);
+        int starsWon = this.CalculateStarsWon();
+        if (starsWon >= 1)
+        {
+            this.fullStarsArray[0].GetComponent<SpriteRenderer>().enabled = true;
+            this.fullStarsArray[0].GetComponent<RadialParticlesScript>().Reset(false);
+        }
+        yield return (object)new WaitForSeconds(0.2f);
+        if (starsWon >= 2)
+        {
+            this.fullStarsArray[1].GetComponent<SpriteRenderer>().enabled = true;
+            this.fullStarsArray[1].GetComponent<RadialParticlesScript>().Reset(false);
+        }
+        yield return (object)new WaitForSeconds(0.2f);
+        if (starsWon == 3)
+        {
+            this.fullStarsArray[2].GetComponent<SpriteRenderer>().enabled = true;
+            this.fullStarsArray[2].GetComponent<RadialParticlesScript>().Reset(false);
+        }
+        this.puzzleState = PuzzleState.PUZZLE_COMPLETE; 
+    }
+    private int CalculateStarsWon()
+    {
+        float duration = Time.deltaTime - this.startTime;
+        if (duration <= numberOfCells + this.starAwardIncrement && errorsCount < 3)
+        {
+            return 3;
+        }
+        if (duration <= numberOfCells + this.starAwardIncrement * 2 && errorsCount < 10)
+        {
+            return 2;
+        }
+        if (duration <= numberOfCells + this.starAwardIncrement * 3)
+        {
+            return 1;
+        }
+        return 0;
+    }
 
-	private int GetDailyStars(string prefname)
-	{
-		string str = PlayerPrefs.GetString(prefname, "nodata");
-		string[] array = str.Split('-');
-		return Convert.ToInt32(array[2]);
-	}
+    private int GetDailyStars(string prefname)
+    {
+        string str = PlayerPrefs.GetString(prefname, "nodata");
+        string[] array = str.Split('-');
+        return Convert.ToInt32(array[2]);
+    }
 
 }

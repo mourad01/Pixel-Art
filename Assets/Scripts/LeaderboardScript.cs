@@ -1,17 +1,4 @@
-/*
-http://www.cgsoso.com/forum-211-1.html
-
-CG搜搜 Unity3d 每日Unity3d插件免费更新 更有VIP资源！
-
-CGSOSO 主打游戏开发，影视设计等CG资源素材。
-
-插件由会员免费分享，如果商用，请务必联系原著购买授权！
-
-daily assets update for try.
-
-U should buy a license from author if u use it in your project!
-*/
-
+using UnityDebug = global::UnityEngine.Debug;
 #if UNITY_ANDROID
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
@@ -37,81 +24,81 @@ public class LeaderboardScript : MonoBehaviour
 
     private void Start()
     {   
-		this.InitLeaderboards(); 
+        this.InitLeaderboards(); 
     }
 
-	//public void CheckForPastAchievements()
-	//{
-	//    if (this.IsAuthenticated())
-	//    {
-	//        UnityEngine.Debug.Log("CheckForPastAchievements... IsAuthenticated YES");
-	//        int @int = PlayerPrefs.GetInt("CheckedPastAch", 0);
-	//        AchievementFlags achievementFlags = (AchievementFlags)@int;
-	//        UnityEngine.Debug.Log("CheckForPastAchievements : CheckedPastAch Pref : " + @int);
-	//        UnityEngine.Debug.Log("Achievement flags : " + achievementFlags);
-	//        if ((achievementFlags & AchievementFlags.COMPLETE_C1) == (AchievementFlags)0 && this.TestChapterComplete(1))
-	//        {
-	//            UnityEngine.Debug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQAw");
-	//            this.ReportAchievementProgress("CgkIifzNtrcZEAIQAw", 100.0);
-	//            achievementFlags |= AchievementFlags.COMPLETE_C1;
-	//        }
-	//        if ((achievementFlags & AchievementFlags.COMPLETE_C2) == (AchievementFlags)0 && this.TestChapterComplete(2))
-	//        {
-	//            UnityEngine.Debug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQBA");
-	//            this.ReportAchievementProgress("CgkIifzNtrcZEAIQBA", 100.0);
-	//            achievementFlags |= AchievementFlags.COMPLETE_C2;
-	//        }
-	//        if ((achievementFlags & AchievementFlags.COMPLETE_C3) == (AchievementFlags)0 && this.TestChapterComplete(3))
-	//        {
-	//            UnityEngine.Debug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQBQ");
-	//            this.ReportAchievementProgress("CgkIifzNtrcZEAIQBQ", 100.0);
-	//            achievementFlags |= AchievementFlags.COMPLETE_C3;
-	//        }
-	//        if ((achievementFlags & AchievementFlags.THREESTAR_C1) == (AchievementFlags)0 && this.TestChapter3Starred(1))
-	//        {
-	//            UnityEngine.Debug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQBg");
-	//            this.ReportAchievementProgress("CgkIifzNtrcZEAIQBg", 100.0);
-	//            achievementFlags |= AchievementFlags.THREESTAR_C1;
-	//        }
-	//        if ((achievementFlags & AchievementFlags.THREESTAR_C2) == (AchievementFlags)0 && this.TestChapter3Starred(2))
-	//        {
-	//            UnityEngine.Debug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQBw");
-	//            this.ReportAchievementProgress("CgkIifzNtrcZEAIQBw", 100.0);
-	//            achievementFlags |= AchievementFlags.THREESTAR_C2;
-	//        }
-	//        if ((achievementFlags & AchievementFlags.THREESTAR_C3) == (AchievementFlags)0 && this.TestChapter3Starred(3))
-	//        {
-	//            UnityEngine.Debug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQCA");
-	//            this.ReportAchievementProgress("CgkIifzNtrcZEAIQCA", 100.0);
-	//            achievementFlags |= AchievementFlags.THREESTAR_C3;
-	//        }
-	//        PlayerPrefs.SetInt("CheckedPastAch", (int)achievementFlags);
-	//        PlayerPrefs.Save();
-	//    }
-	//    else
-	//    {
-	//        UnityEngine.Debug.Log("CheckForPastAchievements... IsAuthenticated NO");
-	//    }
-	//}
+    //public void CheckForPastAchievements()
+    //{
+    //    if (this.IsAuthenticated())
+    //    {
+    //        UnityDebug.Log("CheckForPastAchievements... IsAuthenticated YES");
+    //        int @int = PlayerPrefs.GetInt("CheckedPastAch", 0);
+    //        AchievementFlags achievementFlags = (AchievementFlags)@int;
+    //        UnityDebug.Log("CheckForPastAchievements : CheckedPastAch Pref : " + @int);
+    //        UnityDebug.Log("Achievement flags : " + achievementFlags);
+    //        if ((achievementFlags & AchievementFlags.COMPLETE_C1) == (AchievementFlags)0 && this.TestChapterComplete(1))
+    //        {
+    //            UnityDebug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQAw");
+    //            this.ReportAchievementProgress("CgkIifzNtrcZEAIQAw", 100.0);
+    //            achievementFlags |= AchievementFlags.COMPLETE_C1;
+    //        }
+    //        if ((achievementFlags & AchievementFlags.COMPLETE_C2) == (AchievementFlags)0 && this.TestChapterComplete(2))
+    //        {
+    //            UnityDebug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQBA");
+    //            this.ReportAchievementProgress("CgkIifzNtrcZEAIQBA", 100.0);
+    //            achievementFlags |= AchievementFlags.COMPLETE_C2;
+    //        }
+    //        if ((achievementFlags & AchievementFlags.COMPLETE_C3) == (AchievementFlags)0 && this.TestChapterComplete(3))
+    //        {
+    //            UnityDebug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQBQ");
+    //            this.ReportAchievementProgress("CgkIifzNtrcZEAIQBQ", 100.0);
+    //            achievementFlags |= AchievementFlags.COMPLETE_C3;
+    //        }
+    //        if ((achievementFlags & AchievementFlags.THREESTAR_C1) == (AchievementFlags)0 && this.TestChapter3Starred(1))
+    //        {
+    //            UnityDebug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQBg");
+    //            this.ReportAchievementProgress("CgkIifzNtrcZEAIQBg", 100.0);
+    //            achievementFlags |= AchievementFlags.THREESTAR_C1;
+    //        }
+    //        if ((achievementFlags & AchievementFlags.THREESTAR_C2) == (AchievementFlags)0 && this.TestChapter3Starred(2))
+    //        {
+    //            UnityDebug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQBw");
+    //            this.ReportAchievementProgress("CgkIifzNtrcZEAIQBw", 100.0);
+    //            achievementFlags |= AchievementFlags.THREESTAR_C2;
+    //        }
+    //        if ((achievementFlags & AchievementFlags.THREESTAR_C3) == (AchievementFlags)0 && this.TestChapter3Starred(3))
+    //        {
+    //            UnityDebug.Log("CheckForPastAchievements... awarding CgkIifzNtrcZEAIQCA");
+    //            this.ReportAchievementProgress("CgkIifzNtrcZEAIQCA", 100.0);
+    //            achievementFlags |= AchievementFlags.THREESTAR_C3;
+    //        }
+    //        PlayerPrefs.SetInt("CheckedPastAch", (int)achievementFlags);
+    //        PlayerPrefs.Save();
+    //    }
+    //    else
+    //    {
+    //        UnityDebug.Log("CheckForPastAchievements... IsAuthenticated NO");
+    //    }
+    //}
 
-	public void InitLeaderboards()
-	{
-		if (!this.IsAuthenticated())
-		{
-			try
-			{
-				Social.localUser.Authenticate(new Action<bool>(this.ProcessAuthentication));
-			}
-			catch (Exception ex)
-			{
-				Debug.LogError(ex);
-			}
-		}
-		else
-		{
-			UnityEngine.Debug.Log("InitLeaderboards :  Already Authenticated");
-		}
-	}
+    public void InitLeaderboards()
+    {
+        if (!this.IsAuthenticated())
+        {
+            try
+            {
+                Social.localUser.Authenticate(new Action<bool>(this.ProcessAuthentication));
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+        }
+        else
+        {
+            UnityDebug.Log("InitLeaderboards :  Already Authenticated");
+        }
+    }
 
     public bool IsAuthenticated()
     {
@@ -126,12 +113,12 @@ public class LeaderboardScript : MonoBehaviour
     {
         if (success)
         {
-            UnityEngine.Debug.Log("ProcessAuthentication - success");
+            UnityDebug.Log("ProcessAuthentication - success");
             //this.CheckForPastAchievements();
         }
         else
         {
-            UnityEngine.Debug.Log("ProcessAuthentication - failed");
+            UnityDebug.Log("ProcessAuthentication - failed");
         }
     }
 
@@ -149,23 +136,23 @@ public class LeaderboardScript : MonoBehaviour
         {
             Social.ShowLeaderboardUI();
         }
-		else
-		{
-			try
-			{
-				Social.localUser.Authenticate((b) =>
-				{
-					if (b)
-					{
-						Social.ShowLeaderboardUI();
-					}
-				});
-			}
-			catch (Exception ex)
-			{
-				Debug.LogError(ex);
-			}
-		}
+        else
+        {
+            try
+            {
+                Social.localUser.Authenticate((b) =>
+                {
+                    if (b)
+                    {
+                        Social.ShowLeaderboardUI();
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError(ex);
+            }
+        }
     }
 
     public void ReportLeaderboardScore(long score, string leaderBoardID)
@@ -176,17 +163,17 @@ public class LeaderboardScript : MonoBehaviour
             {
                 if (success)
                 {
-                    UnityEngine.Debug.Log("Reported time successfully");
+                    UnityDebug.Log("Reported time successfully");
                 }
                 else
                 {
-                    UnityEngine.Debug.Log("Failed to report time " + leaderBoardID);
+                    UnityDebug.Log("Failed to report time " + leaderBoardID);
                 }
             });
         }
         else
         {
-            UnityEngine.Debug.Log("ReportLeaderboardScore NOT authenticated");
+            UnityDebug.Log("ReportLeaderboardScore NOT authenticated");
         }
     }
 
@@ -198,24 +185,24 @@ public class LeaderboardScript : MonoBehaviour
     //        {
     //            if (success)
     //            {
-    //                UnityEngine.Debug.Log("Reported achievement successfully");
+    //                UnityDebug.Log("Reported achievement successfully");
     //            }
     //            else
     //            {
-    //                UnityEngine.Debug.Log("Failed to report achievement " + achievementID);
+    //                UnityDebug.Log("Failed to report achievement " + achievementID);
     //            }
     //        });
     //    }
     //    else
     //    {
-    //        UnityEngine.Debug.Log("ReportAchievementProgress NOT authenticated");
+    //        UnityDebug.Log("ReportAchievementProgress NOT authenticated");
     //    }
     //}
 
     public void LeaderboardLogout()
-	{
+    {
 #if (UNITY_ANDROID || (UNITY_IPHONE && !NO_GPGS))
-		((GooglePlayGames.PlayGamesPlatform)Social.Active).SignOut();
+        ((GooglePlayGames.PlayGamesPlatform)Social.Active).SignOut();
 #endif
     }
 
@@ -226,7 +213,7 @@ public class LeaderboardScript : MonoBehaviour
 
     public bool TestChapterComplete(int num)
     {
-        UnityEngine.Debug.Log("TestChapterComplete : " + num);
+        UnityDebug.Log("TestChapterComplete : " + num);
         int value2 = 0;
         int value3 = (num - 1) * 6;
         for (int i = value3; i < value3 + 6; i++)
@@ -242,7 +229,7 @@ public class LeaderboardScript : MonoBehaviour
 
     public bool TestChapter3Starred(int num)
     {
-        UnityEngine.Debug.Log("TestChapter3Starred : " + num);
+        UnityDebug.Log("TestChapter3Starred : " + num);
         int value2 = 0;
         int value3 = (num - 1) * 72;
         int value4 = value3 + 72;
@@ -259,7 +246,7 @@ public class LeaderboardScript : MonoBehaviour
 
     //public void TestChapter3StarredFromPostcard(int pcIdx)
     //{
-    //    UnityEngine.Debug.Log("TestChapter3StarredFromPostcard : " + pcIdx);
+    //    UnityDebug.Log("TestChapter3StarredFromPostcard : " + pcIdx);
     //    int @int = PlayerPrefs.GetInt("CheckedPastAch", 0);
     //    AchievementFlags achievementFlags = (AchievementFlags)@int;
     //    int chapterNumber = this.GetChapterNumber(pcIdx);
@@ -295,7 +282,7 @@ public class LeaderboardScript : MonoBehaviour
 
     //public void TestChapterCompleteFromPostcard(int pcIdx)
     //{
-    //    UnityEngine.Debug.Log("TestChapterCompleteFromPostcard : " + pcIdx);
+    //    UnityDebug.Log("TestChapterCompleteFromPostcard : " + pcIdx);
     //    int @int = PlayerPrefs.GetInt("CheckedPastAch", 0);
     //    AchievementFlags achievementFlags = (AchievementFlags)@int;
     //    int chapterNumber = this.GetChapterNumber(pcIdx);

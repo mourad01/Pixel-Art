@@ -1,17 +1,3 @@
-/*
-http://www.cgsoso.com/forum-211-1.html
-
-CG搜搜 Unity3d 每日Unity3d插件免费更新 更有VIP资源！
-
-CGSOSO 主打游戏开发，影视设计等CG资源素材。
-
-插件由会员免费分享，如果商用，请务必联系原著购买授权！
-
-daily assets update for try.
-
-U should buy a license from author if u use it in your project!
-*/
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -55,7 +41,7 @@ public class GetNameScript : MonoBehaviour
 
     public Text leaderboardPromptText;
 
-	public Material grayMaterial;
+    public Material grayMaterial;
     //public Button lbDialogSignoutButton;
 
     //public GameObject dialogLeaderboard;
@@ -98,14 +84,14 @@ public class GetNameScript : MonoBehaviour
 
     private int ereyesterdayStars;
 
-	public static GetNameScript Instance;
-	private void Awake()
-	{
-		Instance = this;
-		//Init();
-	}
+    public static GetNameScript Instance;
+    private void Awake()
+    {
+        Instance = this;
+        //Init();
+    }
 
-	public void Init()
+    public void Init()
     {
         this.todayFilename = GetDailyIdentity(0);
         this.yesterdayFilename = GetDailyIdentity(-1);
@@ -219,7 +205,7 @@ public class GetNameScript : MonoBehaviour
         //{
         //    this.leaderboardButton.interactable = false;
         //}
-		 
+
         this.resultText.gameObject.SetActive(false);
         this.dlSpinner.SetActive(false);
         this.bestTimeNewImage.gameObject.SetActive(false);
@@ -249,7 +235,7 @@ public class GetNameScript : MonoBehaviour
                 {
                     //if (AdsWrapper.Instance.IsVideoAvailable())
                     {
-						//AdsWrapper.Instance.ShowInter(string.Empty);
+                        //AdsWrapper.Instance.ShowInter(string.Empty);
                         val2 = 287462819;
                         PlayerPrefs.SetInt("PuzzleStateId", val2);
                         PlayerPrefs.Save();
@@ -257,48 +243,48 @@ public class GetNameScript : MonoBehaviour
                 }
                 else
                 {
-                    UnityEngine.Debug.Log("IAP to disable ads detected. Skip Ad.");
+                    Debug.Log("IAP to disable ads detected. Skip Ad.");
                 }
             }
             else if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("currAccumTime still accumulating... : " + val2.ToString());
+                Debug.Log("currAccumTime still accumulating... : " + val2.ToString());
             }
         }
     }
 
-	public static void GetTodayArt(ImagePreview image, Material grayMaterial)
-	{
-		NewLibraryWindow.UpdateDailyClick(false);
-		var identify = GetDailyIdentity(0);
+    public static void GetTodayArt(ImagePreview image, Material grayMaterial)
+    {
+        NewLibraryWindow.UpdateDailyClick(false);
+        var identify = GetDailyIdentity(0);
 
-		if (DailyDataExists(identify))
-		{
-			DataManager.Instance.GetImages(false, (ii) =>
-			{
-				int index = GetIdentifyIndex(identify, ii.Images.Count);
-				var imageInfo = ii.Images[index];
+        if (DailyDataExists(identify))
+        {
+            DataManager.Instance.GetImages(false, (ii) =>
+            {
+                int index = GetIdentifyIndex(identify, ii.Images.Count);
+                var imageInfo = ii.Images[index];
 
-				image.Init(imageInfo);
-				image.LoadIcon();
-				NewLibraryWindow.UpdateDailyClick(true);
-			});  
-		} 
-	}
+                image.Init(imageInfo);
+                image.LoadIcon();
+                NewLibraryWindow.UpdateDailyClick(true);
+            });  
+        } 
+    }
 
     public void PressDownloadorPlay(int dailyOffset)
     {
-        UnityEngine.Debug.Log("PressDownloadorPlay()");
-		AudioManager.Instance.PlayClick(); 
+        Debug.Log("PressDownloadorPlay()");
+        AudioManager.Instance.PlayClick(); 
         if (DailyDataExists(GetDailyIdentity(dailyOffset)))
         {
-            UnityEngine.Debug.Log("PLAY");
+            Debug.Log("PLAY");
             LevelProgressControl.control.dailyDayOffset = dailyOffset;
             this.ExecutePuzzle(GetDailyIdentity(dailyOffset));
         }
         else
         {
-            UnityEngine.Debug.Log("DOWNLOAD");
+            Debug.Log("DOWNLOAD");
             this.ResetDailyDownload();
             this.dlSpinner.SetActive(true);
             string str = GetDailyIdentity(dailyOffset);
@@ -318,138 +304,138 @@ public class GetNameScript : MonoBehaviour
         SceneManager.LoadScene("GenericPuzzle");
     }
 
-	public void ExecutePuzzle(string identify)
-	{
-		LevelProgressControl.control.puzzleSrcType = LevelProgressControl.PuzzleSourceType.PUZZLE_DAILY;
-		LevelProgressControl.control.postcardOrigin = SceneManager.GetActiveScene().name;
-		LevelProgressControl.control.puzzleBasename = identify;
-		PlayerPrefs.SetString("datafile", identify);
+    public void ExecutePuzzle(string identify)
+    {
+        LevelProgressControl.control.puzzleSrcType = LevelProgressControl.PuzzleSourceType.PUZZLE_DAILY;
+        LevelProgressControl.control.postcardOrigin = SceneManager.GetActiveScene().name;
+        LevelProgressControl.control.puzzleBasename = identify;
+        PlayerPrefs.SetString("datafile", identify);
 
-		DataManager.Instance.GetImages(false, (ii) =>
-		{
-			int index = GetIdentifyIndex(identify, ii.Images.Count);
-			var imageInfo = ii.Images[index];
+        DataManager.Instance.GetImages(false, (ii) =>
+        {
+            int index = GetIdentifyIndex(identify, ii.Images.Count);
+            var imageInfo = ii.Images[index];
 
-			NewLibraryWindow.ExecutePuzzle(imageInfo);
-		});
-	}
-	private static int GetIdentifyIndex(string str, int maxSize)
-	{
-		uint number = (uint)str.GetHashCode();
-		return (int)((number + (maxSize + 200)) % maxSize);
-	}
+            NewLibraryWindow.ExecutePuzzle(imageInfo);
+        });
+    }
+    private static int GetIdentifyIndex(string str, int maxSize)
+    {
+        uint number = (uint)str.GetHashCode();
+        return (int)((number + (maxSize + 200)) % maxSize);
+    }
     private IEnumerator DownloadTextureData(string identify, int dailyOffset)
     {
-		if (DataManager.Instance == null)
-			yield return null;
+        if (DataManager.Instance == null)
+            yield return null;
 
-		this.LoadDailyPuzzleIcon(dailyOffset, true);
-	} 
+        this.LoadDailyPuzzleIcon(dailyOffset, true);
+    } 
 
     private void LoadSilhouette()
     {
         Texture2D texture2D = LoadPNG(Application.persistentDataPath + "/daily.png");
     }
-	private IEnumerator LoadSaveCoroutine(ImageInfo imageInfo, Image image, string id)
-	{
-		var resTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-		resTex.filterMode = (FilterMode)(imageInfo.Is3D ? 1 : 0);
-		var swd = MainManager.Instance.SavedWorksList.LoadById(id);
-		yield return null;
-		resTex.LoadImage(swd.Preview);
-
-		image.sprite = Sprite.Create(resTex, new Rect(0f, 0f, (float)resTex.width, (float)resTex.height), new Vector2(0.5f, 0.5f));
-	}
-	
-	private void LoadDailyPuzzleIcon(Image image, string identify, int dailyOffset, bool isSilhouette)
-	{
-		if (isSilhouette)
-		{
-			image.material = grayMaterial;
-		}
-		else
-		{
-			image.material = null;
-		}
-
-		DataManager.Instance.GetImages(false, (ii) =>
-		{
-			int index = GetIdentifyIndex(identify, ii.Images.Count);
-			var imageInfo = ii.Images[index];
-
-			var saveId = MainManager.Instance.SavedWorksList.LastSaveOfImageId(imageInfo.Id);
-			 
-			if (imageInfo.Is3D && saveId != null)
-			{
-				this.bIsImageFetched = true;
-				image.gameObject.SetActive(true);
-				base.StartCoroutine(LoadSaveCoroutine(imageInfo, image, saveId));
-				this.SetDailyButtonVerb("Play", dailyOffset);
-				this.dlSpinner.SetActive(false); 
-
-				PlayerPrefsWrapper.SetBool("Daily-" + identify, true);
-				if (dailyOffset == 0)
-				{
-					MainMenu.Instance.RefreshTodayArt();
-				}
-			}
-			else
-			{
-				DataManager.Instance.GetImageAsset(imageInfo, delegate (bool res, Texture2D tex)
-				{
-					if (res)
-					{
-						this.bIsImageFetched = true;
-						image.sprite = Sprite.Create(tex, new Rect(0f, 0f, (float)tex.width, (float)tex.height), new Vector2(0.5f, 0.5f));
-						if (saveId != null)
-						{
-							base.StartCoroutine(LoadSaveCoroutine(imageInfo, image, saveId));
-						}
-						this.SetDailyButtonVerb("Play", dailyOffset);
-						this.dlSpinner.SetActive(false);
-
-						PlayerPrefsWrapper.SetBool("Daily-" + identify, true);
-						if (dailyOffset == 0)
-						{
-							MainMenu.Instance.RefreshTodayArt();
-						}
-					} 
-				});
-				if (imageInfo.Is3D)
-				{
-					DataManager.Instance.GetImageAsset3D(imageInfo, null);
-				}
-			}
-		}); 
-	}
-
-	private void LoadDailyPuzzleIcon(int todayOffset, bool isSilhouette)
+    private IEnumerator LoadSaveCoroutine(ImageInfo imageInfo, Image image, string id)
     {
-		switch (todayOffset)
-		{
-			case 0:
-				LoadDailyPuzzleIcon(puzzleReadyTodayImg, GetDailyIdentity(todayOffset), todayOffset, isSilhouette);
-				break;
-			case -1:
-				LoadDailyPuzzleIcon(puzzleReadyYesterdayImg, GetDailyIdentity(todayOffset), todayOffset, isSilhouette);
-				break;
-			case -2:
-				LoadDailyPuzzleIcon(puzzleReadyEreyesterdayImg, GetDailyIdentity(todayOffset), todayOffset, isSilhouette);
-				break;
-		}
+        var resTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+        resTex.filterMode = (FilterMode)(imageInfo.Is3D ? 1 : 0);
+        var swd = MainManager.Instance.SavedWorksList.LoadById(id);
+        yield return null;
+        resTex.LoadImage(swd.Preview);
 
-		//Texture2D texture2D = LoadPNG(Application.persistentDataPath + "/" + GetDailyIdentity(todayOffset) + ".png");
+        image.sprite = Sprite.Create(resTex, new Rect(0f, 0f, (float)resTex.width, (float)resTex.height), new Vector2(0.5f, 0.5f));
+    }
+
+    private void LoadDailyPuzzleIcon(Image image, string identify, int dailyOffset, bool isSilhouette)
+    {
+        if (isSilhouette)
+        {
+            image.material = grayMaterial;
+        }
+        else
+        {
+            image.material = null;
+        }
+
+        DataManager.Instance.GetImages(false, (ii) =>
+        {
+            int index = GetIdentifyIndex(identify, ii.Images.Count);
+            var imageInfo = ii.Images[index];
+
+            var saveId = MainManager.Instance.SavedWorksList.LastSaveOfImageId(imageInfo.Id);
+
+            if (imageInfo.Is3D && saveId != null)
+            {
+                this.bIsImageFetched = true;
+                image.gameObject.SetActive(true);
+                base.StartCoroutine(LoadSaveCoroutine(imageInfo, image, saveId));
+                this.SetDailyButtonVerb("Play", dailyOffset);
+                this.dlSpinner.SetActive(false); 
+
+                PlayerPrefsWrapper.SetBool("Daily-" + identify, true);
+                if (dailyOffset == 0)
+                {
+                    MainMenu.Instance.RefreshTodayArt();
+                }
+            }
+            else
+            {
+                DataManager.Instance.GetImageAsset(imageInfo, delegate (bool res, Texture2D tex)
+                {
+                    if (res)
+                    {
+                        this.bIsImageFetched = true;
+                        image.sprite = Sprite.Create(tex, new Rect(0f, 0f, (float)tex.width, (float)tex.height), new Vector2(0.5f, 0.5f));
+                        if (saveId != null)
+                        {
+                            base.StartCoroutine(LoadSaveCoroutine(imageInfo, image, saveId));
+                        }
+                        this.SetDailyButtonVerb("Play", dailyOffset);
+                        this.dlSpinner.SetActive(false);
+
+                        PlayerPrefsWrapper.SetBool("Daily-" + identify, true);
+                        if (dailyOffset == 0)
+                        {
+                            MainMenu.Instance.RefreshTodayArt();
+                        }
+                    } 
+                });
+                if (imageInfo.Is3D)
+                {
+                    DataManager.Instance.GetImageAsset3D(imageInfo, null);
+                }
+            }
+        }); 
+    }
+
+    private void LoadDailyPuzzleIcon(int todayOffset, bool isSilhouette)
+    {
+        switch (todayOffset)
+        {
+            case 0:
+                LoadDailyPuzzleIcon(puzzleReadyTodayImg, GetDailyIdentity(todayOffset), todayOffset, isSilhouette);
+                break;
+            case -1:
+                LoadDailyPuzzleIcon(puzzleReadyYesterdayImg, GetDailyIdentity(todayOffset), todayOffset, isSilhouette);
+                break;
+            case -2:
+                LoadDailyPuzzleIcon(puzzleReadyEreyesterdayImg, GetDailyIdentity(todayOffset), todayOffset, isSilhouette);
+                break;
+        }
+
+        //Texture2D texture2D = LoadPNG(Application.persistentDataPath + "/" + GetDailyIdentity(todayOffset) + ".png");
   //      switch (todayOffset)
   //      {
   //          case 0:
   //              this.puzzleReadyTodayImg.sprite = Sprite.Create(texture2D, new Rect(0f, 0f, (float)texture2D.width, (float)texture2D.height), new Vector2(0.5f, 0.5f));
   //              if (isSilhouette)
   //              {
-		//			this.puzzleReadyTodayImg.material = grayMaterial; 
+        //			this.puzzleReadyTodayImg.material = grayMaterial; 
   //              }
   //              else
   //              {
-		//			this.puzzleReadyTodayImg.material = null; 
+        //			this.puzzleReadyTodayImg.material = null; 
   //              }
   //              break;
   //          case -1:
@@ -457,22 +443,22 @@ public class GetNameScript : MonoBehaviour
   //              if (isSilhouette)
   //              {
   //                  this.puzzleReadyYesterdayImg.material = grayMaterial;
-		//		}
+        //		}
   //              else
   //              {
   //                  this.puzzleReadyYesterdayImg.material = null;
-		//		}
+        //		}
   //              break;
   //          case -2:
   //              this.puzzleReadyEreyesterdayImg.sprite = Sprite.Create(texture2D, new Rect(0f, 0f, (float)texture2D.width, (float)texture2D.height), new Vector2(0.5f, 0.5f));
   //              if (isSilhouette)
   //              {
   //                  this.puzzleReadyEreyesterdayImg.material = grayMaterial;
-		//		}
+        //		}
   //              else
   //              {
   //                  this.puzzleReadyEreyesterdayImg.material = null;
-		//		}
+        //		}
   //              break;
   //      }
     }
@@ -498,9 +484,9 @@ public class GetNameScript : MonoBehaviour
         {
             dateTime = dateTime.AddDays((double)todayOffset);
         }
-        UnityEngine.Debug.Log(dateTime.Date);
+        Debug.Log(dateTime.Date);
         string text = string.Format("{0,3:D3}-{1}", dateTime.DayOfYear, dateTime.Year);
-        UnityEngine.Debug.Log("Today's identity string: DayOfYear : Year -> " + text);
+        Debug.Log("Today's identity string: DayOfYear : Year -> " + text);
         return text;
     }
 
@@ -526,16 +512,16 @@ public class GetNameScript : MonoBehaviour
 
     private static bool DailyDataExists(string identify)
     {
-		return PlayerPrefsWrapper.GetBool("Daily-" + identify);
-		//if (DataManager.Instance.AllImages == null || DataManager.Instance.AllImages.Images.Count == 0)
-		//	return false;
+        return PlayerPrefsWrapper.GetBool("Daily-" + identify);
+        //if (DataManager.Instance.AllImages == null || DataManager.Instance.AllImages.Images.Count == 0)
+        //	return false;
 
-		//int index = GetIdentifyIndex(identify, DataManager.Instance.AllImages.Images.Count);
-		//var imageInfo = DataManager.Instance.AllImages.Images[index];
+        //int index = GetIdentifyIndex(identify, DataManager.Instance.AllImages.Images.Count);
+        //var imageInfo = DataManager.Instance.AllImages.Images[index];
 
-		//return DataManager.Instance.CheckLocalAsset(imageInfo); 
+        //return DataManager.Instance.CheckLocalAsset(imageInfo); 
 
-		//string path = Application.persistentDataPath + "/" + fnameBase + ".png";
+        //string path = Application.persistentDataPath + "/" + fnameBase + ".png";
   //      string path2 = Application.persistentDataPath + "/" + fnameBase + "-data.txt";
   //      bool result = true;
   //      if (!File.Exists(path))
@@ -567,31 +553,31 @@ public class GetNameScript : MonoBehaviour
 
     public void CleanDailyPuzzleDataFiles()
     {
-        UnityEngine.Debug.Log("*** CleanDailyPuzzleDataFiles ***");
+        Debug.Log("*** CleanDailyPuzzleDataFiles ***");
         string[] files = Directory.GetFiles(Application.persistentDataPath, "???-20??*.*", SearchOption.TopDirectoryOnly);
         if (files.Length > 12)
         {
             string[] array = files;
             foreach (string text in array)
             {
-                UnityEngine.Debug.Log("Daily data file -> " + text);
+                Debug.Log("Daily data file -> " + text);
                 string fileName = Path.GetFileName(text);
-                UnityEngine.Debug.Log("Daily data file -> " + fileName);
+                Debug.Log("Daily data file -> " + fileName);
                 if (fileName.Contains(this.todayFilename))
                 {
-                    UnityEngine.Debug.Log("Daily is today. NOT DELETING!");
+                    Debug.Log("Daily is today. NOT DELETING!");
                 }
                 else if (fileName.Contains(this.yesterdayFilename))
                 {
-                    UnityEngine.Debug.Log("Daily is yesterday. NOT DELETING!");
+                    Debug.Log("Daily is yesterday. NOT DELETING!");
                 }
                 else if (fileName.Contains(this.ereyesterdayFilename))
                 {
-                    UnityEngine.Debug.Log("Daily is ereyesterday. NOT DELETING!");
+                    Debug.Log("Daily is ereyesterday. NOT DELETING!");
                 }
                 else
                 {
-                    UnityEngine.Debug.Log("DELETING " + text);
+                    Debug.Log("DELETING " + text);
                     File.Delete(text);
                 }
             }
@@ -600,17 +586,17 @@ public class GetNameScript : MonoBehaviour
 
     public int CalcDailyPrefDateDiff()
     {
-        UnityEngine.Debug.Log("CalcDailyDateDiff");
+        Debug.Log("CalcDailyDateDiff");
         string[] array = this.todayFilename.Split('-');
-        UnityEngine.Debug.Log("today day " + array[0] + " today year " + array[1]);
+        Debug.Log("today day " + array[0] + " today year " + array[1]);
         int num = Convert.ToInt32(array[0]);
         int val2 = Convert.ToInt32(array[1]);
         int val3 = val2 * 365 + num;
-        UnityEngine.Debug.Log("Integer version: today day " + num + " today year " + val2 + " total days " + val3);
+        Debug.Log("Integer version: today day " + num + " today year " + val2 + " total days " + val3);
         string @string = PlayerPrefs.GetString("dailytodaydata", "nodata");
         if (@string.Equals("nodata"))
         {
-            UnityEngine.Debug.Log("CalcDailyPrefDateDiff -> nodata for dailytodaydata. This shouldn't happen");
+            Debug.Log("CalcDailyPrefDateDiff -> nodata for dailytodaydata. This shouldn't happen");
         }
         string[] array2 = @string.Split('-');
         int val4 = Convert.ToInt32(array2[0]);
@@ -621,14 +607,14 @@ public class GetNameScript : MonoBehaviour
             case 0:
                 if (Debug.isDebugBuild)
                 {
-                    UnityEngine.Debug.Log("daysDiff == 0");
+                    Debug.Log("daysDiff == 0");
                 }
                 return 0;
             case 1:
             {
                 if (Debug.isDebugBuild)
                 {
-                    UnityEngine.Debug.Log("daysDiff == 1");
+                    Debug.Log("daysDiff == 1");
                 }
                 PlayerPrefs.SetString("dailyereyesterdaydata", PlayerPrefs.GetString("dailyyesterdaydata", "nodata"));
                 PlayerPrefs.SetString("dailyyesterdaydata", PlayerPrefs.GetString("dailytodaydata", "nodata"));
@@ -641,7 +627,7 @@ public class GetNameScript : MonoBehaviour
             {
                 if (Debug.isDebugBuild)
                 {
-                    UnityEngine.Debug.Log("daysDiff == 2");
+                    Debug.Log("daysDiff == 2");
                 }
                 PlayerPrefs.SetString("dailyereyesterdaydata", PlayerPrefs.GetString("dailytodaydata", "nodata"));
                 string value5 = this.yesterdayFilename + "-99";
@@ -655,7 +641,7 @@ public class GetNameScript : MonoBehaviour
             {
                 if (Debug.isDebugBuild)
                 {
-                    UnityEngine.Debug.Log("daysDiff > 2");
+                    Debug.Log("daysDiff > 2");
                 }
                 string value = this.todayFilename + "-99";
                 PlayerPrefs.SetString("dailytodaydata", value);
@@ -681,7 +667,7 @@ public class GetNameScript : MonoBehaviour
             PlayerPrefs.SetString("dailytodaydata", value);
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("today PPref = nodata");
+                Debug.Log("today PPref = nodata");
             }
             LevelProgressControl.control.dailyTodayPersonalBest = 600f;
         }
@@ -692,7 +678,7 @@ public class GetNameScript : MonoBehaviour
             PlayerPrefs.SetString("dailyyesterdaydata", value2);
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("yesterday PPref = nodata");
+                Debug.Log("yesterday PPref = nodata");
             }
         }
         string string3 = PlayerPrefs.GetString("dailyereyesterdaydata", "nodata");
@@ -702,7 +688,7 @@ public class GetNameScript : MonoBehaviour
             PlayerPrefs.SetString("dailyereyesterdaydata", value3);
             if (Debug.isDebugBuild)
             {
-                UnityEngine.Debug.Log("ereyesterday PPref = nodata");
+                Debug.Log("ereyesterday PPref = nodata");
             }
         }
         PlayerPrefs.Save();
@@ -716,23 +702,23 @@ public class GetNameScript : MonoBehaviour
     } 
 
     public void PressShowLeaderboardButton()
-	{
-		AudioManager.Instance.PlayClick();
-		this.leaderBoardScript.ShowLeaderboards();
+    {
+        AudioManager.Instance.PlayClick();
+        this.leaderBoardScript.ShowLeaderboards();
     } 
 
     public void PressSignoutButton()
-	{
-		AudioManager.Instance.PlayClick();
-		this.leaderBoardScript.LeaderboardLogout();
+    {
+        AudioManager.Instance.PlayClick();
+        this.leaderBoardScript.LeaderboardLogout();
         this.PressCloseButton();
     }
 
     public void PressCloseButton()
     { 
         this.SetButtonsInteractable(true);
-		AudioManager.Instance.PlayClick();
-	}
+        AudioManager.Instance.PlayClick();
+    }
 
     private void SetButtonsInteractable(bool bSetting)
     {
@@ -758,13 +744,13 @@ public class GetNameScript : MonoBehaviour
     private void DailyRolloverCountdown()
     {
         DateTime dateTime = DateTime.UtcNow.AddHours(-8.0);
-        UnityEngine.Debug.Log("UTC Now today (PST) : " + dateTime);
+        Debug.Log("UTC Now today (PST) : " + dateTime);
         DateTime dateTime2 = new DateTime(dateTime.Year, dateTime.Month, dateTime.Day);
-        UnityEngine.Debug.Log("UTC Rollover midnight 24 hrs early (PST) : " + dateTime2);
+        Debug.Log("UTC Rollover midnight 24 hrs early (PST) : " + dateTime2);
         DateTime dateTime3 = dateTime2.AddDays(1.0);
-        UnityEngine.Debug.Log("UTC Rollover midnight (PST) : " + dateTime3);
+        Debug.Log("UTC Rollover midnight (PST) : " + dateTime3);
         TimeSpan timeSpan = dateTime3.Subtract(dateTime);
-        UnityEngine.Debug.Log("Time until roll over " + timeSpan);
+        Debug.Log("Time until roll over " + timeSpan);
         string str = string.Format("{0:D2}:{1:D2}", timeSpan.Hours, timeSpan.Minutes);
         this.rolloverTimeText.text = "New Daily Puzzle in " + str;
     }

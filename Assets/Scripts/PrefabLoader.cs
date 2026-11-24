@@ -1,44 +1,30 @@
-/*
-http://www.cgsoso.com/forum-211-1.html
-
-CG搜搜 Unity3d 每日Unity3d插件免费更新 更有VIP资源！
-
-CGSOSO 主打游戏开发，影视设计等CG资源素材。
-
-插件由会员免费分享，如果商用，请务必联系原著购买授权！
-
-daily assets update for try.
-
-U should buy a license from author if u use it in your project!
-*/
-
 using System.Linq;
 using UnityEngine;
 
 public class PrefabLoader : MonoBehaviour
 {
 
-	public BaseWindow[] windows;
+    public BaseWindow[] windows;
 
-	private static PrefabLoader instance;
-	private void Awake()
-	{
-		instance = this;
-		DontDestroyOnLoad(gameObject);
-	}
+    private static PrefabLoader instance;
+    private void Awake()
+    {
+        instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
-	public static T Load<T>(string name) where T : BaseWindow
-	{
-		T a = null;
-		try
-		{
-			var w = instance.windows.FirstOrDefault(t => t.name == name);
-			a = (T)w;
-		}
-		catch(MissingReferenceException e)
+    public static T Load<T>(string name) where T : BaseWindow
+    {
+        T a = null;
+        try
         {
-			Debug.Log(e.Message);
+            var w = instance.windows.FirstOrDefault(t => t.name == name);
+            a = (T)w;
         }
-		return a;
-	}
+        catch(MissingReferenceException e)
+        {
+            Debug.Log(e.Message);
+        }
+        return a;
+    }
 }

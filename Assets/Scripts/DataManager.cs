@@ -1,17 +1,3 @@
-/*
-http://www.cgsoso.com/forum-211-1.html
-
-CG搜搜 Unity3d 每日Unity3d插件免费更新 更有VIP资源！
-
-CGSOSO 主打游戏开发，影视设计等CG资源素材。
-
-插件由会员免费分享，如果商用，请务必联系原著购买授权！
-
-daily assets update for try.
-
-U should buy a license from author if u use it in your project!
-*/
-
 
 
 using Serialization;
@@ -24,161 +10,160 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
-	public Action OnInternetAppeared;
+    public Action OnInternetAppeared;
 
-	private DateTime m_startTime = DateTime.Now; 
+    private DateTime m_startTime = DateTime.Now; 
 
-	[SerializeField]
-	private ServerConnector m_serverConnector;
+    [SerializeField] private ServerConnector m_serverConnector;
 
-	private ImagesInfo m_imagesInfo; 
+    private ImagesInfo m_imagesInfo; 
 
-	public static DataManager Instance { get; private set; }
+    public static DataManager Instance { get; private set; }
 
-	public ImagesInfo AllImages
-	{
-		get
-		{
-			return m_imagesInfo;
-		}
-	}
+    public ImagesInfo AllImages
+    {
+        get
+        {
+            return m_imagesInfo;
+        }
+    }
 
-	public bool ServerAvailable
-	{
-		get
-		{
-			return InternetConnection.IsAvailable && !this.ServerError;
-		}
-	}
+    public bool ServerAvailable
+    {
+        get
+        {
+            return InternetConnection.IsAvailable && !this.ServerError;
+        }
+    }
 
-	public bool ServerError { get; private set; }
+    public bool ServerError { get; private set; }
 
-	public bool Inited { get; private set; }
+    public bool Inited { get; private set; }
 
-	private void Awake()
-	{
-		DataManager.Instance = this; 
-	}
+    private void Awake()
+    {
+        DataManager.Instance = this; 
+    }
 
-	public void Init()
-	{ 
-		this.m_serverConnector.Init();
-		ServerConnector serverConnector = this.m_serverConnector;
-		serverConnector.OnInternetAppeared = (Action)Delegate.Combine(serverConnector.OnInternetAppeared, (Action)delegate
-		{
-			this.OnInternetAppeared.SafeInvoke();
-		});
-	} 
+    public void Init()
+    { 
+        this.m_serverConnector.Init();
+        ServerConnector serverConnector = this.m_serverConnector;
+        serverConnector.OnInternetAppeared = (Action)Delegate.Combine(serverConnector.OnInternetAppeared, (Action)delegate
+        {
+            this.OnInternetAppeared.SafeInvoke();
+        });
+    } 
 
-	public void GetImages(bool force, Action<ImagesInfo> handler)
-	{
+    public void GetImages(bool force, Action<ImagesInfo> handler)
+    {
         Debug.Log("GetImages 10");
-		if (this.m_imagesInfo != null && !force)
-		{
-			handler.SafeInvoke(this.m_imagesInfo);
-		}
-		else
-		{
+        if (this.m_imagesInfo != null && !force)
+        {
+            handler.SafeInvoke(this.m_imagesInfo);
+        }
+        else
+        {
             Debug.Log("Start loading GetImages");
-			//SearchForLocalFile(AppPathsConfig.ImagesFile, delegate (ImagesInfo res)
-			//{
-			//	this.m_imagesInfo = res;
-			//});
-			base.StartCoroutine(m_serverConnector.GetLocalStreamData((res) =>
+            //SearchForLocalFile(AppPathsConfig.ImagesFile, delegate (ImagesInfo res)
+            //{
+            //	this.m_imagesInfo = res;
+            //});
+            base.StartCoroutine(m_serverConnector.GetLocalStreamData((res) =>
             {
                 Debug.Log("GetImages this.m_imagesInfo = res; count = " + res.Count);
                 this.m_imagesInfo = res;
                 base.StartCoroutine(this.GetImagesListCoroutine(force, handler));
-			}));
-			base.StartCoroutine(this.LoadImages(handler));
-		}
-	}
+            }));
+            base.StartCoroutine(this.LoadImages(handler));
+        }
+    }
 
-	private IEnumerator LoadImages(Action<ImagesInfo> handler)
-	{
-		yield return null;
-		if (this.m_imagesInfo == null || this.m_imagesInfo.Images.Count == 0)
-		{
+    private IEnumerator LoadImages(Action<ImagesInfo> handler)
+    {
+        yield return null;
+        if (this.m_imagesInfo == null || this.m_imagesInfo.Images.Count == 0)
+        {
            
-			yield return new WaitForSeconds(0.5f);
-			/*using (var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(imagesAsset.text)))
-			{
-				this.m_imagesInfo = Serializer.LoadFromTextStream<ImagesInfo>(stream);
-			}*/
-		}
-		handler(this.m_imagesInfo);
-	} 
-	private T CheckDownloadedFile<T>(string fileName)
-	{ 
+            yield return new WaitForSeconds(0.5f);
+            /*using (var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(imagesAsset.text)))
+            {
+                this.m_imagesInfo = Serializer.LoadFromTextStream<ImagesInfo>(stream);
+            }*/
+        }
+        handler(this.m_imagesInfo);
+    } 
+    private T CheckDownloadedFile<T>(string fileName)
+    { 
         string path = AppPathsConfig.DownloadsPath + fileName;
         Debug.Log("CheckDownloadedFile " + path);
-		if (File.Exists(path))
+        if (File.Exists(path))
         {
             Debug.Log("CheckDownloadedFile OK");
-			if (typeof(T) == typeof(ImagesInfo))
-			{
-				return Serializer.LoadFromTextFile<T>(path);
-			}
-			return Serializer.LoadFromFile<T>(path);
-		}
-		return default(T);
-	}
+            if (typeof(T) == typeof(ImagesInfo))
+            {
+                return Serializer.LoadFromTextFile<T>(path);
+            }
+            return Serializer.LoadFromFile<T>(path);
+        }
+        return default(T);
+    }
 
-	public ImageInfo GetImageInfo(string imageId)
-	{
-		return this.m_imagesInfo.Images.FirstOrDefault((ImageInfo a) => a.Id == imageId);
-	}
+    public ImageInfo GetImageInfo(string imageId)
+    {
+        return this.m_imagesInfo.Images.FirstOrDefault((ImageInfo a) => a.Id == imageId);
+    }
 
-	public void GetImageAsset(ImageInfo imageInfo, Action<bool, Texture2D> handler)
-	{
-		base.StartCoroutine(this.GetImageAssetCoroutine(imageInfo, handler));
-	}
+    public void GetImageAsset(ImageInfo imageInfo, Action<bool, Texture2D> handler)
+    {
+        base.StartCoroutine(this.GetImageAssetCoroutine(imageInfo, handler));
+    }
 
-	public bool CheckLocalAsset(ImageInfo imageInfo)
-	{
-		string text = imageInfo.Id + ".png";
-		return File.Exists(AppPathsConfig.DownloadsPath + text);
-	}
+    public bool CheckLocalAsset(ImageInfo imageInfo)
+    {
+        string text = imageInfo.Id + ".png";
+        return File.Exists(AppPathsConfig.DownloadsPath + text);
+    }
 
-	public void GetImageAsset3D(ImageInfo imageInfo, Action<bool, CashImage3D> handler)
-	{
-		base.StartCoroutine(this.GetImageAsset3DCoroutine(imageInfo, handler));
-	}
+    public void GetImageAsset3D(ImageInfo imageInfo, Action<bool, CashImage3D> handler)
+    {
+        base.StartCoroutine(this.GetImageAsset3DCoroutine(imageInfo, handler));
+    }
 
-	public void GetPhotoAsset(string id, Action<bool, Texture2D> handler)
-	{
-		base.StartCoroutine(this.GetPhotoAssetCoroutine(id, handler));
-	} 
+    public void GetPhotoAsset(string id, Action<bool, Texture2D> handler)
+    {
+        base.StartCoroutine(this.GetPhotoAssetCoroutine(id, handler));
+    } 
 
-	public AssetBundle GetInappsWindow()
-	{
-		return null;
-	}
+    public AssetBundle GetInappsWindow()
+    {
+        return null;
+    }
 
-	public AssetBundle GetTrialInappsWindow()
-	{
-		return null;
-	} 
-	private void Log(string message)
-	{
-	}
+    public AssetBundle GetTrialInappsWindow()
+    {
+        return null;
+    } 
+    private void Log(string message)
+    {
+    }
 
-	private void LogError(string message)
-	{
-	}
+    private void LogError(string message)
+    {
+    }
 
-	private void OnApplicationPause(bool pause)
-	{
-		if (pause)
-		{ 
-		}
-		else
-		{
-			this.m_startTime = DateTime.Now;
-		}
-	}  
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+        { 
+        }
+        else
+        {
+            this.m_startTime = DateTime.Now;
+        }
+    }  
     private IEnumerator CheckEmbeddedVersion<T>(string fileName, Action<T> handler) 
-	{
+    {
         Debug.Log("CheckEmbeddedVersion " + AppPathsConfig.StreamingAssetsPath + fileName);
         var www = new WWW(AppPathsConfig.StreamingAssetsPath + fileName);
         yield return www;
@@ -195,7 +180,7 @@ public class DataManager : MonoBehaviour
             Debug.Log("CheckEmbeddedVersion error"); 
             SystemExtends.SafeInvoke<T>(handler, default(T)); 
         }
-	}
+    }
 
 
     private IEnumerator SearchForLocalFile<T>(string fileName, Action<T> handler)
@@ -261,8 +246,8 @@ public class DataManager : MonoBehaviour
             }
         });         yield return null;
     }
-	private IEnumerator GetImageAssetCoroutine(ImageInfo imageInfo, Action<bool, Texture2D> handler)
-	{
+    private IEnumerator GetImageAssetCoroutine(ImageInfo imageInfo, Action<bool, Texture2D> handler)
+    {
         this.StartCoroutine(SearchForLocalFile(imageInfo.Id + ".png", delegate (CashImage foundAsset)
         { 
             if (foundAsset != null)
@@ -298,7 +283,7 @@ public class DataManager : MonoBehaviour
             handler.SafeInvoke((UnityEngine.Object)serverTex != (UnityEngine.Object)null, serverTex); 
         })); 
         yield return null;
-	}
+    }
 
     private IEnumerator GetImageAsset3DCoroutine(ImageInfo imageInfo, Action<bool, CashImage3D> handler)
     {          this.StartCoroutine(this.SearchForLocalFile(imageInfo.Id + ".png.vox", delegate (CashImage3D foundAsset)         {
